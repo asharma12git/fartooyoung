@@ -15,7 +15,7 @@ const ChildMarriage = () => {
         ></div>
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-end items-center h-full text-center px-4 pb-32">
-          <h2 className="text-4xl font-medium text-brand-orange mb-8">
+          <h2 className="text-4xl font-medium mb-8" style={{ color: '#f59e0b' }}>
             Restoring Hopes, Restoring Smiles ®
           </h2>
           

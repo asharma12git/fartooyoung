@@ -7,6 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
+        'brand-orange': '#F97316',
+        'brand-orange-hover': '#EA580C',
         dark: {
           50: '#f8fafc',
           100: '#f1f5f9',

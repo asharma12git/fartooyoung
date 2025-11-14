@@ -20,6 +20,11 @@ Global Secondary Index: email-index (email as partition key)
 ### 4. Secrets Manager
 - Secret: `fartooyoung/jwt-secret`
 
+### 5. CloudFront + WAF Security
+- CloudFront distribution for API Gateway
+- AWS WAF with rate limiting and security rules
+- Protection against SQL injection, XSS, and common attacks
+
 ## Code Changes Required
 
 ### 1. Create API Service Layer
@@ -356,3 +361,57 @@ exports.handler = async (event) => {
 6. **Modify**: `src/components/Header.jsx` - Show user state and logout
 
 The key change is in `AuthModal.jsx` where you replace the mock `console.log` with actual API calls to your AWS Lambda functions.
+
+## WAF Security Configuration
+
+### AWS WAF Rules for API Protection
+```bash
+# Rate limiting rule
+aws wafv2 create-rule-group \
+  --name fartooyoung-rate-limit \
+  --scope CLOUDFRONT \
+  --capacity 100 \
+  --rules '[{
+    "Name": "RateLimitRule",
+    "Priority": 1,
+    "Statement": {
+      "RateBasedStatement": {
+        "Limit": 2000,
+        "AggregateKeyType": "IP"
+      }
+    },
+    "Action": {"Block": {}},
+    "VisibilityConfig": {
+      "SampledRequestsEnabled": true,
+      "CloudWatchMetricsEnabled": true,
+      "MetricName": "RateLimitRule"
+    }
+  }]'
+
+# SQL injection protection
+aws wafv2 create-rule-group \
+  --name fartooyoung-sqli-protection \
+  --scope CLOUDFRONT \
+  --capacity 200 \
+  --rules '[{
+    "Name": "SQLiRule",
+    "Priority": 2,
+    "Statement": {
+      "ManagedRuleGroupStatement": {
+        "VendorName": "AWS",
+        "Name": "AWSManagedRulesSQLiRuleSet"
+      }
+    },
+    "Action": {"Block": {}},
+    "VisibilityConfig": {
+      "SampledRequestsEnabled": true,
+      "CloudWatchMetricsEnabled": true,
+      "MetricName": "SQLiRule"
+    }
+  }]'
+```
+
+### CloudFront Distribution with WAF
+- Attach WAF to CloudFront distribution serving API Gateway
+- Enable logging to S3 for security monitoring
+- Configure custom error pages for blocked requests

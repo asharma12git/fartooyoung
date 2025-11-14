@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import logo from '../assets/images/shared/Far-Too-Young-c4-white.png'
 
 const Header = ({ onAuthClick, onDonateClick }) => {
   const location = useLocation()
@@ -11,47 +12,58 @@ const Header = ({ onAuthClick, onDonateClick }) => {
   ]
 
   return (
-    <header className="bg-dark-800 border-b border-dark-700">
+    <header className="absolute top-0 left-0 right-0 z-50 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
+        <div className="flex justify-between items-center h-40 py-6 pt-8">
+          <div className="flex items-center justify-start -ml-32">
             <Link to="/" className="flex items-center">
-              <div className="w-32 h-8 bg-white rounded flex items-center justify-center">
-                <span className="text-dark-900 font-bold text-sm">LOGO</span>
-              </div>
+              <img src={logo} alt="Far Too Young" className="h-36 w-auto" />
             </Link>
-            <nav className="hidden md:flex space-x-6">
+          </div>
+          
+          <nav className="flex-1 flex justify-center items-center">
+            <div className="flex space-x-12">
               {navItems.map(item => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 text-lg font-medium transition-colors ${
                     location.pathname === item.path
-                      ? 'text-blue-400 border-b-2 border-blue-400'
-                      : 'text-gray-300 hover:text-white'
+                      ? 'text-white border-b-2 border-white'
+                      : 'text-white/90 hover:text-white'
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
-            </nav>
-          </div>
+            </div>
+          </nav>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-end space-x-4 -mr-32">
             <button
               onClick={onAuthClick}
-              className="text-gray-300 hover:text-white transition-colors"
-              aria-label="Sign Up / Login"
+              className="flex items-center space-x-2"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+              <span className="text-white/90 text-lg font-medium">Login</span>
+              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
             </button>
+            
+            <div className="h-8 w-px bg-white/30"></div>
+            
             <button
               onClick={onDonateClick}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="flex items-center space-x-2"
             >
-              Donate
+              <span className="text-white/90 text-lg font-medium">Donate</span>
+              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
             </button>
           </div>
         </div>

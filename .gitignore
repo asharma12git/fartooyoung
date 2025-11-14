@@ -40,3 +40,5 @@ coverage/
 
 # AWS
 .aws/
+# Ideas folder with website samples
+ideas/

@@ -21,6 +21,16 @@ export default {
           800: '#1e293b',
           900: '#0f172a',
         }
+      },
+      fontFamily: {
+        'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+      },
+      fontSize: {
+        // 4-tier typography system
+        'text-large': ['4rem', { lineHeight: '1.2', fontWeight: '600' }],      // 64px - Large (slogans)
+        'text-medium': ['1.125rem', { lineHeight: '1.6', fontWeight: '500' }], // 18px - Medium (headers/nav)
+        'text-small': ['1rem', { lineHeight: '1.6', fontWeight: '400' }],      // 16px - Small (body text)
+        'text-xs': ['0.875rem', { lineHeight: '1.6', fontWeight: '400' }],     // 14px - Extra Small (disclaimers)
       }
     },
   },

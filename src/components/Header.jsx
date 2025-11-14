@@ -27,7 +27,7 @@ const Header = ({ onAuthClick, onDonateClick }) => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 py-2 text-lg font-medium transition-colors ${
+                  className={`px-4 py-2 text-xl font-medium transition-colors ${
                     location.pathname === item.path
                       ? 'text-white border-b-2 border-white'
                       : 'text-white/90 hover:text-white'
@@ -44,7 +44,7 @@ const Header = ({ onAuthClick, onDonateClick }) => {
               onClick={onAuthClick}
               className="flex items-center space-x-2"
             >
-              <span className="text-white/90 text-lg font-medium">Login</span>
+              <span className="text-white/90 text-xl font-medium">Login</span>
               <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -58,7 +58,7 @@ const Header = ({ onAuthClick, onDonateClick }) => {
               onClick={onDonateClick}
               className="flex items-center space-x-2"
             >
-              <span className="text-white/90 text-lg font-medium">Donate</span>
+              <span className="text-white/90 text-xl font-medium">Donate</span>
               <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round" strokeLinejoin="round"/>

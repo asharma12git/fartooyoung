@@ -12,16 +12,16 @@ const ChildMarriage = () => {
         <div className="absolute inset-0 bg-black/50"></div>
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-end items-center h-full text-center px-4 pb-32">
-          <h2 className="text-3xl md:text-4xl font-semibold text-brand-orange mb-8">
+          <h2 className="text-4xl font-medium text-brand-orange mb-8">
             Restoring Hopes, Restoring Smiles ®
           </h2>
           
-          <p className="text-xl text-white mb-8 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-small text-white mb-8 leading-relaxed max-w-3xl mx-auto">
             Far Too Young envisions a society free from child, underage and forced marriages - 
             a society where girls and women feel valued and reach their full potential.
           </p>
           
-          <p className="text-2xl text-white mb-12 font-medium">
+          <p className="text-small text-white mb-12">
             Please Support Us.
           </p>
           
@@ -29,7 +29,7 @@ const ChildMarriage = () => {
             DONATE
           </button>
           
-          <div className="text-sm text-white/80 italic max-w-4xl mx-auto">
+          <div className="text-xs text-white/80 italic max-w-4xl mx-auto">
             <p className="mb-2">
               Far Too Young Inc is a United States non-profit recognized by the IRS as a 501(c)(3) charitable organization.
             </p>
@@ -54,8 +54,8 @@ const ChildMarriage = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-amber-900 mb-4 group-hover:text-amber-800">Our Mission</h3>
-              <p className="text-amber-700 leading-relaxed">
+              <h3 className="text-headline text-amber-900 mb-4 group-hover:text-amber-800">Our Mission</h3>
+              <p className="text-body text-amber-700 leading-relaxed">
                 Ending child marriage through education, advocacy, and community empowerment worldwide.
               </p>
             </div>
@@ -69,8 +69,8 @@ const ChildMarriage = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-orange-900 mb-4 group-hover:text-orange-800">Global Impact</h3>
-              <p className="text-orange-700 leading-relaxed">
+              <h3 className="text-headline text-orange-900 mb-4 group-hover:text-orange-800">Global Impact</h3>
+              <p className="text-body text-orange-700 leading-relaxed">
                 12 million girls affected annually. We're changing lives across continents.
               </p>
             </div>
@@ -84,8 +84,8 @@ const ChildMarriage = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-red-900 mb-4 group-hover:text-red-800">Education</h3>
-              <p className="text-red-700 leading-relaxed">
+              <h3 className="text-headline text-red-900 mb-4 group-hover:text-red-800">Education</h3>
+              <p className="text-body text-red-700 leading-relaxed">
                 Scholarships and programs keeping girls in school and building brighter futures.
               </p>
             </div>
@@ -99,8 +99,8 @@ const ChildMarriage = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-pink-900 mb-4 group-hover:text-pink-800">Get Involved</h3>
-              <p className="text-pink-700 leading-relaxed">
+              <h3 className="text-headline text-pink-900 mb-4 group-hover:text-pink-800">Get Involved</h3>
+              <p className="text-body text-pink-700 leading-relaxed">
                 Join our community of advocates working to protect children worldwide.
               </p>
             </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
+import Footer from './components/Footer'
 import ChildMarriage from './pages/ChildMarriage'
 import FounderTeam from './pages/FounderTeam'
 import Partners from './pages/Partners'
@@ -14,12 +15,12 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-dark-900">
+      <div className="min-h-screen bg-dark-900 flex flex-col">
         <Header 
           onAuthClick={() => setShowAuth(true)}
           onDonateClick={() => setShowDonation(true)}
         />
-        <main>
+        <main className="flex-1">
           <Routes>
             <Route path="/" element={<ChildMarriage />} />
             <Route path="/founder-team" element={<FounderTeam />} />
@@ -27,6 +28,7 @@ function App() {
             <Route path="/what-we-do" element={<WhatWeDo />} />
           </Routes>
         </main>
+        <Footer />
         
         {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
         {showDonation && <DonationModal onClose={() => setShowDonation(false)} />}

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import logo from '../assets/images/shared/Far-Too-Young-c4-white.png'
+import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const Header = ({ onAuthClick, onDonateClick }) => {
   const location = useLocation()

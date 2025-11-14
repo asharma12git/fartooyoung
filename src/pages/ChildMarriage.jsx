@@ -4,12 +4,15 @@ const ChildMarriage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Background Image */}
-      <div 
-        className="relative h-screen bg-cover bg-center bg-no-repeat overflow-hidden"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
-        {/* Background Overlay */}
-        <div className="absolute inset-0 bg-black/50"></div>
+      <div className="relative h-screen overflow-hidden">
+        {/* Background Image with Filters */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${heroImage})`,
+            filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.55) contrast(1.0)'
+          }}
+        ></div>
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-end items-center h-full text-center px-4 pb-32">
           <h2 className="text-4xl font-medium text-brand-orange mb-8">

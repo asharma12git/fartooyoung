@@ -1,4 +1,5 @@
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
+import childBrideImage from '../assets/images/pages/child-marriage/Child-Bride.jpg'
 
 const ChildMarriage = () => {
   return (
@@ -43,8 +44,61 @@ const ChildMarriage = () => {
         </div>
       </div>
 
+      {/* A Child Bride Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Double Line - Content Width */}
+          <div className="mb-8">
+            <div className="w-full h-0.5 bg-black mb-1"></div>
+            <div className="w-full h-0.5 bg-black"></div>
+          </div>
+          
+          {/* Content Grid */}
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left - Title and Description */}
+            <div>
+              <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">A CHILD BRIDE</h2>
+              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                Gender discrimination is embedded in 
+                the legal system and social structures and that along with poverty is the root cause of child marriages. Every year 4 million girls under the age of 15 are victims of child, underage and forced marriages in South Asia. This illegal practice robs them of their rights to education, their reproductive rights and consensual marriage.
+              </p>
+              
+              {/* Subtle divider line */}
+              <div className="w-full h-px bg-gray-400 mb-6"></div>
+              
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Once married as children, the child brides are victims of lifelong servitude, domestic violence, pregnancy complications and death through early childbirth. Child brides are at risk of being trafficked and sold. Child marriage reinforces the gendered nature of poverty, with limited education and skills, bringing down the potential of the girl, her family, her community and her country. These hinder a girl throughout her adult life and into the next generation.
+              </p>
+            </div>
+            
+            {/* Right - Image */}
+            <div className="h-full">
+              <img 
+                src={childBrideImage} 
+                alt="Child bride awareness" 
+                className="w-full h-full object-cover rounded-lg shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hear Ranju, Binita & Hema Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Single Line Separator */}
+          <div className="w-full h-px bg-black mb-8"></div>
+          
+          {/* Title */}
+          <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">HEAR RANJU, BINITA & HEMA</h2>
+          
+          {/* Content will go here */}
+          
+        </div>
+      </div>
+
       {/* Navigation Sections */}
-      <div className="bg-white">
+      <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             

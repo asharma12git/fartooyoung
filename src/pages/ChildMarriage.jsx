@@ -1,11 +1,86 @@
 import { useState } from 'react'
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
-import childBrideImage from '../assets/images/pages/child-marriage/Child-Bride.jpg'
+import childBrideImage from '../assets/images/pages/child-marriage/a-child-bride/Child-Bride.jpg'
 import useCountUp from '../hooks/useCountUp'
-import flagBangladesh from '../assets/images/pages/child-marriage/Flags/Flag_Bangladesh.png'
-import flagNepal from '../assets/images/pages/child-marriage/Flags/Flag_Nepal.svg'
-import flagUSA from '../assets/images/pages/child-marriage/Flags/Flag_USA.png'
-import flagIndia from '../assets/images/pages/child-marriage/Flags/Flag_India.png'
+import flagBangladesh from '../assets/images/pages/child-marriage/where-we-work/Flag_Bangladesh.png'
+import flagNepal from '../assets/images/pages/child-marriage/where-we-work/Flag_Nepal.svg'
+import flagUSA from '../assets/images/pages/child-marriage/where-we-work/Flag_USA.png'
+import flagIndia from '../assets/images/pages/child-marriage/where-we-work/Flag_India.png'
+import protectRightsImage1 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/cm-care-austrialia.jpg'
+import protectRightsImage2 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/Girls-studying-in-Nepal-Credit-Save-the-Children.jpg'
+import protectRightsImage3 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/girls-group.jpg'
+
+const ProtectRightsPanel = ({ image, title, description }) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  return (
+    <div className="group">
+      <div className="relative">
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+        
+        {/* Content Container */}
+        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 overflow-hidden transition-transform duration-300 group-hover:scale-105">
+          <div className="aspect-video w-full overflow-hidden">
+            <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          </div>
+          <div className="p-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">{title}</h3>
+            <div className="text-center">
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            {isExpanded && (
+              <div className="mt-6 pt-6 border-t border-gray-200/50">
+                <p className="text-gray-900 text-sm leading-relaxed text-justify font-medium whitespace-pre-line">{description}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ProtectRights = () => {
+  const panels = [
+    {
+      image: protectRightsImage2,
+      title: "GBV : Child Marriage",
+      description: "Gender Based Violence (GBV), already a global crisis, has increased many folds after the COVID-19 pandemic. Children and women have been futher abused, trapped and isolated as a result of the health crisis. Economic hardships, social instability, captivity and helplessness have futher made situations worst for them. Domestic and sexual violence human trafficking and child marriage is on the the rise like never before.\n\nThe pandemic has put an additional 10 million underage girls at risk of child, underage and forced marriages and now over 150 million child marriages are expected to take place by 2030. By 2030, the world's target is to eliminate the practice, but reaching this goal will require coordinated action and additional investment. Many countries around the world are struggling to meet this goal. To end child marriage by 2030, progress must be 17 times faster than the progress of the last decade according to UNICEF.\n\nFar Too Young, Inc is committed to the fight against child marriage and eliminate this practice and urgency to prioritize children for all recovery efforts to protect the coming generation from being the lost one."
+    },
+    {
+      image: protectRightsImage1,
+      title: "Why is Child Marriage Wrong",
+      description: "Child marriage is a gross violation of human rights as it not only robs children of their childhood but leaves them vulnerable to violence, physical and mental abuse. Child marriages lead to disruption in education and in teenage pregnancies (mostly leading to higher risk and complications during childbirth) affecting the sexual health and development of the mother. With the well-being and future of the child bride and the lives and livelihood of her family at stake, eradication of this social injustice would have a direct impact on the welfare and prosperity of the wider population and nations."
+    },
+    {
+      image: protectRightsImage3,
+      title: "Why Child Marriage Happens", 
+      description: "Child marriage is rooted in gender inequality as girls are treated inferior to male children. Girls are denied their human rights such as access to education and health services. Laws protecting girls aren't enforced.\n\nStigma against premarital sex and unwanted pregnancies which is believed to bring shame and dishonor to the family forces girls to marry when they reach puberty. Poverty and insecurities lead families to marry girls early as it reduces financial burden on them.\n\nMarrying off girls early also means girls' families pay less dowry and the grooms' families bring in unpaid labor and servitude. Young girls are considered to be obedient and more hardworking. Old traditional practices like gauna, prevalent in Bihar, Uttar Pradesh and other states in India and the terai in Nepal force girls to marry as children."
+    }
+  ]
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {panels.map((panel, index) => (
+        <ProtectRightsPanel key={index} {...panel} />
+      ))}
+    </div>
+  )
+}
 
 const CountryCard = ({ flag, country, description, frontDescription }) => {
   return (
@@ -241,15 +316,29 @@ const ChildMarriage = () => {
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">HEAR RANJU, BINITA & HEMA</h2>
           
           {/* YouTube Video */}
-          <div className="w-full aspect-video mb-8">
-            <iframe
-              className="w-full h-full rounded-lg shadow-lg"
-              src="https://www.youtube.com/embed/cHmHZO4F0qs"
-              title="Hear Ranju, Binita & Hema"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+          <div className="relative">
+            {/* iPad Frame */}
+            <div className="relative bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 p-8 rounded-[2.5rem] shadow-2xl border border-slate-300">
+              {/* Screen */}
+              <div className="relative bg-black rounded-[1.5rem] overflow-hidden shadow-inner">
+                {/* Video Container */}
+                <div className="w-full aspect-video">
+                  <iframe
+                    className="w-full h-full"
+                    src="https://www.youtube.com/embed/cHmHZO4F0qs"
+                    title="Hear Ranju, Binita & Hema"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+              
+              {/* Home Button */}
+              <div className="flex justify-center mt-6">
+                <div className="w-12 h-12 bg-slate-200 rounded-full shadow-inner border-2 border-slate-400"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -282,6 +371,20 @@ const ChildMarriage = () => {
           {/* Flip Cards Grid */}
           <WhereWeWork />
           
+        </div>
+      </div>
+
+      {/* Protect the Rights of the Girl Child Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Single Line Separator */}
+          <div className="w-full h-px bg-black mb-8"></div>
+          
+          {/* Title */}
+          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">PROTECT THE RIGHTS OF THE GIRL CHILD</h2>
+          
+          {/* Panels Grid */}
+          <ProtectRights />
         </div>
       </div>
     </div>

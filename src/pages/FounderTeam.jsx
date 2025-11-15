@@ -9,9 +9,7 @@ import oshinBistaImage from '../assets/images/pages/founder-team/our-team/Oshin-
 import sooryaBaralImage from '../assets/images/pages/founder-team/our-team/Soorya-Baral.png'
 import DonationModal from '../components/DonationModal'
 import Card from '../components/Card'
-import SectionTitle from '../components/SectionTitle'
-import PersonCard from '../components/PersonCard'
-import { LAYOUT, GRADIENTS, BORDERS } from '../constants/styles'
+import { GRADIENTS, BORDERS } from '../constants/styles'
 
 const FounderTeam = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)

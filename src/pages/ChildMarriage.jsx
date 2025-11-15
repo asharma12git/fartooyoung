@@ -96,7 +96,7 @@ const ProtectRights = () => {
 const CountryCard = ({ flag, country, description, frontDescription }) => {
   return (
     <div className="group perspective-1000 h-[28rem]">
-      <div className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">>
+      <div className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
         {/* Front */}
         <div className="absolute inset-0 w-full h-full backface-hidden">
           <div className="relative h-full">

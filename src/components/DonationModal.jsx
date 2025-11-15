@@ -11,7 +11,6 @@ const DonationModal = ({ onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const finalAmount = amount === 'custom' ? customAmount : amount
     // Mock payment processing - in real app, this would integrate with Stripe/PayPal
     onClose()
   }

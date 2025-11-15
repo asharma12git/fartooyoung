@@ -9,6 +9,7 @@ import flagIndia from '../assets/images/pages/child-marriage/where-we-work/Flag_
 import protectRightsImage1 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/cm-care-austrialia.jpg'
 import protectRightsImage2 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/Girls-studying-in-Nepal-Credit-Save-the-Children.jpg'
 import protectRightsImage3 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/girls-group.jpg'
+import logoWatermark from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const ProtectRightsPanel = ({ image, title, description }) => {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -112,6 +113,15 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
           <div className="relative h-full">
             {/* Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+            
+            {/* Subtle Logo Watermark */}
+            <div 
+              className="absolute inset-0 bg-center bg-no-repeat rounded-3xl opacity-90"
+              style={{ 
+                backgroundImage: `url(${logoWatermark})`,
+                backgroundSize: '500px 500px'
+              }}
+            ></div>
             
             {/* Content Container */}
             <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl h-full">

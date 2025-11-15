@@ -336,20 +336,17 @@ const ChildMarriage = () => {
             Please Support Us.
           </p>
           
-          <button 
-            onClick={() => setShowDonationModal(true)}
-            className="bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-6 py-3 rounded-md text-base font-bold transition-colors mb-8 border border-orange-400/50"
-          >
-            DONATE
-          </button>
+          <div className="text-center mb-8">
+            <button 
+              onClick={() => setShowDonationModal(true)}
+              className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              <span>DONATE</span>
+            </button>
+          </div>
           
-          <div className="text-xs text-white/80 italic max-w-4xl mx-auto">
-            <p className="mb-2">
-              Far Too Young Inc is a United States non-profit recognized by the IRS as a 501(c)(3) charitable organization.
-            </p>
-            <p>
-              Our work is supported entirely through donations. 100 percent of your contribution is tax deductible.
-            </p>
+          <div className="text-xs text-white/80 italic text-center">
+            <p>Far Too Young is a United States 501(c)(3) Non-Profit Organization. || Tax ID: 87-3583633 || Our work is supported entirely through donations. 100 percent of your contribution is tax deductible.</p>
           </div>
         </div>
       </div>

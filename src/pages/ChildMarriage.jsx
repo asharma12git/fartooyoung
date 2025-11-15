@@ -345,8 +345,10 @@ const ChildMarriage = () => {
             </button>
           </div>
           
-          <div className="text-xs text-white/80 italic text-center">
-            <p>Far Too Young is a United States 501(c)(3) Non-Profit Organization. || Tax ID: 87-3583633 || Our work is supported entirely through donations. 100 percent of your contribution is tax deductible.</p>
+          <div className="text-xs text-white/80 italic text-center space-y-1">
+            <p>Tax ID: 87-3583633</p>
+            <p>Far Too Young is a United States 501(c)(3) Non-Profit Organization.</p>
+            <p>Our work is supported entirely through donations. 100 percent of your contribution is tax deductible.</p>
           </div>
         </div>
       </div>

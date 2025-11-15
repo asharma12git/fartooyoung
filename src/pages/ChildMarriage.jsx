@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
 import childBrideImage from '../assets/images/pages/child-marriage/Child-Bride.jpg'
 import useCountUp from '../hooks/useCountUp'
@@ -6,10 +7,10 @@ import flagNepal from '../assets/images/pages/child-marriage/Flags/Flag_Nepal.sv
 import flagUSA from '../assets/images/pages/child-marriage/Flags/Flag_USA.png'
 import flagIndia from '../assets/images/pages/child-marriage/Flags/Flag_India.png'
 
-const CountryCard = ({ flag, country, description }) => {
+const CountryCard = ({ flag, country, description, frontDescription }) => {
   return (
-    <div className="group perspective-1000 h-96">
-      <div className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
+    <div className="group perspective-1000 h-[28rem]">
+      <div className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">>
         {/* Front */}
         <div className="absolute inset-0 w-full h-full backface-hidden">
           <div className="relative h-full">
@@ -19,19 +20,32 @@ const CountryCard = ({ flag, country, description }) => {
             {/* Content Container */}
             <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl h-full shadow-lg border border-white/50">
               <div className="h-full flex flex-col items-center justify-start pt-8 p-8">
-                <div className="w-24 h-16 mb-8">
+                <div className="w-28 h-18 mb-8">>
                   <img src={flag} alt={`${country} flag`} className="w-full h-full object-contain" />
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900">{country}</h3>
+                <h3 className="text-3xl font-semibold text-gray-900 mb-12">{country}</h3>
+                {frontDescription && (
+                  <p className="text-sm font-medium text-gray-600 uppercase tracking-wider text-justify leading-relaxed">{frontDescription}</p>
+                )}
               </div>
             </div>
           </div>
         </div>
         
         {/* Back */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl shadow-lg border border-orange-300 overflow-hidden">
-          <div className="h-full flex items-center justify-center p-8">
-            <p className="text-white text-center text-base leading-relaxed">{description}</p>
+        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-lg border border-white/50 overflow-hidden">
+          <div className="relative h-full">
+            {/* Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+            
+            {/* Content Container */}
+            <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl h-full">
+              <div className="h-full flex items-center justify-center p-8">
+                <div className="max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
+                  <p className="text-gray-900 text-justify text-sm leading-relaxed font-medium whitespace-pre-line">{description}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -44,22 +58,26 @@ const WhereWeWork = () => {
     {
       flag: flagBangladesh,
       country: "Bangladesh",
-      description: "Working with local communities to prevent child marriage and support girls' education through grassroots initiatives."
+      frontDescription: "Child marriage is illegal in Bangladesh also but the country has the highest prevalence of child marriage in South Asia.",
+      description: "Bangladesh ranks among the 10 countries in the world with the highest levels of child marriage and is home to 38 million child brides of which, 13 million married before the age of 15. Bangladesh is determined to end child marriage by 2041 by intervening at the policy level, ensuring compliance to laws banning child marriage and changing norms among communities and families."
     },
     {
       flag: flagIndia,
-      country: "India", 
-      description: "Partnering with organizations to address child marriage in rural areas and empower girls through education programs."
+      country: "India",
+      frontDescription: "In 2021, the Union cabinet approved a proposal to raise the legal age of marriage for women from 18 to 21 years.",
+      description: "1 in 3 of the world's child brides live in India. According to UNICEF, in India, although the prevalence of girl children getting married before the age of 18 has slightly declined from 47 % to 27 %, the country is home to the largest numbers of child brides in the world. Of India's 223 million child brides, 102 million were married before turning 15. States in India like Kerala with high levels of better health and social indices, child marriage is lower."
     },
     {
       flag: flagNepal,
       country: "Nepal",
-      description: "Supporting community-based programs that protect girls from early marriage and promote their rights."
+      frontDescription: "A joint research report published in 2017 by UNICEF and UNFPA says Nepal has the 3rd highest rate of child marriage in both boys and girls in Asia, in spite of it being illegal since 1963.",
+      description: "The reasons behind this high prevalence is deep rooted and complex in Nepal.\n\nThe centuries old tradition of dowry has led to unwanted girl children which in turn led them to be married off early. Poverty, illiteracy, inheritance laws, stigma against pre-marital sex, lack of education or vocational facilities amongst the youth are other causes.\n\nThe constitution of Nepal 2015 makes marriage under the age of 20 unlawful. There are fines and punitive measures for adults who marry those under 18, those who arrange, matchmake, facilitate and solemnize such weddings. However, the law has loopholes and inconsistencies that allow perpetrators to live and act freely. There are hardly any complaints or legal recourses the practice is socially accepted.\n\nHowever, Nepal is the only affected South Asian country to have co-sponsored the Human Rights Council Resolution which declares child marriage a violation of human rights and calls for strengthening and collating efforts to eliminate it. In 2014 Nepal participated in the Girl Summit held in London and committed to the global agenda to achieve gender equality and eliminate child marriage as per the Sustainable Development Goals (SDGs) and this was legally adopted as part of Nepal's National Strategy 2072 (2015 if the Gregorian calendar). In 2016, Nepal hosted the event where Prince Harry lauded the country's efforts in bringing down the number by 10% in a decade but called to increase efforts in girls' education and empowerment."
     },
     {
       flag: flagUSA,
       country: "United States",
-      description: "Raising awareness and mobilizing resources to support global efforts in ending child marriage worldwide."
+      frontDescription: "Until the year 2018, child marriage was legal in all 50 states in the US. As of 2023, ten states have now completely banned child marriage and that is good news.",
+      description: "From the year 2000 to 2017, almost 300,000 minors between the age of 14 to 18 were married as children in the United States and vast majority (86%) were married to adult men. The biggest barrier to ending child marriage is lack of awareness according to UNICEF-USA. Child marriage is a gross violation of human rights. Elected officials must see the need to push legislation to formally outlaw child marriage in their states. Only 13 out of 50 states in the US have banned child marriage."
     }
   ]
 
@@ -88,7 +106,7 @@ const StatisticsGrid = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* 38M Child Brides in Bangladesh */}
           <div ref={ref38M} className="text-center">
-            <p className="text-sm font-medium text-gray-600 uppercase tracking-wider mb-2">
+            <p className="text-base font-medium text-gray-600 uppercase tracking-wider mb-2">
               Child Brides in Bangladesh
             </p>
             <div className="text-5xl md:text-6xl font-bold text-gray-900">
@@ -188,7 +206,7 @@ const ChildMarriage = () => {
             {/* Left - Title and Description */}
             <div>
               <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">A CHILD BRIDE</h2>
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              <p className="text-lg text-gray-700 leading-relaxed mb-6 text-justify">
                 Gender discrimination is embedded in 
                 the legal system and social structures and that along with poverty is the root cause of child marriages. Every year 4 million girls under the age of 15 are victims of child, underage and forced marriages in South Asia. This illegal practice robs them of their rights to education, their reproductive rights and consensual marriage.
               </p>
@@ -196,7 +214,7 @@ const ChildMarriage = () => {
               {/* Subtle divider line */}
               <div className="w-full h-px bg-gray-400 mb-6"></div>
               
-              <p className="text-lg text-gray-700 leading-relaxed">
+              <p className="text-lg text-gray-700 leading-relaxed text-justify">
                 Once married as children, the child brides are victims of lifelong servitude, domestic violence, pregnancy complications and death through early childbirth. Child brides are at risk of being trafficked and sold. Child marriage reinforces the gendered nature of poverty, with limited education and skills, bringing down the potential of the girl, her family, her community and her country. These hinder a girl throughout her adult life and into the next generation.
               </p>
             </div>

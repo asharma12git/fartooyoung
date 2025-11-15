@@ -8,6 +8,10 @@ import ashutoshSharmaImage from '../assets/images/pages/founder-team/our-team/As
 import oshinBistaImage from '../assets/images/pages/founder-team/our-team/Oshin-Bista.jpg'
 import sooryaBaralImage from '../assets/images/pages/founder-team/our-team/Soorya-Baral.png'
 import DonationModal from '../components/DonationModal'
+import Card from '../components/Card'
+import SectionTitle from '../components/SectionTitle'
+import PersonCard from '../components/PersonCard'
+import { LAYOUT, GRADIENTS, BORDERS } from '../constants/styles'
 
 const FounderTeam = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)
@@ -56,15 +60,9 @@ const FounderTeam = () => {
           {/* Section Title */}
           <h3 className="text-2xl font-medium text-center text-gray-900 mb-12 leading-tight">ENDING GENDER BASED VIOLENCE: A CALL TO ACTION</h3>
           
-          {/* Letter Content */}
           <div className="w-full">
-            <div className="relative">
-              {/* Gradient Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
-              
-              {/* Content Container */}
-              <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-16 shadow-2xl border border-orange-100/40">
-                <p className="text-xl text-gray-900 mb-8 leading-relaxed font-serif">Dear Friends,</p>
+            <Card gradient={GRADIENTS.METALLIC_GRAY} border={BORDERS.GRAY} padding="p-16" hover={false}>
+              <p className="text-xl text-gray-900 mb-8 leading-relaxed font-serif">Dear Friends,</p>
                 
                 <p className="text-lg text-gray-800 mb-8 leading-relaxed text-justify font-serif">
                   From a young age, I've been deeply drawn to social service with a passion to serve the communities and give back to society. Witnessing the struggles of those less fortunate, both in my native Nepal and later in the United States, ignited a desire within me to make a difference. I believe that everyone deserves a chance to live a life free from violence, poverty and injustice.
@@ -118,7 +116,7 @@ const FounderTeam = () => {
                     <span>DONATE</span>
                   </Link>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>

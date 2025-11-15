@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const AuthModal = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true)
@@ -77,6 +78,10 @@ const AuthModal = ({ onClose }) => {
       </div>
     </div>
   )
+}
+
+AuthModal.propTypes = {
+  onClose: PropTypes.func.isRequired
 }
 
 export default AuthModal

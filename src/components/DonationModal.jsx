@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const DonationModal = ({ onClose }) => {
   const [donationType, setDonationType] = useState('one-time')
@@ -153,6 +154,10 @@ const DonationModal = ({ onClose }) => {
       </div>
     </div>
   )
+}
+
+DonationModal.propTypes = {
+  onClose: PropTypes.func.isRequired
 }
 
 export default DonationModal

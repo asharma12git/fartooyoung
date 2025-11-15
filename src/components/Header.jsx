@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const Header = ({ onAuthClick, onDonateClick }) => {
@@ -70,6 +71,11 @@ const Header = ({ onAuthClick, onDonateClick }) => {
       </div>
     </header>
   )
+}
+
+Header.propTypes = {
+  onAuthClick: PropTypes.func.isRequired,
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default Header

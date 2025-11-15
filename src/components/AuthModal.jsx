@@ -11,7 +11,6 @@ const AuthModal = ({ onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     // Mock authentication - in real app, this would call AWS Lambda
-    console.log('Auth attempt:', { isLogin, formData })
     onClose()
   }
 

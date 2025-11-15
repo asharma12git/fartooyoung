@@ -109,12 +109,12 @@ const FounderTeam = () => {
                 </div>
                 
                 <div className="mt-8 text-center">
-                  <Link 
-                    to="/partners" 
+                  <button 
+                    onClick={() => setShowDonationModal(true)}
                     className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <span>DONATE</span>
-                  </Link>
+                  </button>
                 </div>
             </Card>
           </div>

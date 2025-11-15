@@ -397,6 +397,20 @@ const ChildMarriage = () => {
           <ProtectRights />
         </div>
       </div>
+
+      {/* SDG Goals Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Single Line Separator */}
+          <div className="w-full h-px bg-black mb-8"></div>
+          
+          {/* Title */}
+          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">IF WE DO NOT END CHILD MARRIAGE, NINE SUSTAINABLE DEVELOPMENT GOALS CANNOT BE MET</h2>
+          
+          {/* Content will be added here */}
+          
+        </div>
+      </div>
     </div>
   )
 }

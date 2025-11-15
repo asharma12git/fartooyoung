@@ -1,6 +1,76 @@
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
 import childBrideImage from '../assets/images/pages/child-marriage/Child-Bride.jpg'
 import useCountUp from '../hooks/useCountUp'
+import flagBangladesh from '../assets/images/pages/child-marriage/Flags/Flag_Bangladesh.png'
+import flagNepal from '../assets/images/pages/child-marriage/Flags/Flag_Nepal.svg'
+import flagUSA from '../assets/images/pages/child-marriage/Flags/Flag_USA.png'
+import flagIndia from '../assets/images/pages/child-marriage/Flags/Flag_India.png'
+
+const CountryCard = ({ flag, country, description }) => {
+  return (
+    <div className="group perspective-1000 h-96">
+      <div className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
+        {/* Front */}
+        <div className="absolute inset-0 w-full h-full backface-hidden">
+          <div className="relative h-full">
+            {/* Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+            
+            {/* Content Container */}
+            <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl h-full shadow-lg border border-white/50">
+              <div className="h-full flex flex-col items-center justify-start pt-8 p-8">
+                <div className="w-24 h-16 mb-8">
+                  <img src={flag} alt={`${country} flag`} className="w-full h-full object-contain" />
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900">{country}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Back */}
+        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl shadow-lg border border-orange-300 overflow-hidden">
+          <div className="h-full flex items-center justify-center p-8">
+            <p className="text-white text-center text-base leading-relaxed">{description}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const WhereWeWork = () => {
+  const countries = [
+    {
+      flag: flagBangladesh,
+      country: "Bangladesh",
+      description: "Working with local communities to prevent child marriage and support girls' education through grassroots initiatives."
+    },
+    {
+      flag: flagIndia,
+      country: "India", 
+      description: "Partnering with organizations to address child marriage in rural areas and empower girls through education programs."
+    },
+    {
+      flag: flagNepal,
+      country: "Nepal",
+      description: "Supporting community-based programs that protect girls from early marriage and promote their rights."
+    },
+    {
+      flag: flagUSA,
+      country: "United States",
+      description: "Raising awareness and mobilizing resources to support global efforts in ending child marriage worldwide."
+    }
+  ]
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {countries.map((country, index) => (
+        <CountryCard key={index} {...country} />
+      ))}
+    </div>
+  )
+}
 
 const StatisticsGrid = () => {
   const [count38M, ref38M] = useCountUp(38, 2000)
@@ -189,9 +259,10 @@ const ChildMarriage = () => {
           <div className="w-full h-px bg-black mb-8"></div>
           
           {/* Title */}
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">WHERE WE WORK</h2>
+          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">WHERE WE WORK</h2>
           
-          {/* Content will go here */}
+          {/* Flip Cards Grid */}
+          <WhereWeWork />
           
         </div>
       </div>

@@ -28,10 +28,10 @@ const ProtectRightsPanel = ({ image, title, description }) => {
     <div className="group">
       <div className="relative">
         {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
         
         {/* Content Container */}
-        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 overflow-hidden transition-transform duration-300 group-hover:scale-105">
+        <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl shadow-lg border border-orange-100/30 overflow-hidden transition-transform duration-300 group-hover:scale-105">
           <div className="aspect-video w-full overflow-hidden">
             <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
           </div>
@@ -101,10 +101,10 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
         <div className="absolute inset-0 w-full h-full backface-hidden">
           <div className="relative h-full">
             {/* Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
             
             {/* Content Container */}
-            <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl h-full shadow-lg border border-white/50">
+            <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl h-full shadow-lg border border-slate-100/30">
               <div className="h-full flex flex-col items-center justify-start pt-8 p-8">
                 <div className="w-28 h-18 mb-8">>
                   <img src={flag} alt={`${country} flag`} className="w-full h-full object-contain" />
@@ -119,10 +119,10 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
         </div>
         
         {/* Back */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-lg border border-white/50 overflow-hidden">
+        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-lg border border-slate-100/30 overflow-hidden">
           <div className="relative h-full">
             {/* Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
             
             {/* Subtle Logo Watermark */}
             <div 
@@ -134,7 +134,7 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
             ></div>
             
             {/* Content Container */}
-            <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl h-full">
+            <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl h-full">
               <div className="h-full flex items-center justify-center p-8">
                 <div className="max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
                   <p className="text-gray-900 text-justify text-sm leading-relaxed font-medium whitespace-pre-line">{description}</p>
@@ -200,10 +200,10 @@ const SDGCarousel = () => {
   return (
     <div className="relative">
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
       
       {/* Content Container */}
-      <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/50 overflow-hidden">
+      <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-amber-100/30 overflow-hidden">
         <div className="overflow-hidden">
           <div 
             className="flex transition-transform duration-700 ease-in-out"
@@ -256,10 +256,10 @@ const StatisticsGrid = () => {
   return (
     <div className="relative">
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
       
       {/* Content Container */}
-      <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-lg border border-white/50">
+      <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-lg border border-orange-100/30">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* 38M Child Brides in Bangladesh */}
           <div ref={ref38M} className="text-center">
@@ -402,7 +402,7 @@ const ChildMarriage = () => {
           {/* YouTube Video */}
           <div className="relative">
             {/* iPad Frame */}
-            <div className="relative bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 p-8 rounded-[2.5rem] shadow-2xl border border-slate-300">
+            <div className="relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-8 rounded-[2.5rem] shadow-2xl border border-gray-300">
               {/* Screen */}
               <div className="relative bg-black rounded-[1.5rem] overflow-hidden shadow-inner">
                 {/* Video Container */}

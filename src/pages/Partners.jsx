@@ -1,4 +1,8 @@
 import heroImage from '../assets/images/pages/partners/Sad-Girl.jpg'
+import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert.png'
+import chadaniJoshiImage from '../assets/images/pages/partners/mentors/Chanadani-Joshi.jpg'
+import ritaThapaImage from '../assets/images/pages/partners/mentors/Rita-Thapa-bw.jpg'
+import pramilaRijalImage from '../assets/images/pages/partners/mentors/Pramila-Rijal-Acharya-bw.jpg'
 
 const Partners = () => {
   return (
@@ -24,72 +28,168 @@ const Partners = () => {
         </div>
       </div>
 
-      {/* Navigation Sections */}
-      <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            {/* Global Partners Section */}
-            <div className="group cursor-pointer bg-gradient-to-br from-amber-50 to-orange-50 p-8 rounded-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="mb-6">
-                <div className="w-16 h-16 bg-amber-600 rounded-full flex items-center justify-center group-hover:bg-amber-700 transition-colors">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-xl font-medium text-amber-900 mb-4 group-hover:text-amber-800">Global Partners</h3>
-              <p className="text-base text-amber-700 leading-relaxed">
-                UN agencies, international NGOs, and foundations working together for global change.
-              </p>
-            </div>
-
-            {/* Local Partners Section */}
-            <div className="group cursor-pointer bg-gradient-to-br from-orange-50 to-red-50 p-8 rounded-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="mb-6">
-                <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center group-hover:bg-orange-700 transition-colors">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-xl font-medium text-orange-900 mb-4 group-hover:text-orange-800">Local Partners</h3>
-              <p className="text-base text-orange-700 leading-relaxed">
-                Grassroots organizations and community leaders driving change at the local level.
-              </p>
-            </div>
-
-            {/* Corporate Partners Section */}
-            <div className="group cursor-pointer bg-gradient-to-br from-red-50 to-pink-50 p-8 rounded-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="mb-6">
-                <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:bg-red-700 transition-colors">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-xl font-medium text-red-900 mb-4 group-hover:text-red-800">Corporate Partners</h3>
-              <p className="text-base text-red-700 leading-relaxed">
-                Businesses supporting our mission through CSR programs and employee engagement.
-              </p>
-            </div>
-
-            {/* Partnership Opportunities Section */}
-            <div className="group cursor-pointer bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="mb-6">
-                <div className="w-16 h-16 bg-pink-600 rounded-full flex items-center justify-center group-hover:bg-pink-700 transition-colors">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-xl font-medium text-pink-900 mb-4 group-hover:text-pink-800">Join Us</h3>
-              <p className="text-base text-pink-700 leading-relaxed">
-                Explore partnership opportunities and become part of our global network.
-              </p>
-            </div>
-
+      {/* Affiliate Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Double Line - Content Width */}
+          <div className="mb-8">
+            <div className="w-full h-0.5 bg-black mb-1"></div>
+            <div className="w-full h-0.5 bg-black"></div>
           </div>
+          
+          {/* Title */}
+          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">AFFILIATE</h2>
+          
+          {/* Affiliate Content - Clean Card */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
+            <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-16 shadow-2xl border border-orange-100/30">
+            
+            {/* Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left Section - Logo with Description */}
+              <div className="text-center">
+                {/* Logo */}
+                <div className="w-80 h-80 mx-auto mb-8 flex items-center justify-center p-6">
+                  <img 
+                    src={mediaAlertLogo} 
+                    alt="Media Alert Logo" 
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                
+                {/* Logo Description */}
+                <div className="text-left">
+                  <p className="text-gray-600 text-base leading-relaxed mb-4">
+                    Established in 1993 as a non-profit NGO under the Social Welfare Council of Nepal. For the past 30 years, Media Alert has worked in Nepal, South Asia, and internationally on communication projects with various partner community-based organizations.
+                  </p>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Media Alert's expertise lies in community-based programs, enter-educate approach, skill and capacity building, advocacy, social marketing, research and planning, monitoring and evaluation.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Right Section - Main Text */}
+              <div className="text-gray-600 text-base leading-relaxed space-y-4">
+                <p>
+                  Media Alert uses behavior change communication (BCC) in creating awareness, increasing knowledge base, building approval, and influencing behavior. It has designed and implemented many unique campaigns especially targeting marginalized grassroots audiences.
+                </p>
+                <p>
+                  The organization has produced and disseminated scores of shorts and documentaries, public service spots, and several edutainment film campaigns against modern day slavery, human trafficking, child marriage, HIV/AIDS, on gender equality, women empowerment, human rights, health, the environment, democracy, and peace building to educate and empower people and communities.
+                </p>
+                <p>
+                  Media Alert regularly conducts seminars and workshops on communication and strategies, campaign development, social marketing, and BCC with development partners, government bodies, and international non-governmental organizations.
+                </p>
+                <p>
+                  Since its establishment, Media Alert runs the Fr. Moran Education Fund which provides scholarships to needy children across Nepal, runs regular free clinics and health camps, and has been providing help and support to victims of man-made disasters and people with health emergencies.
+                </p>
+              </div>
+            </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      {/* Mentors Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Single Line Separator */}
+          <div className="w-full h-px bg-black mb-8"></div>
+          
+          {/* Title */}
+          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">MENTORS</h2>
+          
+          {/* Mentors Panels Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Mrs. Chadani Joshi Panel */}
+            <div className="relative h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
+              <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-slate-100/30 hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+              <h3 className="text-xl font-medium text-left text-gray-700 mb-6">MRS. CHADANI JOSHI</h3>
+              <div className="w-full h-px bg-gray-400 mb-6"></div>
+              
+              {/* Photo */}
+              <div className="w-full h-80 mb-6">
+                <img 
+                  src={chadaniJoshiImage} 
+                  alt="Mrs. Chadani Joshi" 
+                  className="w-full h-full object-cover object-center rounded-2xl"
+                />
+              </div>
+              
+              {/* Biography */}
+              <p className="text-gray-700 leading-relaxed text-justify mb-4">
+                Mrs. Joshi is a gender, rights, and policy specialist with over 52 years of experience. In her initial years, she served as the Joint Secretary as well as the Chief of Development Programs for the Government of Nepal. During her tenure, she initiated the pioneering PCRW Program that gave rural women in Nepal access to production credit.
+              </p>
+              <p className="text-gray-700 leading-relaxed text-justify mb-4">
+                She has also contributed immensely to gender-responsive budgets in the country. In 1990, she set up the UNIFEM (now known as UN Women) South Asia Regional Office and devoted 18 years molding it into a knowledge-based organization. As the Regional Director, she furthered UNIFEM's development agenda by supporting innovative and experimental programs benefiting women while keeping in mind national and regional priorities.
+              </p>
+              <p className="text-gray-700 leading-relaxed text-justify">
+                In 2017, the Ministry of Women, Children and Social Welfare, Government of Nepal appointed Ms. Joshi as the Chair of the Think Tank of the Ministry. Presently, she is also a member of the UN Women's Civil Society Advisory Group. She was honored with a Lifetime Achievement Award by the President of Nepal in 2009.
+              </p>
+              </div>
+            </div>
+
+            {/* Mrs. Rita Thapa Panel */}
+            <div className="relative h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
+              <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-orange-100/30 hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+              <h3 className="text-xl font-medium text-left text-gray-700 mb-6">MRS. RITA THAPA</h3>
+              <div className="w-full h-px bg-gray-400 mb-6"></div>
+              
+              {/* Photo */}
+              <div className="w-full h-80 mb-6">
+                <img 
+                  src={ritaThapaImage} 
+                  alt="Mrs. Rita Thapa" 
+                  className="w-full h-full object-cover object-center rounded-2xl"
+                />
+              </div>
+              
+              {/* Biography */}
+              <p className="text-gray-700 leading-relaxed text-justify mb-4">
+                Mrs. Thapa is widely recognized for her groundbreaking work in founding Tewa, Nepal's first and only fund for women. She has over thirty-five years of experience as a feminist educator, community activist, initiating and supporting institutions for women's empowerment and for peace.
+              </p>
+              <p className="text-gray-700 leading-relaxed text-justify mb-4">
+                Thapa also founded and led (2001-2009) Nagarik Aawaz, an initiative for conflict transformation and peace-building in Nepal. In recognition of this exceptional "innovative contribution to the public good," Rita received the rare honor of being named an Ashoka Fellow.
+              </p>
+              <p className="text-gray-700 leading-relaxed text-justify">
+                She served as a past Board Member and Chair of the Global Fund for Women and the Urgent Action Fund. In 2005, she was included in the 1000 Women for Peace Nomination for the Nobel Peace Prize. She also served on the Board of the Global Fund for Community Foundation and the South Asian Women's Fund.
+              </p>
+              </div>
+            </div>
+
+            {/* Mrs. Pramila Rijal Acharya Panel */}
+            <div className="relative h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
+              <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-slate-100/30 hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+              <h3 className="text-xl font-medium text-left text-gray-700 mb-6">MRS. PRAMILA RIJAL ACHARYA</h3>
+              <div className="w-full h-px bg-gray-400 mb-6"></div>
+              
+              {/* Photo */}
+              <div className="w-full h-80 mb-6">
+                <img 
+                  src={pramilaRijalImage} 
+                  alt="Mrs. Pramila Rijal Acharya" 
+                  className="w-full h-full object-cover object-center rounded-2xl"
+                />
+              </div>
+              
+              {/* Biography */}
+              <p className="text-gray-700 leading-relaxed text-justify mb-4">
+                Mrs. Rijal is the President of South Asian Women Development Forum (SAWDF), a SAARC recognized body, with long-standing experience and recognition in bringing together a consortium of women-led institutions with extensive work around women's entrepreneurship through SAWDF Chapters in South Asia.
+              </p>
+              <p className="text-gray-700 leading-relaxed text-justify mb-4">
+                Mrs. Rijal is the Board member of the Industry, Commerce, Promotion Dialogue Council headed by The Prime Minister of Nepal. She is the past President of The Federation of Women Entrepreneur Associations of Nepal (FWEAN) and Charter President of Zonta Club, Kathmandu. She has served as a board member of several boards in Nepal including the Institute of Foreign Affairs, Industrial Promotional Board, and the National Women's Commission.
+              </p>
+              <p className="text-gray-700 leading-relaxed text-justify">
+                As a social entrepreneur, she is the recipient of several awards as the harbinger of change on the advancement and empowerment of women at the national and regional level. She has been conferred the Prabal Jana Sewa Shree medal by the Right Honorable President of Nepal, one of Nepal's highest civilian awards.
+              </p>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>

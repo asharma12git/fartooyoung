@@ -1,14 +1,33 @@
+import { useState } from 'react'
 import heroImage from '../assets/images/pages/partners/Sad-Girl.jpg'
 import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert.png'
+import empowerWomenImage from '../assets/images/pages/partners/empower-women.jpg'
 import chadaniJoshiImage from '../assets/images/pages/partners/mentors/Chanadani-Joshi.jpg'
 import ritaThapaImage from '../assets/images/pages/partners/mentors/Rita-Thapa-bw.jpg'
 import pramilaRijalImage from '../assets/images/pages/partners/mentors/Pramila-Rijal-Acharya-bw.jpg'
+import undpLogo from '../assets/images/pages/partners/past-present-collabs/UNDP.png'
+import unicefLogo from '../assets/images/pages/partners/past-present-collabs/UNICEF.png'
+import usaidLogo from '../assets/images/pages/partners/past-present-collabs/USAID.png'
+import saarcLogo from '../assets/images/pages/partners/past-present-collabs/SAARC.png'
+import dfidLogo from '../assets/images/pages/partners/past-present-collabs/DFID.png'
+import icrcLogo from '../assets/images/pages/partners/past-present-collabs/ICRC.png'
+import jicaLogo from '../assets/images/pages/partners/past-present-collabs/JICA.png'
+import fhiLogo from '../assets/images/pages/partners/past-present-collabs/FHI-Family-Health-International.png'
+import nepalRedCrossLogo from '../assets/images/pages/partners/past-present-collabs/Nepal-Red-Cross-Society.png'
+import psiLogo from '../assets/images/pages/partners/past-present-collabs/PSI.png'
+import unWomenLogo from '../assets/images/pages/partners/past-present-collabs/UN-Women.png'
+import europeanUnionLogo from '../assets/images/pages/partners/past-present-collabs/European-Union.png'
+import bpKoiralaLogo from '../assets/images/pages/partners/past-present-collabs/BP-Koirala-India-Nepal-Foundation.png'
+import nepalGovLogo from '../assets/images/pages/partners/past-present-collabs/Nepal-Government.png'
 import Card from '../components/Card'
 import SectionTitle from '../components/SectionTitle'
 import PersonCard from '../components/PersonCard'
+import DonationModal from '../components/DonationModal'
 import { LAYOUT, GRADIENTS, BORDERS } from '../constants/styles'
 
 const Partners = () => {
+  const [showDonationModal, setShowDonationModal] = useState(false)
+
   const mentors = [
     {
       name: "MRS. CHADANI JOSHI",
@@ -42,8 +61,49 @@ const Partners = () => {
     }
   ]
 
+  const collaborationPartners = [
+    { name: "UNDP", logo: undpLogo },
+    { name: "UNICEF", logo: unicefLogo },
+    { name: "USAID", logo: usaidLogo },
+    { name: "SAARC", logo: saarcLogo },
+    { name: "DFID", logo: dfidLogo },
+    { name: "ICRC", logo: icrcLogo },
+    { name: "JICA", logo: jicaLogo },
+    { name: "FHI 360", logo: fhiLogo },
+    { name: "Nepal Red Cross Society", logo: nepalRedCrossLogo },
+    { name: "PSI", logo: psiLogo },
+    { name: "UN Women", logo: unWomenLogo },
+    { name: "European Union", logo: europeanUnionLogo },
+    { name: "BP Koirala India Nepal Foundation", logo: bpKoiralaLogo },
+    { name: "Government of Nepal", logo: nepalGovLogo }
+  ]
+
   return (
     <div className="min-h-screen">
+      <style jsx>{`
+        @keyframes floatMove {
+          0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
+          10% { opacity: 1; }
+          50% { transform: translate(20px, -30px) scale(1.2); opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translate(-15px, 25px) scale(0.6); opacity: 0; }
+        }
+        @keyframes slideIn {
+          0% { transform: translateX(-100px) scale(0.5); opacity: 0; }
+          30% { opacity: 1; }
+          70% { transform: translateX(50px) scale(1.3); opacity: 1; }
+          100% { transform: translateX(100px) scale(0.7); opacity: 0; }
+        }
+        @keyframes fadeScale {
+          0% { transform: scale(0.3); opacity: 0; }
+          25% { transform: scale(1.5); opacity: 1; }
+          75% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(0.4); opacity: 0; }
+        }
+        .float-1 { animation: floatMove 8s infinite; }
+        .float-2 { animation: slideIn 6s infinite; }
+        .float-3 { animation: fadeScale 7s infinite; }
+      `}</style>
       {/* Hero Section with Background Image */}
       <div className="relative h-screen overflow-hidden">
         <div 
@@ -123,6 +183,121 @@ const Partners = () => {
           </div>
         </div>
       </div>
+
+      {/* Local Level Partnership Section */}
+      <div className={LAYOUT.SECTION}>
+        <div className={LAYOUT.CONTAINER}>
+          <SectionTitle>LOCAL LEVEL PARTNERSHIP</SectionTitle>
+          
+          <div className="relative h-96 bg-gray-900 rounded-lg overflow-hidden">
+            {/* Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{ 
+                backgroundImage: `url(${empowerWomenImage})`,
+                filter: 'brightness(0.4) contrast(1.2)'
+              }}
+            ></div>
+            
+            {/* Animated Text */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-full h-full">
+                <div className="absolute text-white font-bold float-1" style={{top: '10%', left: '10%', animationDelay: '0s', fontSize: '18px'}}>
+                  Health Posts
+                </div>
+                <div className="absolute text-white font-medium float-2" style={{top: '25%', right: '15%', animationDelay: '1s', fontSize: '14px'}}>
+                  Civil Societies
+                </div>
+                <div className="absolute text-white font-bold float-3" style={{top: '40%', left: '20%', animationDelay: '2s', fontSize: '20px'}}>
+                  Hospitals
+                </div>
+                <div className="absolute text-white font-light float-1" style={{top: '15%', left: '50%', animationDelay: '3s', fontSize: '12px'}}>
+                  Community Based Organizations
+                </div>
+                <div className="absolute text-white font-semibold float-2" style={{top: '55%', right: '25%', animationDelay: '4s', fontSize: '16px'}}>
+                  Co-operatives
+                </div>
+                <div className="absolute text-white font-bold float-3" style={{top: '70%', left: '15%', animationDelay: '5s', fontSize: '15px'}}>
+                  Women Leaders
+                </div>
+                <div className="absolute text-white font-medium float-1" style={{top: '30%', right: '35%', animationDelay: '6s', fontSize: '13px'}}>
+                  Elected Leaders
+                </div>
+                <div className="absolute text-white font-light float-2" style={{top: '85%', left: '40%', animationDelay: '7s', fontSize: '11px'}}>
+                  Village Development Committees
+                </div>
+                <div className="absolute text-white font-bold float-3" style={{top: '20%', left: '75%', animationDelay: '0.5s', fontSize: '17px'}}>
+                  Municipalities
+                </div>
+                <div className="absolute text-white font-medium float-1" style={{top: '50%', left: '60%', animationDelay: '1.5s', fontSize: '12px'}}>
+                  Community Support Groups
+                </div>
+                <div className="absolute text-white font-semibold float-2" style={{top: '75%', right: '10%', animationDelay: '2.5s', fontSize: '19px'}}>
+                  Media
+                </div>
+                <div className="absolute text-white font-bold float-3" style={{top: '35%', left: '5%', animationDelay: '3.5s', fontSize: '14px'}}>
+                  Local Governments
+                </div>
+                <div className="absolute text-white font-medium float-1" style={{top: '65%', left: '70%', animationDelay: '4.5s', fontSize: '13px'}}>
+                  Education Institutions
+                </div>
+                <div className="absolute text-white font-light float-2" style={{top: '5%', right: '30%', animationDelay: '5.5s', fontSize: '21px'}}>
+                  Wards
+                </div>
+                <div className="absolute text-white font-bold float-3" style={{top: '80%', left: '25%', animationDelay: '6.5s', fontSize: '16px'}}>
+                  Schools
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Past & Present Collaboration Section */}
+      <div className={LAYOUT.SECTION}>
+        <div className={LAYOUT.CONTAINER}>
+          <SectionTitle>PAST & PRESENT COLLABORATION</SectionTitle>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            {collaborationPartners.map((partner, index) => (
+              <div 
+                key={index}
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
+              >
+                <div className="w-24 h-24 flex items-center justify-center mb-3">
+                  <img 
+                    src={partner.logo} 
+                    alt={`${partner.name} logo`}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                <p className="text-xs text-gray-600 text-center font-medium leading-tight">
+                  {partner.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Donate Section */}
+      <div className="py-16 bg-gray-50">
+        <div className={LAYOUT.CONTAINER}>
+          <div className="text-center">
+            <button
+              onClick={() => setShowDonationModal(true)}
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
+            >
+              DONATE NOW
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Donation Modal */}
+      {showDonationModal && (
+        <DonationModal onClose={() => setShowDonationModal(false)} />
+      )}
     </div>
   )
 }

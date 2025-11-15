@@ -116,8 +116,7 @@ const FounderTeam = () => {
                     <span>DONATE</span>
                   </Link>
                 </div>
-              </Card>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

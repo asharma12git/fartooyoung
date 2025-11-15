@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
 import childBrideImage from '../assets/images/pages/child-marriage/a-child-bride/Child-Bride.jpg'
 import useCountUp from '../hooks/useCountUp'
+import DonationModal from '../components/DonationModal'
 import flagBangladesh from '../assets/images/pages/child-marriage/where-we-work/Flag_Bangladesh.png'
 import flagNepal from '../assets/images/pages/child-marriage/where-we-work/Flag_Nepal.svg'
 import flagUSA from '../assets/images/pages/child-marriage/where-we-work/Flag_USA.png'
@@ -10,6 +11,15 @@ import protectRightsImage1 from '../assets/images/pages/child-marriage/protect-r
 import protectRightsImage2 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/Girls-studying-in-Nepal-Credit-Save-the-Children.jpg'
 import protectRightsImage3 from '../assets/images/pages/child-marriage/protect-rights-of-the-child/girls-group.jpg'
 import logoWatermark from '../assets/images/shared/Far-Too-Young-Logo.png'
+import sdg1 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_1.png'
+import sdg2 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_2.png'
+import sdg3 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_3.png'
+import sdg4 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_4.png'
+import sdg5 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_05.png'
+import sdg8 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_8.png'
+import sdg10 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_10.png'
+import sdg13 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_13.png'
+import sdg16 from '../assets/images/pages/child-marriage/sdg/Sustainable_Development_Goal_16.png'
 
 const ProtectRightsPanel = ({ image, title, description }) => {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -175,6 +185,68 @@ const WhereWeWork = () => {
   )
 }
 
+const SDGCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  
+  const sdgImages = [sdg1, sdg2, sdg3, sdg4, sdg5, sdg8, sdg10, sdg13, sdg16]
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => prev + 1)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="relative">
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-r from-green-100 via-blue-50 via-purple-50 to-pink-100 rounded-3xl"></div>
+      
+      {/* Content Container */}
+      <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/50 overflow-hidden">
+        <div className="overflow-hidden">
+          <div 
+            className="flex transition-transform duration-700 ease-in-out"
+            style={{ transform: `translateX(-${currentIndex * (100 / 6)}%)` }}
+            onTransitionEnd={() => {
+              if (currentIndex >= sdgImages.length) {
+                setCurrentIndex(0)
+              }
+            }}
+          >
+            {[...sdgImages, ...sdgImages.slice(0, 6)].map((image, index) => (
+              <div key={index} className="flex-shrink-0 w-1/6 px-3">
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <img 
+                    src={image} 
+                    alt={`SDG ${index + 1}`} 
+                    className="w-full h-auto rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform group-hover:scale-105" 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Progress Indicators */}
+        <div className="flex justify-center mt-6 space-x-2">
+          {sdgImages.map((_, index) => (
+            <div
+              key={index}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === currentIndex % sdgImages.length 
+                  ? 'w-8 bg-orange-500' 
+                  : 'w-2 bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const StatisticsGrid = () => {
   const [count38M, ref38M] = useCountUp(38, 2000)
   const [count102M, ref102M] = useCountUp(102, 2000)
@@ -235,6 +307,8 @@ const StatisticsGrid = () => {
 }
 
 const ChildMarriage = () => {
+  const [showDonationModal, setShowDonationModal] = useState(false)
+
   return (
     <div className="min-h-screen">
       {/* Hero Section with Background Image */}
@@ -262,7 +336,10 @@ const ChildMarriage = () => {
             Please Support Us.
           </p>
           
-          <button className="bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-6 py-3 rounded-md text-base font-bold transition-colors mb-8 border border-orange-400/50">
+          <button 
+            onClick={() => setShowDonationModal(true)}
+            className="bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-6 py-3 rounded-md text-base font-bold transition-colors mb-8 border border-orange-400/50"
+          >
             DONATE
           </button>
           
@@ -407,10 +484,16 @@ const ChildMarriage = () => {
           {/* Title */}
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">IF WE DO NOT END CHILD MARRIAGE, NINE SUSTAINABLE DEVELOPMENT GOALS CANNOT BE MET</h2>
           
-          {/* Content will be added here */}
+          {/* SDG Carousel */}
+          <SDGCarousel />
           
         </div>
       </div>
+
+      {/* Donation Modal */}
+      {showDonationModal && (
+        <DonationModal onClose={() => setShowDonationModal(false)} />
+      )}
     </div>
   )
 }

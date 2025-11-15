@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types'
 import { GRADIENTS, CARD_STYLES, BORDERS } from '../constants/styles'
 
+/**
+ * Reusable Card component with gradient background and consistent styling
+ * Used throughout the application for content sections, team profiles, etc.
+ */
 const Card = ({ 
   children, 
   gradient = GRADIENTS.METALLIC_GRAY, 
@@ -11,7 +15,10 @@ const Card = ({
 }) => {
   return (
     <div className="relative h-full">
+      {/* Gradient background layer */}
       <div className={`absolute inset-0 ${gradient} rounded-3xl`}></div>
+      
+      {/* Content container with glass morphism effect */}
       <div className={`
         ${CARD_STYLES.BASE} 
         ${hover ? CARD_STYLES.HOVER : ''} 

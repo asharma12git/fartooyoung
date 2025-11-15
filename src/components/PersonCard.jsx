@@ -2,6 +2,10 @@ import PropTypes from 'prop-types'
 import Card from './Card'
 import { TYPOGRAPHY } from '../constants/styles'
 
+/**
+ * Specialized card component for displaying team member and mentor profiles
+ * Includes photo, name, and biography with consistent styling
+ */
 const PersonCard = ({ 
   name, 
   image, 
@@ -12,9 +16,13 @@ const PersonCard = ({
 }) => {
   return (
     <Card gradient={gradient} border={border}>
+      {/* Person name */}
       <h3 className={TYPOGRAPHY.CARD_TITLE}>{name}</h3>
+      
+      {/* Divider line */}
       <div className="w-full h-px bg-gray-400 mb-6"></div>
       
+      {/* Profile photo */}
       <div className="w-full h-80 mb-6">
         <img 
           src={image} 
@@ -23,6 +31,7 @@ const PersonCard = ({
         />
       </div>
       
+      {/* Biography content - supports both string and array of paragraphs */}
       <div className="flex-1">
         {Array.isArray(biography) ? (
           biography.map((paragraph, index) => (

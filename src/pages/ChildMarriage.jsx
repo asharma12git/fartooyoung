@@ -106,7 +106,7 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
             {/* Content Container */}
             <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl h-full shadow-lg border border-slate-100/30">
               <div className="h-full flex flex-col items-center justify-start pt-8 p-8">
-                <div className="w-28 h-18 mb-8">>
+                <div className="w-28 h-18 mb-8">
                   <img src={flag} alt={`${country} flag`} className="w-full h-full object-contain" />
                 </div>
                 <h3 className="text-3xl font-semibold text-gray-900 mb-12">{country}</h3>

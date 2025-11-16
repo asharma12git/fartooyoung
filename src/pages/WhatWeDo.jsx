@@ -586,7 +586,7 @@ const WhatWeDo = () => {
                   </div>
                 </div>
               </div>
-              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm">
+              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
                 <h3 className="text-3xl font-medium text-red-600">Honoring Father Moran</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
                   Father Marshall D. Moran, a pioneering American Jesuit priest, revolutionized education in Nepal. In 1951, he founded St. Xavier's School in Godavari, Kathmandu, providing accessible and quality education to children from all socioeconomic backgrounds, with particular focus on those from impoverished families.
@@ -604,8 +604,16 @@ const WhatWeDo = () => {
           {/* Story 2 - Text Left, Image Right */}
           <div className="mb-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1">
-                <h3 className="text-3xl font-medium text-red-600">FAR TOO YOUNG - THE FILM</h3>
+              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1 h-full flex flex-col justify-start">
+                <h3 className="text-3xl font-medium text-red-600">Far Too Young - The Film</h3>
+                <p className="text-sm leading-snug text-gray-600 italic mb-4" 
+                   style={{
+                     fontFamily: 'Dancing Script, cursive',
+                     letterSpacing: '0.5px',
+                     lineHeight: '1.4'
+                   }}>
+                  'In every classroom, in every community, in every country of the world'
+                </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
                   Following years of research and screenplay development based on actual case studies, an educational feature film centered on the fundamental right to education and the urgent fight against all forms of Gender-Based Violence, with a particular focus on the devastating impact of child marriage, is poised to enter full production in the near future.
                 </p>
@@ -614,7 +622,7 @@ const WhatWeDo = () => {
                 </p>
               </div>
               <div className="relative lg:order-2">
-                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                <div className="aspect-[4/5] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
                   <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
                     <img 
                       src={storyImage2} 
@@ -631,20 +639,49 @@ const WhatWeDo = () => {
           <div className="mb-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
-                <div className="aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden shadow-lg">
-                  {/* Placeholder for story image 3 */}
-                  <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                    <span className="text-gray-500 text-lg">Story Image 3</span>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Top Left Image */}
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                    <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                      {/* Placeholder for image 1 */}
+                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm">Image 1</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Top Right Image */}
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                    <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                      {/* Placeholder for image 2 */}
+                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm">Image 2</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Bottom Left Image */}
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                    <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                      {/* Placeholder for image 3 */}
+                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm">Image 3</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Bottom Right Image */}
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                    <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                      {/* Placeholder for image 4 */}
+                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm">Image 4</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="space-y-6">
-                <h3 className="text-3xl font-medium text-gray-900">Building Tomorrow</h3>
+              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
+                <h3 className="text-3xl font-medium text-red-600">The Tara Campaign</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  The most powerful stories are those of hope and possibility. When we showcase girls who have escaped child marriage and gone on to become doctors, teachers, and leaders, we paint a vivid picture of what's possible when childhood is protected and dreams are nurtured.
-                </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  These success stories serve as beacons of hope for communities still grappling with traditional practices. They demonstrate that investing in a girl's education and delaying marriage doesn't just benefit the individual—it strengthens entire communities and breaks cycles of poverty.
+                  The Tara Campaign uses illustrations and comic for awareness and advocacy. It tells the story of Tara, a child bride and a young mother who now fights against all forms of Gender Based Violence including child, underage and forced marriages.
                 </p>
               </div>
             </div>

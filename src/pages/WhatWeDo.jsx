@@ -1,10 +1,42 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import heroImage from '../assets/images/pages/what-we-do/Child-Bride-Mom.jpeg'
 import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
 import DonationModal from '../components/DonationModal'
 
+// Import carousel images
+import carouselImage1 from '../assets/images/pages/what-we-do/carousel/FTY-MV-82-scaled.jpg'
+import carouselImage2 from '../assets/images/pages/what-we-do/carousel/FTY-MV-81.jpg'
+import carouselImage3 from '../assets/images/pages/what-we-do/carousel/FTY-MV-84.jpg'
+
 const WhatWeDo = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  
+  // Carousel images array
+  const imageArray = [
+    { src: carouselImage1, name: 'Community Workshop' },
+    { src: carouselImage2, name: 'Education Program' },
+    { src: carouselImage3, name: 'Awareness Campaign' }
+  ]
+  
+  const totalSlides = Math.ceil(imageArray.length / 2)
+  
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides)
+  }
+  
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
+  }
+
+  // Auto-play carousel every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide()
+    }, 5000)
+    
+    return () => clearInterval(interval)
+  }, [totalSlides])
   return (
     <div className="min-h-screen">
       <style>{`
@@ -214,8 +246,8 @@ const WhatWeDo = () => {
           </div>
           
           {/* Map Card */}
-          <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-orange-200">
-            <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg">
+          <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+            <div className="relative bg-white rounded-[1.5rem] overflow-hidden shadow-inner">
               <iframe
                 src="https://www.google.com/maps/d/u/0/embed?mid=1ymaVHjK-zm-DYGNl6btbiPcJA9JJ-Nc&ehbc=2E312F&noprof=1"
                 width="100%"
@@ -343,6 +375,64 @@ const WhatWeDo = () => {
                   Chhattisgarh
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Work Showcase Carousel */}
+          <div className="mt-16">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-medium text-gray-900 mb-4">Our Work in Action</h3>
+              <p className="text-lg text-gray-600">Documenting our impact across communities</p>
+            </div>
+            
+            {/* Carousel Container */}
+            <div className="relative p-6 rounded-[2rem] shadow-2xl border border-gray-300" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).map((image, index) => (
+                  <div key={index} className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
+                    <img 
+                      src={image.src} 
+                      alt={image.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+                
+                {/* Fill empty slots if odd number of images */}
+                {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).length === 1 && (
+                  <div className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500 text-lg">Add more images</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Carousel Controls */}
+              {totalSlides > 1 && (
+                <div className="flex justify-center mt-6 space-x-4">
+                  <button 
+                    onClick={prevSlide}
+                    className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="text-gray-600">‹</span>
+                  </button>
+                  <div className="flex space-x-2 items-center">
+                    {Array.from({ length: totalSlides }, (_, i) => (
+                      <div 
+                        key={i}
+                        className={`w-2 h-2 rounded-full ${i === currentSlide ? 'bg-orange-500' : 'bg-gray-300'}`}
+                      ></div>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={nextSlide}
+                    className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="text-gray-600">›</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

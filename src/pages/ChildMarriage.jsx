@@ -323,7 +323,7 @@ const ChildMarriage = () => {
         ></div>
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-end items-center h-full text-center px-4 pb-32">
-          <h2 className="text-4xl font-medium mb-8" style={{ color: '#f59e0b' }}>
+          <h2 className="text-4xl font-medium mb-8" style={{ color: '#f09819' }}>
             Restoring Hopes, Restoring Smiles ®
           </h2>
           
@@ -404,7 +404,7 @@ const ChildMarriage = () => {
           {/* YouTube Video */}
           <div className="relative">
             {/* iPad Frame */}
-            <div className="relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-8 rounded-[2.5rem] shadow-2xl border border-gray-300">
+            <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
               {/* Screen */}
               <div className="relative bg-black rounded-[1.5rem] overflow-hidden shadow-inner">
                 {/* Video Container */}

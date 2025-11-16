@@ -213,7 +213,7 @@ const WhatWeDo = () => {
       </div>
 
       {/* Our Presence Section */}
-      <div className="bg-white py-16">
+      <div className="bg-gradient-to-br from-gray-50 to-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Presence</h2>
@@ -222,7 +222,7 @@ const WhatWeDo = () => {
             </p>
           </div>
           
-          <div className="relative bg-gray-100 rounded-lg p-8 overflow-hidden">
+          <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-orange-100/30 overflow-hidden">
             {/* Map Container */}
             <div className="relative w-full h-[500px] rounded-lg border-2 border-gray-300 overflow-hidden">
               
@@ -246,20 +246,20 @@ const WhatWeDo = () => {
                 
                 {/* Nepal Marker - Blue (Kathmandu) - moved NE */}
                 <div className="absolute top-16 left-1/2 transform translate-x-6 pointer-events-auto">
-                  <div className="w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow-lg animate-ping"></div>
-                  <div className="absolute top-0 left-0 w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow-lg"></div>
+                  <div className="w-5 h-5 bg-blue-600/70 rounded-full border-2 border-white shadow-lg animate-ping"></div>
+                  <div className="absolute top-0 left-0 w-5 h-5 bg-blue-600/70 rounded-full border-2 border-white shadow-lg"></div>
                 </div>
                 
                 {/* India Marker - Red (New Delhi) */}
-                <div className="absolute top-52 left-1/3 transform translate-x-4 pointer-events-auto">
-                  <div className="w-6 h-6 bg-red-600 rounded-full border-2 border-white shadow-lg animate-ping"></div>
-                  <div className="absolute top-0 left-0 w-6 h-6 bg-red-600 rounded-full border-2 border-white shadow-lg"></div>
+                <div className="absolute top-52 left-1/3 transform translate-x-20 pointer-events-auto">
+                  <div className="w-5 h-5 bg-red-600/70 rounded-full border-2 border-white shadow-lg animate-ping"></div>
+                  <div className="absolute top-0 left-0 w-5 h-5 bg-red-600/70 rounded-full border-2 border-white shadow-lg"></div>
                 </div>
                 
                 {/* Bangladesh Marker - Orange (Dhaka) */}
-                <div className="absolute top-32 right-1/4 transform -translate-x-2 pointer-events-auto">
-                  <div className="w-6 h-6 bg-orange-600 rounded-full border-2 border-white shadow-lg animate-ping"></div>
-                  <div className="absolute top-0 left-0 w-6 h-6 bg-orange-600 rounded-full border-2 border-white shadow-lg"></div>
+                <div className="absolute top-44 right-1/4 transform -translate-x-24 pointer-events-auto">
+                  <div className="w-5 h-5 bg-orange-600/70 rounded-full border-2 border-white shadow-lg animate-ping"></div>
+                  <div className="absolute top-0 left-0 w-5 h-5 bg-orange-600/70 rounded-full border-2 border-white shadow-lg"></div>
                 </div>
 
                 {/* Dynamic Area Dots */}
@@ -366,7 +366,7 @@ const WhatWeDo = () => {
               {/* Nepal Areas */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center mb-4">
-                  <div className="w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg mr-3"></div>
+                  <div className="w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow-lg mr-3"></div>
                   <h3 className="text-lg font-semibold text-gray-900">Nepal</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
@@ -436,7 +436,7 @@ const WhatWeDo = () => {
               {/* India Areas */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center mb-4">
-                  <div className="w-4 h-4 bg-red-600 rounded-full border-2 border-white shadow-lg mr-3"></div>
+                  <div className="w-6 h-6 bg-red-600 rounded-full border-2 border-white shadow-lg mr-3"></div>
                   <h3 className="text-lg font-semibold text-gray-900">India</h3>
                 </div>
                 <div className="grid grid-cols-1 gap-2 text-sm text-gray-700">
@@ -476,7 +476,7 @@ const WhatWeDo = () => {
               {/* Bangladesh Areas */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center mb-4">
-                  <div className="w-4 h-4 bg-orange-600 rounded-full border-2 border-white shadow-lg mr-3"></div>
+                  <div className="w-6 h-6 bg-orange-600 rounded-full border-2 border-white shadow-lg mr-3"></div>
                   <h3 className="text-lg font-semibold text-gray-900">Bangladesh</h3>
                 </div>
                 <div className="grid grid-cols-1 gap-2 text-sm text-gray-700">

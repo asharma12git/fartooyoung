@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import heroImage from '../assets/images/pages/what-we-do/Child-Bride-Mom.jpeg'
 import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
+import storyImage1a from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Father_Marshall_D._Moran-kBB_cIR_3-transformed.webp'
+import storyImage1b from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Fr.-Marshal-D-Moran-Color-Ham-Radio-BW.webp'
+import storyImage2 from '../assets/images/pages/what-we-do/storytelling-for-advocacy/fty-the-film-collage.jpg'
 import DonationModal from '../components/DonationModal'
 
 // Import carousel images
@@ -543,6 +546,107 @@ const WhatWeDo = () => {
                   </button>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Story-telling for Advocacy Section */}
+      <div className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Story-telling for Advocacy</h2>
+            <p className="text-xl text-gray-600">
+              Real stories that drive change and inspire action against child marriage.
+            </p>
+          </div>
+
+          {/* Story 1 - Image Left, Text Right */}
+          <div className="mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="relative space-y-3">
+                {/* First Image - Ham Radio */}
+                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                    <img 
+                      src={storyImage1b} 
+                      alt="Father Marshal D Moran with Ham Radio" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+                {/* Second Image - Portrait */}
+                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                    <img 
+                      src={storyImage1a} 
+                      alt="Father Marshall D. Moran" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm">
+                <h3 className="text-3xl font-medium text-red-600">Honoring Father Moran</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Father Marshall D. Moran, a pioneering American Jesuit priest, revolutionized education in Nepal. In 1951, he founded St. Xavier's School in Godavari, Kathmandu, providing accessible and quality education to children from all socioeconomic backgrounds, with particular focus on those from impoverished families.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  A renowned Ham Radio Operator with call sign 9N1MM, Father Moran connected with a global community, leveraging his network to support numerous relief efforts in Nepal and beyond. His unwavering commitment to empowering young minds led to the establishment of several schools across Nepal, offering educational opportunities to countless children who would otherwise have been denied the fundamental right to education.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  In honor of his enduring legacy and to galvanize global action against child abuse and exploitation, Far Too Young, Inc. is spearheading 'Far Too Young,' a poignant film project dedicated to Reverend Fr. Moran. This collaborative effort, in partnership with the Media Alert & Relief Foundation, aims to illuminate the critical issues of child abuse and the importance of quality education through the Fr. Moran Education Fund, which actively supports countless children through scholarships and provides vital grants to educational institutions throughout Nepal.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Story 2 - Text Left, Image Right */}
+          <div className="mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1">
+                <h3 className="text-3xl font-medium text-red-600">FAR TOO YOUNG - THE FILM</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Following years of research and screenplay development based on actual case studies, an educational feature film centered on the fundamental right to education and the urgent fight against all forms of Gender-Based Violence, with a particular focus on the devastating impact of child marriage, is poised to enter full production in the near future.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Upon completion, this impactful film will be widely disseminated across diverse global audiences through a multi-lingual distribution strategy, aiming to raise awareness and inspire action towards a more equitable and just society.
+                </p>
+              </div>
+              <div className="relative lg:order-2">
+                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                    <img 
+                      src={storyImage2} 
+                      alt="Far Too Young - The Film Collage" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Story 3 - Image Left, Text Right */}
+          <div className="mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="relative">
+                <div className="aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden shadow-lg">
+                  {/* Placeholder for story image 3 */}
+                  <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                    <span className="text-gray-500 text-lg">Story Image 3</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-6">
+                <h3 className="text-3xl font-medium text-gray-900">Building Tomorrow</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  The most powerful stories are those of hope and possibility. When we showcase girls who have escaped child marriage and gone on to become doctors, teachers, and leaders, we paint a vivid picture of what's possible when childhood is protected and dreams are nurtured.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  These success stories serve as beacons of hope for communities still grappling with traditional practices. They demonstrate that investing in a girl's education and delaying marriage doesn't just benefit the individual—it strengthens entire communities and breaks cycles of poverty.
+                </p>
+              </div>
             </div>
           </div>
         </div>

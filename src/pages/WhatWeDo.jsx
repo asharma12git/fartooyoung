@@ -212,6 +212,22 @@ const WhatWeDo = () => {
               Locations across South Asia where we work to end child marriage
             </p>
           </div>
+          
+          {/* Map Card */}
+          <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl shadow-2xl transition-all duration-300 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-8">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg">
+              <iframe
+                src="https://www.google.com/maps/d/u/0/embed?mid=1ymaVHjK-zm-DYGNl6btbiPcJA9JJ-Nc&ehbc=2E312F&noprof=1"
+                width="100%"
+                height="500"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full"
+              ></iframe>
+            </div>
+          </div>
         </div>
       </div>
 

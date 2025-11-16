@@ -228,6 +228,95 @@ const WhatWeDo = () => {
               ></iframe>
             </div>
           </div>
+
+          {/* Country Panels */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            {/* Nepal */}
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-blue-500">
+              <h3 className="text-xl font-medium text-gray-900 mb-4 flex items-center">
+                <div className="w-4 h-4 bg-blue-500 rounded-full mr-3"></div>
+                Nepal
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Doti
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Banke
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Nawalpur District
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Gorkha
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Rautahat
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Dhanusa
+                </div>
+              </div>
+            </div>
+
+            {/* Bangladesh */}
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4" style={{ borderLeftColor: '#c2195b' }}>
+              <h3 className="text-xl font-medium text-gray-900 mb-4 flex items-center">
+                <div className="w-4 h-4 rounded-full mr-3" style={{ backgroundColor: '#c2195b' }}></div>
+                Bangladesh
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  Nilphamari
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  Gazipur
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  Dhaka
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  Rangpur
+                </div>
+              </div>
+            </div>
+
+            {/* India */}
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-orange-500">
+              <h3 className="text-xl font-medium text-gray-900 mb-4 flex items-center">
+                <div className="w-4 h-4 bg-orange-500 rounded-full mr-3"></div>
+                India
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  Uttar Pradesh
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  Jharkhand
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  Bihar
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  Chhattisgarh
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

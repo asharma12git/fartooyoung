@@ -219,7 +219,7 @@ const WhatWeDo = () => {
               <iframe
                 src="https://www.google.com/maps/d/u/0/embed?mid=1ymaVHjK-zm-DYGNl6btbiPcJA9JJ-Nc&ehbc=2E312F&noprof=1"
                 width="100%"
-                height="500"
+                height="600"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"

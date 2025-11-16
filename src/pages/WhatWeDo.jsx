@@ -4,9 +4,64 @@ import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-mo
 import DonationModal from '../components/DonationModal'
 
 // Import carousel images
-import carouselImage1 from '../assets/images/pages/what-we-do/carousel/FTY-MV-82-scaled.jpg'
-import carouselImage2 from '../assets/images/pages/what-we-do/carousel/FTY-MV-81.jpg'
-import carouselImage3 from '../assets/images/pages/what-we-do/carousel/FTY-MV-84.jpg'
+import img0709 from '../assets/images/pages/what-we-do/carousel/IMG_0709.webp'
+import img0728 from '../assets/images/pages/what-we-do/carousel/IMG_0728.webp'
+import img0731 from '../assets/images/pages/what-we-do/carousel/IMG_0731.webp'
+import img0740 from '../assets/images/pages/what-we-do/carousel/IMG_0740.webp'
+import img0742 from '../assets/images/pages/what-we-do/carousel/IMG_0742.webp'
+import img0748 from '../assets/images/pages/what-we-do/carousel/IMG_0748.webp'
+import img0749 from '../assets/images/pages/what-we-do/carousel/IMG_0749.webp'
+import img0751 from '../assets/images/pages/what-we-do/carousel/IMG_0751.webp'
+import img0752 from '../assets/images/pages/what-we-do/carousel/IMG_0752.webp'
+import img0757 from '../assets/images/pages/what-we-do/carousel/IMG_0757.webp'
+import img0758 from '../assets/images/pages/what-we-do/carousel/IMG_0758.webp'
+import img0767 from '../assets/images/pages/what-we-do/carousel/IMG_0767.webp'
+import img0770 from '../assets/images/pages/what-we-do/carousel/IMG_0770.webp'
+import img0774 from '../assets/images/pages/what-we-do/carousel/IMG_0774.webp'
+import img0775 from '../assets/images/pages/what-we-do/carousel/IMG_0775.webp'
+import img0780 from '../assets/images/pages/what-we-do/carousel/IMG_0780.webp'
+import img0800 from '../assets/images/pages/what-we-do/carousel/IMG_0800.webp'
+import img0803 from '../assets/images/pages/what-we-do/carousel/IMG_0803.webp'
+import img0808 from '../assets/images/pages/what-we-do/carousel/IMG_0808.webp'
+import img0811 from '../assets/images/pages/what-we-do/carousel/IMG_0811.webp'
+import img0812 from '../assets/images/pages/what-we-do/carousel/IMG_0812.webp'
+import img0815 from '../assets/images/pages/what-we-do/carousel/IMG_0815.webp'
+import img0819 from '../assets/images/pages/what-we-do/carousel/IMG_0819.webp'
+import img0821 from '../assets/images/pages/what-we-do/carousel/IMG_0821.webp'
+import img0827 from '../assets/images/pages/what-we-do/carousel/IMG_0827.webp'
+import img0832 from '../assets/images/pages/what-we-do/carousel/IMG_0832.webp'
+import img0833 from '../assets/images/pages/what-we-do/carousel/IMG_0833.webp'
+import img0834 from '../assets/images/pages/what-we-do/carousel/IMG_0834.webp'
+import img0837 from '../assets/images/pages/what-we-do/carousel/IMG_0837.webp'
+import img0850 from '../assets/images/pages/what-we-do/carousel/IMG_0850.webp'
+import img0851 from '../assets/images/pages/what-we-do/carousel/IMG_0851.webp'
+import img0853 from '../assets/images/pages/what-we-do/carousel/IMG_0853.webp'
+import img0856 from '../assets/images/pages/what-we-do/carousel/IMG_0856.webp'
+import img0867 from '../assets/images/pages/what-we-do/carousel/IMG_0867.webp'
+import img0897 from '../assets/images/pages/what-we-do/carousel/IMG_0897.webp'
+import img0908 from '../assets/images/pages/what-we-do/carousel/IMG_0908.webp'
+import img0910 from '../assets/images/pages/what-we-do/carousel/IMG_0910.webp'
+import img0915 from '../assets/images/pages/what-we-do/carousel/IMG_0915.webp'
+import img0916 from '../assets/images/pages/what-we-do/carousel/IMG_0916.webp'
+import img0918 from '../assets/images/pages/what-we-do/carousel/IMG_0918.webp'
+import img0919 from '../assets/images/pages/what-we-do/carousel/IMG_0919.webp'
+import img0924 from '../assets/images/pages/what-we-do/carousel/IMG_0924.webp'
+import img0930 from '../assets/images/pages/what-we-do/carousel/IMG_0930.webp'
+import img0955 from '../assets/images/pages/what-we-do/carousel/IMG_0955.webp'
+import img0956 from '../assets/images/pages/what-we-do/carousel/IMG_0956.webp'
+import img0957 from '../assets/images/pages/what-we-do/carousel/IMG_0957.webp'
+import img0958 from '../assets/images/pages/what-we-do/carousel/IMG_0958.webp'
+import img0962 from '../assets/images/pages/what-we-do/carousel/IMG_0962.webp'
+import img0972 from '../assets/images/pages/what-we-do/carousel/IMG_0972.webp'
+import img0983 from '../assets/images/pages/what-we-do/carousel/IMG_0983.webp'
+import photo1 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-16.webp'
+import photo2 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-17-3.webp'
+import photo3 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-19-2.webp'
+import photo4 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-20-2.webp'
+import photo5 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-21-3.webp'
+import photo6 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-22-3.webp'
+import photo7 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-11-44.webp'
+import photo8 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-11-45-2.webp'
 
 const WhatWeDo = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)
@@ -14,9 +69,64 @@ const WhatWeDo = () => {
   
   // Carousel images array
   const imageArray = [
-    { src: carouselImage1, name: 'Community Workshop' },
-    { src: carouselImage2, name: 'Education Program' },
-    { src: carouselImage3, name: 'Awareness Campaign' }
+    { src: img0709, name: 'Community Engagement' },
+    { src: img0728, name: 'Educational Workshop' },
+    { src: img0731, name: 'Awareness Program' },
+    { src: img0740, name: 'Youth Empowerment' },
+    { src: img0742, name: 'Skills Training' },
+    { src: img0748, name: 'Health Education' },
+    { src: img0749, name: 'Community Outreach' },
+    { src: img0751, name: 'Women Empowerment' },
+    { src: img0752, name: 'Educational Support' },
+    { src: img0757, name: 'Counseling Session' },
+    { src: img0758, name: 'Community Workshop' },
+    { src: img0767, name: 'Awareness Campaign' },
+    { src: img0770, name: 'Youth Program' },
+    { src: img0774, name: 'Educational Initiative' },
+    { src: img0775, name: 'Community Support' },
+    { src: img0780, name: 'Skills Development' },
+    { src: img0800, name: 'Empowerment Session' },
+    { src: img0803, name: 'Community Meeting' },
+    { src: img0808, name: 'Educational Program' },
+    { src: img0811, name: 'Awareness Workshop' },
+    { src: img0812, name: 'Youth Engagement' },
+    { src: img0815, name: 'Community Outreach' },
+    { src: img0819, name: 'Educational Support' },
+    { src: img0821, name: 'Skills Training' },
+    { src: img0827, name: 'Women Empowerment' },
+    { src: img0832, name: 'Community Workshop' },
+    { src: img0833, name: 'Awareness Program' },
+    { src: img0834, name: 'Educational Initiative' },
+    { src: img0837, name: 'Youth Program' },
+    { src: img0850, name: 'Community Support' },
+    { src: img0851, name: 'Skills Development' },
+    { src: img0853, name: 'Empowerment Session' },
+    { src: img0856, name: 'Educational Workshop' },
+    { src: img0867, name: 'Community Engagement' },
+    { src: img0897, name: 'Awareness Campaign' },
+    { src: img0908, name: 'Youth Empowerment' },
+    { src: img0910, name: 'Community Meeting' },
+    { src: img0915, name: 'Educational Support' },
+    { src: img0916, name: 'Skills Training' },
+    { src: img0918, name: 'Women Empowerment' },
+    { src: img0919, name: 'Community Workshop' },
+    { src: img0924, name: 'Awareness Program' },
+    { src: img0930, name: 'Educational Initiative' },
+    { src: img0955, name: 'Youth Program' },
+    { src: img0956, name: 'Community Support' },
+    { src: img0957, name: 'Skills Development' },
+    { src: img0958, name: 'Empowerment Session' },
+    { src: img0962, name: 'Educational Workshop' },
+    { src: img0972, name: 'Community Engagement' },
+    { src: img0983, name: 'Awareness Campaign' },
+    { src: photo1, name: 'Field Work Documentation' },
+    { src: photo2, name: 'Community Impact' },
+    { src: photo3, name: 'Program Implementation' },
+    { src: photo4, name: 'Educational Outreach' },
+    { src: photo5, name: 'Community Development' },
+    { src: photo6, name: 'Awareness Activities' },
+    { src: photo7, name: 'Youth Engagement' },
+    { src: photo8, name: 'Empowerment Programs' }
   ]
   
   const totalSlides = Math.ceil(imageArray.length / 2)

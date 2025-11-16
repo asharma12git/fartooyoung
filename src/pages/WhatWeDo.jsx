@@ -16,7 +16,7 @@ const WhatWeDo = () => {
   }
   return (
     <div className="min-h-screen">
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           0% {
             opacity: 0;

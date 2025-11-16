@@ -241,7 +241,7 @@ const WhatWeDo = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Presence</h2>
             <p className="text-xl text-gray-600">
-              Locations across South Asia where we work to end child marriage
+              Locations across South Asia where we work to end child marriage.
             </p>
           </div>
           
@@ -382,7 +382,7 @@ const WhatWeDo = () => {
           <div className="mt-16">
             <div className="text-center mb-12">
               <h3 className="text-3xl font-medium text-gray-900 mb-4">Our Work in Action</h3>
-              <p className="text-lg text-gray-600">Documenting our impact across communities</p>
+              <p className="text-lg text-gray-600">Documenting our impact across communities.</p>
             </div>
             
             {/* Carousel Container */}

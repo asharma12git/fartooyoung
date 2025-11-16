@@ -151,50 +151,50 @@ const WhatWeDo = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* First Row */}
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">01</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Education</h3>
               <p className="text-gray-600 text-sm">Ensuring educational facilities to every girl. Providing scholarships to stay in schools.</p>
             </div>
             
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">02</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Justice</h3>
               <p className="text-gray-600 text-sm">Assisting local authorities to implement the law and reiterate it within communities.</p>
             </div>
             
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1.5s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">03</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Engage</h3>
               <p className="text-gray-600 text-sm">Engaging with and supporting community based organizations in their work to bring about changes.</p>
             </div>
             
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">04</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Mobilize</h3>
               <p className="text-gray-600 text-sm">Involving men and mobilizing communities and families to change their perception and keep children safe and women free from violence and abuse.</p>
             </div>
             
             {/* Second Row */}
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2.5s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">05</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Awareness</h3>
               <p className="text-gray-600 text-sm">Increasing awareness and advocacy programs at local, national and international levels.</p>
             </div>
             
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">06</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Empowerment</h3>
               <p className="text-gray-600 text-sm">Empowering girls and women and enabling them to make their own choices.</p>
             </div>
             
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3.5s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">07</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Counselling</h3>
               <p className="text-gray-600 text-sm">Counselling child brides and helping to break the vicious cycle.</p>
             </div>
             
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_4s_forwards]">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_4s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">08</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Poverty Reduction</h3>
               <p className="text-gray-600 text-sm">Providing vocational skills and job opportunities to increase means of earning.</p>

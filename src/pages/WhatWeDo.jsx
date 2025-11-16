@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import heroImage from '../assets/images/pages/what-we-do/Child-Bride-Mom.jpeg'
 import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
 import storyImage1a from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Father_Marshall_D._Moran-kBB_cIR_3-transformed.webp'
@@ -74,6 +74,54 @@ const WhatWeDo = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [zoomedImage, setZoomedImage] = useState(null)
+  
+  // Counter animation component
+  const Counter = ({ end, suffix = '', duration = 2000 }) => {
+    const [count, setCount] = useState(0)
+    const [isVisible, setIsVisible] = useState(false)
+    const ref = useRef()
+
+    useEffect(() => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true)
+          }
+        },
+        { threshold: 0.1 }
+      )
+
+      if (ref.current) {
+        observer.observe(ref.current)
+      }
+
+      return () => observer.disconnect()
+    }, [isVisible])
+
+    useEffect(() => {
+      if (!isVisible) return
+
+      let startTime
+      const animate = (currentTime) => {
+        if (!startTime) startTime = currentTime
+        const progress = Math.min((currentTime - startTime) / duration, 1)
+        
+        setCount(Math.floor(progress * end))
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate)
+        }
+      }
+      
+      requestAnimationFrame(animate)
+    }, [isVisible, end, duration])
+
+    return (
+      <div ref={ref} className="text-6xl font-bold text-black mb-4">
+        {count.toLocaleString()}{suffix}
+      </div>
+    )
+  }
   
   // Carousel images array
   const imageArray = [
@@ -290,7 +338,7 @@ const WhatWeDo = () => {
       </div>
 
       {/* Multi-Pronged Approach Section */}
-      <div className="bg-gray-50 py-16">
+      <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Multi-Pronged Approach</h2>
@@ -354,7 +402,7 @@ const WhatWeDo = () => {
       </div>
 
       {/* Our Presence Section */}
-      <div className="bg-gradient-to-br from-gray-50 to-white py-20">
+      <div className="bg-gradient-to-br from-gray-50 to-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Presence</h2>
@@ -554,10 +602,20 @@ const WhatWeDo = () => {
             </div>
           </div>
         </div>
+        
+        {/* Donate Button */}
+        <div className="text-center mt-12">
+          <button
+            onClick={() => setShowDonationModal(true)}
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
+          >
+            DONATE NOW
+          </button>
+        </div>
       </div>
 
       {/* Story-telling for Advocacy Section */}
-      <div className="bg-white py-20">
+      <div className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Story-telling for Advocacy</h2>
@@ -699,7 +757,7 @@ const WhatWeDo = () => {
       </div>
 
       {/* Our Target for 2025 | 2026 Section */}
-      <div className="bg-white py-20">
+      <div className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Target for 2025 | 2026</h2>
@@ -711,53 +769,51 @@ const WhatWeDo = () => {
           {/* Target content - 3x2 Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Target 1 */}
-            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
-              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
-                <div className="text-6xl font-bold text-orange-500 mb-4">20M+</div>
-                <p className="text-gray-600 text-sm">Reach people through awareness and advocacy against child marriage in communities and countries.</p>
-              </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
+              <Counter end={20} suffix="M+" />
+              <p className="text-gray-600 text-sm">Reach people through awareness and advocacy against child marriage in communities and countries.</p>
             </div>
 
             {/* Target 2 */}
-            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
-              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
-                <div className="text-6xl font-bold text-orange-500 mb-4">6,000+</div>
-                <p className="text-gray-600 text-sm">Provide additional scholarships to keep girl children in school.</p>
-              </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
+              <Counter end={6000} suffix="+" />
+              <p className="text-gray-600 text-sm">Provide additional scholarships to keep girl children in school.</p>
             </div>
 
             {/* Target 3 */}
-            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
-              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
-                <div className="text-6xl font-bold text-orange-500 mb-4">4,000+</div>
-                <p className="text-gray-600 text-sm">Provide vocational skills to young brides.</p>
-              </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
+              <Counter end={4000} suffix="+" />
+              <p className="text-gray-600 text-sm">Provide vocational skills to young brides.</p>
             </div>
 
             {/* Target 4 */}
-            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
-              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
-                <div className="text-6xl font-bold text-orange-500 mb-4">20,000+</div>
-                <p className="text-gray-600 text-sm">Provide additional counselling to young brides.</p>
-              </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
+              <Counter end={20000} suffix="+" />
+              <p className="text-gray-600 text-sm">Provide additional counselling to young brides.</p>
             </div>
 
             {/* Target 5 */}
-            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
-              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
-                <div className="text-6xl font-bold text-orange-500 mb-4">1,200+</div>
-                <p className="text-gray-600 text-sm">Form new partnerships and local bodies.</p>
-              </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
+              <Counter end={1200} suffix="+" />
+              <p className="text-gray-600 text-sm">Form new partnerships and local bodies.</p>
             </div>
 
             {/* Target 6 */}
-            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
-              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
-                <div className="text-6xl font-bold text-orange-500 mb-4">1,800+</div>
-                <p className="text-gray-600 text-sm">Partnership and programs in new schools.</p>
-              </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
+              <Counter end={1800} suffix="+" />
+              <p className="text-gray-600 text-sm">Partnership and programs in new schools.</p>
             </div>
           </div>
+        </div>
+        
+        {/* Donate Button */}
+        <div className="text-center mt-12">
+          <button
+            onClick={() => setShowDonationModal(true)}
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
+          >
+            DONATE NOW
+          </button>
         </div>
       </div>
 

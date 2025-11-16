@@ -115,7 +115,7 @@ const Partners = () => {
         ></div>
         
         <div className="relative z-10 flex flex-col justify-end items-start h-full pb-32">
-          <div className={LAYOUT.CONTAINER}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <h2 className="text-4xl font-medium text-white">Partners</h2>
           </div>
         </div>

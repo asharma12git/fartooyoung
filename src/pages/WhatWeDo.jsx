@@ -4,6 +4,10 @@ import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-mo
 import storyImage1a from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Father_Marshall_D._Moran-kBB_cIR_3-transformed.webp'
 import storyImage1b from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Fr.-Marshal-D-Moran-Color-Ham-Radio-BW.webp'
 import storyImage2 from '../assets/images/pages/what-we-do/storytelling-for-advocacy/fty-the-film-collage.jpg'
+import taraImage1 from '../assets/images/pages/what-we-do/the-tara-campaign/02-c.jpg'
+import taraImage2 from '../assets/images/pages/what-we-do/the-tara-campaign/02-d.jpg'
+import taraImage3 from '../assets/images/pages/what-we-do/the-tara-campaign/03-a.jpg'
+import taraImage4 from '../assets/images/pages/what-we-do/the-tara-campaign/03-c.jpg'
 import DonationModal from '../components/DonationModal'
 
 // Import carousel images
@@ -606,7 +610,7 @@ const WhatWeDo = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1 h-full flex flex-col justify-start">
                 <h3 className="text-3xl font-medium text-red-600">Far Too Young - The Film</h3>
-                <p className="text-sm leading-snug text-gray-600 italic mb-4" 
+                <p className="text-base leading-snug text-gray-600 italic mb-4" 
                    style={{
                      fontFamily: 'Dancing Script, cursive',
                      letterSpacing: '0.5px',
@@ -643,37 +647,41 @@ const WhatWeDo = () => {
                   {/* Top Left Image */}
                   <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      {/* Placeholder for image 1 */}
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm">Image 1</span>
-                      </div>
+                      <img 
+                        src={taraImage1} 
+                        alt="Tara Campaign Comic 1" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                   {/* Top Right Image */}
                   <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      {/* Placeholder for image 2 */}
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm">Image 2</span>
-                      </div>
+                      <img 
+                        src={taraImage2} 
+                        alt="Tara Campaign Comic 2" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                   {/* Bottom Left Image */}
                   <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      {/* Placeholder for image 3 */}
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm">Image 3</span>
-                      </div>
+                      <img 
+                        src={taraImage3} 
+                        alt="Tara Campaign Comic 3" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                   {/* Bottom Right Image */}
                   <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      {/* Placeholder for image 4 */}
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm">Image 4</span>
-                      </div>
+                      <img 
+                        src={taraImage4} 
+                        alt="Tara Campaign Comic 4" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                 </div>

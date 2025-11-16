@@ -214,8 +214,8 @@ const WhatWeDo = () => {
           </div>
           
           {/* Map Card */}
-          <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl shadow-2xl transition-all duration-300 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-8">
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg">
+          <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-orange-200">
+            <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg">
               <iframe
                 src="https://www.google.com/maps/d/u/0/embed?mid=1ymaVHjK-zm-DYGNl6btbiPcJA9JJ-Nc&ehbc=2E312F&noprof=1"
                 width="100%"
@@ -239,27 +239,39 @@ const WhatWeDo = () => {
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Doti
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Banke
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Nawalpur District
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Gorkha
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Rautahat
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Dhanusa
                 </div>
               </div>
@@ -273,19 +285,27 @@ const WhatWeDo = () => {
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Nilphamari
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Gazipur
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Dhaka
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#c2195b' }}></div>
+                  <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Rangpur
                 </div>
               </div>
@@ -299,19 +319,27 @@ const WhatWeDo = () => {
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Uttar Pradesh
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Jharkhand
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Bihar
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                   Chhattisgarh
                 </div>
               </div>

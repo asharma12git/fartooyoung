@@ -249,10 +249,8 @@ const WhatWeDo = () => {
           
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">FAR TOO YOUNG</h2>
           
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <div className="flex items-center justify-center h-full">
-              <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="border border-gray-300 rounded-lg p-4 shadow-sm h-full flex flex-col justify-start">
               <div className="text-lg leading-snug text-gray-700 italic" 
                    style={{
                      fontFamily: 'Dancing Script, cursive',
@@ -284,28 +282,25 @@ const WhatWeDo = () => {
                 Please stop this curse,<br />
                 Before this gets much too worse...</p>
               </div>
-              
-              {/* SoundCloud Player Placeholder */}
-              <div className="mt-8">
-                {/* SoundCloud embed will go here */}
-              </div>
-              </div>
             </div>
             
-            <div className="flex items-center justify-center h-full">
-              <img 
-                src={joinMovementImage} 
-                alt="Join the Movement" 
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
-            </div>
+            <div className="relative">
+              <div className="rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
+                  <img 
+                    src={joinMovementImage} 
+                    alt="Join the Movement" 
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           
           {/* SoundCloud Player Section */}
           <div className="mt-12">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="text-center mb-6">
+            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-200">
+              <div className="mb-6">
                 <h3 className="text-xl font-medium text-gray-800 mb-2">🎵 Listen to the Poem Above</h3>
                 <p className="text-gray-600 text-sm">Experience the words as a song</p>
               </div>
@@ -324,7 +319,7 @@ const WhatWeDo = () => {
               </div>
               
               {/* Donate Button */}
-              <div className="text-center mt-6">
+              <div className="mt-6">
                 <button
                   onClick={() => setShowDonationModal(true)}
                   className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"

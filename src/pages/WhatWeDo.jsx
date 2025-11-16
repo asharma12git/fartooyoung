@@ -73,6 +73,7 @@ import photo8 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-
 const WhatWeDo = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [zoomedImage, setZoomedImage] = useState(null)
   
   // Carousel images array
   const imageArray = [
@@ -591,7 +592,7 @@ const WhatWeDo = () => {
                 </div>
               </div>
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
-                <h3 className="text-3xl font-medium text-red-600">Honoring Father Moran</h3>
+                <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Honoring Father Moran</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
                   Father Marshall D. Moran, a pioneering American Jesuit priest, revolutionized education in Nepal. In 1951, he founded St. Xavier's School in Godavari, Kathmandu, providing accessible and quality education to children from all socioeconomic backgrounds, with particular focus on those from impoverished families.
                 </p>
@@ -609,7 +610,7 @@ const WhatWeDo = () => {
           <div className="mb-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1 h-full flex flex-col justify-start">
-                <h3 className="text-3xl font-medium text-red-600">Far Too Young - The Film</h3>
+                <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
                 <p className="text-base leading-snug text-gray-600 italic mb-4" 
                    style={{
                      fontFamily: 'Dancing Script, cursive',
@@ -645,7 +646,7 @@ const WhatWeDo = () => {
               <div className="relative">
                 <div className="grid grid-cols-2 gap-3">
                   {/* Top Left Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage1)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
                       <img 
                         src={taraImage1} 
@@ -655,7 +656,7 @@ const WhatWeDo = () => {
                     </div>
                   </div>
                   {/* Top Right Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage2)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
                       <img 
                         src={taraImage2} 
@@ -665,7 +666,7 @@ const WhatWeDo = () => {
                     </div>
                   </div>
                   {/* Bottom Left Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage3)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
                       <img 
                         src={taraImage3} 
@@ -675,7 +676,7 @@ const WhatWeDo = () => {
                     </div>
                   </div>
                   {/* Bottom Right Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage4)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
                       <img 
                         src={taraImage4} 
@@ -687,7 +688,7 @@ const WhatWeDo = () => {
                 </div>
               </div>
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
-                <h3 className="text-3xl font-medium text-red-600">The Tara Campaign</h3>
+                <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">The Tara Campaign</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
                   The Tara Campaign uses illustrations and comic for awareness and advocacy. It tells the story of Tara, a child bride and a young mother who now fights against all forms of Gender Based Violence including child, underage and forced marriages.
                 </p>
@@ -696,6 +697,88 @@ const WhatWeDo = () => {
           </div>
         </div>
       </div>
+
+      {/* Our Target for 2025 | 2026 Section */}
+      <div className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Target for 2025 | 2026</h2>
+            <p className="text-xl text-gray-600">
+              Strategic goals and milestones for advancing our mission against child marriage.
+            </p>
+          </div>
+
+          {/* Target content - 3x2 Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Target 1 */}
+            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-bold text-orange-500 mb-4">20M+</div>
+                <p className="text-gray-600 text-sm">Reach people through awareness and advocacy against child marriage in communities and countries.</p>
+              </div>
+            </div>
+
+            {/* Target 2 */}
+            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-bold text-orange-500 mb-4">6,000+</div>
+                <p className="text-gray-600 text-sm">Provide additional scholarships to keep girl children in school.</p>
+              </div>
+            </div>
+
+            {/* Target 3 */}
+            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-bold text-orange-500 mb-4">4,000+</div>
+                <p className="text-gray-600 text-sm">Provide vocational skills to young brides.</p>
+              </div>
+            </div>
+
+            {/* Target 4 */}
+            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-bold text-orange-500 mb-4">20,000+</div>
+                <p className="text-gray-600 text-sm">Provide additional counselling to young brides.</p>
+              </div>
+            </div>
+
+            {/* Target 5 */}
+            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-bold text-orange-500 mb-4">1,200+</div>
+                <p className="text-gray-600 text-sm">Form new partnerships and local bodies.</p>
+              </div>
+            </div>
+
+            {/* Target 6 */}
+            <div className="rounded-lg shadow-xl border-2 border-gray-300 p-6" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="bg-white rounded-lg p-8 shadow-inner h-full flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-bold text-orange-500 mb-4">1,800+</div>
+                <p className="text-gray-600 text-sm">Partnership and programs in new schools.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Image Zoom Modal */}
+      {zoomedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={() => setZoomedImage(null)}>
+          <div className="relative max-w-4xl max-h-screen p-4">
+            <img 
+              src={zoomedImage} 
+              alt="Zoomed Tara Campaign Comic" 
+              className="w-full h-full object-contain rounded-lg"
+            />
+            <button 
+              onClick={() => setZoomedImage(null)}
+              className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-800"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Donation Modal */}
       {showDonationModal && (

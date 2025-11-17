@@ -11,20 +11,48 @@ import { useState } from 'react'
 
 /**
  * Main App component - Root of the Far Too Young application
- * Handles routing, global modals, and layout structure
+ * Handles routing, global modals, authentication state, and layout structure
  */
 function App() {
   // Global modal state management
   const [showAuth, setShowAuth] = useState(false)
   const [showDonation, setShowDonation] = useState(false)
+  
+  // Global authentication state
+  const [user, setUser] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  // Authentication handlers
+  const handleLogin = (userData) => {
+    setUser(userData)
+    setIsLoggedIn(true)
+    setShowAuth(false) // Close modal after successful login
+  }
+
+  const handleLogout = () => {
+    setUser(null)
+    setIsLoggedIn(false)
+  }
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) {
+      // If logged in, show dashboard
+      setShowAuth(true)
+    } else {
+      // If not logged in, show login form
+      setShowAuth(true)
+    }
+  }
 
   return (
     <Router>
       <div className="min-h-screen bg-dark-900 flex flex-col">
         {/* Global navigation header */}
         <Header 
-          onAuthClick={() => setShowAuth(true)}
+          onAuthClick={handleAuthClick}
           onDonateClick={() => setShowDonation(true)}
+          user={user}
+          isLoggedIn={isLoggedIn}
         />
         
         {/* Main content area with page routing */}
@@ -41,7 +69,15 @@ function App() {
         <Footer />
         
         {/* Global modals - conditionally rendered */}
-        {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+        {showAuth && (
+          <AuthModal 
+            onClose={() => setShowAuth(false)}
+            user={user}
+            isLoggedIn={isLoggedIn}
+            onLogin={handleLogin}
+            onLogout={handleLogout}
+          />
+        )}
         {showDonation && <DonationModal onClose={() => setShowDonation(false)} />}
       </div>
     </Router>

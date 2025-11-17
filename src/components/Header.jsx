@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
-const Header = ({ onAuthClick, onDonateClick }) => {
+const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
   const location = useLocation()
 
   const navItems = [
@@ -45,7 +45,9 @@ const Header = ({ onAuthClick, onDonateClick }) => {
               onClick={onAuthClick}
               className="flex items-center space-x-2"
             >
-              <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">Login</span>
+              <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">
+                {isLoggedIn ? user?.name || 'Account' : 'Login'}
+              </span>
               <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -75,7 +77,9 @@ const Header = ({ onAuthClick, onDonateClick }) => {
 
 Header.propTypes = {
   onAuthClick: PropTypes.func.isRequired,
-  onDonateClick: PropTypes.func.isRequired
+  onDonateClick: PropTypes.func.isRequired,
+  user: PropTypes.object,
+  isLoggedIn: PropTypes.bool.isRequired
 }
 
 export default Header

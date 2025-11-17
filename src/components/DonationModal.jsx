@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 const DonationModal = ({ onClose, user }) => {
@@ -8,6 +8,13 @@ const DonationModal = ({ onClose, user }) => {
   const [paymentMethod, setPaymentMethod] = useState('stripe')
 
   const presetAmounts = [25, 50, 100, 250, 500, 1000]
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -39,11 +46,11 @@ const DonationModal = ({ onClose, user }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-8 w-full max-w-md mx-4 shadow-2xl ring-1 ring-orange-500/50 relative">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-orange-500/50 relative">
         <button
           onClick={onClose}
-          className="absolute top-0 right-0 w-10 h-10 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg"
+          className="absolute top-0 right-0 w-10 h-10 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg z-10"
           style={{ borderBottomLeftRadius: '0.5rem' }}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
@@ -51,9 +58,27 @@ const DonationModal = ({ onClose, user }) => {
           </svg>
         </button>
         
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-4xl font-medium text-white">Make a Donation</h2>
-        </div>
+        <div className="flex">
+          {/* Left Column - Title and Image */}
+          <div className="w-1/2 p-8 flex flex-col">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold text-orange-400 mb-4">Help Protect Children and Girls</h1>
+              <p className="text-sm text-white/70 mt-8">Help our organization by donating today! We will be grateful.</p>
+              <p className="text-sm text-white/70 mt-2">100% of your donation is tax deductible.</p>
+            </div>
+            
+            {/* Image */}
+            <div className="flex-1 flex items-center justify-center min-h-[400px]">
+              <img 
+                src="/src/assets/images/components/donation-modal/5.jpg" 
+                alt="Children in need of protection"
+                className="w-full h-auto max-h-[400px] object-cover object-top rounded-lg"
+              />
+            </div>
+          </div>
+          
+          {/* Right Column - Donation Form */}
+          <div className="w-1/2 p-8 border-l border-white/20">
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -174,7 +199,16 @@ const DonationModal = ({ onClose, user }) => {
           >
             {donationType === 'monthly' ? 'Donate Monthly' : 'Donate'} {amount === 'custom' ? customAmount : amount}
           </button>
+          
+          <div className="flex items-center justify-center mt-3 text-white/70">
+            <svg className="w-4 h-4 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm">100% Secure Donation</span>
+          </div>
         </form>
+          </div>
+        </div>
       </div>
     </div>
   )

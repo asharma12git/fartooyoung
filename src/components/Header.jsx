@@ -45,9 +45,9 @@ const Header = ({ onAuthClick, onDonateClick }) => {
               onClick={onAuthClick}
               className="flex items-center space-x-2"
             >
-              <span className="text-white/90 text-small font-medium transition-colors duration-300 hover:text-orange-200">Login</span>
-              <div className="bg-orange-500/80 backdrop-blur-sm p-1.5 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">Login</span>
+              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
@@ -59,9 +59,9 @@ const Header = ({ onAuthClick, onDonateClick }) => {
               onClick={onDonateClick}
               className="flex items-center space-x-2"
             >
-              <span className="text-white/90 text-small font-medium transition-colors duration-300 hover:text-orange-200">Donate</span>
-              <div className="bg-orange-500/80 backdrop-blur-sm p-1.5 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">Donate</span>
+              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>

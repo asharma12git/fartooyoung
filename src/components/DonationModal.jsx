@@ -22,6 +22,7 @@ const DonationModal = ({ onClose, user }) => {
   const [coverTransactionCosts, setCoverTransactionCosts] = useState(false)
   const [showTransactionTooltip, setShowTransactionTooltip] = useState(false)
   const [tooltipType, setTooltipType] = useState('text') // 'text' or 'icon'
+  const [showMonthlyPopup, setShowMonthlyPopup] = useState(false)
 
   const calculateFee = () => {
     const donationAmount = amount === 'custom' ? parseFloat(customAmount) || 0 : amount
@@ -108,14 +109,14 @@ const DonationModal = ({ onClose, user }) => {
           
           {/* Right Column - Donation Form */}
           <div className="w-1/2 p-8 border-l border-white/20">
-            <form onSubmit={handleSubmit} className="space-y-6 min-h-[650px] flex flex-col justify-center">
+            <form onSubmit={handleSubmit} className="min-h-[650px] flex flex-col justify-center">
               {currentStep === 1 ? (
-                <>
-                  <div className="text-center mb-8">
+                <div className="flex flex-col justify-evenly flex-1 space-y-0">
+                  <div className="text-center mb-4 -mt-8">
                     <p className="text-white/70 text-sm leading-relaxed">Monthly giving helps Far Too Young keep girls at school. The more time a girl spends in education, the greater the reduction in risk of child marriage.</p>
                     
                     {/* Elegant Divider */}
-                    <div className="mt-6 flex items-center">
+                    <div className="mt-4 flex items-center">
                       <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                     </div>
                   </div>
@@ -138,7 +139,10 @@ const DonationModal = ({ onClose, user }) => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setDonationType('monthly')}
+                        onClick={() => {
+                          setDonationType('monthly')
+                          setShowMonthlyPopup(true)
+                        }}
                         className={`flex-1 py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${
                           donationType === 'monthly'
                             ? 'bg-orange-500/80 text-white border border-orange-400/50'
@@ -232,9 +236,9 @@ const DonationModal = ({ onClose, user }) => {
                     </svg>
                     <span className="text-sm">100% Secure Donation</span>
                   </div>
-                </>
+                </div>
               ) : (
-                <>
+                <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-lg font-medium text-white mb-2">
@@ -466,20 +470,21 @@ const DonationModal = ({ onClose, user }) => {
                         className="mr-3 mt-1 w-4 h-4 text-orange-500 focus:ring-orange-500/50"
                       />
                       <span 
-                        className="text-white text-sm flex items-center cursor-pointer"
-                        onClick={() => {
+                        className="text-white text-sm flex items-center"
+                        onMouseEnter={() => {
                           setTooltipType('text')
-                          setShowTransactionTooltip(!showTransactionTooltip)
+                          setShowTransactionTooltip(true)
                         }}
+                        onMouseLeave={() => setShowTransactionTooltip(false)}
                       >
                         Cover transaction costs
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
+                          onMouseEnter={() => {
                             setTooltipType('icon')
-                            setShowTransactionTooltip(!showTransactionTooltip)
+                            setShowTransactionTooltip(true)
                           }}
+                          onMouseLeave={() => setShowTransactionTooltip(false)}
                           className="ml-2 w-4 h-4 bg-white/20 rounded-full flex items-center justify-center text-white/70 hover:bg-white/30 transition-colors"
                         >
                           ?
@@ -517,7 +522,7 @@ const DonationModal = ({ onClose, user }) => {
                        'Donate'}
                     </button>
                   </div>
-                </>
+                </div>
               )}
             </form>
           </div>
@@ -607,6 +612,37 @@ const DonationModal = ({ onClose, user }) => {
               >
                 Accept Terms
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Monthly Donation Popup */}
+      {showMonthlyPopup && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-60">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-md mx-4 shadow-2xl ring-1 ring-orange-500/50 relative p-6">
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-orange-400 mb-4">Monthly Giving</h3>
+              <p className="text-white/90 text-sm mb-6 leading-relaxed">
+                Please consider making your ${amount === 'custom' ? customAmount || '0' : amount} donation monthly. Your consistent support would mean the world to us and help us save more girls from child marriage. Will you help us make a lasting impact?
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setDonationType('one-time')
+                    setShowMonthlyPopup(false)
+                  }}
+                  className="flex-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors border border-white/30"
+                >
+                  Keep One-time
+                </button>
+                <button
+                  onClick={() => setShowMonthlyPopup(false)}
+                  className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-4 py-2 rounded-md text-sm font-bold transition-colors border border-orange-400/50"
+                >
+                  Yes, Monthly
+                </button>
+              </div>
             </div>
           </div>
         </div>

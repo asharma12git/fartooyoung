@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const DonationModal = ({ onClose }) => {
+const DonationModal = ({ onClose, user }) => {
   const [donationType, setDonationType] = useState('one-time')
   const [amount, setAmount] = useState(100)
   const [customAmount, setCustomAmount] = useState('')
@@ -11,7 +11,30 @@ const DonationModal = ({ onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Mock payment processing - in real app, this would integrate with Stripe/PayPal
+    
+    // Save donation to localStorage if user is logged in
+    if (user) {
+      const donationAmount = amount === 'custom' ? parseFloat(customAmount) : amount
+      const newDonation = {
+        id: Date.now(), // Simple ID generation
+        amount: donationAmount,
+        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+        type: donationType === 'one-time' ? 'One-time' : 'Monthly',
+        status: 'Completed',
+        paymentMethod: paymentMethod
+      }
+      
+      // Get existing donations for this user
+      const existingDonations = localStorage.getItem(`donations_${user.email}`)
+      const donations = existingDonations ? JSON.parse(existingDonations) : []
+      
+      // Add new donation
+      donations.push(newDonation)
+      
+      // Save back to localStorage
+      localStorage.setItem(`donations_${user.email}`, JSON.stringify(donations))
+    }
+    
     onClose()
   }
 
@@ -158,7 +181,8 @@ const DonationModal = ({ onClose }) => {
 }
 
 DonationModal.propTypes = {
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  user: PropTypes.object
 }
 
 export default DonationModal

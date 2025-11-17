@@ -33,6 +33,10 @@ A responsive React application built with Vite and Tailwind CSS for an organizat
    npm run build
    ```
 
+## Testing
+
+See `test-credentials.md` for login credentials and testing instructions.
+
 ## Project Structure
 
 ```

@@ -38,23 +38,39 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
 
   // User Dashboard/Landing Page (what they see after login)
   if (isLoggedIn && user) {
-    // Mock data for demonstration
+    // Get user-specific donations from localStorage
+    const getUserDonations = () => {
+      const donations = localStorage.getItem(`donations_${user.email}`)
+      return donations ? JSON.parse(donations) : []
+    }
+
+    const userDonations = getUserDonations()
+    
+    // Calculate real stats from user's donations
     const userStats = {
-      totalDonations: 12,
-      lifetimeTotal: 2450,
-      averageDonation: 204
+      totalDonations: userDonations.length,
+      lifetimeTotal: userDonations.reduce((sum, donation) => sum + donation.amount, 0),
+      averageDonation: userDonations.length > 0 
+        ? Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) / userDonations.length)
+        : 0
     }
     
-    const recentDonations = [
-      { id: 1, amount: 100, date: '2024-01-15', type: 'One-time', status: 'Completed' },
-      { id: 2, amount: 50, date: '2024-01-01', type: 'Monthly', status: 'Completed' },
-      { id: 3, amount: 250, date: '2023-12-20', type: 'One-time', status: 'Completed' },
-      { id: 4, amount: 50, date: '2023-12-01', type: 'Monthly', status: 'Completed' }
-    ]
+    const recentDonations = userDonations
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 4) // Show last 4 donations
 
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-4xl mx-4 shadow-2xl ring-1 ring-orange-500/50 relative max-h-[90vh] flex flex-col">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-6xl mx-4 shadow-2xl ring-1 ring-orange-500/50 relative max-h-[90vh] flex flex-col">
+          {/* Sign Out Button - Top Left */}
+          <button
+            onClick={handleLogout}
+            className="absolute top-4 left-4 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white px-4 py-2 rounded-lg transition-all duration-300 text-sm font-medium border border-white/20 z-10"
+          >
+            Sign Out
+          </button>
+          
+          {/* Close Button - Top Right */}
           <button
             onClick={onClose}
             className="absolute top-0 right-0 w-10 h-10 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg z-20"
@@ -85,8 +101,8 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
               }
             `}</style>
             {/* Header */}
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {user.name}!</h2>
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-medium text-orange-400 mb-2">Welcome back, {user.name}!</h2>
               <p className="text-white/70">Manage your donations and profile</p>
             </div>
 
@@ -94,7 +110,9 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
             <div className="flex space-x-1 mb-8 bg-white/5 p-1 rounded-lg">
               {[
                 { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-                { id: 'history', label: 'Donation History', icon: '📋' },
+                { id: 'donations', label: 'Donations', icon: '❤️' },
+                { id: 'orders', label: 'Orders', icon: '📦' },
+                { id: 'wishlist', label: 'Wishlist', icon: '⭐' },
                 { id: 'settings', label: 'Settings', icon: '⚙️' }
               ].map(tab => (
                 <button
@@ -115,7 +133,221 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
             {/* Dashboard Tab */}
             {activeTab === 'dashboard' && (
               <div className="space-y-8">
-                {/* Stats Cards */}
+                {/* Impact Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
+                      <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-orange-400 text-lg">👩‍🎓</span>
+                      </div>
+                    </div>
+                    <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 50)}</p>
+                    <p className="text-white/60 text-sm mt-1">girls in school this month</p>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-white/80 text-sm font-medium">Months of Education</h3>
+                      <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-orange-400 text-lg">📚</span>
+                      </div>
+                    </div>
+                    <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 50)}</p>
+                    <p className="text-white/60 text-sm mt-1">total months funded</p>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-white/80 text-sm font-medium">Lives Completely Changed</h3>
+                      <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-orange-400 text-lg">🌟</span>
+                      </div>
+                    </div>
+                    <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 6000)}</p>
+                    <p className="text-white/60 text-sm mt-1">girls fully educated (age 5-14)</p>
+                  </div>
+                </div>
+
+                {/* Progress Towards Goals */}
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                  <h3 className="text-xl font-semibold text-white mb-6">Your Impact Goals for 2025</h3>
+                  <div className="space-y-6">
+                    {/* Goal 1: Support 1 Girl for 1 Year */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-white/80">Support 1 Girl for 1 Year ($600)</span>
+                        <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$600</span>
+                      </div>
+                      <div className="w-full bg-white/10 rounded-full h-3">
+                        <div 
+                          className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min((userStats.lifetimeTotal / 600) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-white/60 text-sm mt-1">${Math.max(600 - userStats.lifetimeTotal, 0)} more to reach goal</p>
+                    </div>
+
+                    {/* Goal 2: Complete Elementary Education */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-white/80">Fund Complete Elementary (5 years - $3,000)</span>
+                        <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$3,000</span>
+                      </div>
+                      <div className="w-full bg-white/10 rounded-full h-3">
+                        <div 
+                          className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min((userStats.lifetimeTotal / 3000) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-white/60 text-sm mt-1">Ages 5-10: Foundation for life</p>
+                    </div>
+
+                    {/* Goal 3: Life-Changing Champion */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-white/80">Life-Changing Champion ($6,000)</span>
+                        <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$6,000</span>
+                      </div>
+                      <div className="w-full bg-white/10 rounded-full h-3">
+                        <div 
+                          className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min((userStats.lifetimeTotal / 6000) * 100, 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-white/60 text-sm mt-1">Complete education: Age 5-14 (10 years)</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity & Next Steps */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Recent Activity */}
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4">Recent Impact</h3>
+                    {recentDonations.length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-white/60 text-sm">Start making an impact today!</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {recentDonations.slice(0, 3).map(donation => (
+                          <div key={donation.id} className="flex items-center space-x-3 py-2">
+                            <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
+                              <span className="text-orange-400 text-sm">💝</span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-white text-sm">${donation.amount} donation</p>
+                              <p className="text-white/60 text-xs">{donation.date}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Kindest Donation */}
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4">Your Kindest Donation</h3>
+                    {userDonations.length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-white/60 text-sm">Your largest donation will appear here</p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <span className="text-orange-400 text-xl">👑</span>
+                        </div>
+                        <p className="text-2xl font-bold text-white">${Math.max(...userDonations.map(d => d.amount))}</p>
+                        <p className="text-white/60 text-sm mt-1">
+                          {userDonations.find(d => d.amount === Math.max(...userDonations.map(d => d.amount)))?.date}
+                        </p>
+                        <p className="text-orange-400 text-xs mt-2">
+                          {Math.max(...userDonations.map(d => d.amount)) >= 600 ? '🌟 Life-Changing Impact!' : 
+                           Math.max(...userDonations.map(d => d.amount)) >= 300 ? '💫 Amazing Generosity!' : 
+                           '❤️ Beautiful Kindness!'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Thank You Note */}
+                <div className="bg-gradient-to-r from-orange-500/10 to-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-lg p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-orange-400 text-xl">💌</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-white mb-3">A Message from the Field</h3>
+                      {userStats.lifetimeTotal >= 6000 ? (
+                        <div>
+                          <p className="text-white/90 italic mb-2">
+                            "Dear friend, because of your incredible support, I completed my entire education from Grade 1 to 10! 
+                            I am now studying to become a teacher so I can help other girls like me. You changed my whole life. 
+                            Thank you from the bottom of my heart."
+                          </p>
+                          <p className="text-orange-400 text-sm font-medium">- Priya, Age 16, Graduate</p>
+                        </div>
+                      ) : userStats.lifetimeTotal >= 3000 ? (
+                        <div>
+                          <p className="text-white/90 italic mb-2">
+                            "Thank you so much for helping me go to school! I just finished Grade 5 and I love learning math. 
+                            My dream is to become a doctor and help people in my village. You are making my dreams possible!"
+                          </p>
+                          <p className="text-orange-400 text-sm font-medium">- Anita, Age 11, Grade 5</p>
+                        </div>
+                      ) : userStats.lifetimeTotal >= 600 ? (
+                        <div>
+                          <p className="text-white/90 italic mb-2">
+                            "I am so happy to be in school this year! I learned to read and write, and my favorite subject is science. 
+                            Thank you for believing in me and giving me this chance to learn."
+                          </p>
+                          <p className="text-orange-400 text-sm font-medium">- Meera, Age 8, Grade 2</p>
+                        </div>
+                      ) : userStats.lifetimeTotal >= 50 ? (
+                        <div>
+                          <p className="text-white/90 italic mb-2">
+                            "Thank you for helping me stay in school! Every day I learn something new. 
+                            Today I learned to write my name perfectly. I am so excited to keep learning!"
+                          </p>
+                          <p className="text-orange-400 text-sm font-medium">- Kavya, Age 6, Grade 1</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-white/90 italic mb-2">
+                            "Every donation, no matter the size, brings hope to girls like me. 
+                            Thank you for caring about our education and our future. Together, we can change the world!"
+                          </p>
+                          <p className="text-orange-400 text-sm font-medium">- From all the girls at Far Too Young</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <button className="bg-orange-500/80 hover:bg-orange-600/90 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium">
+                      🎯 Make Another Donation
+                    </button>
+                    <button className="bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium border border-white/20">
+                      📚 Read Success Stories
+                    </button>
+                    <button className="bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium border border-white/20">
+                      📢 Share Our Mission
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Donations Tab */}
+            {activeTab === 'donations' && (
+              <div className="space-y-8">
+                {/* Donation Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -151,52 +383,80 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
                   </div>
                 </div>
 
-                {/* Recent Donations */}
+                {/* All Donations History */}
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-white mb-6">Recent Donations</h3>
-                  <div className="space-y-4">
-                    {recentDonations.map(donation => (
-                      <div key={donation.id} className="flex items-center justify-between py-3 px-4 bg-white/5 rounded-lg border border-white/10">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
-                            <span className="text-orange-400">❤️</span>
+                  <h3 className="text-xl font-semibold text-white mb-6">Donation History</h3>
+                  {userDonations.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-white/60">No donations yet</p>
+                      <p className="text-white/40 text-sm mt-2">Your donation history will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {userDonations.map(donation => (
+                        <div key={donation.id} className="flex items-center justify-between py-4 px-4 bg-white/5 rounded-lg border border-white/10">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center">
+                              <span className="text-orange-400 text-lg">💝</span>
+                            </div>
+                            <div>
+                              <p className="text-white font-medium text-lg">${donation.amount}</p>
+                              <p className="text-white/60">{donation.type} donation</p>
+                              <p className="text-white/50 text-sm">{donation.date}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-white font-medium">${donation.amount}</p>
-                            <p className="text-white/60 text-sm">{donation.type} • {donation.date}</p>
+                          <div className="text-right">
+                            <span className="text-green-400 font-medium">{donation.status}</span>
+                            <p className="text-white/60 text-sm mt-1">Receipt available</p>
                           </div>
                         </div>
-                        <span className="text-green-400 text-sm font-medium">{donation.status}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Orders Tab */}
+            {activeTab === 'orders' && (
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-12">
+                <div className="text-center">
+                  <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span className="text-4xl">📦</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white mb-4">E-commerce Coming Soon</h3>
+                  <p className="text-white/60 mb-6">We're working on bringing you merchandise and educational materials to support our cause.</p>
+                  <div className="bg-white/5 rounded-lg p-4 max-w-md mx-auto">
+                    <p className="text-white/80 text-sm">Future features:</p>
+                    <ul className="text-white/60 text-sm mt-2 space-y-1">
+                      <li>• Awareness merchandise</li>
+                      <li>• Educational materials</li>
+                      <li>• Event tickets</li>
+                      <li>• Digital resources</li>
+                    </ul>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Donation History Tab */}
-            {activeTab === 'history' && (
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-6">All Donations</h3>
-                <div className="space-y-3">
-                  {recentDonations.map(donation => (
-                    <div key={donation.id} className="flex items-center justify-between py-4 px-4 bg-white/5 rounded-lg border border-white/10">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center">
-                          <span className="text-orange-400 text-lg">💝</span>
-                        </div>
-                        <div>
-                          <p className="text-white font-medium text-lg">${donation.amount}</p>
-                          <p className="text-white/60">{donation.type} donation</p>
-                          <p className="text-white/50 text-sm">{donation.date}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-green-400 font-medium">{donation.status}</span>
-                        <p className="text-white/60 text-sm mt-1">Receipt available</p>
-                      </div>
-                    </div>
-                  ))}
+            {/* Wishlist Tab */}
+            {activeTab === 'wishlist' && (
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-12">
+                <div className="text-center">
+                  <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span className="text-4xl">⭐</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white mb-4">Wishlist Coming Soon</h3>
+                  <p className="text-white/60 mb-6">Save your favorite items and get notified when they become available.</p>
+                  <div className="bg-white/5 rounded-lg p-4 max-w-md mx-auto">
+                    <p className="text-white/80 text-sm">Planned features:</p>
+                    <ul className="text-white/60 text-sm mt-2 space-y-1">
+                      <li>• Save favorite products</li>
+                      <li>• Get availability notifications</li>
+                      <li>• Share wishlists</li>
+                      <li>• Quick purchase options</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             )}
@@ -250,12 +510,9 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
 
             {/* Logout Button */}
             <div className="mt-8 pt-6 border-t border-white/20">
-              <button
-                onClick={handleLogout}
-                className="text-white/70 hover:text-orange-200 transition-colors duration-300"
-              >
-                Sign out
-              </button>
+              <p className="text-white/60 text-sm text-center">
+                Need help? Contact us at support@fartooyoung.org
+              </p>
             </div>
           </div>
         </div>

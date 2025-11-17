@@ -78,7 +78,7 @@ function App() {
             onLogout={handleLogout}
           />
         )}
-        {showDonation && <DonationModal onClose={() => setShowDonation(false)} />}
+        {showDonation && <DonationModal onClose={() => setShowDonation(false)} user={user} />}
       </div>
     </Router>
   )

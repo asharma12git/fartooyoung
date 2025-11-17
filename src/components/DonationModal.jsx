@@ -108,18 +108,20 @@ const DonationModal = ({ onClose, user }) => {
           
           {/* Right Column - Donation Form */}
           <div className="w-1/2 p-8 border-l border-white/20">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-white">
-                {currentStep === 1 ? 'Choose Your Impact' : 'Complete Your Donation'}
-              </h3>
-              <p className="text-sm text-white/60 mt-2">Step {currentStep} of 2</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 min-h-[650px] flex flex-col justify-center">
               {currentStep === 1 ? (
                 <>
+                  <div className="text-center mb-8">
+                    <p className="text-white/70 text-sm leading-relaxed">Monthly giving helps Far Too Young keep girls at school. The more time a girl spends in education, the greater the reduction in risk of child marriage.</p>
+                    
+                    {/* Elegant Divider */}
+                    <div className="mt-6 flex items-center">
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="block text-xl font-medium text-white mb-3">
+                    <label className="block text-lg font-medium text-white mb-3">
                       Donation Type
                     </label>
                     <div className="flex space-x-3">
@@ -149,7 +151,7 @@ const DonationModal = ({ onClose, user }) => {
                   </div>
 
                   <div>
-                    <label className="block text-xl font-medium text-white mb-3">
+                    <label className="block text-lg font-medium text-white mb-3">
                       Amount
                     </label>
                     <div className="grid grid-cols-3 gap-3 mb-3">
@@ -235,7 +237,7 @@ const DonationModal = ({ onClose, user }) => {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-white mb-2">
+                      <label className="block text-lg font-medium text-white mb-2">
                         First Name *
                       </label>
                       <input
@@ -247,7 +249,7 @@ const DonationModal = ({ onClose, user }) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-white mb-2">
+                      <label className="block text-lg font-medium text-white mb-2">
                         Last Name *
                       </label>
                       <input
@@ -261,7 +263,7 @@ const DonationModal = ({ onClose, user }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <label className="block text-lg font-medium text-white mb-2">
                       Email Address *
                     </label>
                     <input
@@ -274,7 +276,7 @@ const DonationModal = ({ onClose, user }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white mb-3">
+                    <label className="block text-lg font-medium text-white mb-3">
                       Payment Method
                     </label>
                     

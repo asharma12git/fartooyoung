@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
-const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
+const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout, onDonateClick }) => {
   const [isLogin, setIsLogin] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [formData, setFormData] = useState({
@@ -14,6 +15,9 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     
+    // Set new login timestamp for welcome message
+    localStorage.setItem('loginTimestamp', Date.now())
+    
     // Simulate successful login/signup
     const userData = {
       name: formData.name || formData.email.split('@')[0],
@@ -24,6 +28,8 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
   }
 
   const handleLogout = () => {
+    // Clear login timestamp on logout to get new welcome message next login
+    localStorage.removeItem('loginTimestamp')
     onLogout() // Call parent's logout handler
     setFormData({ email: '', password: '', name: '' })
   }
@@ -61,7 +67,7 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
 
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-6xl mx-4 shadow-2xl ring-1 ring-orange-500/50 relative max-h-[90vh] flex flex-col">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-7xl mx-4 shadow-2xl ring-1 ring-orange-500/50 relative max-h-[90vh] flex flex-col">
           {/* Sign Out Button - Top Left */}
           <button
             onClick={handleLogout}
@@ -102,8 +108,82 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
             `}</style>
             {/* Header */}
             <div className="mb-8 text-center">
-              <h2 className="text-3xl font-medium text-orange-400 mb-2">Welcome back, {user.name}!</h2>
-              <p className="text-white/70">Manage your donations and profile</p>
+              <h2 className="text-4xl font-medium text-orange-400 mb-4">
+                {(() => {
+                  const welcomeMessages = [
+                    `Hello, ${user.name}!`,
+                    `Great to see you, ${user.name}!`,
+                    `Welcome back, ${user.name}!`,
+                    `So glad you're here, ${user.name}!`,
+                    `Thank you for returning, ${user.name}!`,
+                    `Wonderful to see you again, ${user.name}!`,
+                    `Your impact continues, ${user.name}!`,
+                    `Ready to change lives, ${user.name}?`,
+                    `Hope is here, ${user.name}!`,
+                    `Making a difference, ${user.name}!`
+                  ]
+                  
+                  // Use login timestamp as seed for session-based welcome message
+                  let loginTime = localStorage.getItem('loginTimestamp')
+                  if (!loginTime) {
+                    loginTime = Date.now()
+                    localStorage.setItem('loginTimestamp', loginTime)
+                  }
+                  const messageIndex = Math.floor(parseInt(loginTime) / 1000) % welcomeMessages.length
+                  
+                  return welcomeMessages[messageIndex]
+                })()}
+              </h2>
+              <div className="flex justify-center mb-4">
+                <img src={logo} alt="Far Too Young" className="h-36 w-auto opacity-90" />
+              </div>
+              <p className="text-white/80 text-base italic max-w-2xl mx-auto">
+                "{(() => {
+                  const inspirationalQuotes = [
+                    "Every donation creates ripples of hope across the world",
+                    "Your kindness is changing lives, one girl at a time",
+                    "Education is the most powerful weapon to change the world",
+                    "Together, we're building a future where every girl can dream",
+                    "Your generosity lights the path to a brighter tomorrow",
+                    "Small acts of kindness create extraordinary transformations",
+                    "You're not just donating money, you're investing in futures",
+                    "Every girl deserves the chance to write her own story",
+                    "Your support turns impossible dreams into beautiful realities",
+                    "Thank you for believing in the power of education",
+                    "A girl with a book becomes a woman with a vision",
+                    "Your compassion is breaking chains of inequality forever",
+                    "When we educate a girl, we educate an entire generation",
+                    "Hope grows stronger with every act of love you share",
+                    "You're planting seeds of wisdom in the hearts of tomorrow",
+                    "Each donation is a vote for a world where dreams come true",
+                    "Your heart's generosity echoes through countless lives",
+                    "Education unlocks doors that poverty tried to seal shut",
+                    "You're writing chapters of hope in stories yet untold",
+                    "Every girl you help becomes a beacon of possibility",
+                    "Your kindness today becomes someone's strength tomorrow",
+                    "Together, we're turning tears of despair into tears of joy",
+                    "You're not just changing lives, you're changing the world",
+                    "A single act of love can illuminate an entire lifetime",
+                    "Your support gives wings to dreams that were meant to soar",
+                    "Education is love in action, and you are love personified",
+                    "You're helping girls discover the magic within themselves",
+                    "Every donation carries the power to rewrite destiny",
+                    "Your belief in others becomes their belief in themselves",
+                    "Thank you for being the answer to someone's prayer"
+                  ]
+                  
+                  // Use same login timestamp as welcome message for session-based quotes
+                  let loginTime = localStorage.getItem('loginTimestamp')
+                  if (!loginTime) {
+                    loginTime = Date.now()
+                    localStorage.setItem('loginTimestamp', loginTime)
+                  }
+                  // Use different calculation for quotes to get different index than welcome
+                  const quoteIndex = Math.floor(parseInt(loginTime) / 2000) % inspirationalQuotes.length
+                  
+                  return inspirationalQuotes[quoteIndex]
+                })()}"
+              </p>
             </div>
 
             {/* Tab Navigation */}
@@ -118,7 +198,7 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-sm font-medium transition-all duration-300 ${
+                  className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-lg font-medium transition-all duration-300 ${
                     activeTab === tab.id
                       ? 'bg-orange-500/80 text-white border border-orange-400/50'
                       : 'text-white/70 hover:text-white hover:bg-white/10'
@@ -148,13 +228,13 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
 
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-white/80 text-sm font-medium">Months of Education</h3>
+                      <h3 className="text-white/80 text-sm font-medium">Years of Education Funded</h3>
                       <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
                         <span className="text-orange-400 text-lg">📚</span>
                       </div>
                     </div>
-                    <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 50)}</p>
-                    <p className="text-white/60 text-sm mt-1">total months funded</p>
+                    <p className="text-3xl font-bold text-white">{(userStats.lifetimeTotal / 600).toFixed(1)}</p>
+                    <p className="text-white/60 text-sm mt-1">years of education provided</p>
                   </div>
 
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
@@ -248,27 +328,39 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
 
                   {/* Kindest Donation */}
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Your Kindest Donation</h3>
-                    {userDonations.length === 0 ? (
-                      <div className="text-center py-4">
-                        <p className="text-white/60 text-sm">Your largest donation will appear here</p>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <span className="text-orange-400 text-xl">👑</span>
+                    <h3 className="text-lg font-semibold text-white mb-4">Your Kindest Donation This Year</h3>
+                    {(() => {
+                      const currentYear = new Date().getFullYear().toString()
+                      const currentYearDonations = userDonations.filter(d => d.date.startsWith(currentYear))
+                      
+                      if (currentYearDonations.length === 0) {
+                        return (
+                          <div className="text-center py-4">
+                            <p className="text-white/60 text-sm">No donations this year yet</p>
+                            <p className="text-white/40 text-xs mt-1">Make your first {currentYear} donation!</p>
+                          </div>
+                        )
+                      }
+                      
+                      const highestDonation = Math.max(...currentYearDonations.map(d => d.amount))
+                      const highestDonationData = currentYearDonations.find(d => d.amount === highestDonation)
+                      
+                      return (
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-orange-400 text-xl">👑</span>
+                          </div>
+                          <p className="text-2xl font-bold text-white">${highestDonation}</p>
+                          <p className="text-white/60 text-sm mt-1">{highestDonationData?.date}</p>
+                          <p className="text-orange-400 text-xs mt-2">
+                            {highestDonation >= 600 ? '🌟 Life-Changing Impact!' : 
+                             highestDonation >= 300 ? '💫 Amazing Generosity!' : 
+                             '❤️ Beautiful Kindness!'}
+                          </p>
+                          <p className="text-white/50 text-xs mt-1">{currentYear} Highlight</p>
                         </div>
-                        <p className="text-2xl font-bold text-white">${Math.max(...userDonations.map(d => d.amount))}</p>
-                        <p className="text-white/60 text-sm mt-1">
-                          {userDonations.find(d => d.amount === Math.max(...userDonations.map(d => d.amount)))?.date}
-                        </p>
-                        <p className="text-orange-400 text-xs mt-2">
-                          {Math.max(...userDonations.map(d => d.amount)) >= 600 ? '🌟 Life-Changing Impact!' : 
-                           Math.max(...userDonations.map(d => d.amount)) >= 300 ? '💫 Amazing Generosity!' : 
-                           '❤️ Beautiful Kindness!'}
-                        </p>
-                      </div>
-                    )}
+                      )
+                    })()}
                   </div>
                 </div>
 
@@ -326,11 +418,94 @@ const AuthModal = ({ onClose, user, isLoggedIn, onLogin, onLogout }) => {
                   </div>
                 </div>
 
+                {/* Annual Impact History */}
+                {userDonations.length > 0 && (
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <h3 className="text-xl font-semibold text-white mb-6">Your Impact Journey</h3>
+                    <div className="flex space-x-4 overflow-x-auto pb-2" style={{
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
+                    }}>
+                      <style jsx>{`
+                        div::-webkit-scrollbar {
+                          height: 6px;
+                        }
+                        div::-webkit-scrollbar-track {
+                          background: transparent;
+                        }
+                        div::-webkit-scrollbar-thumb {
+                          background: rgba(249, 115, 22, 0.6);
+                          border-radius: 3px;
+                        }
+                        div::-webkit-scrollbar-thumb:hover {
+                          background: rgba(249, 115, 22, 0.8);
+                        }
+                      `}</style>
+                      {(() => {
+                        // Get unique years from donations
+                        const years = [...new Set(userDonations.map(d => d.date.split('-')[0]))].sort((a, b) => b - a)
+                        
+                        return years.map(year => {
+                          const yearDonations = userDonations.filter(d => d.date.startsWith(year))
+                          const yearTotal = yearDonations.reduce((sum, d) => sum + d.amount, 0)
+                          const yearCount = yearDonations.length
+                          const girlsSupported = Math.floor(yearTotal / 50)
+                          
+                          return (
+                            <div key={year} className="bg-white/5 border border-white/10 rounded-lg p-4 min-w-[280px] flex-shrink-0">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="text-lg font-semibold text-white">{year}</h4>
+                                <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
+                                  <span className="text-orange-400 text-sm">📅</span>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span className="text-white/70 text-sm">Donations</span>
+                                  <span className="text-white font-medium">{yearCount}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-white/70 text-sm">Total Impact</span>
+                                  <span className="text-white font-medium">${yearTotal}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-white/70 text-sm">Girls Supported</span>
+                                  <span className="text-orange-400 font-medium">{girlsSupported}</span>
+                                </div>
+                                {yearTotal >= 6000 && (
+                                  <div className="flex justify-between">
+                                    <span className="text-white/70 text-sm">Lives Transformed</span>
+                                    <span className="text-green-400 font-medium">{Math.floor(yearTotal / 6000)}</span>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Year highlight */}
+                              <div className="mt-3 pt-3 border-t border-white/10">
+                                <p className="text-white/60 text-xs">
+                                  {yearTotal >= 1000 ? '🌟 Amazing year!' : 
+                                   yearTotal >= 500 ? '💫 Great impact!' : 
+                                   yearCount >= 5 ? '❤️ Consistent supporter!' : 
+                                   '🎯 Making a difference!'}
+                                </p>
+                              </div>
+                            </div>
+                          )
+                        })
+                      })()}
+                    </div>
+                  </div>
+                )}
+
                 {/* Quick Actions */}
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <button className="bg-orange-500/80 hover:bg-orange-600/90 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium">
+                    <button 
+                      onClick={onDonateClick}
+                      className="bg-orange-500/80 hover:bg-orange-600/90 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium"
+                    >
                       🎯 Make Another Donation
                     </button>
                     <button className="bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium border border-white/20">
@@ -664,7 +839,8 @@ AuthModal.propTypes = {
   user: PropTypes.object,
   isLoggedIn: PropTypes.bool.isRequired,
   onLogin: PropTypes.func.isRequired,
-  onLogout: PropTypes.func.isRequired
+  onLogout: PropTypes.func.isRequired,
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default AuthModal

@@ -26,7 +26,8 @@ function App() {
   const handleLogin = (userData) => {
     setUser(userData)
     setIsLoggedIn(true)
-    setShowAuth(false) // Close modal after successful login
+    // Keep modal open to show dashboard after login
+    // setShowAuth(false) - removed this line
   }
 
   const handleLogout = () => {
@@ -76,6 +77,7 @@ function App() {
             isLoggedIn={isLoggedIn}
             onLogin={handleLogin}
             onLogout={handleLogout}
+            onDonateClick={() => setShowDonation(true)}
           />
         )}
         {showDonation && <DonationModal onClose={() => setShowDonation(false)} user={user} />}

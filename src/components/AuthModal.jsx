@@ -86,11 +86,11 @@ const AuthModal = ({ onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
       {/* Centered login form - slimmer width */}
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-8 w-full max-w-sm mx-4 shadow-2xl relative">
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-8 w-full max-w-sm mx-4 shadow-2xl relative ring-1 ring-orange-500/50">
         {/* Close button - slightly darker */}
         <button
           onClick={onClose}
-          className="absolute top-0 right-0 w-8 h-8 bg-orange-400/60 backdrop-blur-sm hover:bg-orange-400/80 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/60 rounded-tr-lg"
+          className="absolute top-0 right-0 w-8 h-8 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg"
           style={{ borderBottomLeftRadius: '0.5rem' }}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
@@ -198,7 +198,7 @@ const AuthModal = ({ onClose }) => {
 
           <button
             type="submit"
-            className="w-full bg-orange-400/60 backdrop-blur-sm hover:bg-orange-400/80 text-white py-3 rounded-md text-base font-bold transition-all duration-300 border border-orange-400/60 mt-8"
+            className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white py-3 rounded-md text-base font-bold transition-all duration-300 border border-orange-400/50 mt-8"
           >
             {isLogin ? 'Login' : 'Register'}
           </button>
@@ -209,7 +209,11 @@ const AuthModal = ({ onClose }) => {
             onClick={() => setIsLogin(!isLogin)}
             className="text-white/80 hover:text-orange-200 text-base transition-colors duration-300"
           >
-            {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+            {isLogin ? (
+              <>Don't have an account? <span className="font-medium text-gray-300">Register</span></>
+            ) : (
+              <>Already have an account? <span className="font-medium text-gray-300">Login</span></>
+            )}
           </button>
         </div>
       </div>

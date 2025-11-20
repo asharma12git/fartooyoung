@@ -9,21 +9,33 @@ const AuthModal = ({ onClose, onLogin }) => {
     name: ''
   })
 
-  // Dummy login function for testing
-  const handleSubmit = (e) => {
+  // Real API login function
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Set new login timestamp for welcome message
-    localStorage.setItem('loginTimestamp', Date.now())
-    
-    // Simulate successful login/signup
-    const userData = {
-      name: formData.name || formData.email.split('@')[0],
-      email: formData.email
+    try {
+      const response = await fetch('http://localhost:3001/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: formData.email, 
+          password: formData.password 
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        onLogin(data.user) // Use real user data from backend
+        onClose() // Close modal after successful login
+      } else {
+        alert(data.message) // Show backend error message
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      alert('Login failed: ' + error.message)
     }
-    
-    onLogin(userData) // Call parent's login handler
-    onClose() // Close modal after successful login
   }
 
   // Prevent background scrolling when modal is open

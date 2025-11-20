@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 
 const AuthModal = ({ onClose, onLogin }) => {
   const [isLogin, setIsLogin] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -12,6 +14,8 @@ const AuthModal = ({ onClose, onLogin }) => {
   // Real API login function
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('') // Clear any previous errors
+    setLoading(true)
     
     try {
       const response = await fetch('http://localhost:3001/auth/login', {
@@ -30,11 +34,13 @@ const AuthModal = ({ onClose, onLogin }) => {
         onLogin(data.user) // Use real user data from backend
         onClose() // Close modal after successful login
       } else {
-        alert(data.message) // Show backend error message
+        setError(data.message || 'Invalid credentials')
       }
     } catch (error) {
       console.error('Login error:', error)
-      alert('Login failed: ' + error.message)
+      setError('Login failed. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -68,12 +74,25 @@ const AuthModal = ({ onClose, onLogin }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {error && (
+            <div className="bg-red-500/20 border border-red-400/50 text-red-200 px-4 py-3 rounded-md backdrop-blur-sm">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                {error}
+              </div>
+            </div>
+          )}
           {!isLogin && (
             <div className="relative">
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => {
+                  setFormData({...formData, name: e.target.value})
+                  setError('')
+                }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required={!isLogin}
               />
@@ -94,7 +113,10 @@ const AuthModal = ({ onClose, onLogin }) => {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) => {
+                setFormData({...formData, email: e.target.value})
+                setError('')
+              }}
               className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
               required
             />
@@ -114,7 +136,10 @@ const AuthModal = ({ onClose, onLogin }) => {
             <input
               type="password"
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              onChange={(e) => {
+                setFormData({...formData, password: e.target.value})
+                setError('')
+              }}
               className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
               required
             />
@@ -161,15 +186,26 @@ const AuthModal = ({ onClose, onLogin }) => {
 
           <button
             type="submit"
-            className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white py-3 rounded-md text-base font-bold transition-all duration-300 border border-orange-400/50 mt-8"
+            disabled={loading}
+            className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-300/60 text-white py-3 rounded-md text-base font-bold transition-all duration-300 border border-orange-400/50 mt-8"
           >
-            {isLogin ? 'Login' : 'Register'}
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Logging in...
+              </div>
+            ) : (
+              isLogin ? 'Login' : 'Register'
+            )}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin)
+              setError('')
+            }}
             className="text-white/80 hover:text-orange-200 text-base transition-colors duration-300"
           >
             {isLogin ? (

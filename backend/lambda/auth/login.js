@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 
 // Configure DynamoDB - works locally and in AWS
 const dynamodb = new AWS.DynamoDB.DocumentClient({
-  endpoint: process.env.DYNAMODB_ENDPOINT || undefined
+  endpoint: process.env.DYNAMODB_ENDPOINT || undefined,
+  region: 'us-east-1'
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';

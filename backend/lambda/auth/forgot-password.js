@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient({
   endpoint: process.env.DYNAMODB_ENDPOINT || undefined
@@ -27,7 +27,7 @@ exports.handler = async (event) => {
     }
     
     // Generate reset token
-    const resetToken = uuidv4();
+    const resetToken = randomUUID();
     const resetExpires = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 minutes
     
     // Save reset token to database

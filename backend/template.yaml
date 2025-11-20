@@ -2,6 +2,15 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Far Too Young Authentication API
 
+Globals:
+  Function:
+    Environment:
+      Variables:
+        DYNAMODB_ENDPOINT: http://192.168.1.199:8000
+        JWT_SECRET: dev-secret-key
+        AWS_ACCESS_KEY_ID: dummy
+        AWS_SECRET_ACCESS_KEY: dummy
+
 Resources:
   # Login Function
   LoginFunction:

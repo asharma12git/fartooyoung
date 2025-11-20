@@ -11,20 +11,23 @@ const AuthModal = ({ onClose, onLogin }) => {
     name: ''
   })
 
-  // Real API login function
+  // Real API login/register function
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('') // Clear any previous errors
     setLoading(true)
     
     try {
-      const response = await fetch('http://localhost:3001/auth/login', {
+      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
+      const endpoint = isLogin ? '/auth/login' : '/auth/register'
+      const payload = isLogin 
+        ? { email: formData.email, password: formData.password }
+        : { email: formData.email, password: formData.password, name: formData.name }
+      
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: formData.email, 
-          password: formData.password 
-        })
+        body: JSON.stringify(payload)
       })
       
       const data = await response.json()
@@ -37,8 +40,8 @@ const AuthModal = ({ onClose, onLogin }) => {
         setError(data.message || 'Invalid credentials')
       }
     } catch (error) {
-      console.error('Login error:', error)
-      setError('Login failed. Please try again.')
+      console.error('Auth error:', error)
+      setError('Request failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -192,7 +195,7 @@ const AuthModal = ({ onClose, onLogin }) => {
             {loading ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Logging in...
+                {isLogin ? 'Logging in...' : 'Creating account...'}
               </div>
             ) : (
               isLogin ? 'Login' : 'Register'

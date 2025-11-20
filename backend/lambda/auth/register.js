@@ -11,6 +11,19 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
 
 exports.handler = async (event) => {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      },
+      body: ''
+    };
+  }
+
   try {
     console.log('Register function started');
     console.log('Environment variables:', {

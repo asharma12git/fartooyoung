@@ -2,12 +2,31 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Far Too Young Authentication API
 
+# Parameters for different environments
+Parameters:
+  Environment:
+    Type: String
+    Default: development
+    AllowedValues: [development, production]
+    Description: Deployment environment
+  
+  DynamoDBEndpoint:
+    Type: String
+    Default: "http://192.168.1.199:8000"  # Your local IP
+    Description: DynamoDB endpoint (leave empty for production)
+  
+  JWTSecret:
+    Type: String
+    Default: "dev-secret-key"
+    Description: JWT signing secret
+    NoEcho: true
+
 Globals:
   Function:
     Environment:
       Variables:
-        DYNAMODB_ENDPOINT: http://192.168.1.199:8000
-        JWT_SECRET: dev-secret-key
+        DYNAMODB_ENDPOINT: !Ref DynamoDBEndpoint
+        JWT_SECRET: !Ref JWTSecret
         AWS_ACCESS_KEY_ID: dummy
         AWS_SECRET_ACCESS_KEY: dummy
 

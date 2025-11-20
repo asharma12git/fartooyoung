@@ -1,9 +1,20 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) {
+      // Navigate to dashboard if logged in
+      navigate('/dashboard')
+    } else {
+      // Show login modal if not logged in
+      onAuthClick()
+    }
+  }
 
   const navItems = [
     { path: '/', label: 'Child Marriage' },
@@ -42,7 +53,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
           
           <div className="flex items-center justify-end space-x-4">
             <button
-              onClick={onAuthClick}
+              onClick={handleAuthClick}
               className="flex items-center space-x-2"
             >
               <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">

@@ -1,30 +1,37 @@
-# Test Login Credentials
+Test Card Information (Stripe):
+• **Card Number:** 4242424242424242
+• **Expiration:** 12/25 (any future date)
+• **CVC:** 123 (any 3 digits)
 
-## Dummy Login (Local Testing)
-- **Email**: gary@example.com
-- **Password**: any password (dummy authentication)
-- **Name**: Gary (auto-generated from email)
+Complete Test Flow:
+1. Login as Gary:
+   • Email: gary@test.com
+   • Password: anything (it's mocked)
 
-## Notes
-- These are dummy credentials for local testing only
-- Any email/password combination will work in the current setup
-- When AWS Cognito is integrated, real authentication will be required
-- Each email gets its own donation history stored in localStorage
+2. Click "Donate" button (from header or dashboard)
 
-## Test Flow
-1. Click "Login" button in header
-2. Enter gary@example.com with any password
-3. Access modern 3-tab donor dashboard
-4. Make test donations to see real-time stats updates
-5. View donation history and user settings
-6. Click "Sign out" to logout (X button just closes modal)
+3. Step 1 - Choose Amount:
+   • Select preset amount or enter custom
+   • Choose "One-time" or "Monthly"
+   • Click "Next"
 
-## Dashboard Features to Test
-- **Stats Cards**: Total donations, lifetime amount, average donation
-- **Recent Donations**: Last 4 donations with details
-- **Donation History**: Complete transaction history
-- **Settings**: Profile and notification preferences
-- **Real-time Updates**: Make donations and see dashboard reflect changes
+4. Step 2 - Fill Details:
+   • **First Name:** Gary
+   • **Last Name:** Test
+   • **Email:** gary@test.com
+   • **Payment Method:** Select "Stripe"
+   • **Card Number:** 4242424242424242
+   • **Expiration:** 12/25
+   • **CVC:** 123
 
----
-*This file is for development testing only and should not be deployed to production*
+5. Click "Donate" - Should process and close modal
+
+Alternative (Easier):
+• Switch to PayPal payment method - no card details required, just click "Donate"
+
+After Donation:
+• Check Gary's dashboard → Donations tab
+• See updated impact metrics (girls supported, progress bars)
+• View in "Your Impact Journey" section
+
+The donation will save to localStorage and appear in all dashboard metrics!

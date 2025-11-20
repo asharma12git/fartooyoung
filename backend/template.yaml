@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Far Too Young Authentication API
+
+Resources:
+  # Login Function
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/auth/
+      Handler: login.handler
+      Runtime: nodejs18.x
+      Events:
+        LoginApi:
+          Type: Api
+          Properties:
+            Path: /auth/login
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+
+  # Register Function  
+  RegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/auth/
+      Handler: register.handler
+      Runtime: nodejs18.x
+      Events:
+        RegisterApi:
+          Type: Api
+          Properties:
+            Path: /auth/register
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+
+  # Forgot Password Function
+  ForgotPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/auth/
+      Handler: forgot-password.handler
+      Runtime: nodejs18.x
+      Events:
+        ForgotPasswordApi:
+          Type: Api
+          Properties:
+            Path: /auth/forgot-password
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+
+  # Reset Password Function
+  ResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/auth/
+      Handler: reset-password.handler
+      Runtime: nodejs18.x
+      Events:
+        ResetPasswordApi:
+          Type: Api
+          Properties:
+            Path: /auth/reset-password
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+
+  # Logout Function
+  LogoutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/auth/
+      Handler: logout.handler
+      Runtime: nodejs18.x
+      Events:
+        LogoutApi:
+          Type: Api
+          Properties:
+            Path: /auth/logout
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"

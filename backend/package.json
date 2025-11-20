@@ -1,0 +1,11 @@
+{
+  "name": "fartooyoung-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Far Too Young",
+  "dependencies": {
+    "aws-sdk": "^2.1490.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1"
+  }
+}

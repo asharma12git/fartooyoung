@@ -8,6 +8,19 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 const ses = new AWS.SES({ region: 'us-east-1' });
 
 exports.handler = async (event) => {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      },
+      body: ''
+    };
+  }
+
   try {
     const { email } = JSON.parse(event.body);
     
@@ -30,11 +43,11 @@ exports.handler = async (event) => {
     const resetToken = randomUUID();
     const resetExpires = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 minutes
     
-    // Save reset token to database
+    // Save reset token to database and clear any account lock
     await dynamodb.update({
       TableName: 'fartooyoung-users',
       Key: { email },
-      UpdateExpression: 'SET resetToken = :token, resetExpires = :expires',
+      UpdateExpression: 'SET resetToken = :token, resetExpires = :expires REMOVE failedAttempts, lockedUntil',
       ExpressionAttributeValues: {
         ':token': resetToken,
         ':expires': resetExpires
@@ -69,10 +82,17 @@ exports.handler = async (event) => {
       console.log('Reset URL:', resetUrl);
     }
     
+    // Return different responses for local vs production
+    const isLocal = process.env.DYNAMODB_ENDPOINT && process.env.DYNAMODB_ENDPOINT.includes('localhost');
+    
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ success: true, message: 'Reset email sent if account exists' })
+      body: JSON.stringify({ 
+        success: true, 
+        message: 'Reset email sent if account exists',
+        ...(isLocal && { resetToken }) // Only include token in local development
+      })
     };
     
   } catch (error) {

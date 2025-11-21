@@ -89,6 +89,11 @@ Resources:
               AllowMethods: "'POST,OPTIONS'"
               AllowHeaders: "'Content-Type,Authorization'"
               AllowOrigin: "'*'"
+        ForgotPasswordOptions:
+          Type: Api
+          Properties:
+            Path: /auth/forgot-password
+            Method: options
 
   # Reset Password Function
   ResetPasswordFunction:
@@ -107,6 +112,11 @@ Resources:
               AllowMethods: "'POST,OPTIONS'"
               AllowHeaders: "'Content-Type,Authorization'"
               AllowOrigin: "'*'"
+        ResetPasswordOptions:
+          Type: Api
+          Properties:
+            Path: /auth/reset-password
+            Method: options
 
   # Logout Function
   LogoutFunction:

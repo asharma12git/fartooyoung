@@ -43,15 +43,59 @@ exports.handler = async (event) => {
       };
     }
     
+    // Check if account is locked
+    const now = new Date();
+    if (user.lockedUntil && new Date(user.lockedUntil) > now) {
+      const lockTimeRemaining = Math.ceil((new Date(user.lockedUntil) - now) / (1000 * 60)); // minutes
+      return {
+        statusCode: 401,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ 
+          success: false, 
+          message: `Account locked for ${lockTimeRemaining} more minutes due to failed login attempts. Use 'Forgot Password' for immediate access.`
+        })
+      };
+    }
+    
     // Check password
     const passwordValid = await bcrypt.compare(password, user.hashedPassword);
     
     if (!passwordValid) {
+      // Increment failed attempts
+      const failedAttempts = (user.failedAttempts || 0) + 1;
+      const lockUntil = failedAttempts >= 3 ? new Date(Date.now() + 15 * 60 * 1000).toISOString() : null; // 15 minutes
+      
+      // Update failed attempts and lock status
+      await dynamodb.update({
+        TableName: 'fartooyoung-users',
+        Key: { email },
+        UpdateExpression: lockUntil 
+          ? 'SET failedAttempts = :attempts, lockedUntil = :lockUntil'
+          : 'SET failedAttempts = :attempts',
+        ExpressionAttributeValues: lockUntil
+          ? { ':attempts': failedAttempts, ':lockUntil': lockUntil }
+          : { ':attempts': failedAttempts }
+      }).promise();
+      
+      const attemptsLeft = 3 - failedAttempts;
+      const message = failedAttempts >= 3 
+        ? 'Account locked for 15 minutes due to too many failed attempts. Use "Forgot Password" for immediate access.'
+        : `Invalid credentials. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`;
+      
       return {
         statusCode: 401,
         headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ success: false, message: 'Invalid credentials' })
+        body: JSON.stringify({ success: false, message })
       };
+    }
+    
+    // Successful login - clear failed attempts and lock
+    if (user.failedAttempts || user.lockedUntil) {
+      await dynamodb.update({
+        TableName: 'fartooyoung-users',
+        Key: { email },
+        UpdateExpression: 'REMOVE failedAttempts, lockedUntil'
+      }).promise();
     }
     
     // Create JWT token

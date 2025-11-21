@@ -6,6 +6,19 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 exports.handler = async (event) => {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      },
+      body: ''
+    };
+  }
+
   try {
     const { token, newPassword } = JSON.parse(event.body);
     
@@ -37,8 +50,9 @@ exports.handler = async (event) => {
       };
     }
     
-    // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Hash new password (use fewer rounds for local development)
+    const saltRounds = process.env.DYNAMODB_ENDPOINT ? 4 : 10; // Local: 4, Production: 10
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     
     // Update password and remove reset token
     await dynamodb.update({

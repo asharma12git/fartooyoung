@@ -18,7 +18,7 @@ const AuthModal = ({ onClose, onLogin }) => {
     setLoading(true)
     
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
+      const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
       const endpoint = isLogin ? '/auth/login' : '/auth/register'
       const payload = isLogin 
         ? { email: formData.email, password: formData.password }

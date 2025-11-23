@@ -21,7 +21,9 @@ const DonationModal = ({ onClose, user }) => {
   })
   const [coverTransactionCosts, setCoverTransactionCosts] = useState(false)
   const [showTransactionTooltip, setShowTransactionTooltip] = useState(false)
-  const [tooltipType, setTooltipType] = useState('text') // 'text' or 'icon'
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
   const [showMonthlyPopup, setShowMonthlyPopup] = useState(false)
 
   const calculateFee = () => {
@@ -46,33 +48,54 @@ const DonationModal = ({ onClose, user }) => {
     }
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (currentStep === 1) {
       setCurrentStep(2)
       return
     }
-    
+
     // Step 2 - Process donation
-    if (user) {
+    setLoading(true)
+    setError('')
+
+    try {
       const donationAmount = amount === 'custom' ? parseFloat(customAmount) : amount
-      const newDonation = {
-        id: Date.now(),
-        amount: donationAmount,
-        date: new Date().toISOString().split('T')[0],
-        type: donationType === 'one-time' ? 'One-time' : 'Monthly',
-        status: 'Completed',
-        paymentMethod: paymentMethod
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
+
+      const response = await fetch(`${API_BASE_URL}/donations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: donationAmount,
+          type: donationType,
+          paymentMethod: paymentMethod,
+          email: donorInfo.email,
+          name: `${donorInfo.firstName} ${donorInfo.lastName}`,
+          userId: user ? user.email : null // Link to user if logged in
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccess(true)
+        // Auto-close after 2 seconds
+        setTimeout(() => {
+          onClose()
+        }, 2000)
+      } else {
+        setError(data.message || 'Donation failed. Please try again.')
       }
-      
-      const existingDonations = localStorage.getItem(`donations_${user.email}`)
-      const donations = existingDonations ? JSON.parse(existingDonations) : []
-      donations.push(newDonation)
-      localStorage.setItem(`donations_${user.email}`, JSON.stringify(donations))
+    } catch (err) {
+      console.error('Donation error:', err)
+      setError('Network error. Please try again.')
+    } finally {
+      setLoading(false)
     }
-    
-    onClose()
   }
 
   return (
@@ -87,7 +110,7 @@ const DonationModal = ({ onClose, user }) => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         <div className="flex">
           {/* Left Column - Title and Image */}
           <div className="w-1/2 p-8 flex flex-col">
@@ -96,17 +119,17 @@ const DonationModal = ({ onClose, user }) => {
               <p className="text-sm text-white/70 mt-8">Help our organization by donating today! We will be grateful.</p>
               <p className="text-sm text-white/70 mt-2">100% of your donation is tax deductible.</p>
             </div>
-            
+
             {/* Image */}
             <div className="flex-1 flex items-center justify-center min-h-[400px]">
-              <img 
-                src="/src/assets/images/components/donation-modal/5.jpg" 
+              <img
+                src="/src/assets/images/components/donation-modal/5.jpg"
                 alt="Children in need of protection"
                 className="w-full h-auto max-h-[400px] object-cover object-top rounded-lg"
               />
             </div>
           </div>
-          
+
           {/* Right Column - Donation Form */}
           <div className="w-1/2 p-8 border-l border-white/20">
             <form onSubmit={handleSubmit} className="min-h-[650px] flex flex-col justify-center">
@@ -114,7 +137,7 @@ const DonationModal = ({ onClose, user }) => {
                 <div className="flex flex-col justify-evenly flex-1 space-y-0">
                   <div className="text-center mb-4 -mt-8">
                     <p className="text-white/70 text-sm leading-relaxed">Monthly giving helps Far Too Young keep girls at school. The more time a girl spends in education, the greater the reduction in risk of child marriage.</p>
-                    
+
                     {/* Elegant Divider */}
                     <div className="mt-4 flex items-center">
                       <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
@@ -129,11 +152,10 @@ const DonationModal = ({ onClose, user }) => {
                       <button
                         type="button"
                         onClick={() => setDonationType('one-time')}
-                        className={`flex-1 py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${
-                          donationType === 'one-time'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                        }`}
+                        className={`flex-1 py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${donationType === 'one-time'
+                          ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                          : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                          }`}
                       >
                         One-time
                       </button>
@@ -143,11 +165,10 @@ const DonationModal = ({ onClose, user }) => {
                           setDonationType('monthly')
                           setShowMonthlyPopup(true)
                         }}
-                        className={`flex-1 py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${
-                          donationType === 'monthly'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                        }`}
+                        className={`flex-1 py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${donationType === 'monthly'
+                          ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                          : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                          }`}
                       >
                         Monthly
                       </button>
@@ -164,11 +185,10 @@ const DonationModal = ({ onClose, user }) => {
                           key={preset}
                           type="button"
                           onClick={() => setAmount(preset)}
-                          className={`py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${
-                            amount === preset
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${amount === preset
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           ${preset}
                         </button>
@@ -177,11 +197,10 @@ const DonationModal = ({ onClose, user }) => {
                     <button
                       type="button"
                       onClick={() => setAmount('custom')}
-                      className={`w-full py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${
-                        amount === 'custom'
-                          ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                          : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                      }`}
+                      className={`w-full py-3 px-4 rounded-md text-base font-medium transition-all duration-300 ${amount === 'custom'
+                        ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                        : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                        }`}
                     >
                       Custom Amount
                     </button>
@@ -193,11 +212,10 @@ const DonationModal = ({ onClose, user }) => {
                           value={customAmount}
                           onChange={(e) => setCustomAmount(e.target.value)}
                           min="5"
-                          className={`w-full mt-3 px-4 py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
-                            customAmount && parseFloat(customAmount) < 5
-                              ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500'
-                              : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
-                          }`}
+                          className={`w-full mt-3 px-4 py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${customAmount && parseFloat(customAmount) < 5
+                            ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500'
+                            : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
+                            }`}
                           required
                         />
                         {customAmount && parseFloat(customAmount) < 5 && (
@@ -247,7 +265,7 @@ const DonationModal = ({ onClose, user }) => {
                       <input
                         type="text"
                         value={donorInfo.firstName}
-                        onChange={(e) => setDonorInfo({...donorInfo, firstName: e.target.value})}
+                        onChange={(e) => setDonorInfo({ ...donorInfo, firstName: e.target.value })}
                         className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
                         required
                       />
@@ -259,7 +277,7 @@ const DonationModal = ({ onClose, user }) => {
                       <input
                         type="text"
                         value={donorInfo.lastName}
-                        onChange={(e) => setDonorInfo({...donorInfo, lastName: e.target.value})}
+                        onChange={(e) => setDonorInfo({ ...donorInfo, lastName: e.target.value })}
                         className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
                         required
                       />
@@ -273,7 +291,7 @@ const DonationModal = ({ onClose, user }) => {
                     <input
                       type="email"
                       value={donorInfo.email}
-                      onChange={(e) => setDonorInfo({...donorInfo, email: e.target.value})}
+                      onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
                       className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
                       required
                     />
@@ -283,73 +301,67 @@ const DonationModal = ({ onClose, user }) => {
                     <label className="block text-lg font-medium text-white mb-3">
                       Payment Method
                     </label>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       {/* Left Column - Payment Method Selection */}
                       <div className="space-y-1">
                         <button
                           type="button"
                           onClick={() => setPaymentMethod('stripe')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${
-                            paymentMethod === 'stripe'
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'stripe'
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           Credit Card
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentMethod('apple')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${
-                            paymentMethod === 'apple'
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'apple'
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           Apple Pay
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentMethod('google')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${
-                            paymentMethod === 'google'
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'google'
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           Google Pay
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentMethod('paypal')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${
-                            paymentMethod === 'paypal'
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'paypal'
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           PayPal
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentMethod('venmo')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${
-                            paymentMethod === 'venmo'
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'venmo'
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           Venmo
                         </button>
                         <button
                           type="button"
                           onClick={() => setPaymentMethod('wire')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${
-                            paymentMethod === 'wire'
-                              ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                              : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                          }`}
+                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'wire'
+                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
+                            }`}
                         >
                           Bank Wire
                         </button>
@@ -363,7 +375,7 @@ const DonationModal = ({ onClose, user }) => {
                               type="text"
                               placeholder="Card Number"
                               value={cardInfo.cardNumber}
-                              onChange={(e) => setCardInfo({...cardInfo, cardNumber: e.target.value})}
+                              onChange={(e) => setCardInfo({ ...cardInfo, cardNumber: e.target.value })}
                               className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
                               required
                             />
@@ -372,7 +384,7 @@ const DonationModal = ({ onClose, user }) => {
                                 type="text"
                                 placeholder="MM/YY"
                                 value={cardInfo.expiration}
-                                onChange={(e) => setCardInfo({...cardInfo, expiration: e.target.value})}
+                                onChange={(e) => setCardInfo({ ...cardInfo, expiration: e.target.value })}
                                 className="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
                                 required
                               />
@@ -380,7 +392,7 @@ const DonationModal = ({ onClose, user }) => {
                                 type="text"
                                 placeholder="CVC"
                                 value={cardInfo.cvc}
-                                onChange={(e) => setCardInfo({...cardInfo, cvc: e.target.value})}
+                                onChange={(e) => setCardInfo({ ...cardInfo, cvc: e.target.value })}
                                 className="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
                                 required
                               />
@@ -469,7 +481,7 @@ const DonationModal = ({ onClose, user }) => {
                         onChange={(e) => setCoverTransactionCosts(e.target.checked)}
                         className="mr-3 mt-1 w-4 h-4 text-orange-500 focus:ring-orange-500/50"
                       />
-                      <span 
+                      <span
                         className="text-white text-sm flex items-center"
                         onMouseEnter={() => {
                           setTooltipType('text')
@@ -491,11 +503,11 @@ const DonationModal = ({ onClose, user }) => {
                         </button>
                       </span>
                     </div>
-                    
+
                     {/* Tooltip */}
                     {showTransactionTooltip && (
                       <div className="absolute left-0 top-8 bg-black/90 text-white text-xs p-3 rounded-lg shadow-lg z-10 max-w-xs">
-                        {tooltipType === 'icon' 
+                        {tooltipType === 'icon'
                           ? `By adding $${calculateFee()}, you help cover the necessary software and processing fees.`
                           : 'Would you like to cover the transaction costs so that we receive 100% of your gift?'
                         }
@@ -508,27 +520,61 @@ const DonationModal = ({ onClose, user }) => {
                       type="button"
                       onClick={() => setCurrentStep(1)}
                       className="flex-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 rounded-md text-base font-medium transition-colors border border-white/30"
+                      disabled={loading}
                     >
                       Back
                     </button>
                     <button
                       type="submit"
-                      disabled={!donorInfo.firstName || !donorInfo.lastName || !donorInfo.email || 
-                               (paymentMethod === 'stripe' && (!cardInfo.cardNumber || !cardInfo.expiration || !cardInfo.cvc))}
-                      className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-500/80 disabled:cursor-not-allowed text-white px-6 py-3 rounded-md text-base font-bold transition-colors border border-orange-400/50"
+                      disabled={loading || !donorInfo.firstName || !donorInfo.lastName || !donorInfo.email ||
+                        (paymentMethod === 'stripe' && (!cardInfo.cardNumber || !cardInfo.expiration || !cardInfo.cvc))}
+                      className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-500/50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-md text-base font-bold transition-colors border border-orange-400/50 flex items-center justify-center"
                     >
-                      {paymentMethod === 'stripe' ? 'Donate' : 
-                       paymentMethod === 'paypal' ? 'Donate' : 
-                       'Donate'}
+                      {loading ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        paymentMethod === 'stripe' ? 'Donate' :
+                          paymentMethod === 'paypal' ? 'Donate' :
+                            'Donate'
+                      )}
                     </button>
                   </div>
+
+                  {/* Error Message */}
+                  {error && (
+                    <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-md">
+                      <p className="text-red-300 text-sm">{error}</p>
+                    </div>
+                  )}
+
+                  {/* Success Message Overlay */}
+                  {success && (
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center rounded-lg z-50">
+                      <div className="text-center">
+                        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
+                        <p className="text-white/80">Your donation has been processed successfully.</p>
+                        <p className="text-white/60 text-sm mt-2">Closing...</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </form>
           </div>
         </div>
       </div>
-      
+
       {/* Terms and Conditions Modal */}
       {showTerms && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-60">
@@ -542,11 +588,11 @@ const DonationModal = ({ onClose, user }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            
+
             <div className="p-8 pb-4">
               <h2 className="text-2xl font-bold text-orange-400 mb-6 text-center">Terms and Conditions</h2>
             </div>
-            
+
             <div className="px-8 flex-1 overflow-y-auto" style={{
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
@@ -566,36 +612,36 @@ const DonationModal = ({ onClose, user }) => {
                   background: rgba(249, 115, 22, 0.8);
                 }
               `}</style>
-              
+
               <div className="text-white/90 space-y-4 text-sm leading-relaxed">
                 <p className="font-medium text-orange-300">Do you consent to the following donation terms?</p>
-                
+
                 <p>
                   <strong>Gift Acceptance Policy:</strong> Acceptance of any contribution, gift, or grant is at the sole discretion of Far Too Young, Inc. We reserve the right to decline any donation that cannot be used consistently with our organizational purpose and mission.
                 </p>
-                
+
                 <p>
                   <strong>Donor Financial Security:</strong> Far Too Young, Inc. will not accept any irrevocable gift, whether outright or life-income in character, if under any reasonable circumstances the gift would jeopardize the donor's financial security or well-being.
                 </p>
-                
+
                 <p>
                   <strong>Tax and Legal Guidance:</strong> Far Too Young, Inc. does not provide advice regarding the tax or legal treatment of donations. We strongly encourage all donors to consult with their own qualified professional advisers, including tax attorneys, certified public accountants, or financial planners, to assist them in the donation process.
                 </p>
-                
+
                 <p>
                   <strong>Use of Funds:</strong> All donations will be used to support our mission of ending child marriage and protecting vulnerable children and girls worldwide. Donors may designate specific programs, subject to organizational approval and feasibility.
                 </p>
-                
+
                 <p>
                   <strong>Privacy and Recognition:</strong> Donor information will be kept confidential unless explicit permission is granted for recognition purposes. Donors may request anonymity at any time.
                 </p>
-                
+
                 <p className="text-orange-200 font-medium">
                   By proceeding with your donation, you acknowledge that you have read, understood, and agree to these terms and conditions.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex justify-center space-x-4 p-8 pt-4">
               <button
                 onClick={() => setShowTerms(false)}
@@ -616,7 +662,7 @@ const DonationModal = ({ onClose, user }) => {
           </div>
         </div>
       )}
-      
+
       {/* Monthly Donation Popup */}
       {showMonthlyPopup && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-60">

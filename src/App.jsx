@@ -15,14 +15,17 @@ import { useState } from 'react'
  */
 function AppContent() {
   const navigate = useNavigate()
-  
+
   // Global modal state management
   const [showAuth, setShowAuth] = useState(false)
   const [showDonation, setShowDonation] = useState(false)
-  
+
   // Global authentication state
   const [user, setUser] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  // Refresh key to trigger dashboard data reload
+  const [refreshKey, setRefreshKey] = useState(0)
 
   // Authentication handlers
   const handleLogin = (userData) => {
@@ -41,16 +44,21 @@ function AppContent() {
     setShowAuth(true)
   }
 
+  const handleDonationClose = () => {
+    setShowDonation(false)
+    setRefreshKey(prev => prev + 1) // Trigger dashboard refresh
+  }
+
   return (
     <div className="min-h-screen bg-dark-900 flex flex-col">
       {/* Global navigation header */}
-      <Header 
+      <Header
         onAuthClick={handleAuthClick}
         onDonateClick={() => setShowDonation(true)}
         user={user}
         isLoggedIn={isLoggedIn}
       />
-      
+
       {/* Main content area with page routing */}
       <main className="flex-1">
         <Routes>
@@ -58,33 +66,34 @@ function AppContent() {
           <Route path="/founder-team" element={<FounderTeam />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/what-we-do" element={<WhatWeDo />} />
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
-              <DonorDashboard 
-                user={user} 
+              <DonorDashboard
+                user={user}
                 onLogout={handleLogout}
                 onDonateClick={() => setShowDonation(true)}
+                refreshKey={refreshKey}
               />
-            } 
+            }
           />
         </Routes>
       </main>
-      
+
       {/* Global footer - hide on dashboard */}
       <Routes>
         <Route path="/dashboard" element={null} />
         <Route path="*" element={<Footer />} />
       </Routes>
-      
+
       {/* Global modals - conditionally rendered */}
       {showAuth && (
-        <AuthModal 
+        <AuthModal
           onClose={() => setShowAuth(false)}
           onLogin={handleLogin}
         />
       )}
-      {showDonation && <DonationModal onClose={() => setShowDonation(false)} user={user} />}
+      {showDonation && <DonationModal onClose={handleDonationClose} user={user} />}
     </div>
   )
 }

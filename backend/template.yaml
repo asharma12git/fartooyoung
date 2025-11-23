@@ -12,8 +12,8 @@ Parameters:
   
   DynamoDBEndpoint:
     Type: String
-    Default: "http://192.168.1.199:8000"  # Your local IP
-    Description: DynamoDB endpoint (leave empty for production)
+    Default: http://host.docker.internal:8000
+    Description: Endpoint for local DynamoDB endpoint (leave empty for production)
   
   JWTSecret:
     Type: String
@@ -35,8 +35,8 @@ Resources:
   LoginFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda/auth/
-      Handler: login.handler
+      CodeUri: .
+      Handler: lambda/auth/login.handler
       Runtime: nodejs18.x
       Events:
         LoginApi:
@@ -58,8 +58,8 @@ Resources:
   RegisterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda/auth/
-      Handler: register.handler
+      CodeUri: .
+      Handler: lambda/auth/register.handler
       Runtime: nodejs18.x
       Events:
         RegisterApi:
@@ -71,13 +71,18 @@ Resources:
               AllowMethods: "'POST,OPTIONS'"
               AllowHeaders: "'Content-Type,Authorization'"
               AllowOrigin: "'*'"
+        RegisterOptions:
+          Type: Api
+          Properties:
+            Path: /auth/register
+            Method: options
 
   # Forgot Password Function
   ForgotPasswordFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda/auth/
-      Handler: forgot-password.handler
+      CodeUri: .
+      Handler: lambda/auth/forgot-password.handler
       Runtime: nodejs18.x
       Events:
         ForgotPasswordApi:
@@ -99,8 +104,8 @@ Resources:
   ResetPasswordFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda/auth/
-      Handler: reset-password.handler
+      CodeUri: .
+      Handler: lambda/auth/reset-password.handler
       Runtime: nodejs18.x
       Events:
         ResetPasswordApi:
@@ -122,8 +127,8 @@ Resources:
   LogoutFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda/auth/
-      Handler: logout.handler
+      CodeUri: .
+      Handler: lambda/auth/logout.handler
       Runtime: nodejs18.x
       Events:
         LogoutApi:
@@ -135,3 +140,55 @@ Resources:
               AllowMethods: "'POST,OPTIONS'"
               AllowHeaders: "'Content-Type,Authorization'"
               AllowOrigin: "'*'"
+        LogoutOptions:
+          Type: Api
+          Properties:
+            Path: /auth/logout
+            Method: options
+
+  # Create Donation Function
+  CreateDonationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/donations/create-donation.handler
+      Runtime: nodejs18.x
+      Events:
+        CreateDonationApi:
+          Type: Api
+          Properties:
+            Path: /donations
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+        CreateDonationOptions:
+          Type: Api
+          Properties:
+            Path: /donations
+            Method: options
+
+  # Get Donations Function
+  GetDonationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/donations/get-donations.handler
+      Runtime: nodejs18.x
+      Events:
+        GetDonationsApi:
+          Type: Api
+          Properties:
+            Path: /donations
+            Method: get
+            Cors:
+              AllowMethods: "'GET,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+        GetDonationsOptions:
+          Type: Api
+          Properties:
+            Path: /donations
+            Method: options
+

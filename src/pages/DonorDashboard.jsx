@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
-const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
+const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [userDonations, setUserDonations] = useState([])
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
   // Redirect if not logged in
@@ -14,27 +16,61 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
     }
   }, [user, navigate])
 
+  // Fetch user donations from API
+  useEffect(() => {
+    const fetchDonations = async () => {
+      if (!user?.email) return
+
+      setLoading(true) // Show loading when refetching
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
+        const token = localStorage.getItem('token')
+
+        if (!token) {
+          console.error('No authentication token found')
+          setUserDonations([])
+          setLoading(false)
+          return
+        }
+
+        const response = await fetch(`${API_BASE_URL}/donations`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        const data = await response.json()
+
+        if (data.success) {
+          setUserDonations(data.donations)
+        } else {
+          console.error('Failed to fetch donations:', data.message)
+          setUserDonations([])
+        }
+      } catch (error) {
+        console.error('Error fetching donations:', error)
+        setUserDonations([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDonations()
+  }, [user, refreshKey]) // Refetch when refreshKey changes
+
   if (!user) return null
 
-  // Get user-specific donations from localStorage
-  const getUserDonations = () => {
-    const donations = localStorage.getItem(`donations_${user.email}`)
-    return donations ? JSON.parse(donations) : []
-  }
-
-  const userDonations = getUserDonations()
-  
   // Calculate real stats from user's donations
   const userStats = {
     totalDonations: userDonations.length,
     lifetimeTotal: userDonations.reduce((sum, donation) => sum + donation.amount, 0),
-    averageDonation: userDonations.length > 0 
+    averageDonation: userDonations.length > 0
       ? Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) / userDonations.length)
       : 0
   }
-  
+
   const recentDonations = userDonations
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 4) // Show last 4 donations
 
   const handleLogout = () => {
@@ -53,7 +89,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
         >
           Sign Out
         </button>
-        
+
         {/* Close Button - Top Right */}
         <button
           onClick={() => navigate('/')}
@@ -64,7 +100,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         <div className="p-8 flex-1 overflow-y-auto" style={{
           scrollbarWidth: 'thin',
           scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
@@ -84,7 +120,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
               background: rgba(249, 115, 22, 0.8);
             }
           `}</style>
-          
+
           {/* Header */}
           <div className="mb-8 text-center">
             <h2 className="text-4xl font-medium text-orange-400 mb-4">
@@ -101,14 +137,14 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                   `Hope is here, ${user.name}!`,
                   `Making a difference, ${user.name}!`
                 ]
-                
+
                 let loginTime = localStorage.getItem('loginTimestamp')
                 if (!loginTime) {
                   loginTime = Date.now()
                   localStorage.setItem('loginTimestamp', loginTime)
                 }
                 const messageIndex = Math.floor(parseInt(loginTime) / 1000) % welcomeMessages.length
-                
+
                 return welcomeMessages[messageIndex]
               })()}
             </h2>
@@ -132,11 +168,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-lg font-medium transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-lg font-medium transition-all duration-300 ${activeTab === tab.id
+                  ? 'bg-orange-500/80 text-white border border-orange-400/50'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 <span>{tab.icon}</span>
                 <span>{tab.label}</span>
@@ -202,7 +237,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
               {/* Progress Towards Goals */}
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                 <h3 className="text-xl font-semibold text-white mb-6">Your Impact Goals for 2025</h3>
-                
+
                 {/* Current Month Summary - Three Column Format */}
                 <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
                   <div className="grid grid-cols-3 gap-4">
@@ -216,33 +251,33 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                         <p className="text-white/60 text-sm">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
                       </div>
                     </div>
-                    
+
                     {/* Girls Educated */}
                     <div className="text-center">
                       <h4 className="text-white/80 text-sm font-medium mb-1">Girls Educated</h4>
                       <p className="text-2xl font-bold text-orange-400">
                         {(() => {
                           const currentMonth = new Date().toISOString().slice(0, 7) // YYYY-MM format
-                          const monthlyDonations = userDonations.filter(d => d.date.startsWith(currentMonth))
+                          const monthlyDonations = userDonations.filter(d => d.createdAt?.startsWith(currentMonth))
                           const monthlyTotal = monthlyDonations.reduce((sum, d) => sum + d.amount, 0)
                           return Math.floor(monthlyTotal / 50)
                         })()}
                       </p>
                     </div>
-                    
+
                     {/* Donated This Month */}
                     <div className="text-center">
                       <h4 className="text-white/80 text-sm font-medium mb-1">Donated</h4>
                       <p className="text-xl font-bold text-white">
                         ${(() => {
                           const currentMonth = new Date().toISOString().slice(0, 7)
-                          const monthlyDonations = userDonations.filter(d => d.date.startsWith(currentMonth))
+                          const monthlyDonations = userDonations.filter(d => d.createdAt?.startsWith(currentMonth))
                           return monthlyDonations.reduce((sum, d) => sum + d.amount, 0)
                         })()}
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Cost Breakdown */}
                   <div className="mt-3 pt-3 border-t border-white/10">
                     <p className="text-white/70 text-xs mb-2">$50/month per girl covers:</p>
@@ -279,7 +314,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                       <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$600</span>
                     </div>
                     <div className="w-full bg-white/10 rounded-full h-3">
-                      <div 
+                      <div
                         className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 600) * 100, 100)}%` }}
                       ></div>
@@ -294,7 +329,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                       <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$3,000</span>
                     </div>
                     <div className="w-full bg-white/10 rounded-full h-3">
-                      <div 
+                      <div
                         className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 3000) * 100, 100)}%` }}
                       ></div>
@@ -309,7 +344,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                       <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$6,000</span>
                     </div>
                     <div className="w-full bg-white/10 rounded-full h-3">
-                      <div 
+                      <div
                         className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 6000) * 100, 100)}%` }}
                       ></div>
@@ -327,8 +362,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                     {/* Kindest Donation - Compact Version */}
                     {(() => {
                       const currentYear = new Date().getFullYear().toString()
-                      const currentYearDonations = userDonations.filter(d => d.date.startsWith(currentYear))
-                      
+                      const currentYearDonations = userDonations.filter(d => d.createdAt?.startsWith(currentYear))
+
                       if (currentYearDonations.length > 0) {
                         const highestDonation = Math.max(...currentYearDonations.map(d => d.amount))
                         return (
@@ -344,7 +379,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                       return null
                     })()}
                   </div>
-                  
+
                   <div className="flex space-x-4 overflow-x-auto pb-2" style={{
                     scrollbarWidth: 'thin',
                     scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
@@ -366,14 +401,14 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                     `}</style>
                     {(() => {
                       // Get unique years from donations
-                      const years = [...new Set(userDonations.map(d => d.date.split('-')[0]))].sort((a, b) => b - a)
-                      
+                      const years = [...new Set(userDonations.map(d => d.createdAt?.split('-')[0]))].sort((a, b) => b - a)
+
                       return years.map(year => {
-                        const yearDonations = userDonations.filter(d => d.date.startsWith(year))
+                        const yearDonations = userDonations.filter(d => d.createdAt?.startsWith(year))
                         const yearTotal = yearDonations.reduce((sum, d) => sum + d.amount, 0)
                         const yearCount = yearDonations.length
                         const girlsSupported = Math.floor(yearTotal / 50)
-                        
+
                         return (
                           <div key={year} className="bg-white/5 border border-white/10 rounded-lg p-4 min-w-[280px] flex-shrink-0">
                             <div className="flex items-center justify-between mb-3">
@@ -382,7 +417,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                                 <span className="text-orange-400 text-sm">📅</span>
                               </div>
                             </div>
-                            
+
                             <div className="space-y-2">
                               <div className="flex justify-between">
                                 <span className="text-white/70 text-sm">Donations</span>
@@ -403,14 +438,14 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                                 </div>
                               )}
                             </div>
-                            
+
                             {/* Year highlight */}
                             <div className="mt-3 pt-3 border-t border-white/10">
                               <p className="text-white/60 text-xs">
-                                {yearTotal >= 1000 ? '🌟 Amazing year!' : 
-                                 yearTotal >= 500 ? '💫 Great impact!' : 
-                                 yearCount >= 5 ? '❤️ Consistent supporter!' : 
-                                 '🎯 Making a difference!'}
+                                {yearTotal >= 1000 ? '🌟 Amazing year!' :
+                                  yearTotal >= 500 ? '💫 Great impact!' :
+                                    yearCount >= 5 ? '❤️ Consistent supporter!' :
+                                      '🎯 Making a difference!'}
                               </p>
                             </div>
                           </div>
@@ -425,7 +460,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <button 
+                  <button
                     onClick={onDonateClick}
                     className="bg-orange-500/80 hover:bg-orange-600/90 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium"
                   >
@@ -499,7 +534,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
                           <div>
                             <p className="text-white font-medium text-lg">${donation.amount}</p>
                             <p className="text-white/60">{donation.type} donation</p>
-                            <p className="text-white/50 text-sm">{donation.date}</p>
+                            <p className="text-white/50 text-sm">{donation.createdAt?.split('T')[0]}</p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -594,7 +629,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick }) => {
 DonorDashboard.propTypes = {
   user: PropTypes.object.isRequired,
   onLogout: PropTypes.func.isRequired,
-  onDonateClick: PropTypes.func.isRequired
+  onDonateClick: PropTypes.func.isRequired,
+  refreshKey: PropTypes.number.isRequired
 }
 
 export default DonorDashboard

@@ -324,26 +324,26 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                       <h3 className="text-xl font-bold text-white">Your Impact Insights</h3>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-white/5 rounded-lg p-4">
+                      {/* Donor Rank */}
+                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">🏆</div>
                         <div className="text-white/60 text-sm mb-1">Donor Rank</div>
                         <div className="text-white font-bold text-lg">Top {100 - percentile}%</div>
                       </div>
-                      <div className="bg-white/5 rounded-lg p-4">
+                      {/* Year Growth */}
+                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">📈</div>
                         <div className="text-white/60 text-sm mb-1">Year Growth</div>
-                        <div className="text-white font-bold text-lg">
-                          {growthPercent > 0 ? '+' : ''}{growthPercent}%
-                        </div>
+                        <div className="text-white font-bold text-lg">{growthPercent > 0 ? '+' : ''}{growthPercent}%</div>
                       </div>
-                      <div className="bg-white/5 rounded-lg p-4">
+                      {/* To Goal */}
+                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">🎯</div>
                         <div className="text-white/60 text-sm mb-1">To Goal</div>
-                        <div className="text-white font-bold text-lg">
-                          {Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls
-                        </div>
+                        <div className="text-white font-bold text-lg">{Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls</div>
                       </div>
-                      <div className="bg-white/5 rounded-lg p-4">
+                      {/* This Year Donations */}
+                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">⭐</div>
                         <div className="text-white/60 text-sm mb-1">This Year</div>
                         <div className="text-white font-bold text-lg">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>

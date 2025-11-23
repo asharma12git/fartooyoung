@@ -27,7 +27,11 @@ exports.handler = async (event) => {
         // Verify JWT token
         const authHeader = event.headers?.Authorization || event.headers?.authorization;
 
+        console.log('Auth header:', authHeader ? 'Present' : 'Missing');
+        console.log('Headers:', JSON.stringify(event.headers));
+
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            console.log('Authentication failed: No valid auth header');
             return {
                 statusCode: 401,
                 headers: { 'Access-Control-Allow-Origin': '*' },
@@ -36,11 +40,14 @@ exports.handler = async (event) => {
         }
 
         const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+        console.log('Token extracted, length:', token.length);
 
         let decoded;
         try {
             decoded = jwt.verify(token, JWT_SECRET);
+            console.log('Token verified successfully for:', decoded.email);
         } catch (err) {
+            console.log('Token verification failed:', err.message);
             return {
                 statusCode: 401,
                 headers: { 'Access-Control-Allow-Origin': '*' },

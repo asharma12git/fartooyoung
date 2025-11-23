@@ -7,6 +7,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [userDonations, setUserDonations] = useState([])
   const [loading, setLoading] = useState(true)
+  const [calculatorAmount, setCalculatorAmount] = useState(100)
   const navigate = useNavigate()
 
   // Redirect if not logged in
@@ -121,39 +122,82 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
             }
           `}</style>
 
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <h2 className="text-4xl font-medium text-orange-400 mb-4">
-              {(() => {
-                const welcomeMessages = [
-                  `Hello, ${user.name}!`,
-                  `Great to see you, ${user.name}!`,
-                  `Welcome back, ${user.name}!`,
-                  `So glad you're here, ${user.name}!`,
-                  `Thank you for returning, ${user.name}!`,
-                  `Wonderful to see you again, ${user.name}!`,
-                  `Your impact continues, ${user.name}!`,
-                  `Ready to change lives, ${user.name}?`,
-                  `Hope is here, ${user.name}!`,
-                  `Making a difference, ${user.name}!`
-                ]
+          {/* Hero Header with Impact Summary */}
+          <div className="mb-8">
+            {/* Welcome Message */}
+            <div className="text-center mb-6">
+              <h2 className="text-4xl font-medium text-orange-400 mb-4">
+                {(() => {
+                  const welcomeMessages = [
+                    `Hello, ${user.name}!`,
+                    `Great to see you, ${user.name}!`,
+                    `Welcome back, ${user.name}!`,
+                    `So glad you're here, ${user.name}!`,
+                    `Thank you for returning, ${user.name}!`,
+                    `Wonderful to see you again, ${user.name}!`,
+                    `Your impact continues, ${user.name}!`,
+                    `Ready to change lives, ${user.name}?`,
+                    `Hope is here, ${user.name}!`,
+                    `Making a difference, ${user.name}!`
+                  ]
 
-                let loginTime = localStorage.getItem('loginTimestamp')
-                if (!loginTime) {
-                  loginTime = Date.now()
-                  localStorage.setItem('loginTimestamp', loginTime)
-                }
-                const messageIndex = Math.floor(parseInt(loginTime) / 1000) % welcomeMessages.length
+                  let loginTime = localStorage.getItem('loginTimestamp')
+                  if (!loginTime) {
+                    loginTime = Date.now()
+                    localStorage.setItem('loginTimestamp', loginTime)
+                  }
+                  const messageIndex = Math.floor(parseInt(loginTime) / 1000) % welcomeMessages.length
 
-                return welcomeMessages[messageIndex]
-              })()}
-            </h2>
-            <div className="flex justify-center mb-4">
-              <img src={logo} alt="Far Too Young" className="h-36 w-auto opacity-90" />
+                  return welcomeMessages[messageIndex]
+                })()}
+              </h2>
+              <div className="flex justify-center mb-4">
+                <img src={logo} alt="Far Too Young" className="h-32 w-auto opacity-90" />
+              </div>
             </div>
-            <p className="text-white/80 text-base italic max-w-2xl mx-auto">
-              "Every donation creates ripples of hope across the world"
-            </p>
+
+            {/* Hero Impact Banner - Only show if user has donations */}
+            {userDonations.length > 0 && (
+              <div className="bg-gradient-to-r from-orange-500/30 via-orange-400/20 to-purple-500/30 backdrop-blur-sm border border-orange-400/50 rounded-xl p-8 text-center">
+                <p className="text-white/90 text-lg mb-4 italic">
+                  "Every donation creates ripples of hope across the world"
+                </p>
+                <div className="flex justify-center items-center space-x-8">
+                  <div>
+                    <div className="text-5xl font-bold text-white mb-1">{Math.floor(userStats.lifetimeTotal / 50)}</div>
+                    <div className="text-white/70 text-sm">Girls Educated</div>
+                  </div>
+                  <div className="h-12 w-px bg-white/30"></div>
+                  <div>
+                    <div className="text-5xl font-bold text-orange-300 mb-1">${userStats.lifetimeTotal}</div>
+                    <div className="text-white/70 text-sm">Total Impact</div>
+                  </div>
+                  <div className="h-12 w-px bg-white/30"></div>
+                  <div>
+                    <div className="text-5xl font-bold text-green-400 mb-1">{userStats.totalDonations}</div>
+                    <div className="text-white/70 text-sm">Donations</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* First-time donor message */}
+            {userDonations.length === 0 && (
+              <div className="bg-gradient-to-r from-orange-500/20 to-orange-400/10 backdrop-blur-sm border border-orange-400/40 rounded-xl p-8 text-center">
+                <p className="text-white/90 text-xl mb-4">
+                  Ready to make your first impact?
+                </p>
+                <p className="text-white/70 text-base mb-6">
+                  Every donation helps girls around the world access education and build brighter futures.
+                </p>
+                <button
+                  onClick={() => onDonateClick()}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-bold text-lg transition-all transform hover:scale-105"
+                >
+                  Make Your First Donation
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Tab Navigation */}
@@ -182,7 +226,134 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
             <div className="space-y-8">
-              {/* Impact Stats Cards */}
+              {/* Smart Donation Suggestion - AI Feature #1 */}
+              {(() => {
+                if (userDonations.length === 0) return null
+
+                // Calculate smart suggestion
+                const avgDonation = userStats.averageDonation
+                const suggestedAmount = Math.round(avgDonation * 1.2) // 20% higher
+                const currentYear = new Date().getFullYear()
+                const yearDonations = userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString()))
+                const yearTotal = yearDonations.reduce((sum, d) => sum + d.amount, 0)
+                const girlsEducatedSoFar = Math.floor(yearTotal / 50)
+                const goalGirls = 10
+                const progressPercent = Math.min((girlsEducatedSoFar / goalGirls) * 100, 100)
+
+                return (
+                  <div className="bg-gradient-to-r from-orange-500/20 to-orange-400/10 backdrop-blur-sm border border-orange-400/40 rounded-lg p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <span className="text-2xl">🎯</span>
+                          <h3 className="text-xl font-bold text-white">Smart Suggestion for You</h3>
+                        </div>
+                        <p className="text-white/90 text-lg mb-4">
+                          {user.name}, based on your giving pattern, a <span className="font-bold text-orange-300">${suggestedAmount}</span> donation this month would help you reach your goal of educating {goalGirls} girls this year. You're <span className="font-bold text-green-400">{Math.round(progressPercent)}%</span> there!
+                        </p>
+                        <div className="flex items-center space-x-3">
+                          <button
+                            onClick={() => onDonateClick()}
+                            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
+                          >
+                            Donate ${suggestedAmount} Now
+                          </button>
+                          <button className="text-white/60 hover:text-white text-sm transition-colors">
+                            Maybe Later
+                          </button>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <div className="w-24 h-24 relative">
+                          <svg className="transform -rotate-90 w-24 h-24">
+                            <circle
+                              cx="48"
+                              cy="48"
+                              r="40"
+                              stroke="rgba(255,255,255,0.1)"
+                              strokeWidth="8"
+                              fill="none"
+                            />
+                            <circle
+                              cx="48"
+                              cy="48"
+                              r="40"
+                              stroke="#10b981"
+                              strokeWidth="8"
+                              fill="none"
+                              strokeDasharray={`${progressPercent * 2.51} 251`}
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-white font-bold text-lg">{Math.round(progressPercent)}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {/* Impact Insights - AI Feature #2 */}
+              {(() => {
+                if (userDonations.length === 0) return null
+
+                // Calculate insights
+                const totalDonors = 100 // In production, get from backend
+                const avgAllDonors = 150 // In production, get from backend
+                const percentile = userStats.lifetimeTotal > avgAllDonors ?
+                  Math.min(Math.round((userStats.lifetimeTotal / avgAllDonors) * 50) + 50, 95) :
+                  Math.round((userStats.lifetimeTotal / avgAllDonors) * 50)
+
+                const currentYear = new Date().getFullYear()
+                const lastYear = currentYear - 1
+                const thisYearTotal = userDonations
+                  .filter(d => d.createdAt?.startsWith(currentYear.toString()))
+                  .reduce((sum, d) => sum + d.amount, 0)
+                const lastYearTotal = userDonations
+                  .filter(d => d.createdAt?.startsWith(lastYear.toString()))
+                  .reduce((sum, d) => sum + d.amount, 0)
+                const growthPercent = lastYearTotal > 0 ?
+                  Math.round(((thisYearTotal - lastYearTotal) / lastYearTotal) * 100) : 0
+
+                return (
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <span className="text-2xl">📊</span>
+                      <h3 className="text-xl font-bold text-white">Your Impact Insights</h3>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white/5 rounded-lg p-4">
+                        <div className="text-3xl mb-2">🏆</div>
+                        <div className="text-white/60 text-sm mb-1">Donor Rank</div>
+                        <div className="text-white font-bold text-lg">Top {100 - percentile}%</div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-4">
+                        <div className="text-3xl mb-2">📈</div>
+                        <div className="text-white/60 text-sm mb-1">Year Growth</div>
+                        <div className="text-white font-bold text-lg">
+                          {growthPercent > 0 ? '+' : ''}{growthPercent}%
+                        </div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-4">
+                        <div className="text-3xl mb-2">🎯</div>
+                        <div className="text-white/60 text-sm mb-1">To Goal</div>
+                        <div className="text-white font-bold text-lg">
+                          {Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls
+                        </div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-4">
+                        <div className="text-3xl mb-2">⭐</div>
+                        <div className="text-white/60 text-sm mb-1">This Year</div>
+                        <div className="text-white font-bold text-lg">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {/* Impact Stats Cards - Existing */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -233,6 +404,86 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                   </div>
                 </div>
               </div>
+
+              {/* Impact Calculator - AI Feature #3 */}
+              {(() => {
+                const calculateImpact = (amount) => {
+                  return {
+                    girlsEducated: Math.floor(amount / 50),
+                    schoolKits: Math.floor(amount / 25),
+                    teacherTraining: Math.floor(amount / 200),
+                    schoolsSupported: Math.floor(amount / 500)
+                  }
+                }
+
+                const impact = calculateImpact(calculatorAmount)
+
+                return (
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                    <div className="flex items-center space-x-2 mb-6">
+                      <span className="text-2xl">🔮</span>
+                      <h3 className="text-xl font-bold text-white">Impact Calculator</h3>
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="text-white/80 text-sm font-medium">Your Donation Amount</label>
+                        <div className="text-2xl font-bold text-orange-400">${calculatorAmount}</div>
+                      </div>
+                      <input
+                        type="range"
+                        min="25"
+                        max="500"
+                        step="25"
+                        value={calculatorAmount}
+                        onChange={(e) => setCalculatorAmount(parseInt(e.target.value))}
+                        className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                        style={{
+                          background: `linear-gradient(to right, #f97316 0%, #f97316 ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) 100%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-white/50 text-xs mt-1">
+                        <span>$25</span>
+                        <span>$500</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30">
+                        <div className="text-3xl mb-2">👧</div>
+                        <div className="text-white font-bold text-2xl">{impact.girlsEducated}</div>
+                        <div className="text-white/70 text-sm">Girls Educated</div>
+                        <div className="text-white/50 text-xs mt-1">(1 year)</div>
+                      </div>
+                      <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-4 border border-blue-400/30">
+                        <div className="text-3xl mb-2">📚</div>
+                        <div className="text-white font-bold text-2xl">{impact.schoolKits}</div>
+                        <div className="text-white/70 text-sm">School Kits</div>
+                        <div className="text-white/50 text-xs mt-1">(supplies)</div>
+                      </div>
+                      <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-4 border border-green-400/30">
+                        <div className="text-3xl mb-2">👩‍🏫</div>
+                        <div className="text-white font-bold text-2xl">{impact.teacherTraining}</div>
+                        <div className="text-white/70 text-sm">Teacher Training</div>
+                        <div className="text-white/50 text-xs mt-1">(sessions)</div>
+                      </div>
+                      <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-lg p-4 border border-purple-400/30">
+                        <div className="text-3xl mb-2">🏫</div>
+                        <div className="text-white font-bold text-2xl">{impact.schoolsSupported}</div>
+                        <div className="text-white/70 text-sm">Schools Supported</div>
+                        <div className="text-white/50 text-xs mt-1">(monthly)</div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => onDonateClick()}
+                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-md font-bold transition-all transform hover:scale-105"
+                    >
+                      Donate ${calculatorAmount} Now
+                    </button>
+                  </div>
+                )
+              })()}
 
               {/* Progress Towards Goals */}
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">

@@ -29,7 +29,7 @@ const ProtectRightsPanel = ({ image, title, description }) => {
       <div className="relative">
         {/* Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
-        
+
         {/* Content Container */}
         <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl shadow-lg border border-orange-100/30 overflow-hidden transition-transform duration-300 group-hover:scale-105">
           <div className="aspect-video w-full overflow-hidden">
@@ -38,15 +38,15 @@ const ProtectRightsPanel = ({ image, title, description }) => {
           <div className="p-8">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">{title}</h3>
             <div className="text-center">
-              <button 
+              <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
-                <svg 
+                <svg
                   className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -79,7 +79,7 @@ const ProtectRights = () => {
     },
     {
       image: protectRightsImage3,
-      title: "Why Child Marriage Happens", 
+      title: "Why Child Marriage Happens",
       description: "Child marriage is rooted in gender inequality as girls are treated inferior to male children. Girls are denied their human rights such as access to education and health services. Laws protecting girls aren't enforced.\n\nStigma against premarital sex and unwanted pregnancies which is believed to bring shame and dishonor to the family forces girls to marry when they reach puberty. Poverty and insecurities lead families to marry girls early as it reduces financial burden on them.\n\nMarrying off girls early also means girls' families pay less dowry and the grooms' families bring in unpaid labor and servitude. Young girls are considered to be obedient and more hardworking. Old traditional practices like gauna, prevalent in Bihar, Uttar Pradesh and other states in India and the terai in Nepal force girls to marry as children."
     }
   ]
@@ -102,7 +102,7 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
           <div className="relative h-full">
             {/* Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
-            
+
             {/* Content Container */}
             <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl h-full shadow-lg border border-slate-100/30">
               <div className="h-full flex flex-col items-center justify-start pt-8 p-8">
@@ -117,22 +117,22 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
             </div>
           </div>
         </div>
-        
+
         {/* Back */}
         <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-lg border border-slate-100/30 overflow-hidden">
           <div className="relative h-full">
             {/* Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
-            
+
             {/* Subtle Logo Watermark */}
-            <div 
+            <div
               className="absolute inset-0 bg-center bg-no-repeat rounded-3xl opacity-90"
-              style={{ 
+              style={{
                 backgroundImage: `url(${logoWatermark})`,
                 backgroundSize: '500px 500px'
               }}
             ></div>
-            
+
             {/* Content Container */}
             <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl h-full">
               <div className="h-full flex items-center justify-center p-8">
@@ -187,9 +187,9 @@ const WhereWeWork = () => {
 
 const SDGCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
-  
+
   const sdgImages = [sdg1, sdg2, sdg3, sdg4, sdg5, sdg8, sdg10, sdg13, sdg16]
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex(prev => prev + 1)
@@ -201,11 +201,11 @@ const SDGCarousel = () => {
     <div className="relative">
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
-      
+
       {/* Content Container */}
       <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-amber-100/30 overflow-hidden">
         <div className="overflow-hidden">
-          <div 
+          <div
             className="flex transition-transform duration-700 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * (100 / 6)}%)` }}
             onTransitionEnd={() => {
@@ -218,27 +218,26 @@ const SDGCarousel = () => {
               <div key={index} className="flex-shrink-0 w-1/6 px-3">
                 <div className="group relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <img 
-                    src={image} 
-                    alt={`SDG ${index + 1}`} 
-                    className="w-full h-auto rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform group-hover:scale-105" 
+                  <img
+                    src={image}
+                    alt={`SDG ${index + 1}`}
+                    className="w-full h-auto rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform group-hover:scale-105"
                   />
                 </div>
               </div>
             ))}
           </div>
         </div>
-        
+
         {/* Progress Indicators */}
         <div className="flex justify-center mt-6 space-x-2">
           {sdgImages.map((_, index) => (
             <div
               key={index}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex % sdgImages.length 
-                  ? 'w-8 bg-orange-500' 
-                  : 'w-2 bg-gray-300'
-              }`}
+              className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex % sdgImages.length
+                ? 'w-8 bg-orange-500'
+                : 'w-2 bg-gray-300'
+                }`}
             />
           ))}
         </div>
@@ -257,7 +256,7 @@ const StatisticsGrid = () => {
     <div className="relative">
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
-      
+
       {/* Content Container */}
       <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-lg border border-orange-100/30">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -314,9 +313,9 @@ const ChildMarriage = () => {
       {/* Hero Section with Background Image */}
       <div className="relative h-screen overflow-hidden">
         {/* Background Image with Filters */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
+          style={{
             backgroundImage: `url(${heroImage})`,
             filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.55) contrast(1.0)'
           }}
@@ -326,25 +325,25 @@ const ChildMarriage = () => {
           <h2 className="text-4xl font-medium mb-8" style={{ color: '#f09819' }}>
             Restoring Hopes, Restoring Smiles ®
           </h2>
-          
+
           <p className="text-small text-white mb-8 leading-relaxed max-w-3xl mx-auto">
-            Far Too Young envisions a society free from child, underage and forced marriages - 
+            Far Too Young envisions a society free from child, underage and forced marriages -
             a society where girls and women feel valued and reach their full potential.
           </p>
-          
+
           <p className="text-small text-white mb-12">
             Please Support Us.
           </p>
-          
+
           <div className="text-center mb-8">
-            <button 
+            <button
               onClick={() => setShowDonationModal(true)}
               className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span>DONATE</span>
             </button>
           </div>
-          
+
           <div className="text-xs text-white/80 italic text-center space-y-1">
             <p>Tax ID: 87-3583633</p>
             <p>Far Too Young is a United States 501(c)(3) Non-Profit Organization.</p>
@@ -361,30 +360,30 @@ const ChildMarriage = () => {
             <div className="w-full h-0.5 bg-black mb-1"></div>
             <div className="w-full h-0.5 bg-black"></div>
           </div>
-          
+
           {/* Content Grid */}
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left - Title and Description */}
             <div>
               <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">A CHILD BRIDE</h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-6 text-justify">
-                Gender discrimination is embedded in 
+                Gender discrimination is embedded in
                 the legal system and social structures and that along with poverty is the root cause of child marriages. Every year 4 million girls under the age of 15 are victims of child, underage and forced marriages in South Asia. This illegal practice robs them of their rights to education, their reproductive rights and consensual marriage.
               </p>
-              
+
               {/* Subtle divider line */}
               <div className="w-full h-px bg-gray-400 mb-6"></div>
-              
+
               <p className="text-lg text-gray-700 leading-relaxed text-justify">
                 Once married as children, the child brides are victims of lifelong servitude, domestic violence, pregnancy complications and death through early childbirth. Child brides are at risk of being trafficked and sold. Child marriage reinforces the gendered nature of poverty, with limited education and skills, bringing down the potential of the girl, her family, her community and her country. These hinder a girl throughout her adult life and into the next generation.
               </p>
             </div>
-            
+
             {/* Right - Image */}
             <div className="h-full">
-              <img 
-                src={childBrideImage} 
-                alt="Child bride awareness" 
+              <img
+                src={childBrideImage}
+                alt="Child bride awareness"
                 className="w-full h-full object-cover rounded-lg shadow-lg"
               />
             </div>
@@ -397,14 +396,14 @@ const ChildMarriage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
           <div className="w-full h-px bg-black mb-8"></div>
-          
+
           {/* Title */}
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">HEAR RANJU, BINITA & HEMA</h2>
-          
+
           {/* YouTube Video */}
           <div className="relative">
             {/* iPad Frame */}
-            <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+            <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300 bg-gradient-to-r from-orange-200/20 via-purple-200/20 to-purple-300/20">
               {/* Screen */}
               <div className="relative bg-black rounded-[1.5rem] overflow-hidden shadow-inner">
                 {/* Video Container */}
@@ -419,7 +418,7 @@ const ChildMarriage = () => {
                   ></iframe>
                 </div>
               </div>
-              
+
               {/* Home Button */}
               <div className="flex justify-center mt-6">
                 <div className="w-12 h-12 bg-slate-200 rounded-full shadow-inner border-2 border-slate-400"></div>
@@ -434,12 +433,12 @@ const ChildMarriage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
           <div className="w-full h-px bg-black mb-8"></div>
-          
+
           {/* Title */}
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">
             SOUTH ASIA HAS WORLD'S HIGHEST NUMBER OF CHILD BRIDES
           </h2>
-          
+
           {/* Statistics Grid */}
           <StatisticsGrid />
         </div>
@@ -450,13 +449,13 @@ const ChildMarriage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
           <div className="w-full h-px bg-black mb-8"></div>
-          
+
           {/* Title */}
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">WHERE WE WORK</h2>
-          
+
           {/* Flip Cards Grid */}
           <WhereWeWork />
-          
+
         </div>
       </div>
 
@@ -465,10 +464,10 @@ const ChildMarriage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
           <div className="w-full h-px bg-black mb-8"></div>
-          
+
           {/* Title */}
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">PROTECT THE RIGHTS OF THE GIRL CHILD</h2>
-          
+
           {/* Panels Grid */}
           <ProtectRights />
         </div>
@@ -479,13 +478,13 @@ const ChildMarriage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
           <div className="w-full h-px bg-black mb-8"></div>
-          
+
           {/* Title */}
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">IF WE DO NOT END CHILD MARRIAGE, NINE SUSTAINABLE DEVELOPMENT GOALS CANNOT BE MET</h2>
-          
+
           {/* SDG Carousel */}
           <SDGCarousel />
-          
+
         </div>
       </div>
 

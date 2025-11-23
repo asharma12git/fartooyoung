@@ -74,7 +74,7 @@ const WhatWeDo = () => {
   const [showDonationModal, setShowDonationModal] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [zoomedImage, setZoomedImage] = useState(null)
-  
+
   // Counter animation component
   const Counter = ({ end, suffix = '', duration = 2000 }) => {
     const [count, setCount] = useState(0)
@@ -105,14 +105,14 @@ const WhatWeDo = () => {
       const animate = (currentTime) => {
         if (!startTime) startTime = currentTime
         const progress = Math.min((currentTime - startTime) / duration, 1)
-        
+
         setCount(Math.floor(progress * end))
-        
+
         if (progress < 1) {
           requestAnimationFrame(animate)
         }
       }
-      
+
       requestAnimationFrame(animate)
     }, [isVisible, end, duration])
 
@@ -122,7 +122,7 @@ const WhatWeDo = () => {
       </div>
     )
   }
-  
+
   // Carousel images array
   const imageArray = [
     { src: img0709, name: 'Community Engagement' },
@@ -184,13 +184,13 @@ const WhatWeDo = () => {
     { src: photo7, name: 'Youth Engagement' },
     { src: photo8, name: 'Empowerment Programs' }
   ]
-  
+
   const totalSlides = Math.ceil(imageArray.length / 2)
-  
+
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides)
   }
-  
+
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
   }
@@ -200,7 +200,7 @@ const WhatWeDo = () => {
     const interval = setInterval(() => {
       nextSlide()
     }, 5000)
-    
+
     return () => clearInterval(interval)
   }, [totalSlides])
   return (
@@ -220,15 +220,15 @@ const WhatWeDo = () => {
       {/* Hero Section with Background Image */}
       <div className="relative h-screen overflow-hidden">
         {/* Background Image with Filters */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
+          style={{
             backgroundImage: `url(${heroImage})`,
             filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.6) contrast(1.0)',
             backgroundPosition: 'center 30%'
           }}
         ></div>
-        
+
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-end items-start h-full pb-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -246,57 +246,57 @@ const WhatWeDo = () => {
             <div className="w-full h-0.5 bg-black mb-1"></div>
             <div className="w-full h-0.5 bg-black"></div>
           </div>
-          
+
           <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">FAR TOO YOUNG</h2>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="border border-gray-300 rounded-lg p-4 shadow-sm h-full flex flex-col justify-start">
-              <div className="text-lg leading-snug text-gray-700 italic" 
-                   style={{
-                     fontFamily: 'Dancing Script, cursive',
-                     letterSpacing: '0.5px',
-                     lineHeight: '1.4'
-                   }}>
+              <div className="text-lg leading-snug text-gray-700 italic"
+                style={{
+                  fontFamily: 'Dancing Script, cursive',
+                  letterSpacing: '0.5px',
+                  lineHeight: '1.4'
+                }}>
                 <p className="mb-3">I was far too young to be a bride,<br />
-                Can't you see, can't you see,<br />
-                I am still a child?<br />
-                You sent me away to be a wife<br />
-                To a man unknown to spend my life.</p>
-                
+                  Can't you see, can't you see,<br />
+                  I am still a child?<br />
+                  You sent me away to be a wife<br />
+                  To a man unknown to spend my life.</p>
+
                 <p className="mb-3">It was time for learning and for play,<br />
-                Time to do the things, my way.<br />
-                So much more, I had to grow,<br />
-                Why did you have to let me go?</p>
-                
+                  Time to do the things, my way.<br />
+                  So much more, I had to grow,<br />
+                  Why did you have to let me go?</p>
+
                 <p className="mb-3">Mother, father, what despair<br />
-                Turned me from your loving care,<br />
-                Worked and threatened, torn apart,<br />
-                Pain and sorrow broke my heart.</p>
-                
+                  Turned me from your loving care,<br />
+                  Worked and threatened, torn apart,<br />
+                  Pain and sorrow broke my heart.</p>
+
                 <p className="mb-3">I was far too young to bear a child<br />
-                So crushed, so weak, I nearly died.</p>
-                
+                  So crushed, so weak, I nearly died.</p>
+
                 <p className="mb-4">I sing this song for all to hear,<br />
-                I ask for help from far and near,<br />
-                Please keep us children safe,<br />
-                Please stop this curse,<br />
-                Before this gets much too worse...</p>
+                  I ask for help from far and near,<br />
+                  Please keep us children safe,<br />
+                  Please stop this curse,<br />
+                  Before this gets much too worse...</p>
               </div>
             </div>
-            
+
             <div className="relative">
-              <div className="rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+              <div className="rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
                 <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                  <img 
-                    src={joinMovementImage} 
-                    alt="Join the Movement" 
+                  <img
+                    src={joinMovementImage}
+                    alt="Join the Movement"
                     className="w-full h-auto rounded-lg"
                   />
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* SoundCloud Player Section */}
           <div className="mt-12">
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-200">
@@ -306,18 +306,18 @@ const WhatWeDo = () => {
               </div>
               <div className="w-full">
                 {/* SoundCloud embed iframe will go here */}
-                <iframe 
-                  width="100%" 
-                  height="166" 
-                  scrolling="no" 
-                  frameBorder="no" 
+                <iframe
+                  width="100%"
+                  height="166"
+                  scrolling="no"
+                  frameBorder="no"
                   allow="autoplay"
                   src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/far-too-young/far-too-young-new-final-version-effects-will-be-added&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
                   className="rounded-lg"
                 >
                 </iframe>
               </div>
-              
+
               {/* Donate Button */}
               <div className="mt-6">
                 <button
@@ -341,7 +341,7 @@ const WhatWeDo = () => {
               Helping reduce and eventually eradicate child marriage and save the child brides from harm.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* First Row */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards] border border-orange-200">
@@ -349,44 +349,44 @@ const WhatWeDo = () => {
               <h3 className="text-xl font-medium text-gray-900 mb-3">Education</h3>
               <p className="text-gray-600 text-sm">Ensuring educational facilities to every girl. Providing scholarships to stay in schools.</p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">02</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Justice</h3>
               <p className="text-gray-600 text-sm">Assisting local authorities to implement the law and reiterate it within communities.</p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">03</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Engage</h3>
               <p className="text-gray-600 text-sm">Engaging with and supporting community based organizations in their work to bring about changes.</p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">04</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Mobilize</h3>
               <p className="text-gray-600 text-sm">Involving men and mobilizing communities and families to change their perception and keep children safe and women free from violence and abuse.</p>
             </div>
-            
+
             {/* Second Row */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">05</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Awareness</h3>
               <p className="text-gray-600 text-sm">Increasing awareness and advocacy programs at local, national and international levels.</p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">06</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Empowerment</h3>
               <p className="text-gray-600 text-sm">Empowering girls and women and enabling them to make their own choices.</p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">07</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Counselling</h3>
               <p className="text-gray-600 text-sm">Counselling child brides and helping to break the vicious cycle.</p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_4s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">08</div>
               <h3 className="text-xl font-medium text-gray-900 mb-3">Poverty Reduction</h3>
@@ -405,9 +405,9 @@ const WhatWeDo = () => {
               Locations across South Asia where we work to end child marriage.
             </p>
           </div>
-          
+
           {/* Map Card */}
-          <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+          <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-orange-200/20 via-purple-200/20 to-purple-300/20">
             <div className="relative bg-white rounded-[1.5rem] overflow-hidden shadow-inner">
               <iframe
                 src="https://www.google.com/maps/d/u/0/embed?mid=1ymaVHjK-zm-DYGNl6btbiPcJA9JJ-Nc&ehbc=2E312F&noprof=1"
@@ -433,37 +433,37 @@ const WhatWeDo = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Doti
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Banke
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Nawalpur District
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Gorkha
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Rautahat
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-blue-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Dhanusa
                 </div>
@@ -479,25 +479,25 @@ const WhatWeDo = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Nilphamari
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Gazipur
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Dhaka
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2" style={{ fill: '#c2195b' }} viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Rangpur
                 </div>
@@ -513,25 +513,25 @@ const WhatWeDo = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Uttar Pradesh
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Jharkhand
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Bihar
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <svg className="w-3 h-3 mr-2 fill-orange-500" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                   Chhattisgarh
                 </div>
@@ -545,20 +545,20 @@ const WhatWeDo = () => {
               <h3 className="text-3xl font-medium text-gray-900 mb-4">Our Work in Action</h3>
               <p className="text-lg text-gray-600">Documenting our impact across communities.</p>
             </div>
-            
+
             {/* Carousel Container */}
-            <div className="relative p-6 rounded-[2rem] shadow-2xl border border-gray-300" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+            <div className="relative p-6 rounded-[2rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).map((image, index) => (
                   <div key={index} className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
-                    <img 
-                      src={image.src} 
+                    <img
+                      src={image.src}
                       alt={image.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
                 ))}
-                
+
                 {/* Fill empty slots if odd number of images */}
                 {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).length === 1 && (
                   <div className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
@@ -568,11 +568,11 @@ const WhatWeDo = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* Carousel Controls */}
               {totalSlides > 1 && (
                 <div className="flex justify-center mt-6 space-x-4">
-                  <button 
+                  <button
                     onClick={prevSlide}
                     className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
                   >
@@ -580,13 +580,13 @@ const WhatWeDo = () => {
                   </button>
                   <div className="flex space-x-2 items-center">
                     {Array.from({ length: totalSlides }, (_, i) => (
-                      <div 
+                      <div
                         key={i}
                         className={`w-2 h-2 rounded-full ${i === currentSlide ? 'bg-orange-500' : 'bg-gray-300'}`}
                       ></div>
                     ))}
                   </div>
-                  <button 
+                  <button
                     onClick={nextSlide}
                     className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
                   >
@@ -597,7 +597,7 @@ const WhatWeDo = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Donate Button */}
         <div className="text-center mt-12">
           <button
@@ -624,21 +624,21 @@ const WhatWeDo = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative space-y-3">
                 {/* First Image - Ham Radio */}
-                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
                   <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                    <img 
-                      src={storyImage1b} 
-                      alt="Father Marshal D Moran with Ham Radio" 
+                    <img
+                      src={storyImage1b}
+                      alt="Father Marshal D Moran with Ham Radio"
                       className="w-full h-full object-cover"
                     />
                   </div>
                 </div>
                 {/* Second Image - Portrait */}
-                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
                   <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                    <img 
-                      src={storyImage1a} 
-                      alt="Father Marshall D. Moran" 
+                    <img
+                      src={storyImage1a}
+                      alt="Father Marshall D. Moran"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -664,12 +664,12 @@ const WhatWeDo = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1 h-full flex flex-col justify-start">
                 <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
-                <p className="text-base leading-snug text-gray-600 italic mb-4" 
-                   style={{
-                     fontFamily: 'Dancing Script, cursive',
-                     letterSpacing: '0.5px',
-                     lineHeight: '1.4'
-                   }}>
+                <p className="text-base leading-snug text-gray-600 italic mb-4"
+                  style={{
+                    fontFamily: 'Dancing Script, cursive',
+                    letterSpacing: '0.5px',
+                    lineHeight: '1.4'
+                  }}>
                   'In every classroom, in every community, in every country of the world'
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
@@ -680,11 +680,11 @@ const WhatWeDo = () => {
                 </p>
               </div>
               <div className="relative lg:order-2">
-                <div className="aspect-[4/5] rounded-lg shadow-xl border-2 border-gray-300 p-2" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+                <div className="aspect-[4/5] rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
                   <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                    <img 
-                      src={storyImage2} 
-                      alt="Far Too Young - The Film Collage" 
+                    <img
+                      src={storyImage2}
+                      alt="Far Too Young - The Film Collage"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -699,41 +699,41 @@ const WhatWeDo = () => {
               <div className="relative">
                 <div className="grid grid-cols-2 gap-3">
                   {/* Top Left Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage1)}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20 cursor-pointer" onClick={() => setZoomedImage(taraImage1)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      <img 
-                        src={taraImage1} 
-                        alt="Tara Campaign Comic 1" 
+                      <img
+                        src={taraImage1}
+                        alt="Tara Campaign Comic 1"
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
                   {/* Top Right Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage2)}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20 cursor-pointer" onClick={() => setZoomedImage(taraImage2)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      <img 
-                        src={taraImage2} 
-                        alt="Tara Campaign Comic 2" 
+                      <img
+                        src={taraImage2}
+                        alt="Tara Campaign Comic 2"
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
                   {/* Bottom Left Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage3)}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20 cursor-pointer" onClick={() => setZoomedImage(taraImage3)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      <img 
-                        src={taraImage3} 
-                        alt="Tara Campaign Comic 3" 
+                      <img
+                        src={taraImage3}
+                        alt="Tara Campaign Comic 3"
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
                   {/* Bottom Right Image */}
-                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(244, 208, 63, 0.15) 100%), linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }} onClick={() => setZoomedImage(taraImage4)}>
+                  <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20 cursor-pointer" onClick={() => setZoomedImage(taraImage4)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
-                      <img 
-                        src={taraImage4} 
-                        alt="Tara Campaign Comic 4" 
+                      <img
+                        src={taraImage4}
+                        alt="Tara Campaign Comic 4"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -800,7 +800,7 @@ const WhatWeDo = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Donate Button */}
         <div className="text-center mt-12">
           <button
@@ -816,12 +816,12 @@ const WhatWeDo = () => {
       {zoomedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={() => setZoomedImage(null)}>
           <div className="relative max-w-4xl max-h-screen p-4">
-            <img 
-              src={zoomedImage} 
-              alt="Zoomed Tara Campaign Comic" 
+            <img
+              src={zoomedImage}
+              alt="Zoomed Tara Campaign Comic"
               className="w-full h-full object-contain rounded-lg"
             />
-            <button 
+            <button
               onClick={() => setZoomedImage(null)}
               className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-800"
             >

@@ -1,151 +1,35 @@
-# Environment Switching Guide - Local Development vs AWS Production
-
-**Date**: November 20, 2025  
-**Purpose**: Complete guide for switching between local development and AWS production environments using AWS CodePipeline CI/CD
-
----
+# Environment Switching & AWS Deployment Guide
 
 ## Overview
+This guide covers AWS staging deployment and production deployment for the Far Too Young platform.
 
-The Far Too Young platform uses environment-based configuration to seamlessly switch between local development and AWS production without changing code. Production deployments are automated through AWS CodePipeline.
-
----
-
-## Environment Files Structure
-
-### **Local Development Files**
-```
-.env.local                    # Local development settings (NOT in git)
-├── NODE_ENV=development
-├── API_BASE_URL=http://localhost:3001
-├── REACT_APP_API_BASE_URL=http://localhost:3001
-├── DYNAMODB_ENDPOINT=http://localhost:8000
-├── JWT_SECRET=dev-secret-key
-└── AWS credentials for local DynamoDB
-```
-
-### **Production Reference File**
-```
-.env.production              # Template/reference only (in git)
-├── NODE_ENV=production
-├── API_BASE_URL=https://api.fartooyoung.org
-├── REACT_APP_API_BASE_URL=https://api.fartooyoung.org
-├── DYNAMODB_ENDPOINT=undefined (uses AWS DynamoDB)
-└── JWT_SECRET=prod-secret-from-aws-secrets
-```
+> **Note:** For local development setup and current project status, see [Development Progress Guide](../4-planning/development-progress.md)
 
 ---
 
-## CI/CD Architecture - AWS CodePipeline
+## AWS Staging Deployment Guide
 
-### **Complete AWS CI/CD Stack**
-```
-GitHub Repository → AWS CodePipeline → AWS CodeBuild → AWS Lambda/S3 Deployment
-```
+### Phase 1: Prepare Repository (10 minutes)
 
-**AWS Services Used:**
-- **AWS CodeCommit** or **GitHub Integration** - Source code repository
-- **AWS CodePipeline** - Orchestrates the entire CI/CD workflow
-- **AWS CodeBuild** - Builds and tests the application
-- **AWS CodeDeploy** - Deploys to Lambda functions and S3
-- **AWS CloudFormation/SAM** - Infrastructure as Code deployment
-
-### **Pipeline Stages**
-1. **Source Stage** - Triggered by git push to main branch
-2. **Build Stage** - CodeBuild compiles and tests code
-3. **Deploy Stage** - CodeDeploy updates Lambda functions and frontend
-
----
-
-## How Environment Switching Works
-
-### **Local Development (Automatic)**
-
-**Commands:**
-```bash
-# Terminal 1: DynamoDB Local
-docker run -p 8000:8000 amazon/dynamodb-local
-
-# Terminal 2: Backend API
-cd backend && sam local start-api --port 3001
-
-# Terminal 3: Frontend
-npm run dev
-```
-
-**What Happens:**
-- **React** automatically reads `.env.local`
-- **SAM CLI** uses template.yaml local parameters
-- **Code uses**: localhost endpoints, local DynamoDB
-- **No manual configuration needed**
-
-### **AWS Production (Automated via CodePipeline)**
-
-**Trigger:**
-```bash
-# Push to main branch triggers automatic deployment
-git add .
-git commit -m "New feature"
-git push origin main  # ← This triggers AWS CodePipeline
-```
-
-**What Happens Automatically:**
-1. **CodePipeline detects** git push to main branch
-2. **CodeBuild runs** build and test scripts
-3. **SAM deploys** with production environment variables
-4. **Lambda functions updated** with new code
-5. **S3/CloudFront updated** with new frontend build
-
----
-
-## Environment Switching Scenarios
-
-### **Scenario 1: Daily Development → Automatic Production Deploy**
-```bash
-# 1. Develop locally (automatic)
-npm run dev                    # Uses .env.local automatically
-
-# 2. Test features locally
-# ... make changes, test with local backend ...
-
-# 3. Deploy to production (automatic)
-git add . && git commit -m "New feature"
-git push origin main           # ← Triggers AWS CodePipeline automatically
-# No manual deployment needed!
-```
-
-### **Scenario 2: Production Issue → Local Debug → Auto-Fix**
-```bash
-# 1. Pull latest code
-git pull
-
-# 2. Debug locally (automatic switch to local env)
-npm run dev                    # Automatically uses local settings
-
-# 3. Fix issue and test locally
-# ... fix code, test with local backend ...
-
-# 4. Deploy fix to production (automatic)
-git add . && git commit -m "Fix production issue"
-git push origin main           # ← Auto-deploys via CodePipeline
-```
-
-### **Scenario 3: Multiple Environment Pipeline**
-```bash
-# Development branch → Staging environment
-git push origin develop        # Triggers staging pipeline
-
-# Main branch → Production environment  
-git push origin main           # Triggers production pipeline
-```
-
----
-
-## AWS CodePipeline Configuration
-
-### **buildspec.yml for CodeBuild**
+#### Step 1: Update SAM Template
+Add staging environment to `backend/template.yaml`:
 ```yaml
-# buildspec.yml (in project root)
+Parameters:
+  Environment:
+    Type: String
+    Default: development
+    AllowedValues: [development, staging, production]  # Add staging
+    Description: Deployment environment
+  
+  JWTSecret:
+    Type: String
+    Default: "dev-secret-key"
+    NoEcho: true  # Add this line for security
+```
+
+#### Step 2: Create Backend BuildSpec
+Create `buildspec-backend.yml` in root directory:
+```yaml
 version: 0.2
 phases:
   install:
@@ -153,216 +37,292 @@ phases:
       nodejs: 18
   pre_build:
     commands:
-      - echo Installing dependencies...
-      - npm install
-      - cd backend && npm install
+      - cd backend
   build:
     commands:
-      - echo Building application...
-      - npm run build
-      - cd backend && sam build
-  post_build:
+      - sam build
+      - sam deploy --no-confirm-changeset --stack-name fartooyoung-staging --region us-east-1 --capabilities CAPABILITY_IAM --parameter-overrides Environment=staging JWTSecret=$JWT_SECRET
+```
+
+#### Step 3: Create Frontend BuildSpec
+Create `buildspec-frontend.yml` in root directory:
+```yaml
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+  build:
     commands:
-      - echo Deploying to AWS...
-      - cd backend && sam deploy --no-confirm-changeset --parameter-overrides Environment=production
-artifacts:
-  files:
-    - '**/*'
+      - npm install
+      - npm run build
+      - aws s3 sync dist/ s3://staging-fartooyoung-frontend --delete
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
 ```
 
-### **SAM Template Environment Configuration**
-```yaml
-# backend/template.yaml
-Parameters:
-  Environment:
-    Type: String
-    Default: production
-    Description: Deployment environment
-  
-  DynamoDBEndpoint:
-    Type: String
-    Default: ""  # Empty for production (uses AWS DynamoDB)
-    Description: DynamoDB endpoint
-  
-  JWTSecret:
-    Type: String
-    Default: "{{resolve:secretsmanager:fartooyoung-jwt-secret}}"
-    Description: JWT signing secret from AWS Secrets Manager
-    NoEcho: true
-
-Conditions:
-  IsProduction: !Equals [!Ref Environment, "production"]
-
-Globals:
-  Function:
-    Environment:
-      Variables:
-        DYNAMODB_ENDPOINT: !Ref DynamoDBEndpoint
-        JWT_SECRET: !Ref JWTSecret
-        NODE_ENV: !Ref Environment
-```
-
----
-
-## Code Examples - No Changes Needed
-
-### **Frontend Code (Same Everywhere)**
-```javascript
-// AuthModal.jsx - This code never changes
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
-
-const response = await fetch(`${API_BASE_URL}/auth/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password })
-})
-```
-
-### **Backend Code (Same Everywhere)**
-```javascript
-// login.js - This code never changes
-const dynamodb = new AWS.DynamoDB.DocumentClient({
-  endpoint: process.env.DYNAMODB_ENDPOINT || undefined,  // Local or AWS
-  region: 'us-east-1'
-});
-```
-
----
-
-## AWS CodePipeline Setup Steps
-
-### **1. Create CodePipeline**
+#### Step 4: Create Production Environment File
+Create `.env.production`:
 ```bash
-# AWS CLI command to create pipeline
-aws codepipeline create-pipeline --cli-input-json file://pipeline-config.json
+VITE_API_BASE_URL=https://api-staging.fartooyoung.org
+VITE_ENVIRONMENT=staging
 ```
 
-### **2. Configure Source Stage**
-- **Source Provider**: GitHub or AWS CodeCommit
-- **Repository**: fartooyoung
-- **Branch**: main
-- **Trigger**: Webhook on push
+### Phase 2: Create AWS Infrastructure (20 minutes)
 
-### **3. Configure Build Stage**
-- **Build Provider**: AWS CodeBuild
-- **Build Project**: fartooyoung-build
-- **Buildspec**: buildspec.yml in repository root
+#### Step 5: Create S3 Bucket for Frontend
+```bash
+aws s3 mb s3://staging-fartooyoung-frontend --region us-east-1
+aws s3 website s3://staging-fartooyoung-frontend --index-document index.html --error-document index.html
+```
 
-### **4. Configure Deploy Stage**
-- **Deploy Provider**: AWS CloudFormation (SAM)
-- **Template**: backend/template.yaml
-- **Parameters**: Production environment variables
+#### Step 6: Create CloudFront Distribution
+1. Go to AWS CloudFront Console
+2. Create Distribution
+3. Origin Domain: staging-fartooyoung-frontend.s3.us-east-1.amazonaws.com
+4. Origin Path: (leave empty)
+5. Viewer Protocol Policy: Redirect HTTP to HTTPS
+6. Alternate Domain Names: staging.fartooyoung.org
+7. SSL Certificate: Request certificate via ACM
+8. Default Root Object: index.html
+9. Error Pages: 404 → /index.html (for React routing)
+
+#### Step 7: Create Route53 Record
+1. Go to Route53 Console
+2. Select fartooyoung.org hosted zone
+3. Create Record:
+   - Name: staging
+   - Type: A
+   - Alias: Yes
+   - Route traffic to: CloudFront distribution
+   - Select your distribution
+
+### Phase 3: Set up CodePipeline (25 minutes)
+
+#### Step 8: Create IAM Roles
+
+**CodePipeline Service Role:**
+```bash
+aws iam create-role --role-name CodePipelineServiceRole --assume-role-policy-document '{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {"Service": "codepipeline.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}'
+
+aws iam attach-role-policy --role-name CodePipelineServiceRole --policy-arn arn:aws:iam::aws:policy/AWSCodePipelineFullAccess
+```
+
+**CodeBuild Service Role:**
+```bash
+aws iam create-role --role-name CodeBuildServiceRole --assume-role-policy-document '{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {"Service": "codebuild.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}'
+
+aws iam attach-role-policy --role-name CodeBuildServiceRole --policy-arn arn:aws:iam::aws:policy/PowerUserAccess
+```
+
+#### Step 9: Create CodeBuild Projects
+
+**Backend Build Project:**
+1. Go to CodeBuild Console
+2. Create Project:
+   - Name: fartooyoung-backend-build
+   - Source: GitHub (connect to your repo)
+   - Environment: Amazon Linux 2, Standard runtime
+   - Buildspec: buildspec-backend.yml
+   - Service Role: CodeBuildServiceRole
+
+**Frontend Build Project:**
+1. Create Project:
+   - Name: fartooyoung-frontend-build
+   - Source: GitHub (connect to your repo)
+   - Environment: Amazon Linux 2, Standard runtime
+   - Buildspec: buildspec-frontend.yml
+   - Environment Variables:
+     - CLOUDFRONT_ID: (your distribution ID)
+   - Service Role: CodeBuildServiceRole
+
+#### Step 10: Create CodePipeline
+1. Go to CodePipeline Console
+2. Create Pipeline:
+   - Name: fartooyoung-staging-pipeline
+   - Service Role: CodePipelineServiceRole
+   - Source Stage:
+     - Provider: GitHub
+     - Repository: asharma12git/fartooyoung
+     - Branch: main
+   - Build Stage:
+     - Add Action: Backend Build (CodeBuild project)
+     - Add Action: Frontend Build (CodeBuild project)
+   - Deploy Stage: Skip (handled by CodeBuild)
+
+### Phase 4: Deploy & Test (10 minutes)
+
+#### Step 11: Push to GitHub
+```bash
+git add .
+git commit -m "Add AWS CodePipeline deployment configuration
+
+✅ Added staging environment support
+✅ Created buildspec files for CodeBuild
+✅ Added production environment configuration
+✅ Ready for automated deployment to staging.fartooyoung.org"
+
+git push origin main
+```
+
+#### Step 12: Monitor & Test
+1. Watch CodePipeline execution in AWS Console
+2. Check CloudWatch logs for any errors
+3. Test staging.fartooyoung.org:
+   - Registration/Login
+   - Donation flow
+   - Settings page
+   - Password change
 
 ---
 
-## Important: How .env Files Work with CodePipeline
+## Production Deployment (Future)
 
-### **❌ Common Misconception**
-> "CodePipeline automatically reads .env.production when deploying"
+### When Ready for Production
+1. Create `production` branch from `main`
+2. Update environment variables for production
+3. Create separate CodePipeline for production branch
+4. Deploy to fartooyoung.org (main domain)
 
-### **✅ Reality**
-- **Local**: React/Node automatically read `.env.local`
-- **CodeBuild**: Uses buildspec.yml and SAM template parameters
-- **Production**: Environment variables set via SAM template and AWS Secrets Manager
-- **`.env.production`**: Reference template only, not used by CodePipeline
+### Production Checklist
+- [ ] SSL certificate for fartooyoung.org
+- [ ] Production JWT secret in AWS Secrets Manager
+- [ ] AWS SES for email notifications
+- [ ] CloudWatch monitoring and alerts
+- [ ] Backup strategy for DynamoDB
+- [ ] Cost monitoring and budgets
 
-### **Environment Variables Set Via:**
-```yaml
-# SAM template with Secrets Manager integration
-Parameters:
-  JWTSecret:
-    Type: String
-    Default: "{{resolve:secretsmanager:fartooyoung-jwt-secret}}"
-    NoEcho: true
+---
+
+## Environment Variables Reference
+
+### Local Development
+```bash
+VITE_API_BASE_URL=http://localhost:3001
+VITE_ENVIRONMENT=development
+```
+
+### Staging
+```bash
+VITE_API_BASE_URL=https://api-staging.fartooyoung.org
+VITE_ENVIRONMENT=staging
+```
+
+### Production (Future)
+```bash
+VITE_API_BASE_URL=https://api.fartooyoung.org
+VITE_ENVIRONMENT=production
 ```
 
 ---
 
-## Security Best Practices with CodePipeline
+## Troubleshooting
 
-### **Local Development**
-- ✅ `.env.local` in `.gitignore` (contains dummy secrets)
-- ✅ Use dummy AWS credentials for local DynamoDB
-- ✅ Use simple JWT secret for local testing
+### Common Issues
+1. **CORS Errors**: Check API Gateway CORS configuration
+2. **Build Failures**: Check CodeBuild logs in CloudWatch
+3. **Domain Issues**: Verify Route53 and CloudFront configuration
+4. **Permission Errors**: Check IAM roles and policies
 
-### **Production with CodePipeline**
-- ✅ Real secrets stored in **AWS Secrets Manager**
-- ✅ CodeBuild uses **IAM roles** for AWS access
-- ✅ Environment variables injected via **SAM template**
-- ✅ **No secrets in git repository** ever
-- ✅ **No secrets in buildspec.yml** - use Secrets Manager references
+### Useful Commands
+```bash
+# Check SAM template syntax
+sam validate
 
----
+# Deploy manually (if pipeline fails)
+cd backend
+sam build
+sam deploy --guided
 
-## CodePipeline Deployment Flow
+# Check CloudFront cache
+aws cloudfront create-invalidation --distribution-id YOUR_ID --paths "/*"
 
-### **Automatic Deployment Process**
-```
-1. Developer: git push origin main
-2. CodePipeline: Detects change via webhook
-3. CodeBuild: Runs buildspec.yml
-   - npm install (frontend dependencies)
-   - npm run build (React production build)
-   - sam build (Lambda function packaging)
-   - sam deploy (CloudFormation deployment)
-4. CloudFormation: Updates AWS resources
-   - Lambda functions with new code
-   - S3 bucket with new frontend build
-   - DynamoDB tables (if schema changes)
-   - API Gateway endpoints
-5. CloudFront: Cache invalidation for new frontend
-6. Result: Live website updated automatically
+# Check S3 bucket contents
+aws s3 ls s3://staging-fartooyoung-frontend --recursive
 ```
 
 ---
 
-## Monitoring and Troubleshooting
+## Cost Estimation
 
-### **CodePipeline Console**
-- **Pipeline Status**: View current deployment status
-- **Build Logs**: Debug build failures in CodeBuild
-- **Deployment History**: Track all deployments
+### Monthly Costs (Staging)
+- **Lambda (9 functions)**: $0-8 (pay per request, very low for testing)
+- **DynamoDB (2 tables)**: $0-10 (on-demand pricing for users + donations)
+- **S3**: $1-3 (frontend storage + requests)
+- **CloudFront**: $0-5 (free tier covers most usage)
+- **API Gateway**: $0-5 (pay per API call)
+- **Route53**: $0.50 (hosted zone for staging subdomain)
+- **Total: $5-30/month** for staging environment with light usage
 
-### **Common Issues**
-- **Build Failures**: Check CodeBuild logs for npm/sam errors
-- **Deployment Failures**: Check CloudFormation events
-- **Permission Issues**: Verify CodeBuild IAM role permissions
-
----
-
-## Troubleshooting Environment Issues
-
-### **Problem: Local app calling production API**
-**Solution**: Check `.env.local` has correct `REACT_APP_API_BASE_URL=http://localhost:3001`
-
-### **Problem: Lambda can't connect to local DynamoDB**
-**Solution**: Check SAM template has correct `DynamoDBEndpoint` parameter
-
-### **Problem: CodePipeline deployment failing**
-**Solution**: Check buildspec.yml syntax and CodeBuild logs
-
-### **Problem: Secrets not available in production**
-**Solution**: Verify AWS Secrets Manager integration in SAM template
+### Scaling to Production
+- Add CloudWatch monitoring: +$5-10/month
+- AWS SES for automated emails: +$1-5/month
+- Increased traffic costs: Variable based on usage
+- SSL certificates: Free with AWS Certificate Manager
+- **Production estimate: $15-60/month** depending on user volume
 
 ---
 
-## Key Takeaways
+## Security Considerations
 
-1. **Same codebase** works in all environments
-2. **Environment variables** control the differences
-3. **Local development** is automatic (reads `.env.local`)
-4. **Production deployment** is automatic via **AWS CodePipeline**
-5. **Never commit secrets** to git - use **AWS Secrets Manager**
-6. **CodePipeline handles** all production deployments
-7. **Push to main branch** = automatic production deployment
+### Implemented ✅
+✅ **JWT token authentication** with 24-hour expiration
+✅ **Password hashing with bcrypt** (salt rounds: 10 production, 4 local)
+✅ **Rate limiting** on login attempts (3 attempts = 15-minute lockout)
+✅ **Input validation and sanitization** for all user inputs
+✅ **HTTPS enforcement** via CloudFront
+✅ **Secrets management** with NoEcho parameters
+✅ **Case-insensitive email** authentication (industry standard)
+✅ **Current password verification** for password changes
+✅ **Email enumeration prevention** in authentication flows
+✅ **JWT-protected API endpoints** for sensitive operations
+✅ **User data isolation** (users can only access their own data)
+
+### Future Enhancements 🔄
+- [ ] AWS WAF for DDoS protection
+- [ ] AWS Secrets Manager for JWT secrets rotation
+- [ ] CloudTrail for comprehensive audit logging
+- [ ] VPC endpoints for enhanced network security
+- [ ] Multi-factor authentication (2FA)
+- [ ] Session management and concurrent login limits
+- [ ] Advanced rate limiting with AWS API Gateway throttling
 
 ---
 
-## Next Steps
+## Monitoring & Maintenance
 
-1. **Test local environment switching** - verify `.env.local` works
-2. **Set up AWS CodePipeline** with GitHub integration
-3. **Configure AWS Secrets Manager** for production secrets
-4. **Create buildspec.yml** for CodeBuild configuration
-5. **Add staging environment** pipeline for testing before production
-6. **Set up monitoring** with CloudWatch for pipeline health
+### CloudWatch Metrics to Monitor
+- Lambda function errors and duration
+- DynamoDB read/write capacity
+- API Gateway 4xx/5xx errors
+- CloudFront cache hit ratio
+
+### Regular Maintenance
+- Review CloudWatch logs weekly
+- Update dependencies monthly
+- Security patches as needed
+- Cost optimization quarterly
+
+---
+
+*Last Updated: November 23, 2025*
+*Current Status: Production-Ready Features Complete*
+*Environment: Local Development Optimized + AWS Staging Deployment Ready*
+*Features: 9 Lambda Functions, 2 DynamoDB Tables, Complete Authentication & Donation System*

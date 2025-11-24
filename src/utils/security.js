@@ -36,6 +36,7 @@ export const validateEmail = (email) => {
 // Enhanced password validation
 export const validatePassword = (password) => {
   if (typeof password !== 'string') return { valid: false, message: 'Password must be a string' }
+  if (!password) return { valid: false, message: 'Password is required' }
   if (password.length < 8) return { valid: false, message: 'Password must be at least 8 characters' }
   if (password.length > 128) return { valid: false, message: 'Password too long' }
   if (!/[A-Z]/.test(password)) return { valid: false, message: 'Password must contain uppercase letter' }

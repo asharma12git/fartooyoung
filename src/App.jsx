@@ -19,6 +19,7 @@ function AppContent() {
   // Global modal state management
   const [showAuth, setShowAuth] = useState(false)
   const [showDonation, setShowDonation] = useState(false)
+  const [donationAmount, setDonationAmount] = useState(null)
 
   // Global authentication state
   const [user, setUser] = useState(null)
@@ -68,7 +69,18 @@ function AppContent() {
 
   const handleDonationClose = () => {
     setShowDonation(false)
+    setDonationAmount(null) // Reset amount
     setRefreshKey(prev => prev + 1) // Trigger dashboard refresh
+  }
+
+  const handleUserUpdate = (updatedUser) => {
+    setUser(updatedUser)
+    localStorage.setItem('user', JSON.stringify(updatedUser))
+  }
+
+  const handleDonateClick = (amount = null) => {
+    setDonationAmount(amount)
+    setShowDonation(true)
   }
 
   return (
@@ -76,7 +88,7 @@ function AppContent() {
       {/* Global navigation header */}
       <Header
         onAuthClick={handleAuthClick}
-        onDonateClick={() => setShowDonation(true)}
+        onDonateClick={handleDonateClick}
         user={user}
         isLoggedIn={isLoggedIn}
       />
@@ -94,7 +106,8 @@ function AppContent() {
               <DonorDashboard
                 user={user}
                 onLogout={handleLogout}
-                onDonateClick={() => setShowDonation(true)}
+                onDonateClick={handleDonateClick}
+                onUserUpdate={handleUserUpdate}
                 refreshKey={refreshKey}
               />
             }
@@ -115,7 +128,7 @@ function AppContent() {
           onLogin={handleLogin}
         />
       )}
-      {showDonation && <DonationModal onClose={handleDonationClose} user={user} />}
+      {showDonation && <DonationModal onClose={handleDonationClose} user={user} initialAmount={donationAmount} />}
     </div>
   )
 }

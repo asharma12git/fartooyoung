@@ -74,7 +74,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
             <div className="h-6 w-px bg-white/30"></div>
             
             <button
-              onClick={onDonateClick}
+              onClick={() => onDonateClick()}
               className="flex items-center space-x-2"
             >
               <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">Donate</span>

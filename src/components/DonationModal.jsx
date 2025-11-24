@@ -9,14 +9,14 @@ import {
   isBot
 } from '../utils/security'
 
-const DonationModal = ({ onClose, user }) => {
+const DonationModal = ({ onClose, user, initialAmount = null }) => {
   const [donationType, setDonationType] = useState('one-time')
-  const [amount, setAmount] = useState(100)
+  const [amount, setAmount] = useState(initialAmount || 100)
   const [customAmount, setCustomAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('stripe')
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [showTerms, setShowTerms] = useState(false)
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(initialAmount ? 2 : 1) // Skip to step 2 if amount provided
   const [donorInfo, setDonorInfo] = useState({
     firstName: '',
     lastName: '',
@@ -38,7 +38,7 @@ const DonationModal = ({ onClose, user }) => {
     expiration: '',
     cvc: ''
   })
-  const [coverTransactionCosts, setCoverTransactionCosts] = useState(false)
+  const [coverTransactionCosts, setCoverTransactionCosts] = useState(true)
   const [showTransactionTooltip, setShowTransactionTooltip] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -465,7 +465,13 @@ const DonationModal = ({ onClose, user }) => {
                               type="text"
                               placeholder="Card Number"
                               value={cardInfo.cardNumber}
-                              onChange={(e) => setCardInfo({ ...cardInfo, cardNumber: e.target.value })}
+                              onChange={(e) => {
+                                let value = e.target.value.replace(/\D/g, '') // Remove non-digits
+                                value = value.replace(/(\d{4})(?=\d)/g, '$1 ') // Add space every 4 digits
+                                if (value.length > 19) value = value.substring(0, 19) // Limit to 16 digits + 3 spaces
+                                setCardInfo({ ...cardInfo, cardNumber: value })
+                              }}
+                              maxLength="19"
                               className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
                               required
                             />
@@ -474,7 +480,14 @@ const DonationModal = ({ onClose, user }) => {
                                 type="text"
                                 placeholder="MM/YY"
                                 value={cardInfo.expiration}
-                                onChange={(e) => setCardInfo({ ...cardInfo, expiration: e.target.value })}
+                                onChange={(e) => {
+                                  let value = e.target.value.replace(/\D/g, '') // Remove non-digits
+                                  if (value.length >= 2) {
+                                    value = value.substring(0, 2) + '/' + value.substring(2, 4)
+                                  }
+                                  setCardInfo({ ...cardInfo, expiration: value })
+                                }}
+                                maxLength="5"
                                 className="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
                                 required
                               />
@@ -482,7 +495,12 @@ const DonationModal = ({ onClose, user }) => {
                                 type="text"
                                 placeholder="CVC"
                                 value={cardInfo.cvc}
-                                onChange={(e) => setCardInfo({ ...cardInfo, cvc: e.target.value })}
+                                onChange={(e) => {
+                                  let value = e.target.value.replace(/\D/g, '') // Remove non-digits
+                                  if (value.length > 4) value = value.substring(0, 4) // Limit to 4 digits
+                                  setCardInfo({ ...cardInfo, cvc: value })
+                                }}
+                                maxLength="4"
                                 className="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
                                 required
                               />
@@ -789,7 +807,8 @@ const DonationModal = ({ onClose, user }) => {
 
 DonationModal.propTypes = {
   onClose: PropTypes.func.isRequired,
-  user: PropTypes.object
+  user: PropTypes.object,
+  initialAmount: PropTypes.number
 }
 
 export default DonationModal

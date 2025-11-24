@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
-const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
+const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKey }) => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [userDonations, setUserDonations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -89,7 +89,16 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
   // Handle profile update
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Only submit if we're in editing mode
+    if (!isEditing) {
+      console.log('Form submitted but not in editing mode, ignoring')
+      return
+    }
+    
+    console.log('Submitting profile update...')
     setFormLoading(true)
+    setMessage({ type: '', text: '' }) // Clear any existing messages
     setMessage({ type: '', text: '' })
 
     try {
@@ -108,6 +117,12 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
       const data = await response.json()
 
       if (data.success) {
+        // Update user state in parent component
+        const updatedUser = { ...user, firstName: formData.firstName, lastName: formData.lastName, phone: formData.phone }
+        if (onUserUpdate) {
+          onUserUpdate(updatedUser)
+        }
+        
         setMessage({ type: 'success', text: 'Profile updated successfully!' })
         setIsEditing(false)
       } else {
@@ -364,7 +379,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                         </p>
                         <div className="flex items-center space-x-3">
                           <button
-                            onClick={() => onDonateClick()}
+                            onClick={() => onDonateClick(suggestedAmount)}
                             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
                           >
                             Donate ${suggestedAmount} Now
@@ -534,9 +549,17 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
 
                 return (
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                    <div className="flex items-center space-x-2 mb-6">
-                      <span className="text-2xl">🔮</span>
-                      <h3 className="text-xl font-bold text-white">Impact Calculator</h3>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-2xl">🔮</span>
+                        <h3 className="text-xl font-bold text-white">Impact Calculator</h3>
+                      </div>
+                      <button
+                        onClick={() => onDonateClick(calculatorAmount)}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
+                      >
+                        Donate Now
+                      </button>
                     </div>
 
                     <div className="mb-6">
@@ -588,13 +611,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                         <div className="text-white/50 text-xs mt-1">(monthly)</div>
                       </div>
                     </div>
-
-                    <button
-                      onClick={() => onDonateClick()}
-                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-md font-bold transition-all transform hover:scale-105"
-                    >
-                      Donate ${calculatorAmount} Now
-                    </button>
                   </div>
                 )
               })()}
@@ -838,7 +854,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                 <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <button
-                    onClick={onDonateClick}
+                    onClick={() => onDonateClick()}
                     className="bg-orange-500/80 hover:bg-orange-600/90 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium"
                   >
                     🎯 Make Another Donation
@@ -894,7 +910,15 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
 
               {/* Donation History */}
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-6">Donation History</h3>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-white">Donation History</h3>
+                  <button
+                    onClick={() => onDonateClick()}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
+                  >
+                    Donate Now
+                  </button>
+                </div>
                 {userDonations.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-white/60">No donations yet</p>
@@ -944,7 +968,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                 <h3 className="text-xl font-semibold text-white mb-6">Profile Settings</h3>
                 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-4">
                   {message.text && (
                     <div className={`p-3 rounded-lg text-sm ${message.type === 'success' 
                       ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
@@ -1006,7 +1030,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                     {!isEditing ? (
                       <button
                         type="button"
-                        onClick={() => setIsEditing(true)}
+                        onClick={() => {
+                          setIsEditing(true)
+                          setMessage({ type: '', text: '' }) // Clear any existing messages
+                        }}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
                       >
                         Edit Profile
@@ -1014,7 +1041,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                     ) : (
                       <>
                         <button
-                          type="submit"
+                          type="button"
+                          onClick={handleSubmit}
                           disabled={formLoading}
                           className="bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
                         >
@@ -1044,7 +1072,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                       </>
                     )}
                   </div>
-                </form>
+                </div>
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
@@ -1251,6 +1279,7 @@ DonorDashboard.propTypes = {
   user: PropTypes.object.isRequired,
   onLogout: PropTypes.func.isRequired,
   onDonateClick: PropTypes.func.isRequired,
+  onUserUpdate: PropTypes.func,
   refreshKey: PropTypes.number.isRequired
 }
 

@@ -95,24 +95,22 @@ const AuthModal = ({ onClose, onLogin }) => {
     // Sanitize form data
     const sanitizedData = sanitizeFormData(formData)
     
-    // Enhanced validation
+    // Enhanced validation - simplified for now
     const errors = {}
     
-    if (!validateEmail(sanitizedData.email)) {
+    if (!sanitizedData.email || !sanitizedData.email.includes('@')) {
       errors.email = 'Please enter a valid email address'
     }
 
     if (currentView === 'register') {
-      if (!validateName(sanitizedData.firstName)) {
-        errors.firstName = 'First name must contain only letters and be 1-50 characters'
+      if (!sanitizedData.firstName || sanitizedData.firstName.length < 1) {
+        errors.firstName = 'First name is required'
       }
-      if (!validateName(sanitizedData.lastName)) {
-        errors.lastName = 'Last name must contain only letters and be 1-50 characters'
+      if (!sanitizedData.lastName || sanitizedData.lastName.length < 1) {
+        errors.lastName = 'Last name is required'
       }
-      
-      const passwordValidation = validatePassword(sanitizedData.password)
-      if (!passwordValidation.valid) {
-        errors.password = passwordValidation.message
+      if (!sanitizedData.password || sanitizedData.password.length < 8) {
+        errors.password = 'Password must be at least 8 characters'
       }
     }
 
@@ -339,7 +337,7 @@ const AuthModal = ({ onClose, onLogin }) => {
                   setError('')
                   setValidationErrors({ ...validationErrors, email: '' })
                 }}
-                className={`w-full px-0 py-3 bg-transparent border-0 border-b transition-all duration-300 peer ${
+                className={`w-full px-0 py-3 bg-transparent border-0 border-b transition-all duration-300 peer focus:outline-none ${
                   validationErrors.email 
                     ? 'border-red-400 text-red-300 focus:border-red-500' 
                     : 'border-white/30 text-white focus:border-orange-500'

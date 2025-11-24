@@ -146,6 +146,52 @@ Resources:
             Path: /auth/logout
             Method: options
 
+  # Update Profile Function
+  UpdateProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/auth/update-profile.handler
+      Runtime: nodejs18.x
+      Events:
+        UpdateProfileApi:
+          Type: Api
+          Properties:
+            Path: /auth/update-profile
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+        UpdateProfileOptions:
+          Type: Api
+          Properties:
+            Path: /auth/update-profile
+            Method: options
+
+  # Change Password Function
+  ChangePasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/auth/change-password.handler
+      Runtime: nodejs18.x
+      Events:
+        ChangePasswordApi:
+          Type: Api
+          Properties:
+            Path: /auth/change-password
+            Method: post
+            Cors:
+              AllowMethods: "'POST,OPTIONS'"
+              AllowHeaders: "'Content-Type,Authorization'"
+              AllowOrigin: "'*'"
+        ChangePasswordOptions:
+          Type: Api
+          Properties:
+            Path: /auth/change-password
+            Method: options
+
   # Create Donation Function
   CreateDonationFunction:
     Type: AWS::Serverless::Function

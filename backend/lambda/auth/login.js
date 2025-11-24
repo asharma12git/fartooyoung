@@ -25,7 +25,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email, password } = JSON.parse(event.body);
+    const { email: rawEmail, password } = JSON.parse(event.body)
+    const email = rawEmail.toLowerCase().trim();
     
     // Get user from database
     const result = await dynamodb.get({

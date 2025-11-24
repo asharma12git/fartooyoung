@@ -4,7 +4,7 @@
 
 ### Working User Account (Created & Verified):
 - **Email**: gary@test.com
-- **Password**: NewPass123!
+- **Password**: OldPass123!
 - **Status**: ✅ Active in DynamoDB Local
 - **Last Updated**: 2025-11-23 (Password reset via forgot-password flow)
 

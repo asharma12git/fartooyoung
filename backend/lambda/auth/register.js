@@ -36,7 +36,8 @@ exports.handler = async (event) => {
     });
     console.log('Event body:', event.body);
     
-    const { email, password, name } = JSON.parse(event.body);
+    const { email: rawEmail, password, name } = JSON.parse(event.body);
+    const email = rawEmail.toLowerCase().trim();
     console.log('Parsed input:', { email, name });
     
     // Check if user already exists

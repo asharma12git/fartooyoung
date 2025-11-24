@@ -8,6 +8,32 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
   const [userDonations, setUserDonations] = useState([])
   const [loading, setLoading] = useState(true)
   const [calculatorAmount, setCalculatorAmount] = useState(100)
+  
+  // Settings form state
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState({
+    firstName: user?.name?.split(' ')[0] || '',
+    lastName: user?.name?.split(' ').slice(1).join(' ') || '',
+    phone: user?.phone || ''
+  })
+  const [formLoading, setFormLoading] = useState(false)
+  const [message, setMessage] = useState({ type: '', text: '' })
+  
+  // Password change state
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [passwordLoading, setPasswordLoading] = useState(false)
+  const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' })
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  })
+  
   const navigate = useNavigate()
 
   // Redirect if not logged in
@@ -58,6 +84,84 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
 
     fetchDonations()
   }, [user, refreshKey]) // Refetch when refreshKey changes
+
+  // Handle profile update
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setFormLoading(true)
+    setMessage({ type: '', text: '' })
+
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
+      const token = localStorage.getItem('token')
+
+      const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' })
+        setIsEditing(false)
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to update profile' })
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  // Handle password change
+  const handlePasswordChange = async (e) => {
+    e.preventDefault()
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'New passwords do not match' })
+      return
+    }
+    
+    setPasswordLoading(true)
+    setPasswordMessage({ type: '', text: '' })
+
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
+      const token = localStorage.getItem('token')
+
+      const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setPasswordMessage({ type: 'success', text: 'Password changed successfully!' })
+        setIsChangingPassword(false)
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      } else {
+        setPasswordMessage({ type: 'error', text: data.message || 'Failed to change password' })
+      }
+    } catch (error) {
+      setPasswordMessage({ type: 'error', text: 'Network error. Please try again.' })
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
 
   if (!user) return null
 
@@ -805,26 +909,258 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
             <div className="space-y-6">
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                 <h3 className="text-xl font-semibold text-white mb-6">Profile Settings</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">Name</label>
-                    <input
-                      type="text"
-                      value={user.name}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
-                      readOnly
-                    />
+                
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {message.text && (
+                    <div className={`p-3 rounded-lg text-sm ${message.type === 'success' 
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    }`}>
+                      {message.text}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">First Name</label>
+                      <input
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
+                        disabled={!isEditing}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">Last Name</label>
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
+                        disabled={!isEditing}
+                        required
+                      />
+                    </div>
                   </div>
+
                   <div>
                     <label className="block text-white/80 text-sm font-medium mb-2">Email</label>
                     <input
                       type="email"
                       value={user.email}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
-                      readOnly
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/60 cursor-not-allowed"
+                      disabled
+                    />
+                    <p className="text-white/50 text-xs mt-1">Email cannot be changed for security reasons</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">Phone Number (Optional)</label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      placeholder="+1 (555) 123-4567"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
+                      disabled={!isEditing}
                     />
                   </div>
-                </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    {!isEditing ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsEditing(true)}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        Edit Profile
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="submit"
+                          disabled={formLoading}
+                          className="bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                        >
+                          {formLoading && (
+                            <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          )}
+                          <span>{formLoading ? 'Saving...' : 'Save Changes'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditing(false)
+                            setMessage({ type: '', text: '' })
+                            setFormData({
+                              firstName: user.name?.split(' ')[0] || '',
+                              lastName: user.name?.split(' ').slice(1).join(' ') || '',
+                              phone: user.phone || ''
+                            })
+                          }}
+                          className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-medium transition-colors border border-white/20"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </form>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-white mb-6">Change Password</h3>
+                
+                <form onSubmit={handlePasswordChange} className="space-y-4">
+                  {passwordMessage.text && (
+                    <div className={`p-3 rounded-lg text-sm ${passwordMessage.type === 'success' 
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    }`}>
+                      {passwordMessage.text}
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">Current Password</label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.current ? "text" : "password"}
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                        className="w-full px-4 py-3 pr-12 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
+                        disabled={!isChangingPassword}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords({...showPasswords, current: !showPasswords.current})}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                        disabled={!isChangingPassword}
+                      >
+                        {showPasswords.current ? (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">New Password</label>
+                      <div className="relative">
+                        <input
+                          type={showPasswords.new ? "text" : "password"}
+                          value={passwordData.newPassword}
+                          onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                          className="w-full px-4 py-3 pr-12 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
+                          disabled={!isChangingPassword}
+                          minLength="8"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                          disabled={!isChangingPassword}
+                        >
+                          {showPasswords.new ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">Confirm New Password</label>
+                      <div className="relative">
+                        <input
+                          type={showPasswords.confirm ? "text" : "password"}
+                          value={passwordData.confirmPassword}
+                          onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                          className="w-full px-4 py-3 pr-12 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
+                          disabled={!isChangingPassword}
+                          minLength="8"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords({...showPasswords, confirm: !showPasswords.confirm})}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                          disabled={!isChangingPassword}
+                        >
+                          {showPasswords.confirm ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    {!isChangingPassword ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsChangingPassword(true)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        Change Password
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="submit"
+                          disabled={passwordLoading}
+                          className="bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                        >
+                          {passwordLoading && (
+                            <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          )}
+                          <span>{passwordLoading ? 'Changing...' : 'Update Password'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsChangingPassword(false)
+                            setPasswordMessage({ type: '', text: '' })
+                            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+                          }}
+                          className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-medium transition-colors border border-white/20"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </form>
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">

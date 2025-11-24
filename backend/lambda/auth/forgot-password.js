@@ -22,7 +22,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email } = JSON.parse(event.body);
+    const { email: rawEmail } = JSON.parse(event.body)
+    const email = rawEmail.toLowerCase().trim();
     
     // Check if user exists
     const result = await dynamodb.get({

@@ -167,43 +167,33 @@ backend/
 - **Logo Enhancement**: Increased dashboard logo size by 50% for better brand visibility
 - **Hover Effects**: Smooth scale transitions and interactive feedback
 
-### Phase 16: AWS Production Deployment ✅ (COMPLETED - Nov 24, 2025)
-- **Complete AWS Infrastructure**: SAM template with DynamoDB permissions and IAM roles
-- **9 Lambda Functions Deployed**: All authentication and donation endpoints live on AWS
-- **API Gateway Integration**: Professional REST API with proper routing and CORS
-- **DynamoDB Tables**: Production tables (fartooyoung-staging-users-table, fartooyoung-staging-donations-table)
-- **Environment Variable Strategy**: Seamless local vs AWS compatibility with fallback values
-- **Production API**: https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/
-- **All Endpoints Working**: Registration, login, logout, forgot password, donations (create/get)
-- **Security**: JWT authentication, DynamoDB permissions, proper IAM roles
-- **Testing**: Complete curl command suite for all endpoints
-- **Documentation**: SAM deployment debugging, AWS deployment debugging, API testing guides
+### Phase 17: Complete firstName/lastName System with AWS Integration ✅ (COMPLETED - Nov 24, 2025)
+- **Professional Registration Form**: Two-column First Name | Last Name layout (industry standard)
+- **Clean Database Structure**: Separate firstName/lastName fields for better data quality
+- **AWS Backend Updates**: Updated register/login Lambda functions for new user structure
+- **CORS Integration**: Fixed frontend-AWS API communication with proper CORS headers
+- **Email Normalization**: Case-insensitive email handling across all endpoints (Sam.Smith@fty.com = sam.smith@fty.com)
+- **Login Persistence**: Users stay logged in after page refresh with localStorage management
+- **Header Enhancement**: Displays full name (firstName + lastName) instead of "Account"
+- **Dashboard Improvements**: Welcome messages use proper name display with fallback support
+- **Profile Settings**: Pre-populate with user data (firstName/lastName from JWT token)
+- **Smart Suggestion UX**: "Maybe Later" button properly hides suggestion card
+- **Backward Compatibility**: Supports both old users (name field) and new users (firstName/lastName)
+- **Environment Variables**: Dynamic table names for local vs AWS compatibility
+- **Production Testing**: Full frontend-AWS integration tested on port 4173 with live API
 
 ---
 
 ## Current System Status (Nov 24, 2025)
 
-### ✅ **AWS Production Deployment - LIVE & FUNCTIONAL**
-- **Production API**: https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/
-- **All Endpoints Working**: 
-  - POST /auth/register ✅
-  - POST /auth/login ✅  
-  - POST /auth/logout ✅
-  - POST /auth/forgot-password ✅
-  - GET /donations ✅ (auth required)
-  - POST /donations ✅
-- **Infrastructure**: 9 Lambda functions, 2 DynamoDB tables, API Gateway, IAM roles
-- **Environment Strategy**: Same code works locally and on AWS via environment variables
-- **Security**: JWT tokens, DynamoDB permissions, proper authentication flow
-- **Testing**: Complete curl test suite documented
-
-### ✅ **Local Development Environment - OPTIMIZED**
-- **Dual Environment Support**: Same codebase works locally and on AWS
-- **Environment Variables**: Automatic local vs AWS table name resolution
-- **Fallback Strategy**: `process.env.USERS_TABLE || 'fartooyoung-users'`
-- **Local Stack**: DynamoDB Local + SAM CLI + React dev server
-- **AWS Testing**: Direct API testing with curl commands
-- **Documentation**: Complete debugging guides for both environments
+### ✅ **Complete Full-Stack Application - PRODUCTION READY**
+- **Live AWS API**: https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/
+- **All Endpoints Working**: Registration, login, logout, forgot password, donations (create/get)
+- **Frontend-AWS Integration**: React app successfully connects to live AWS backend
+- **CORS Configured**: Proper cross-origin headers for localhost and production
+- **Database Evolution**: Clean firstName/lastName structure with backward compatibility
+- **Login Persistence**: Industry-standard session management with localStorage
+- **Case-Insensitive Emails**: Professional email handling throughout system
 
 ### ✅ **Authentication System - PRODUCTION READY**
 - **Complete Security**: Rate limiting, input validation, password hashing, JWT tokens
@@ -252,35 +242,35 @@ backend/
 - **Monorepo Structure**: Single source of truth for dependencies
 - **Documentation**: Complete setup guides, debugging guides, architecture diagrams
 
-### 🎯 **Ready for Next Phase - Frontend AWS Integration**
+### 🎯 **Ready for Next Phase - Donation Auto-Linking & Frontend Deployment**
 
-#### **Option A: Frontend AWS Integration (Recommended Next)**
-- Update React app to use AWS API endpoints
-- Environment switching between local and production
-- Frontend deployment to S3 + CloudFront
-- Domain configuration (fartooyoung.org)
+#### **Option A: Donation Auto-Linking (Recommended Next)**
+- Implement auto-linking of anonymous donations when users register
+- Update registration function to find existing donations by email
+- Associate orphaned donations with new user accounts
+- Improve user experience for donation history tracking
 - **Estimated Time**: 1-2 development sessions
 
-#### **Option B: Stripe Payment Integration**
+#### **Option B: Frontend AWS Deployment**
+- Deploy React app to S3 + CloudFront for live domain
+- Configure custom domain (fartooyoung.org) with SSL
+- Set up CI/CD pipeline for automated deployments
+- Environment configuration for production frontend
+- **Estimated Time**: 2-3 development sessions
+
+#### **Option C: Stripe Payment Integration**
 - Real payment processing with Stripe API
 - Stripe Elements for secure card input
 - Payment Intent creation and confirmation
 - Webhook handling for payment events
 - **Estimated Time**: 2-3 development sessions
 
-#### **Option C: Production Optimization**
+#### **Option D: Production Optimization**
 - CloudWatch logging and monitoring
 - Error tracking and alerting
 - Performance optimization
-- Security hardening
+- Security hardening and rate limiting
 - **Estimated Time**: 2-3 development sessions
-
-#### **Option D: E-commerce Platform**
-- Product catalog system
-- Shopping cart functionality
-- Order management
-- Inventory tracking
-- **Estimated Time**: 4-5 development sessions
 
 ---
 
@@ -331,11 +321,11 @@ backend/
 
 ## Next Session Priorities
 
-1. **Frontend Integration**: Connect React app to AWS API endpoints
-2. **Environment Switching**: Add production API configuration to frontend
-3. **Frontend Deployment**: Deploy React app to S3 + CloudFront
-4. **Domain Setup**: Configure fartooyoung.org with SSL
-5. **End-to-End Testing**: Test complete flow from frontend to AWS backend
+1. **Donation Auto-Linking**: Connect anonymous donations to user accounts on registration
+2. **Frontend Deployment**: Deploy React app to AWS for live domain
+3. **User Experience**: Test complete flow from anonymous donation → registration → dashboard
+4. **Performance**: Optimize API response times and database queries
+5. **Monitoring**: Add CloudWatch logging for production debugging
 
 ---
 

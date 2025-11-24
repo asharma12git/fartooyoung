@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { 
+  sanitizeFormData, 
+  validateEmail, 
+  validatePassword, 
+  validateName,
+  rateLimiter,
+  createHoneypot,
+  isBot
+} from '../utils/security'
 
 const AuthModal = ({ onClose, onLogin }) => {
   // Single state for current view - much cleaner!
@@ -16,6 +25,9 @@ const AuthModal = ({ onClose, onLogin }) => {
     newPassword: '',
     token: ''
   })
+  const [honeypot, setHoneypot] = useState(createHoneypot())
+  const [validationErrors, setValidationErrors] = useState({})
+  const [rateLimitError, setRateLimitError] = useState('')
 
   // Validation functions
   const validateFullName = (name) => {
@@ -63,32 +75,50 @@ const AuthModal = ({ onClose, onLogin }) => {
   const handleAuth = async (e) => {
     e.preventDefault()
     setError('')
+    setValidationErrors({})
+    setRateLimitError('')
 
-    // Validate based on current view
-    const emailError = validateEmail(formData.email);
-    if (emailError) {
-      setError(emailError);
-      return;
+    // Check for bot activity (honeypot)
+    if (isBot(honeypot.value)) {
+      setError('Suspicious activity detected. Please try again later.')
+      return
+    }
+
+    // Rate limiting check
+    const rateLimitKey = `auth_${formData.email || 'unknown'}`
+    if (!rateLimiter.canAttempt(rateLimitKey)) {
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(rateLimitKey) / 1000 / 60)
+      setRateLimitError(`Too many attempts. Please wait ${remainingTime} minutes before trying again.`)
+      return
+    }
+
+    // Sanitize form data
+    const sanitizedData = sanitizeFormData(formData)
+    
+    // Enhanced validation
+    const errors = {}
+    
+    if (!validateEmail(sanitizedData.email)) {
+      errors.email = 'Please enter a valid email address'
     }
 
     if (currentView === 'register') {
-      const firstNameError = validateFullName(formData.firstName);
-      if (firstNameError) {
-        setError(`First name: ${firstNameError}`);
-        return;
+      if (!validateName(sanitizedData.firstName)) {
+        errors.firstName = 'First name must contain only letters and be 1-50 characters'
       }
+      if (!validateName(sanitizedData.lastName)) {
+        errors.lastName = 'Last name must contain only letters and be 1-50 characters'
+      }
+      
+      const passwordValidation = validatePassword(sanitizedData.password)
+      if (!passwordValidation.valid) {
+        errors.password = passwordValidation.message
+      }
+    }
 
-      const lastNameError = validateFullName(formData.lastName);
-      if (lastNameError) {
-        setError(`Last name: ${lastNameError}`);
-        return;
-      }
-
-      const passwordError = validatePassword(formData.password);
-      if (passwordError) {
-        setError(passwordError);
-        return;
-      }
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      return
     }
 
     setLoading(true)
@@ -97,8 +127,13 @@ const AuthModal = ({ onClose, onLogin }) => {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const endpoint = currentView === 'login' ? '/auth/login' : '/auth/register'
       const payload = currentView === 'login'
-        ? { email: formData.email, password: formData.password }
-        : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName }
+        ? { email: sanitizedData.email, password: sanitizedData.password }
+        : { 
+            email: sanitizedData.email, 
+            password: sanitizedData.password, 
+            firstName: sanitizedData.firstName, 
+            lastName: sanitizedData.lastName 
+          }
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
@@ -114,9 +149,13 @@ const AuthModal = ({ onClose, onLogin }) => {
         onLogin(data.user)
         onClose()
       } else {
+        // Record failed attempt for rate limiting
+        rateLimiter.recordAttempt(rateLimitKey)
         setError(data.message || 'Invalid credentials')
       }
     } catch (error) {
+      // Record failed attempt for rate limiting
+      rateLimiter.recordAttempt(rateLimitKey)
       setError('Request failed. Please try again.')
     } finally {
       setLoading(false)
@@ -262,8 +301,8 @@ const AuthModal = ({ onClose, onLogin }) => {
         </div>
 
         {/* Error/Success Messages */}
-        {error && (
-          <div className={`px-4 py-3 rounded-md backdrop-blur-sm mb-6 ${error.startsWith('✅')
+        {(error || rateLimitError) && (
+          <div className={`px-4 py-3 rounded-md backdrop-blur-sm mb-6 ${(error && error.startsWith('✅'))
               ? 'bg-green-500/20 border border-green-400/50 text-green-200'
               : 'bg-red-500/20 border border-red-400/50 text-red-200'
             }`}>
@@ -271,7 +310,7 @@ const AuthModal = ({ onClose, onLogin }) => {
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              {error}
+              {rateLimitError || error}
             </div>
           </div>
         )}
@@ -279,6 +318,17 @@ const AuthModal = ({ onClose, onLogin }) => {
         {/* LOGIN VIEW */}
         {currentView === 'login' && (
           <form onSubmit={handleAuth} className="space-y-8">
+            {/* Honeypot field - invisible to users, visible to bots */}
+            <input
+              type="text"
+              name={honeypot.name}
+              value={honeypot.value}
+              onChange={(e) => setHoneypot({ ...honeypot, value: e.target.value })}
+              style={honeypot.style}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+            
             {/* Email Field */}
             <div className="relative">
               <input
@@ -287,14 +337,27 @@ const AuthModal = ({ onClose, onLogin }) => {
                 onChange={(e) => {
                   setFormData({ ...formData, email: e.target.value })
                   setError('')
+                  setValidationErrors({ ...validationErrors, email: '' })
                 }}
-                className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                className={`w-full px-0 py-3 bg-transparent border-0 border-b transition-all duration-300 peer ${
+                  validationErrors.email 
+                    ? 'border-red-400 text-red-300 focus:border-red-500' 
+                    : 'border-white/30 text-white focus:border-orange-500'
+                }`}
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-                } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                formData.email 
+                  ? validationErrors.email 
+                    ? '-top-4 text-red-400' 
+                    : '-top-4 text-orange-400'
+                  : 'top-3 text-white/60'
+                } peer-focus:-top-4 ${validationErrors.email ? 'peer-focus:text-red-400' : 'peer-focus:text-orange-400'}`}>
                 Email
               </label>
+              {validationErrors.email && (
+                <p className="text-red-400 text-sm mt-1">{validationErrors.email}</p>
+              )}
             </div>
 
             {/* Password Field */}

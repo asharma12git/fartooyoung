@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { 
+  sanitizeFormData, 
+  validateEmail, 
+  validateName,
+  rateLimiter,
+  createHoneypot,
+  isBot
+} from '../utils/security'
 
 const DonationModal = ({ onClose, user }) => {
   const [donationType, setDonationType] = useState('one-time')
@@ -36,6 +44,8 @@ const DonationModal = ({ onClose, user }) => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [showMonthlyPopup, setShowMonthlyPopup] = useState(false)
+  const [honeypot, setHoneypot] = useState(createHoneypot())
+  const [validationErrors, setValidationErrors] = useState({})
 
   const calculateFee = () => {
     const donationAmount = amount === 'custom' ? parseFloat(customAmount) || 0 : amount
@@ -67,12 +77,56 @@ const DonationModal = ({ onClose, user }) => {
       return
     }
 
-    // Step 2 - Process donation
+    // Step 2 - Process donation with security checks
     setLoading(true)
     setError('')
+    setValidationErrors({})
+
+    // Check for bot activity (honeypot)
+    if (isBot(honeypot.value)) {
+      setError('Suspicious activity detected. Please try again later.')
+      setLoading(false)
+      return
+    }
+
+    // Rate limiting check
+    const rateLimitKey = `donation_${donorInfo.email || 'unknown'}`
+    if (!rateLimiter.canAttempt(rateLimitKey, 3, 5 * 60 * 1000)) { // 3 attempts per 5 minutes
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(rateLimitKey, 3, 5 * 60 * 1000) / 1000 / 60)
+      setError(`Too many donation attempts. Please wait ${remainingTime} minutes before trying again.`)
+      setLoading(false)
+      return
+    }
+
+    // Sanitize and validate donor information
+    const sanitizedDonorInfo = sanitizeFormData(donorInfo)
+    const errors = {}
+
+    if (!validateName(sanitizedDonorInfo.firstName)) {
+      errors.firstName = 'First name must contain only letters and be 1-50 characters'
+    }
+    if (!validateName(sanitizedDonorInfo.lastName)) {
+      errors.lastName = 'Last name must contain only letters and be 1-50 characters'
+    }
+    if (!validateEmail(sanitizedDonorInfo.email)) {
+      errors.email = 'Please enter a valid email address'
+    }
+
+    const donationAmount = amount === 'custom' ? parseFloat(customAmount) : amount
+    if (!donationAmount || donationAmount < 5) {
+      errors.amount = 'Minimum donation amount is $5'
+    }
+    if (donationAmount > 50000) {
+      errors.amount = 'Maximum donation amount is $50,000. Please contact us for larger donations.'
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      setLoading(false)
+      return
+    }
 
     try {
-      const donationAmount = amount === 'custom' ? parseFloat(customAmount) : amount
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
 
       const response = await fetch(`${API_BASE_URL}/donations`, {
@@ -84,8 +138,8 @@ const DonationModal = ({ onClose, user }) => {
           amount: donationAmount,
           type: donationType,
           paymentMethod: paymentMethod,
-          email: donorInfo.email,
-          name: `${donorInfo.firstName} ${donorInfo.lastName}`,
+          email: sanitizedDonorInfo.email,
+          name: `${sanitizedDonorInfo.firstName} ${sanitizedDonorInfo.lastName}`,
           userId: user ? user.email : null // Link to user if logged in
         })
       })
@@ -99,10 +153,14 @@ const DonationModal = ({ onClose, user }) => {
           onClose()
         }, 2000)
       } else {
+        // Record failed attempt for rate limiting
+        rateLimiter.recordAttempt(rateLimitKey)
         setError(data.message || 'Donation failed. Please try again.')
       }
     } catch (err) {
       console.error('Donation error:', err)
+      // Record failed attempt for rate limiting
+      rateLimiter.recordAttempt(rateLimitKey)
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
@@ -268,6 +326,17 @@ const DonationModal = ({ onClose, user }) => {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {/* Honeypot field - invisible to users, visible to bots */}
+                  <input
+                    type="text"
+                    name={honeypot.name}
+                    value={honeypot.value}
+                    onChange={(e) => setHoneypot({ ...honeypot, value: e.target.value })}
+                    style={honeypot.style}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-lg font-medium text-white mb-2">
@@ -276,10 +345,20 @@ const DonationModal = ({ onClose, user }) => {
                       <input
                         type="text"
                         value={donorInfo.firstName}
-                        onChange={(e) => setDonorInfo({ ...donorInfo, firstName: e.target.value })}
-                        className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
+                        onChange={(e) => {
+                          setDonorInfo({ ...donorInfo, firstName: e.target.value })
+                          setValidationErrors({ ...validationErrors, firstName: '' })
+                        }}
+                        className={`w-full px-4 py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                          validationErrors.firstName 
+                            ? 'border-red-400 focus:ring-red-500/50 focus:border-red-500' 
+                            : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
+                        }`}
                         required
                       />
+                      {validationErrors.firstName && (
+                        <p className="text-red-400 text-sm mt-1">{validationErrors.firstName}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-lg font-medium text-white mb-2">

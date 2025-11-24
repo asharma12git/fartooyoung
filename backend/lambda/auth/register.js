@@ -37,9 +37,9 @@ exports.handler = async (event) => {
     });
     console.log('Event body:', event.body);
     
-    const { email: rawEmail, password, name } = JSON.parse(event.body);
+    const { email: rawEmail, password, firstName, lastName } = JSON.parse(event.body);
     const email = rawEmail.toLowerCase().trim();
-    console.log('Parsed input:', { email, name });
+    console.log('Parsed input:', { email, firstName, lastName });
     
     // Check if user already exists
     console.log('Checking if user exists...');
@@ -66,7 +66,8 @@ exports.handler = async (event) => {
     console.log('Creating user object...');
     const newUser = {
       email,
-      name,
+      firstName,
+      lastName,
       hashedPassword,
       userId: randomUUID(),
       createdAt: new Date().toISOString(),
@@ -91,7 +92,7 @@ exports.handler = async (event) => {
     
     console.log('Creating JWT token...');
     // Create JWT token
-    const token = jwt.sign({ email, name }, JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({ email, firstName, lastName }, JWT_SECRET, { expiresIn: '24h' });
     
     console.log('Registration successful');
     return {
@@ -99,7 +100,7 @@ exports.handler = async (event) => {
       headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         success: true,
-        user: { email, name },
+        user: { email, firstName, lastName },
         token
       })
     };

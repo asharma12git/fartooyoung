@@ -100,15 +100,26 @@ exports.handler = async (event) => {
       }).promise();
     }
     
-    // Create JWT token
-    const token = jwt.sign({ email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '24h' });
+    // Create JWT token with both old and new name formats for compatibility
+    const tokenPayload = { 
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      name: user.name // Keep for backward compatibility
+    };
+    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '24h' });
     
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         success: true,
-        user: { email: user.email, name: user.name },
+        user: { 
+          email: user.email, 
+          firstName: user.firstName,
+          lastName: user.lastName,
+          name: user.name // Keep for backward compatibility
+        },
         token
       })
     };

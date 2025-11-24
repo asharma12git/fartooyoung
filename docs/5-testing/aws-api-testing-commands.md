@@ -1,5 +1,105 @@
 # AWS API Testing Commands
 
+## AWS Resource Viewing Commands
+
+### View All Stack Resources
+```bash
+# List all CloudFormation stacks
+aws cloudformation list-stacks --region us-east-1
+
+# Describe your specific stack
+aws cloudformation describe-stacks --stack-name fartooyoung-staging --region us-east-1
+
+# List all resources in your stack
+aws cloudformation list-stack-resources --stack-name fartooyoung-staging --region us-east-1
+```
+
+### View API Gateway Resources
+```bash
+# List all API Gateway APIs
+aws apigateway get-rest-apis --region us-east-1
+
+# Get specific API details
+aws apigateway get-rest-api --rest-api-id f20mzr7xcg --region us-east-1
+
+# List all resources/endpoints in your API
+aws apigateway get-resources --rest-api-id f20mzr7xcg --region us-east-1
+
+# List API stages
+aws apigateway get-stages --rest-api-id f20mzr7xcg --region us-east-1
+```
+
+### View Lambda Functions
+```bash
+# List all Lambda functions
+aws lambda list-functions --region us-east-1
+
+# Get specific function details
+aws lambda get-function --function-name fartooyoung-staging-RegisterFunction-GaGzUZqdnRAm --region us-east-1
+
+# List functions with staging prefix
+aws lambda list-functions --region us-east-1 --query 'Functions[?starts_with(FunctionName, `fartooyoung-staging`)]'
+```
+
+### View DynamoDB Tables
+```bash
+# List all DynamoDB tables
+aws dynamodb list-tables --region us-east-1
+
+# Describe specific table
+aws dynamodb describe-table --table-name fartooyoung-staging-users-table --region us-east-1
+aws dynamodb describe-table --table-name fartooyoung-staging-donations-table --region us-east-1
+
+# Scan table contents (be careful with large tables)
+aws dynamodb scan --table-name fartooyoung-staging-users-table --region us-east-1 --max-items 10
+aws dynamodb scan --table-name fartooyoung-staging-donations-table --region us-east-1 --max-items 10
+```
+
+### View IAM Roles
+```bash
+# List IAM roles created by your stack
+aws iam list-roles --query 'Roles[?starts_with(RoleName, `fartooyoung-staging`)]' --region us-east-1
+
+# Get specific role details
+aws iam get-role --role-name fartooyoung-staging-RegisterFunctionRole-2nx4WmoMK3pG --region us-east-1
+```
+
+### View CloudWatch Logs
+```bash
+# List log groups for your Lambda functions
+aws logs describe-log-groups --log-group-name-prefix "/aws/lambda/fartooyoung-staging" --region us-east-1
+
+# Get recent logs for a specific function
+aws logs describe-log-streams --log-group-name "/aws/lambda/fartooyoung-staging-RegisterFunction-GaGzUZqdnRAm" --order-by LastEventTime --descending --region us-east-1
+
+# Get actual log events (replace log-stream-name with actual stream)
+aws logs get-log-events --log-group-name "/aws/lambda/fartooyoung-staging-RegisterFunction-GaGzUZqdnRAm" --log-stream-name "STREAM_NAME_HERE" --region us-east-1
+```
+
+### View S3 Buckets (SAM Deployment)
+```bash
+# List S3 buckets
+aws s3 ls
+
+# List contents of your SAM deployment bucket
+aws s3 ls s3://fartooyoung-backend-staging/
+```
+
+### Quick Resource Summary
+```bash
+# One-liner to see all your resources
+echo "=== CLOUDFORMATION STACK ===" && \
+aws cloudformation describe-stacks --stack-name fartooyoung-staging --region us-east-1 --query 'Stacks[0].{StackName:StackName,Status:StackStatus,Created:CreationTime}' && \
+echo -e "\n=== API GATEWAY ===" && \
+aws apigateway get-rest-apis --region us-east-1 --query 'items[?name==`fartooyoung-staging`].{Name:name,ID:id,Created:createdDate}' && \
+echo -e "\n=== LAMBDA FUNCTIONS ===" && \
+aws lambda list-functions --region us-east-1 --query 'Functions[?starts_with(FunctionName, `fartooyoung-staging`)].{Name:FunctionName,Runtime:Runtime,Modified:LastModified}' && \
+echo -e "\n=== DYNAMODB TABLES ===" && \
+aws dynamodb list-tables --region us-east-1 --query 'TableNames[?starts_with(@, `fartooyoung-staging`)]'
+```
+
+---
+
 ## API Endpoint
 ```
 Base URL: https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod

@@ -11,7 +11,8 @@ const AuthModal = ({ onClose, onLogin }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     newPassword: '',
     token: ''
   })
@@ -71,11 +72,18 @@ const AuthModal = ({ onClose, onLogin }) => {
     }
     
     if (currentView === 'register') {
-      const nameError = validateFullName(formData.name);
-      if (nameError) {
-        setError(nameError);
+      const firstNameError = validateFullName(formData.firstName);
+      if (firstNameError) {
+        setError(`First name: ${firstNameError}`);
         return;
       }
+      
+      const lastNameError = validateFullName(formData.lastName);
+      if (lastNameError) {
+        setError(`Last name: ${lastNameError}`);
+        return;
+      }
+      
       const passwordError = validatePassword(formData.password);
       if (passwordError) {
         setError(passwordError);
@@ -86,11 +94,11 @@ const AuthModal = ({ onClose, onLogin }) => {
     setLoading(true)
     
     try {
-      const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const endpoint = currentView === 'login' ? '/auth/login' : '/auth/register'
       const payload = currentView === 'login' 
         ? { email: formData.email, password: formData.password }
-        : { email: formData.email, password: formData.password, name: formData.name }
+        : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName }
       
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
@@ -102,6 +110,7 @@ const AuthModal = ({ onClose, onLogin }) => {
       
       if (data.success) {
         localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
         onLogin(data.user)
         onClose()
       } else {
@@ -127,7 +136,7 @@ const AuthModal = ({ onClose, onLogin }) => {
     setLoading(true)
     
     try {
-      const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -175,7 +184,7 @@ const AuthModal = ({ onClose, onLogin }) => {
     setLoading(true)
     
     try {
-      const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -368,23 +377,43 @@ const AuthModal = ({ onClose, onLogin }) => {
         {/* REGISTER VIEW */}
         {currentView === 'register' && (
           <form onSubmit={handleAuth} className="space-y-8">
-            {/* Name Field */}
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => {
-                  setFormData({...formData, name: e.target.value})
-                  setError('')
-                }}
-                className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
-                required
-              />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.name ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
-                Full Name
-              </label>
+            {/* First Name and Last Name Fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={formData.firstName || ''}
+                  onChange={(e) => {
+                    setFormData({...formData, firstName: e.target.value})
+                    setError('')
+                  }}
+                  className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                  required
+                />
+                <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                  formData.firstName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
+                  First Name
+                </label>
+              </div>
+              
+              <div className="relative">
+                <input
+                  type="text"
+                  value={formData.lastName || ''}
+                  onChange={(e) => {
+                    setFormData({...formData, lastName: e.target.value})
+                    setError('')
+                  }}
+                  className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                  required
+                />
+                <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                  formData.lastName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
+                  Last Name
+                </label>
+              </div>
             </div>
 
             {/* Email Field */}

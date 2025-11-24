@@ -8,7 +8,7 @@ import WhatWeDo from './pages/WhatWeDo'
 import DonorDashboard from './pages/DonorDashboard'
 import AuthModal from './components/AuthModal'
 import DonationModal from './components/DonationModal'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 /**
  * App Content component to access navigate hook
@@ -27,6 +27,25 @@ function AppContent() {
   // Refresh key to trigger dashboard data reload
   const [refreshKey, setRefreshKey] = useState(0)
 
+  // Restore login state on app load
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const userData = localStorage.getItem('user')
+    
+    if (token && userData) {
+      try {
+        const parsedUser = JSON.parse(userData)
+        setUser(parsedUser)
+        setIsLoggedIn(true)
+      } catch (error) {
+        console.error('Error parsing stored user data:', error)
+        // Clear invalid data
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      }
+    }
+  }, [])
+
   // Authentication handlers
   const handleLogin = (userData) => {
     setUser(userData)
@@ -38,6 +57,9 @@ function AppContent() {
   const handleLogout = () => {
     setUser(null)
     setIsLoggedIn(false)
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    navigate('/') // Navigate back to home page
   }
 
   const handleAuthClick = () => {

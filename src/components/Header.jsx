@@ -57,7 +57,12 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
               className="flex items-center space-x-2"
             >
               <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">
-                {isLoggedIn ? user?.name || 'Account' : 'Login'}
+                {isLoggedIn ? 
+                  (user?.firstName && user?.lastName 
+                    ? `${user.firstName} ${user.lastName}`
+                    : user?.name || 'Account'
+                  ) : 'Login'
+                }
               </span>
               <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

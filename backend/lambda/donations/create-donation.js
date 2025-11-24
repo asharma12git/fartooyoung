@@ -24,7 +24,10 @@ exports.handler = async (event) => {
     }
 
     try {
-        const { amount, type, paymentMethod, email, name } = JSON.parse(event.body);
+        const { amount, type, paymentMethod, email: rawEmail, name } = JSON.parse(event.body);
+        
+        // Normalize email to lowercase for consistency
+        const email = rawEmail ? rawEmail.toLowerCase().trim() : null;
 
         // Basic validation
         if (!amount || !paymentMethod) {

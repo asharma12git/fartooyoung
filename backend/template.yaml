@@ -29,6 +29,11 @@ Globals:
         JWT_SECRET: !Ref JWTSecret
         USERS_TABLE: !Sub "${AWS::StackName}-users-table"
         DONATIONS_TABLE: !Sub "${AWS::StackName}-donations-table"
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,Authorization'"
+      AllowOrigin: "'*'"
 
 Resources:
   # Authentication Functions

@@ -8,12 +8,13 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
   const [userDonations, setUserDonations] = useState([])
   const [loading, setLoading] = useState(true)
   const [calculatorAmount, setCalculatorAmount] = useState(100)
+  const [showSmartSuggestion, setShowSmartSuggestion] = useState(true)
   
   // Settings form state
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
-    firstName: user?.name?.split(' ')[0] || '',
-    lastName: user?.name?.split(' ').slice(1).join(' ') || '',
+    firstName: user?.firstName || user?.name?.split(' ')[0] || '',
+    lastName: user?.lastName || user?.name?.split(' ').slice(1).join(' ') || '',
     phone: user?.phone || ''
   })
   const [formLoading, setFormLoading] = useState(false)
@@ -232,17 +233,21 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
             <div className="text-center mb-6">
               <h2 className="text-4xl font-medium text-orange-400 mb-4">
                 {(() => {
+                  const displayName = user.firstName && user.lastName 
+                    ? `${user.firstName} ${user.lastName}`
+                    : user.name || 'Friend'; // Fallback for old users or missing data
+                    
                   const welcomeMessages = [
-                    `Hello, ${user.name}!`,
-                    `Great to see you, ${user.name}!`,
-                    `Welcome back, ${user.name}!`,
-                    `So glad you're here, ${user.name}!`,
-                    `Thank you for returning, ${user.name}!`,
-                    `Wonderful to see you again, ${user.name}!`,
-                    `Your impact continues, ${user.name}!`,
-                    `Ready to change lives, ${user.name}?`,
-                    `Hope is here, ${user.name}!`,
-                    `Making a difference, ${user.name}!`
+                    `Hello, ${displayName}!`,
+                    `Great to see you, ${displayName}!`,
+                    `Welcome back, ${displayName}!`,
+                    `So glad you're here, ${displayName}!`,
+                    `Thank you for returning, ${displayName}!`,
+                    `Wonderful to see you again, ${displayName}!`,
+                    `Your impact continues, ${displayName}!`,
+                    `Ready to change lives, ${displayName}?`,
+                    `Hope is here, ${displayName}!`,
+                    `Making a difference, ${displayName}!`
                   ]
 
                   let loginTime = localStorage.getItem('loginTimestamp')
@@ -344,7 +349,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                 const goalGirls = 10
                 const progressPercent = Math.min((girlsEducatedSoFar / goalGirls) * 100, 100)
 
-                return (
+                return showSmartSuggestion ? (
                   <div className="bg-gradient-to-r from-orange-500/20 to-orange-400/10 backdrop-blur-sm border border-orange-400/40 rounded-lg p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -353,7 +358,9 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                           <h3 className="text-xl font-bold text-white">Smart Suggestion for You</h3>
                         </div>
                         <p className="text-white/90 text-lg mb-4">
-                          {user.name}, based on your giving pattern, a <span className="font-bold text-orange-300">${suggestedAmount}</span> donation this month would help you reach your goal of educating {goalGirls} girls this year. You're <span className="font-bold text-green-400">{Math.round(progressPercent)}%</span> there!
+                          {user.firstName && user.lastName 
+                            ? `${user.firstName} ${user.lastName}` 
+                            : user.name || 'Friend'}, based on your giving pattern, a <span className="font-bold text-orange-300">${suggestedAmount}</span> donation this month would help you reach your goal of educating {goalGirls} girls this year. You're <span className="font-bold text-green-400">{Math.round(progressPercent)}%</span> there!
                         </p>
                         <div className="flex items-center space-x-3">
                           <button
@@ -362,7 +369,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                           >
                             Donate ${suggestedAmount} Now
                           </button>
-                          <button className="text-white/60 hover:text-white text-sm transition-colors">
+                          <button 
+                            onClick={() => setShowSmartSuggestion(false)}
+                            className="text-white/60 hover:text-white text-sm transition-colors"
+                          >
                             Maybe Later
                           </button>
                         </div>
@@ -396,7 +406,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                       </div>
                     </div>
                   </div>
-                )
+                ) : null
               })()}
 
               {/* Impact Insights - AI Feature #2 */}

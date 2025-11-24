@@ -14,6 +14,17 @@ const DonationModal = ({ onClose, user }) => {
     lastName: '',
     email: ''
   })
+
+  // Auto-fill user information if logged in
+  useEffect(() => {
+    if (user) {
+      setDonorInfo({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || ''
+      })
+    }
+  }, [user])
   const [cardInfo, setCardInfo] = useState({
     cardNumber: '',
     expiration: '',

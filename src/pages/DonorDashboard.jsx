@@ -256,7 +256,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                 })()}
               </h2>
               <div className="flex justify-center mb-4">
-                <img src={logo} alt="Far Too Young" className="h-32 w-auto opacity-90" />
+                <img src={logo} alt="Far Too Young" className="h-48 w-auto opacity-90" />
               </div>
             </div>
 

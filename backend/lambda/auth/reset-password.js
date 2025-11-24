@@ -5,6 +5,8 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
   endpoint: process.env.DYNAMODB_ENDPOINT || undefined
 });
 
+const USERS_TABLE = process.env.USERS_TABLE;
+
 exports.handler = async (event) => {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {

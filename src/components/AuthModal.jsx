@@ -50,7 +50,7 @@ const AuthModal = ({ onClose, onLogin }) => {
       return "Password is too long";
     }
     const commonPasswords = [
-      'password', 'password123', '12345678', 'qwerty', 
+      'password', 'password123', '12345678', 'qwerty',
       'abc123', 'letmein', 'welcome', 'admin'
     ];
     if (commonPasswords.includes(password.toLowerCase())) {
@@ -63,51 +63,51 @@ const AuthModal = ({ onClose, onLogin }) => {
   const handleAuth = async (e) => {
     e.preventDefault()
     setError('')
-    
+
     // Validate based on current view
     const emailError = validateEmail(formData.email);
     if (emailError) {
       setError(emailError);
       return;
     }
-    
+
     if (currentView === 'register') {
       const firstNameError = validateFullName(formData.firstName);
       if (firstNameError) {
         setError(`First name: ${firstNameError}`);
         return;
       }
-      
+
       const lastNameError = validateFullName(formData.lastName);
       if (lastNameError) {
         setError(`Last name: ${lastNameError}`);
         return;
       }
-      
+
       const passwordError = validatePassword(formData.password);
       if (passwordError) {
         setError(passwordError);
         return;
       }
     }
-    
+
     setLoading(true)
-    
+
     try {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const endpoint = currentView === 'login' ? '/auth/login' : '/auth/register'
-      const payload = currentView === 'login' 
+      const payload = currentView === 'login'
         ? { email: formData.email, password: formData.password }
         : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName }
-      
+
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
@@ -126,15 +126,15 @@ const AuthModal = ({ onClose, onLogin }) => {
   const handleForgotPassword = async (e) => {
     e.preventDefault()
     setError('')
-    
+
     const emailError = validateEmail(formData.email);
     if (emailError) {
       setError(emailError);
       return;
     }
-    
+
     setLoading(true)
-    
+
     try {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
@@ -142,14 +142,14 @@ const AuthModal = ({ onClose, onLogin }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         if (data.resetToken) {
           // Local development - show token and switch to reset view
           setResetToken(data.resetToken)
-          setFormData({...formData, token: data.resetToken}) // Pre-fill token
+          setFormData({ ...formData, token: data.resetToken }) // Pre-fill token
           setCurrentView('reset')
         } else {
           // Production - show email sent message
@@ -169,20 +169,20 @@ const AuthModal = ({ onClose, onLogin }) => {
   const handleResetPassword = async (e) => {
     e.preventDefault()
     setError('')
-    
+
     if (!formData.token || !formData.newPassword) {
       setError('Please fill in all fields')
       return
     }
-    
+
     const passwordError = validatePassword(formData.newPassword);
     if (passwordError) {
       setError(passwordError);
       return;
     }
-    
+
     setLoading(true)
-    
+
     try {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
       const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
@@ -190,9 +190,9 @@ const AuthModal = ({ onClose, onLogin }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: formData.token, newPassword: formData.newPassword })
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         setError('✅ Password reset successful! You can now login with your new password.')
         setTimeout(() => {
@@ -263,11 +263,10 @@ const AuthModal = ({ onClose, onLogin }) => {
 
         {/* Error/Success Messages */}
         {error && (
-          <div className={`px-4 py-3 rounded-md backdrop-blur-sm mb-6 ${
-            error.startsWith('✅') 
+          <div className={`px-4 py-3 rounded-md backdrop-blur-sm mb-6 ${error.startsWith('✅')
               ? 'bg-green-500/20 border border-green-400/50 text-green-200'
               : 'bg-red-500/20 border border-red-400/50 text-red-200'
-          }`}>
+            }`}>
             <div className="flex items-center">
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -286,15 +285,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => {
-                  setFormData({...formData, email: e.target.value})
+                  setFormData({ ...formData, email: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 Email
               </label>
             </div>
@@ -305,15 +303,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => {
-                  setFormData({...formData, password: e.target.value})
+                  setFormData({ ...formData, password: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.password ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.password ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 Password
               </label>
               <button
@@ -384,33 +381,31 @@ const AuthModal = ({ onClose, onLogin }) => {
                   type="text"
                   value={formData.firstName || ''}
                   onChange={(e) => {
-                    setFormData({...formData, firstName: e.target.value})
+                    setFormData({ ...formData, firstName: e.target.value })
                     setError('')
                   }}
                   className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                   required
                 />
-                <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                  formData.firstName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-                } peer-focus:-top-4 peer-focus:text-orange-400`}>
+                <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.firstName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                  } peer-focus:-top-4 peer-focus:text-orange-400`}>
                   First Name
                 </label>
               </div>
-              
+
               <div className="relative">
                 <input
                   type="text"
                   value={formData.lastName || ''}
                   onChange={(e) => {
-                    setFormData({...formData, lastName: e.target.value})
+                    setFormData({ ...formData, lastName: e.target.value })
                     setError('')
                   }}
                   className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                   required
                 />
-                <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                  formData.lastName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-                } peer-focus:-top-4 peer-focus:text-orange-400`}>
+                <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.lastName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                  } peer-focus:-top-4 peer-focus:text-orange-400`}>
                   Last Name
                 </label>
               </div>
@@ -422,15 +417,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => {
-                  setFormData({...formData, email: e.target.value})
+                  setFormData({ ...formData, email: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 Email
               </label>
             </div>
@@ -441,15 +435,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => {
-                  setFormData({...formData, password: e.target.value})
+                  setFormData({ ...formData, password: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.password ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.password ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 Password
               </label>
               <button
@@ -514,15 +507,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => {
-                  setFormData({...formData, email: e.target.value})
+                  setFormData({ ...formData, email: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 Email
               </label>
             </div>
@@ -587,15 +579,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type="text"
                 value={formData.token}
                 onChange={(e) => {
-                  setFormData({...formData, token: e.target.value})
+                  setFormData({ ...formData, token: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.token ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.token ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 Reset Token
               </label>
             </div>
@@ -606,15 +597,14 @@ const AuthModal = ({ onClose, onLogin }) => {
                 type={showPassword ? "text" : "password"}
                 value={formData.newPassword}
                 onChange={(e) => {
-                  setFormData({...formData, newPassword: e.target.value})
+                  setFormData({ ...formData, newPassword: e.target.value })
                   setError('')
                 }}
                 className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
                 required
               />
-              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                formData.newPassword ? '-top-4 text-orange-400' : 'top-3 text-white/60'
-              } peer-focus:-top-4 peer-focus:text-orange-400`}>
+              <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.newPassword ? '-top-4 text-orange-400' : 'top-3 text-white/60'
+                } peer-focus:-top-4 peer-focus:text-orange-400`}>
                 New Password
               </label>
               <button

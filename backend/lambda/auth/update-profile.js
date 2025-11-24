@@ -8,6 +8,8 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
   })
 })
 
+const USERS_TABLE = process.env.USERS_TABLE
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 
 exports.handler = async (event) => {

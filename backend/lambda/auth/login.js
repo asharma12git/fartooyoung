@@ -9,6 +9,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
+const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';
 
 exports.handler = async (event) => {
   // Handle CORS preflight
@@ -30,7 +31,7 @@ exports.handler = async (event) => {
     
     // Get user from database
     const result = await dynamodb.get({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email }
     }).promise();
     
@@ -68,7 +69,7 @@ exports.handler = async (event) => {
       
       // Update failed attempts and lock status
       await dynamodb.update({
-        TableName: 'fartooyoung-users',
+        TableName: USERS_TABLE,
         Key: { email },
         UpdateExpression: lockUntil 
           ? 'SET failedAttempts = :attempts, lockedUntil = :lockUntil'
@@ -93,7 +94,7 @@ exports.handler = async (event) => {
     // Successful login - clear failed attempts and lock
     if (user.failedAttempts || user.lockedUntil) {
       await dynamodb.update({
-        TableName: 'fartooyoung-users',
+        TableName: USERS_TABLE,
         Key: { email },
         UpdateExpression: 'REMOVE failedAttempts, lockedUntil'
       }).promise();

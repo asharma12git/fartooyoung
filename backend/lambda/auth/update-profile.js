@@ -75,7 +75,7 @@ exports.handler = async (event) => {
 
     // Update user profile
     const updateParams = {
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email: decoded.email },
       UpdateExpression: 'SET firstName = :firstName, lastName = :lastName, #n = :name',
       ExpressionAttributeNames: {

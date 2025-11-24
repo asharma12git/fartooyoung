@@ -9,6 +9,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
+const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';
 
 exports.handler = async (event) => {
   // Handle CORS preflight
@@ -43,7 +44,7 @@ exports.handler = async (event) => {
     // Check if user already exists
     console.log('Checking if user exists...');
     const existingUser = await dynamodb.get({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email }
     }).promise();
     
@@ -84,7 +85,7 @@ exports.handler = async (event) => {
     console.log('Saving user to database...');
     // Save to database
     await dynamodb.put({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Item: newUser
     }).promise();
     

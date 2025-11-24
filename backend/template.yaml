@@ -2,12 +2,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Far Too Young Authentication API
 
-# Parameters for different environments
 Parameters:
   Environment:
     Type: String
     Default: development
-    AllowedValues: [development, production]
+    AllowedValues: [development, staging, production]
     Description: Deployment environment
   
   DynamoDBEndpoint:
@@ -23,218 +22,179 @@ Parameters:
 
 Globals:
   Function:
+    Runtime: nodejs18.x
     Environment:
       Variables:
         DYNAMODB_ENDPOINT: !Ref DynamoDBEndpoint
         JWT_SECRET: !Ref JWTSecret
-        AWS_ACCESS_KEY_ID: dummy
-        AWS_SECRET_ACCESS_KEY: dummy
+        USERS_TABLE: !Sub "${AWS::StackName}-users-table"
+        DONATIONS_TABLE: !Sub "${AWS::StackName}-donations-table"
 
 Resources:
-  # Login Function
+  # Authentication Functions
   LoginFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/auth/login.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
       Events:
         LoginApi:
           Type: Api
           Properties:
             Path: /auth/login
             Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        LoginOptions:
-          Type: Api
-          Properties:
-            Path: /auth/login
-            Method: options
 
-  # Register Function  
   RegisterFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/auth/register.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
       Events:
         RegisterApi:
           Type: Api
           Properties:
             Path: /auth/register
             Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        RegisterOptions:
-          Type: Api
-          Properties:
-            Path: /auth/register
-            Method: options
 
-  # Forgot Password Function
-  ForgotPasswordFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: .
-      Handler: lambda/auth/forgot-password.handler
-      Runtime: nodejs18.x
-      Events:
-        ForgotPasswordApi:
-          Type: Api
-          Properties:
-            Path: /auth/forgot-password
-            Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        ForgotPasswordOptions:
-          Type: Api
-          Properties:
-            Path: /auth/forgot-password
-            Method: options
-
-  # Reset Password Function
-  ResetPasswordFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: .
-      Handler: lambda/auth/reset-password.handler
-      Runtime: nodejs18.x
-      Events:
-        ResetPasswordApi:
-          Type: Api
-          Properties:
-            Path: /auth/reset-password
-            Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        ResetPasswordOptions:
-          Type: Api
-          Properties:
-            Path: /auth/reset-password
-            Method: options
-
-  # Logout Function
   LogoutFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/auth/logout.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
       Events:
         LogoutApi:
           Type: Api
           Properties:
             Path: /auth/logout
             Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        LogoutOptions:
+
+  ForgotPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/auth/forgot-password.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
+      Events:
+        ForgotPasswordApi:
           Type: Api
           Properties:
-            Path: /auth/logout
-            Method: options
+            Path: /auth/forgot-password
+            Method: post
 
-  # Update Profile Function
+  ResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/auth/reset-password.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
+      Events:
+        ResetPasswordApi:
+          Type: Api
+          Properties:
+            Path: /auth/reset-password
+            Method: post
+
   UpdateProfileFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/auth/update-profile.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
       Events:
         UpdateProfileApi:
           Type: Api
           Properties:
             Path: /auth/update-profile
             Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        UpdateProfileOptions:
-          Type: Api
-          Properties:
-            Path: /auth/update-profile
-            Method: options
 
-  # Change Password Function
   ChangePasswordFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/auth/change-password.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
       Events:
         ChangePasswordApi:
           Type: Api
           Properties:
             Path: /auth/change-password
             Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        ChangePasswordOptions:
-          Type: Api
-          Properties:
-            Path: /auth/change-password
-            Method: options
 
-  # Create Donation Function
+  # Donation Functions
   CreateDonationFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/donations/create-donation.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-donations-table"
       Events:
         CreateDonationApi:
           Type: Api
           Properties:
             Path: /donations
             Method: post
-            Cors:
-              AllowMethods: "'POST,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        CreateDonationOptions:
-          Type: Api
-          Properties:
-            Path: /donations
-            Method: options
 
-  # Get Donations Function
   GetDonationsFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: lambda/donations/get-donations.handler
-      Runtime: nodejs18.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-donations-table"
       Events:
         GetDonationsApi:
           Type: Api
           Properties:
             Path: /donations
             Method: get
-            Cors:
-              AllowMethods: "'GET,OPTIONS'"
-              AllowHeaders: "'Content-Type,Authorization'"
-              AllowOrigin: "'*'"
-        GetDonationsOptions:
-          Type: Api
-          Properties:
-            Path: /donations
-            Method: options
+
+  # DynamoDB Tables
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-users-table"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  DonationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-donations-table"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ApiGatewayApi:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
 

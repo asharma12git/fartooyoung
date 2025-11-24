@@ -6,6 +6,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 const ses = new AWS.SES({ region: 'us-east-1' });
+const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';
 
 exports.handler = async (event) => {
   // Handle CORS preflight
@@ -27,7 +28,7 @@ exports.handler = async (event) => {
     
     // Check if user exists
     const result = await dynamodb.get({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email }
     }).promise();
     
@@ -46,7 +47,7 @@ exports.handler = async (event) => {
     
     // Save reset token to database and clear any account lock
     await dynamodb.update({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email },
       UpdateExpression: 'SET resetToken = :token, resetExpires = :expires REMOVE failedAttempts, lockedUntil',
       ExpressionAttributeValues: {

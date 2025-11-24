@@ -24,7 +24,7 @@ exports.handler = async (event) => {
     
     // Find user by reset token
     const result = await dynamodb.scan({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       FilterExpression: 'resetToken = :token',
       ExpressionAttributeValues: {
         ':token': token
@@ -56,7 +56,7 @@ exports.handler = async (event) => {
     
     // Update password and remove reset token
     await dynamodb.update({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email: user.email },
       UpdateExpression: 'SET hashedPassword = :password REMOVE resetToken, resetExpires',
       ExpressionAttributeValues: {

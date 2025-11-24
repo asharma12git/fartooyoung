@@ -8,6 +8,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
+const DONATIONS_TABLE = process.env.DONATIONS_TABLE || 'fartooyoung-donations';
 
 exports.handler = async (event) => {
     // Handle CORS
@@ -61,7 +62,7 @@ exports.handler = async (event) => {
         // Scan donations table for this user's donations
         // Note: In production, you'd want to use a GSI (Global Secondary Index) on email for better performance
         const result = await dynamodb.scan({
-            TableName: 'fartooyoung-donations',
+            TableName: DONATIONS_TABLE,
             FilterExpression: 'email = :email',
             ExpressionAttributeValues: {
                 ':email': userEmail

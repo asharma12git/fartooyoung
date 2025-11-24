@@ -67,7 +67,7 @@ exports.handler = async (event) => {
 
     // Get user to verify current password
     const user = await dynamodb.get({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email: decoded.email }
     }).promise()
 
@@ -95,7 +95,7 @@ exports.handler = async (event) => {
 
     // Update password
     await dynamodb.update({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email: decoded.email },
       UpdateExpression: 'SET hashedPassword = :newPassword',
       ExpressionAttributeValues: {

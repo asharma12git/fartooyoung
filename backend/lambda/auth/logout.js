@@ -6,6 +6,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
+const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';
 
 exports.handler = async (event) => {
   try {
@@ -27,7 +28,7 @@ exports.handler = async (event) => {
     
     // Update last logout time (optional tracking)
     await dynamodb.update({
-      TableName: 'fartooyoung-users',
+      TableName: USERS_TABLE,
       Key: { email: decoded.email },
       UpdateExpression: 'SET lastLogout = :now',
       ExpressionAttributeValues: {

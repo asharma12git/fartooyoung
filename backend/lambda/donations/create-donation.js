@@ -7,6 +7,8 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
     region: 'us-east-1'
 });
 
+const DONATIONS_TABLE = process.env.DONATIONS_TABLE || 'fartooyoung-donations';
+
 exports.handler = async (event) => {
     // Handle CORS
     if (event.httpMethod === 'OPTIONS') {
@@ -37,6 +39,7 @@ exports.handler = async (event) => {
         const timestamp = new Date().toISOString();
 
         const donation = {
+            id: donationId, // Use 'id' as primary key to match DynamoDB table schema
             donationId,
             amount,
             type: type || 'one-time',
@@ -50,7 +53,7 @@ exports.handler = async (event) => {
 
         // Save to DynamoDB
         await dynamodb.put({
-            TableName: 'fartooyoung-donations',
+            TableName: DONATIONS_TABLE,
             Item: donation
         }).promise();
 

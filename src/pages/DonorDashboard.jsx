@@ -435,19 +435,19 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                         <div className="text-white font-bold text-lg">Top {100 - percentile}%</div>
                       </div>
                       {/* Year Growth */}
-                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
+                      <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-4 border border-green-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">📈</div>
                         <div className="text-white/60 text-sm mb-1">Year Growth</div>
                         <div className="text-white font-bold text-lg">{growthPercent > 0 ? '+' : ''}{growthPercent}%</div>
                       </div>
                       {/* To Goal */}
-                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
+                      <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-4 border border-blue-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">🎯</div>
                         <div className="text-white/60 text-sm mb-1">To Goal</div>
                         <div className="text-white font-bold text-lg">{Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls</div>
                       </div>
                       {/* This Year Donations */}
-                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
+                      <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-lg p-4 border border-purple-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">⭐</div>
                         <div className="text-white/60 text-sm mb-1">This Year</div>
                         <div className="text-white font-bold text-lg">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>
@@ -459,33 +459,33 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
 
               {/* Impact Stats Cards - Existing */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-6 border border-green-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-orange-400 text-xl">👧</span>
+                    <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-green-400 text-xl">👧</span>
                     </div>
                   </div>
                   <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 50)}</p>
                   <p className="text-white/60 text-sm mt-1">girls in school this month</p>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-6 border border-blue-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Years of Education Funded</h3>
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-orange-400 text-2xl">📚</span>
+                    <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-blue-400 text-2xl">📚</span>
                     </div>
                   </div>
                   <p className="text-3xl font-bold text-white">{(userStats.lifetimeTotal / 600).toFixed(1)}</p>
                   <p className="text-white/60 text-sm mt-1">years of education provided</p>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-lg p-6 border border-purple-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Lives Completely Changed</h3>
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-orange-400 text-2xl">🎓</span>
+                    <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-purple-400 text-2xl">🎓</span>
                     </div>
                   </div>
                   <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 6000)}</p>
@@ -765,11 +765,23 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                         const girlsSupported = Math.floor(yearTotal / 50)
 
                         return (
-                          <div key={year} className="bg-white/5 border border-white/10 rounded-lg p-4 min-w-[280px] flex-shrink-0">
+                          <div key={year} className={`rounded-lg p-4 min-w-[280px] flex-shrink-0 border transition-all hover:scale-[1.02] ${
+                            years.indexOf(year) % 2 === 0
+                              ? 'bg-gradient-to-br from-green-500/10 to-green-400/5 border-green-400/20'
+                              : 'bg-gradient-to-br from-blue-500/10 to-blue-400/5 border-blue-400/20'
+                          }`}>
                             <div className="flex items-center justify-between mb-3">
                               <h4 className="text-lg font-semibold text-white">{year}</h4>
-                              <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                                <span className="text-orange-400 text-sm">📅</span>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                years.indexOf(year) % 2 === 0
+                                  ? 'bg-green-500/20'
+                                  : 'bg-blue-500/20'
+                              }`}>
+                                <span className={`text-sm ${
+                                  years.indexOf(year) % 2 === 0
+                                    ? 'text-green-400'
+                                    : 'text-blue-400'
+                                }`}>📅</span>
                               </div>
                             </div>
 
@@ -836,7 +848,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
           {activeTab === 'donations' && (
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-6 border border-orange-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Total Donations</h3>
                     <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
@@ -847,22 +859,22 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                   <p className="text-white/60 text-sm mt-1">donations made</p>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-6 border border-green-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Lifetime Total</h3>
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-orange-400 text-lg">💰</span>
+                    <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-green-400 text-lg">💰</span>
                     </div>
                   </div>
                   <p className="text-3xl font-bold text-white">${userStats.lifetimeTotal.toLocaleString()}</p>
                   <p className="text-white/60 text-sm mt-1">total contributed</p>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-6 border border-blue-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Average Donation</h3>
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-orange-400 text-lg">📈</span>
+                    <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-blue-400 text-lg">📈</span>
                     </div>
                   </div>
                   <p className="text-3xl font-bold text-white">${userStats.averageDonation}</p>
@@ -880,11 +892,23 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, refreshKey }) => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {userDonations.map(donation => (
-                      <div key={donation.id} className="flex items-center justify-between py-4 px-4 bg-white/5 rounded-lg border border-white/10">
+                    {userDonations.map((donation, index) => (
+                      <div key={donation.id} className={`flex items-center justify-between py-4 px-4 rounded-lg border transition-all hover:scale-[1.02] ${
+                        index % 2 === 0 
+                          ? 'bg-gradient-to-r from-green-500/10 to-green-400/5 border-green-400/20' 
+                          : 'bg-gradient-to-r from-blue-500/10 to-blue-400/5 border-blue-400/20'
+                      }`}>
                         <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center">
-                            <span className="text-orange-400 text-lg">💝</span>
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                            index % 2 === 0 
+                              ? 'bg-green-500/20' 
+                              : 'bg-blue-500/20'
+                          }`}>
+                            <span className={`text-lg ${
+                              index % 2 === 0 
+                                ? 'text-green-400' 
+                                : 'text-blue-400'
+                            }`}>💝</span>
                           </div>
                           <div>
                             <p className="text-white font-medium text-lg">${donation.amount}</p>

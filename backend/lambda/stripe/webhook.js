@@ -41,11 +41,14 @@ exports.handler = async (event) => {
 
     console.log('Received Stripe webhook:', stripeEvent.type)
 
-    // Handle checkout session completed
+    // Handle checkout session completed (both one-time and subscription setup)
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object
 
       console.log('Checkout session completed:', session.id)
+      console.log('Session mode:', session.mode)
+      console.log('Session subscription:', session.subscription)
+      console.log('Session metadata:', JSON.stringify(session.metadata))
 
       // Create donation record
       const donationId = `checkout_${session.id}`
@@ -54,7 +57,7 @@ exports.handler = async (event) => {
         id: donationId,
         donationId: donationId,
         amount: session.amount_total / 100, // Convert from cents to dollars
-        type: 'one-time', // We'll add subscription support later
+        type: session.mode === 'subscription' ? 'monthly' : 'one-time',
         paymentMethod: 'stripe-checkout',
         email: session.customer_email || session.metadata?.donor_email,
         name: session.metadata?.donor_name || 'Anonymous',
@@ -64,13 +67,62 @@ exports.handler = async (event) => {
         processedAt: new Date().toISOString()
       }
 
+      // Add subscription info if it's a subscription
+      if (session.mode === 'subscription' && session.subscription) {
+        donation.stripeSubscriptionId = session.subscription
+        console.log('Added subscription ID:', session.subscription)
+      }
+
       // Save to DynamoDB
       await dynamodb.put({
         TableName: DONATIONS_TABLE,
         Item: donation
       }).promise()
 
-      console.log('Donation saved to database:', donationId)
+      console.log('Donation saved to database:', donationId, 'Type:', donation.type)
+    }
+
+    // Handle recurring subscription payments
+    if (stripeEvent.type === 'invoice.payment_succeeded') {
+      const invoice = stripeEvent.data.object
+
+      // Only process subscription invoices (not one-time payments)
+      if (invoice.subscription) {
+        console.log('Subscription payment succeeded:', invoice.id)
+
+        // Create donation record for recurring payment
+        const donationId = `invoice_${invoice.id}`
+        
+        const donation = {
+          id: donationId,
+          donationId: donationId,
+          amount: invoice.amount_paid / 100, // Convert from cents to dollars
+          type: 'monthly',
+          paymentMethod: 'stripe-subscription',
+          email: invoice.customer_email,
+          name: invoice.customer_name || 'Subscriber',
+          status: 'completed',
+          stripeInvoiceId: invoice.id,
+          stripeSubscriptionId: invoice.subscription,
+          createdAt: new Date().toISOString(),
+          processedAt: new Date().toISOString()
+        }
+
+        // Save to DynamoDB
+        await dynamodb.put({
+          TableName: DONATIONS_TABLE,
+          Item: donation
+        }).promise()
+
+        console.log('Recurring donation saved to database:', donationId)
+      }
+    }
+
+    // Handle subscription creation
+    if (stripeEvent.type === 'customer.subscription.created') {
+      const subscription = stripeEvent.data.object
+      console.log('Subscription created:', subscription.id)
+      // Could add additional logic here if needed
     }
 
     return {

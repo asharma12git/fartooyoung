@@ -28,6 +28,8 @@ exports.handler = async (event) => {
   try {
     const { amount, donor_info, donation_type } = JSON.parse(event.body)
 
+    console.log('Creating checkout session with:', { amount, donation_type, donor_info })
+
     // Validate required fields
     if (!amount || !donor_info) {
       return {
@@ -40,9 +42,8 @@ exports.handler = async (event) => {
     }
 
     // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig = {
       payment_method_types: ['card'],
-      mode: 'payment',
       line_items: [
         {
           price_data: {
@@ -66,7 +67,19 @@ exports.handler = async (event) => {
       },
       success_url: `${event.headers.origin || 'http://localhost:4173'}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${event.headers.origin || 'http://localhost:4173'}?payment=cancelled`,
-    })
+    }
+
+    // Add recurring configuration for monthly donations
+    if (donation_type === 'monthly') {
+      sessionConfig.mode = 'subscription'
+      sessionConfig.line_items[0].price_data.recurring = {
+        interval: 'month'
+      }
+    } else {
+      sessionConfig.mode = 'payment'
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig)
 
     return {
       statusCode: 200,

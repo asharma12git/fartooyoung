@@ -399,6 +399,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                     <CheckoutButton
                       amount={Math.round(parseFloat(getTotalAmount()) * 100) / 100}
                       donorInfo={sanitizeFormData(donorInfo)}
+                      donationType={donationType}
                       onError={handleStripeError}
                       loading={loading}
                       setLoading={setLoading}

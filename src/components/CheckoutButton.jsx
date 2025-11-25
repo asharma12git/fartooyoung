@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const CheckoutButton = ({ amount, donorInfo, onError, loading, setLoading }) => {
+const CheckoutButton = ({ amount, donorInfo, donationType, onError, loading, setLoading }) => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handleCheckout = async () => {
@@ -27,7 +27,7 @@ const CheckoutButton = ({ amount, donorInfo, onError, loading, setLoading }) => 
         body: JSON.stringify({
           amount: amount,
           donor_info: donorInfo,
-          donation_type: 'one-time'
+          donation_type: donationType || 'one-time'
         }),
       })
       
@@ -97,6 +97,7 @@ const CheckoutButton = ({ amount, donorInfo, onError, loading, setLoading }) => 
 CheckoutButton.propTypes = {
   amount: PropTypes.number.isRequired,
   donorInfo: PropTypes.object.isRequired,
+  donationType: PropTypes.string,
   onError: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   setLoading: PropTypes.func.isRequired

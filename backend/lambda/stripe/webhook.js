@@ -13,8 +13,20 @@ const DONATIONS_TABLE = process.env.DONATIONS_TABLE
 
 exports.handler = async (event) => {
   try {
-    const sig = event.headers['stripe-signature']
+    // API Gateway may transform header names to lowercase
+    const sig = event.headers['stripe-signature'] || event.headers['Stripe-Signature']
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+    console.log('Headers received:', JSON.stringify(event.headers))
+    console.log('Stripe signature:', sig)
+
+    if (!sig) {
+      console.error('No stripe-signature header found')
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'No stripe-signature header value was provided.' })
+      }
+    }
 
     let stripeEvent
     try {

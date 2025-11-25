@@ -26,7 +26,7 @@ capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=staging",
     "JWTSecret=staging-jwt-secret",
-    "StripeSecretKey=YOUR_STAGING_STRIPE_KEY",
+    "StripeSecretKey=YOUR_STAGING_STRIPE_SECRET_KEY",
     "StripeWebhookSecret=YOUR_STAGING_WEBHOOK_SECRET"
 ]
 confirm_changeset = false

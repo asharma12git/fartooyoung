@@ -128,7 +128,9 @@ function AppContent() {
           onLogin={handleLogin}
         />
       )}
-      {showDonation && <DonationModal onClose={handleDonationClose} user={user} initialAmount={donationAmount} />}
+      {showDonation && (
+        <DonationModal onClose={handleDonationClose} user={user} initialAmount={donationAmount} />
+      )}
     </div>
   )
 }

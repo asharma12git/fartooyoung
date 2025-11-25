@@ -20,6 +20,18 @@ Parameters:
     Description: JWT signing secret
     NoEcho: true
 
+  StripeSecretKey:
+    Type: String
+    Default: "sk_test_..."
+    Description: Stripe secret key for payment processing
+    NoEcho: true
+
+  StripeWebhookSecret:
+    Type: String
+    Default: "whsec_..."
+    Description: Stripe webhook endpoint secret
+    NoEcho: true
+
 Globals:
   Function:
     Runtime: nodejs18.x
@@ -172,6 +184,44 @@ Resources:
           Properties:
             Path: /donations
             Method: get
+
+  # Stripe Payment Functions
+  CreateCheckoutSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/stripe/create-checkout-session.handler
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-donations-table"
+      Events:
+        CreateCheckoutSessionApi:
+          Type: Api
+          Properties:
+            Path: /stripe/create-checkout-session
+            Method: post
+
+  StripeWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/stripe/webhook.handler
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+          STRIPE_WEBHOOK_SECRET: !Ref StripeWebhookSecret
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-donations-table"
+      Events:
+        StripeWebhookApi:
+          Type: Api
+          Properties:
+            Path: /stripe/webhook
+            Method: post
 
   # DynamoDB Tables
   UsersTable:

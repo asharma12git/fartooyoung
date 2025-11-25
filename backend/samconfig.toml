@@ -1,0 +1,47 @@
+# SAM configuration file with multiple environments
+version = 0.1
+
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "fartooyoung-local"
+s3_bucket = "fartooyoung-backend-local"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = [
+    "Environment=local",
+    "JWTSecret=local-jwt-secret",
+    "StripeSecretKey=YOUR_LOCAL_STRIPE_KEY",
+    "StripeWebhookSecret=YOUR_LOCAL_WEBHOOK_SECRET"
+]
+confirm_changeset = false
+
+[staging]
+[staging.deploy]
+[staging.deploy.parameters]
+stack_name = "fartooyoung-staging"
+s3_bucket = "fartooyoung-backend-staging"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = [
+    "Environment=staging",
+    "JWTSecret=staging-jwt-secret",
+    "StripeSecretKey=YOUR_STAGING_STRIPE_KEY",
+    "StripeWebhookSecret=YOUR_STAGING_WEBHOOK_SECRET"
+]
+confirm_changeset = false
+
+[production]
+[production.deploy]
+[production.deploy.parameters]
+stack_name = "fartooyoung-production"
+s3_bucket = "fartooyoung-backend-production"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = [
+    "Environment=production",
+    "JWTSecret=production-jwt-secret",
+    "StripeSecretKey=YOUR_PRODUCTION_STRIPE_KEY",
+    "StripeWebhookSecret=YOUR_PRODUCTION_WEBHOOK_SECRET"
+]
+confirm_changeset = false

@@ -184,9 +184,9 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
   // Calculate real stats from user's donations
   const userStats = {
     totalDonations: userDonations.length,
-    lifetimeTotal: userDonations.reduce((sum, donation) => sum + donation.amount, 0),
+    lifetimeTotal: Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) * 100) / 100,
     averageDonation: userDonations.length > 0
-      ? Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) / userDonations.length)
+      ? Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) / userDonations.length * 100) / 100
       : 0
   }
 
@@ -947,7 +947,16 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           <div>
                             <p className="text-white font-medium text-lg">${donation.amount}</p>
                             <p className="text-white/60">{donation.type} donation</p>
-                            <p className="text-white/50 text-sm">{donation.createdAt?.split('T')[0]}</p>
+                            <p className="text-white/50 text-sm">
+                              {donation.createdAt ? new Date(donation.createdAt).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                timeZoneName: 'short'
+                              }) : 'Date not available'}
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">

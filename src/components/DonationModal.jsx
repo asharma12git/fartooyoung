@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import CheckoutButton from './CheckoutButton'
+import donationImage from '../assets/images/components/donation-modal/5.jpg'
 import { 
   sanitizeFormData, 
   validateEmail, 
@@ -40,6 +42,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
   })
   const [coverTransactionCosts, setCoverTransactionCosts] = useState(true)
   const [showTransactionTooltip, setShowTransactionTooltip] = useState(false)
+  const [tooltipType, setTooltipType] = useState('text')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -49,15 +52,22 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
 
   const calculateFee = () => {
     const donationAmount = amount === 'custom' ? parseFloat(customAmount) || 0 : amount
-    // Typical processing fee is around 2.9% + $0.30
-    return (donationAmount * 0.029 + 0.30).toFixed(2)
+    // Calculate in cents to avoid floating point issues
+    const donationCents = Math.round(donationAmount * 100)
+    const feeCents = Math.round(donationCents * 0.029) + 30 // 2.9% + $0.30
+    return (feeCents / 100).toFixed(2)
   }
 
   const getTotalAmount = () => {
     const donationAmount = amount === 'custom' ? parseFloat(customAmount) || 0 : amount
     const fee = coverTransactionCosts ? parseFloat(calculateFee()) : 0
-    const total = donationAmount + fee
-    return total % 1 === 0 ? total.toString() : total.toFixed(2)
+    
+    // Calculate everything in cents to avoid floating point precision issues
+    const donationCents = Math.round(donationAmount * 100)
+    const feeCents = Math.round(fee * 100)
+    const totalCents = donationCents + feeCents
+    
+    return (totalCents / 100).toFixed(2)
   }
 
   const presetAmounts = [25, 50, 100, 250, 500, 1000]
@@ -69,6 +79,30 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
     }
   }, [])
 
+  // Handle Stripe payment success
+  const handleStripeSuccess = async (paymentData) => {
+    try {
+      setError('') // Clear any errors
+      setSuccess(true)
+      
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        onClose()
+      }, 3000)
+    } catch (err) {
+      console.error('Post-payment error:', err)
+      setError('Payment succeeded but there was an issue. Please contact support if needed.')
+      setLoading(false)
+    }
+  }
+
+  // Handle Stripe payment errors
+  const handleStripeError = (errorMessage) => {
+    setError(errorMessage)
+    setLoading(false)
+    // Don't close modal on error - let user try again
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -77,24 +111,13 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
       return
     }
 
-    // Step 2 - Process donation with security checks
-    setLoading(true)
+    // Step 2 - Validate donor information only
     setError('')
     setValidationErrors({})
 
     // Check for bot activity (honeypot)
     if (isBot(honeypot.value)) {
       setError('Suspicious activity detected. Please try again later.')
-      setLoading(false)
-      return
-    }
-
-    // Rate limiting check
-    const rateLimitKey = `donation_${donorInfo.email || 'unknown'}`
-    if (!rateLimiter.canAttempt(rateLimitKey, 3, 5 * 60 * 1000)) { // 3 attempts per 5 minutes
-      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(rateLimitKey, 3, 5 * 60 * 1000) / 1000 / 60)
-      setError(`Too many donation attempts. Please wait ${remainingTime} minutes before trying again.`)
-      setLoading(false)
       return
     }
 
@@ -122,49 +145,10 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
 
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors)
-      setLoading(false)
       return
     }
 
-    try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
-
-      const response = await fetch(`${API_BASE_URL}/donations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          amount: donationAmount,
-          type: donationType,
-          paymentMethod: paymentMethod,
-          email: sanitizedDonorInfo.email,
-          name: `${sanitizedDonorInfo.firstName} ${sanitizedDonorInfo.lastName}`,
-          userId: user ? user.email : null // Link to user if logged in
-        })
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setSuccess(true)
-        // Auto-close after 2 seconds
-        setTimeout(() => {
-          onClose()
-        }, 2000)
-      } else {
-        // Record failed attempt for rate limiting
-        rateLimiter.recordAttempt(rateLimitKey)
-        setError(data.message || 'Donation failed. Please try again.')
-      }
-    } catch (err) {
-      console.error('Donation error:', err)
-      // Record failed attempt for rate limiting
-      rateLimiter.recordAttempt(rateLimitKey)
-      setError('Network error. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+    // Validation passed - Stripe form will handle payment
   }
 
   return (
@@ -192,7 +176,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
             {/* Image */}
             <div className="flex-1 flex items-center justify-center min-h-[400px]">
               <img
-                src="/src/assets/images/components/donation-modal/5.jpg"
+                src={donationImage}
                 alt="Children in need of protection"
                 className="w-full h-auto max-h-[400px] object-cover object-top rounded-lg"
               />
@@ -367,10 +351,20 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                       <input
                         type="text"
                         value={donorInfo.lastName}
-                        onChange={(e) => setDonorInfo({ ...donorInfo, lastName: e.target.value })}
-                        className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
+                        onChange={(e) => {
+                          setDonorInfo({ ...donorInfo, lastName: e.target.value })
+                          setValidationErrors({ ...validationErrors, lastName: '' })
+                        }}
+                        className={`w-full px-4 py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                          validationErrors.lastName 
+                            ? 'border-red-400 focus:ring-red-500/50 focus:border-red-500' 
+                            : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
+                        }`}
                         required
                       />
+                      {validationErrors.lastName && (
+                        <p className="text-red-400 text-sm mt-1">{validationErrors.lastName}</p>
+                      )}
                     </div>
                   </div>
 
@@ -381,203 +375,34 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                     <input
                       type="email"
                       value={donorInfo.email}
-                      onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
+                      onChange={(e) => {
+                        setDonorInfo({ ...donorInfo, email: e.target.value })
+                        setValidationErrors({ ...validationErrors, email: '' })
+                      }}
+                      className={`w-full px-4 py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                        validationErrors.email 
+                          ? 'border-red-400 focus:ring-red-500/50 focus:border-red-500' 
+                          : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
+                      }`}
                       required
                     />
+                    {validationErrors.email && (
+                      <p className="text-red-400 text-sm mt-1">{validationErrors.email}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-lg font-medium text-white mb-3">
-                      Payment Method
+                      Payment Information
                     </label>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      {/* Left Column - Payment Method Selection */}
-                      <div className="space-y-1">
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('stripe')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'stripe'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                            }`}
-                        >
-                          Credit Card
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('apple')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'apple'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                            }`}
-                        >
-                          Apple Pay
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('google')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'google'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                            }`}
-                        >
-                          Google Pay
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('paypal')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'paypal'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                            }`}
-                        >
-                          PayPal
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('venmo')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'venmo'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                            }`}
-                        >
-                          Venmo
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('wire')}
-                          className={`w-full py-2 px-3 rounded-md text-sm font-medium transition-all duration-300 text-left ${paymentMethod === 'wire'
-                            ? 'bg-orange-500/80 text-white border border-orange-400/50'
-                            : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
-                            }`}
-                        >
-                          Bank Wire
-                        </button>
-                      </div>
-
-                      {/* Right Column - Payment Details */}
-                      <div className="bg-white/5 border border-white/20 rounded-lg p-3">
-                        {paymentMethod === 'stripe' && (
-                          <div className="space-y-3">
-                            <input
-                              type="text"
-                              placeholder="Card Number"
-                              value={cardInfo.cardNumber}
-                              onChange={(e) => {
-                                let value = e.target.value.replace(/\D/g, '') // Remove non-digits
-                                value = value.replace(/(\d{4})(?=\d)/g, '$1 ') // Add space every 4 digits
-                                if (value.length > 19) value = value.substring(0, 19) // Limit to 16 digits + 3 spaces
-                                setCardInfo({ ...cardInfo, cardNumber: value })
-                              }}
-                              maxLength="19"
-                              className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
-                              required
-                            />
-                            <div className="grid grid-cols-2 gap-2">
-                              <input
-                                type="text"
-                                placeholder="MM/YY"
-                                value={cardInfo.expiration}
-                                onChange={(e) => {
-                                  let value = e.target.value.replace(/\D/g, '') // Remove non-digits
-                                  if (value.length >= 2) {
-                                    value = value.substring(0, 2) + '/' + value.substring(2, 4)
-                                  }
-                                  setCardInfo({ ...cardInfo, expiration: value })
-                                }}
-                                maxLength="5"
-                                className="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
-                                required
-                              />
-                              <input
-                                type="text"
-                                placeholder="CVC"
-                                value={cardInfo.cvc}
-                                onChange={(e) => {
-                                  let value = e.target.value.replace(/\D/g, '') // Remove non-digits
-                                  if (value.length > 4) value = value.substring(0, 4) // Limit to 4 digits
-                                  setCardInfo({ ...cardInfo, cvc: value })
-                                }}
-                                maxLength="4"
-                                className="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm"
-                                required
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        {paymentMethod === 'paypal' && (
-                          <div className="text-center">
-                            <button
-                              type="button"
-                              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors"
-                            >
-                              Pay with PayPal
-                            </button>
-                          </div>
-                        )}
-
-                        {paymentMethod === 'apple' && (
-                          <div className="text-center">
-                            <button
-                              type="button"
-                              className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors"
-                            >
-                              Pay with Apple Pay
-                            </button>
-                          </div>
-                        )}
-
-                        {paymentMethod === 'google' && (
-                          <div className="text-center">
-                            <button
-                              type="button"
-                              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors"
-                            >
-                              Pay with Google Pay
-                            </button>
-                          </div>
-                        )}
-
-                        {paymentMethod === 'venmo' && (
-                          <div className="text-center">
-                            <button
-                              type="button"
-                              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors"
-                            >
-                              Pay with Venmo
-                            </button>
-                          </div>
-                        )}
-
-                        {paymentMethod === 'wire' && (
-                          <div className="text-center">
-                            <p className="text-white/80 text-xs mb-3">Bank transfer instructions will be provided</p>
-                            <button
-                              type="button"
-                              className="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors"
-                            >
-                              Proceed with Bank Wire
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Elegant Divider */}
-                        <div className="my-4 flex items-center">
-                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                        </div>
-
-                        {/* Total Amount */}
-                        <div className="flex items-center justify-center h-16">
-                          <div className="text-3xl font-bold text-orange-400">
-                            ${getTotalAmount()}
-                            {donationType === 'monthly' && <span className="text-base text-white/70 ml-1">/month</span>}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <CheckoutButton
+                      amount={Math.round(parseFloat(getTotalAmount()) * 100) / 100}
+                      donorInfo={sanitizeFormData(donorInfo)}
+                      onError={handleStripeError}
+                      loading={loading}
+                      setLoading={setLoading}
+                    />
                   </div>
 
                   {/* Cover Transaction Costs */}
@@ -623,34 +448,14 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                     )}
                   </div>
 
-                  <div className="flex space-x-3">
+                  <div className="flex justify-start">
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="flex-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 rounded-md text-base font-medium transition-colors border border-white/30"
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 rounded-md text-base font-medium transition-colors border border-white/30"
                       disabled={loading}
                     >
                       Back
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading || !donorInfo.firstName || !donorInfo.lastName || !donorInfo.email ||
-                        (paymentMethod === 'stripe' && (!cardInfo.cardNumber || !cardInfo.expiration || !cardInfo.cvc))}
-                      className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-500/50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-md text-base font-bold transition-colors border border-orange-400/50 flex items-center justify-center"
-                    >
-                      {loading ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Processing...
-                        </>
-                      ) : (
-                        paymentMethod === 'stripe' ? 'Donate' :
-                          paymentMethod === 'paypal' ? 'Donate' :
-                            'Donate'
-                      )}
                     </button>
                   </div>
 

@@ -19,6 +19,8 @@ We have successfully completed a **comprehensive full-stack donation platform** 
 - **Stripe Checkout Integration**: Converted from Elements to redirect-based Checkout for cleaner UX
 - **Webhook Infrastructure**: Automatic donation recording via Stripe webhook events
 - **Payment Processing**: Real Stripe payment processing with create-checkout-session endpoint
+- **Monthly Subscriptions**: Verified working with automatic recurring payments via webhooks
+- **Subscription Tracking**: DynamoDB records linked by subscription IDs for recurring donations
 - Smart donation flow: Direct-to-payment for "Donate $X Now" buttons
 - Auto-fill for logged-in users (firstName, lastName, email)
 - Monthly and one-time donation support with proper database storage
@@ -87,7 +89,16 @@ Upgrade to embedded, in-app payment experience:
 - **Custom Branding**: Match Far Too Young visual identity
 - **Estimated Time**: 3-4 hours
 
-### **Option 3: Advanced Stripe Features**
+### **Option 3: Stripe Customer Portal Integration**
+Implement donor subscription management:
+- **Portal Customization**: Brand Stripe Customer Portal to match site design
+- **Subscription Management**: Allow donors to cancel, pause, update payment methods
+- **Integration**: Backend endpoint to generate portal sessions
+- **Dashboard Integration**: "Manage Subscription" buttons for monthly donors
+- **Return Flow**: Seamless redirect back to donor dashboard
+- **Estimated Time**: 2-3 hours
+
+### **Option 4: Advanced Stripe Features**
 Enhance existing Stripe integration:
 - Subscription management dashboard
 - Payment method updates
@@ -95,7 +106,7 @@ Enhance existing Stripe integration:
 - Advanced webhook event handling
 - **Estimated Time**: 2-3 hours
 
-### **Option 4: Advanced Features**
+### **Option 5: Advanced Features**
 Add enterprise features:
 - Email notifications for donations
 - Admin dashboard for donation management

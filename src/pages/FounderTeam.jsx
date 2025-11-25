@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import heroImage from '../assets/images/pages/founder-team/Avinash-Sharma.jpg'
 import signatureImage from '../assets/images/pages/founder-team/avinash-sharma/Signature.png'
@@ -7,12 +8,10 @@ import raviBaralImage from '../assets/images/pages/founder-team/our-team/Ravi-Ba
 import ashutoshSharmaImage from '../assets/images/pages/founder-team/our-team/Ashutosh-Sharma.jpg'
 import oshinBistaImage from '../assets/images/pages/founder-team/our-team/Oshin-Bista.jpg'
 import sooryaBaralImage from '../assets/images/pages/founder-team/our-team/Soorya-Baral.png'
-import DonationModal from '../components/DonationModal'
 import Card from '../components/Card'
 import { GRADIENTS, BORDERS } from '../constants/styles'
 
-const FounderTeam = () => {
-  const [showDonationModal, setShowDonationModal] = useState(false)
+const FounderTeam = ({ onDonateClick }) => {
 
   return (
     <div className="min-h-screen">
@@ -108,7 +107,7 @@ const FounderTeam = () => {
                 
                 <div className="mt-8 text-center">
                   <button 
-                    onClick={() => setShowDonationModal(true)}
+                    onClick={() => onDonateClick()}
                     className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <span>DONATE</span>
@@ -308,12 +307,12 @@ const FounderTeam = () => {
         </div>
       </div>
 
-      {/* Donation Modal */}
-      {showDonationModal && (
-        <DonationModal onClose={() => setShowDonationModal(false)} />
-      )}
     </div>
   )
+}
+
+FounderTeam.propTypes = {
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default FounderTeam

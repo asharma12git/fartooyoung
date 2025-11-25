@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
 import childBrideImage from '../assets/images/pages/child-marriage/a-child-bride/Child-Bride.jpg'
 import useCountUp from '../hooks/useCountUp'
-import DonationModal from '../components/DonationModal'
 import flagBangladesh from '../assets/images/pages/child-marriage/where-we-work/Flag_Bangladesh.png'
 import flagNepal from '../assets/images/pages/child-marriage/where-we-work/Flag_Nepal.svg'
 import flagUSA from '../assets/images/pages/child-marriage/where-we-work/Flag_USA.png'
@@ -305,8 +305,7 @@ const StatisticsGrid = () => {
   )
 }
 
-const ChildMarriage = () => {
-  const [showDonationModal, setShowDonationModal] = useState(false)
+const ChildMarriage = ({ onDonateClick }) => {
 
   return (
     <div className="min-h-screen">
@@ -337,7 +336,7 @@ const ChildMarriage = () => {
 
           <div className="text-center mb-8">
             <button
-              onClick={() => setShowDonationModal(true)}
+              onClick={() => onDonateClick()}
               className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span>DONATE</span>
@@ -487,13 +486,12 @@ const ChildMarriage = () => {
 
         </div>
       </div>
-
-      {/* Donation Modal */}
-      {showDonationModal && (
-        <DonationModal onClose={() => setShowDonationModal(false)} />
-      )}
     </div>
   )
+}
+
+ChildMarriage.propTypes = {
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default ChildMarriage

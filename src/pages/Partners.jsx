@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import heroImage from '../assets/images/pages/partners/Sad-Girl.jpg'
 import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert.png'
 import empowerWomenImage from '../assets/images/pages/partners/empower-women.jpg'
@@ -22,11 +23,9 @@ import nepalGovLogo from '../assets/images/pages/partners/past-present-collabs/N
 import Card from '../components/Card'
 import SectionTitle from '../components/SectionTitle'
 import PersonCard from '../components/PersonCard'
-import DonationModal from '../components/DonationModal'
 import { LAYOUT, GRADIENTS, BORDERS } from '../constants/styles'
 
-const Partners = () => {
-  const [showDonationModal, setShowDonationModal] = useState(false)
+const Partners = ({ onDonateClick }) => {
 
   const mentors = [
     {
@@ -285,7 +284,7 @@ const Partners = () => {
         <div className={LAYOUT.CONTAINER}>
           <div className="text-center">
             <button
-              onClick={() => setShowDonationModal(true)}
+              onClick={() => onDonateClick()}
               className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
             >
               DONATE NOW
@@ -294,12 +293,12 @@ const Partners = () => {
         </div>
       </div>
 
-      {/* Donation Modal */}
-      {showDonationModal && (
-        <DonationModal onClose={() => setShowDonationModal(false)} />
-      )}
     </div>
   )
+}
+
+Partners.propTypes = {
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default Partners

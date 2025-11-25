@@ -96,10 +96,10 @@ function AppContent() {
       {/* Main content area with page routing */}
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<ChildMarriage />} />
-          <Route path="/founder-team" element={<FounderTeam />} />
-          <Route path="/partners" element={<Partners />} />
-          <Route path="/what-we-do" element={<WhatWeDo />} />
+          <Route path="/" element={<ChildMarriage onDonateClick={handleDonateClick} />} />
+          <Route path="/founder-team" element={<FounderTeam onDonateClick={handleDonateClick} />} />
+          <Route path="/partners" element={<Partners onDonateClick={handleDonateClick} />} />
+          <Route path="/what-we-do" element={<WhatWeDo onDonateClick={handleDonateClick} />} />
           <Route
             path="/dashboard"
             element={

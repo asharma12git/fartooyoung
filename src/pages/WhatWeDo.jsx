@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import PropTypes from 'prop-types'
 import heroImage from '../assets/images/pages/what-we-do/Child-Bride-Mom.jpeg'
 import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
 import storyImage1a from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Father_Marshall_D._Moran-kBB_cIR_3-transformed.webp'
@@ -8,7 +9,6 @@ import taraImage1 from '../assets/images/pages/what-we-do/the-tara-campaign/02-c
 import taraImage2 from '../assets/images/pages/what-we-do/the-tara-campaign/02-d.jpg'
 import taraImage3 from '../assets/images/pages/what-we-do/the-tara-campaign/03-a.jpg'
 import taraImage4 from '../assets/images/pages/what-we-do/the-tara-campaign/03-c.jpg'
-import DonationModal from '../components/DonationModal'
 
 // Import carousel images
 import img0709 from '../assets/images/pages/what-we-do/carousel/IMG_0709.webp'
@@ -70,8 +70,7 @@ import photo6 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-
 import photo7 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-11-44.webp'
 import photo8 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-11-45-2.webp'
 
-const WhatWeDo = () => {
-  const [showDonationModal, setShowDonationModal] = useState(false)
+const WhatWeDo = ({ onDonateClick }) => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [zoomedImage, setZoomedImage] = useState(null)
 
@@ -321,7 +320,7 @@ const WhatWeDo = () => {
               {/* Donate Button */}
               <div className="mt-6">
                 <button
-                  onClick={() => setShowDonationModal(true)}
+                  onClick={() => onDonateClick()}
                   className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
                 >
                   DONATE NOW
@@ -601,7 +600,7 @@ const WhatWeDo = () => {
         {/* Donate Button */}
         <div className="text-center mt-12">
           <button
-            onClick={() => setShowDonationModal(true)}
+            onClick={() => onDonateClick()}
             className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
           >
             DONATE NOW
@@ -804,7 +803,7 @@ const WhatWeDo = () => {
         {/* Donate Button */}
         <div className="text-center mt-12">
           <button
-            onClick={() => setShowDonationModal(true)}
+            onClick={() => onDonateClick()}
             className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
           >
             DONATE NOW
@@ -830,13 +829,12 @@ const WhatWeDo = () => {
           </div>
         </div>
       )}
-
-      {/* Donation Modal */}
-      {showDonationModal && (
-        <DonationModal onClose={() => setShowDonationModal(false)} />
-      )}
     </div>
   )
+}
+
+WhatWeDo.propTypes = {
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default WhatWeDo

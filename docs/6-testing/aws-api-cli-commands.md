@@ -1,6 +1,6 @@
 # AWS API Testing Commands - Far Too Young Project
 
-## Current AWS Resources Overview
+## Current AWS Resources Overview - 2025-11-26
 
 ### **Production Stack: fartooyoung-staging**
 - **API Gateway**: https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/

@@ -1,4 +1,16 @@
-# AWS API Testing Commands
+# AWS API Testing Commands - Far Too Young Project
+
+## Current AWS Resources Overview
+
+### **Production Stack: fartooyoung-staging**
+- **API Gateway**: https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/
+- **14 Lambda Functions**: All auth, donation, and Stripe endpoints
+- **2 DynamoDB Tables**: Users and donations
+- **AWS Secrets Manager**: Centralized secret storage
+- **IAM Roles**: Function-specific roles with Secrets Manager permissions
+- **S3 Bucket**: SAM deployment artifacts (fartooyoung-backend-staging)
+
+---
 
 ## AWS Resource Viewing Commands
 
@@ -19,14 +31,14 @@ aws cloudformation list-stack-resources --stack-name fartooyoung-staging --regio
 # List all API Gateway APIs
 aws apigateway get-rest-apis --region us-east-1
 
-# Get specific API details
-aws apigateway get-rest-api --rest-api-id f20mzr7xcg --region us-east-1
+# Get specific API details (current staging API)
+aws apigateway get-rest-api --rest-api-id 71z0wz0dg9 --region us-east-1
 
 # List all resources/endpoints in your API
-aws apigateway get-resources --rest-api-id f20mzr7xcg --region us-east-1
+aws apigateway get-resources --rest-api-id 71z0wz0dg9 --region us-east-1
 
 # List API stages
-aws apigateway get-stages --rest-api-id f20mzr7xcg --region us-east-1
+aws apigateway get-stages --rest-api-id 71z0wz0dg9 --region us-east-1
 ```
 
 ### View Lambda Functions
@@ -34,11 +46,14 @@ aws apigateway get-stages --rest-api-id f20mzr7xcg --region us-east-1
 # List all Lambda functions
 aws lambda list-functions --region us-east-1
 
-# Get specific function details
-aws lambda get-function --function-name fartooyoung-staging-RegisterFunction-GaGzUZqdnRAm --region us-east-1
-
 # List functions with staging prefix
 aws lambda list-functions --region us-east-1 --query 'Functions[?starts_with(FunctionName, `fartooyoung-staging`)]'
+
+# Get specific function details (example - replace with actual function name)
+aws lambda get-function --function-name fartooyoung-staging-LoginFunction-XXXXX --region us-east-1
+
+# Get function configuration (shows environment variables)
+aws lambda get-function-configuration --function-name fartooyoung-staging-LoginFunction-XXXXX --region us-east-1
 ```
 
 ### View DynamoDB Tables
@@ -46,13 +61,28 @@ aws lambda list-functions --region us-east-1 --query 'Functions[?starts_with(Fun
 # List all DynamoDB tables
 aws dynamodb list-tables --region us-east-1
 
-# Describe specific table
+# Describe specific tables
 aws dynamodb describe-table --table-name fartooyoung-staging-users-table --region us-east-1
 aws dynamodb describe-table --table-name fartooyoung-staging-donations-table --region us-east-1
 
 # Scan table contents (be careful with large tables)
-aws dynamodb scan --table-name fartooyoung-staging-users-table --region us-east-1 --max-items 10
+aws dynamodb scan --table-name fartooyoung-staging-users-table --region us-east-1 --max-items 5
 aws dynamodb scan --table-name fartooyoung-staging-donations-table --region us-east-1 --max-items 10
+```
+
+### View AWS Secrets Manager
+```bash
+# List all secrets
+aws secretsmanager list-secrets --region us-east-1
+
+# Get secret details (metadata only, not values)
+aws secretsmanager describe-secret --secret-id fartooyoung-staging-secrets --region us-east-1
+
+# Get secret value (SENSITIVE - contains actual secrets)
+aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-staging-secrets-BjIpQD --region us-east-1
+
+# List secrets with staging prefix
+aws secretsmanager list-secrets --region us-east-1 --query 'SecretList[?starts_with(Name, `fartooyoung-staging`)]'
 ```
 
 ### View IAM Roles
@@ -102,14 +132,38 @@ aws dynamodb list-tables --region us-east-1 --query 'TableNames[?starts_with(@, 
 
 ## API Endpoint
 ```
-Base URL: https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod
+Base URL: https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod
 ```
+
+## All Available Endpoints
+
+### Authentication Endpoints
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - User login
+- `POST /auth/logout` - User logout (requires auth)
+- `POST /auth/forgot-password` - Request password reset
+- `POST /auth/reset-password` - Reset password with token
+- `POST /auth/update-profile` - Update user profile (requires auth)
+- `POST /auth/change-password` - Change user password (requires auth)
+
+### Donation Endpoints
+- `POST /donations` - Create donation (no auth required)
+- `GET /donations` - Get user donations (requires auth)
+
+### Stripe Payment Endpoints
+- `POST /stripe/create-checkout-session` - Create Stripe checkout session
+- `POST /stripe/create-payment-intent` - Create payment intent for embedded checkout
+- `POST /stripe/create-portal-session` - Create customer portal session (requires auth)
+- `GET /stripe/list-subscriptions` - List user subscriptions (requires auth)
+- `POST /stripe/webhook` - Stripe webhook handler (Stripe calls this)
+
+---
 
 ## Authentication Endpoints
 
 ### 1. Register User
 ```bash
-curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/register \
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"testpass123","name":"Test User"}'
 ```
@@ -128,7 +182,7 @@ curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/re
 
 ### 2. Login User
 ```bash
-curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/login \
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"testpass123"}'
 ```
@@ -147,7 +201,7 @@ curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/lo
 
 ### 3. Logout User
 ```bash
-curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/logout \
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/auth/logout \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
 ```
@@ -162,7 +216,7 @@ curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/lo
 
 ### 4. Forgot Password
 ```bash
-curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/forgot-password \
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/auth/forgot-password \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com"}'
 ```
@@ -175,11 +229,27 @@ curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/auth/fo
 }
 ```
 
+### 5. Update Profile (Auth Required)
+```bash
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/auth/update-profile \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -d '{"firstName":"John","lastName":"Doe","phone":"(555) 123-4567"}'
+```
+
+### 6. Change Password (Auth Required)
+```bash
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/auth/change-password \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -d '{"currentPassword":"oldpass123","newPassword":"newpass123","confirmPassword":"newpass123"}'
+```
+
 ## Donation Endpoints
 
-### 5. Create Donation (No Auth Required)
+### 7. Create Donation (No Auth Required)
 ```bash
-curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/donations \
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/donations \
   -H "Content-Type: application/json" \
   -d '{"amount":25.00,"paymentMethod":"credit_card","type":"one-time","email":"test@example.com","name":"John Doe"}'
 ```
@@ -198,15 +268,15 @@ curl -X POST https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/donatio
     "email": "test@example.com",
     "name": "John Doe",
     "status": "completed",
-    "createdAt": "2025-11-24T05:29:21.148Z",
-    "processedAt": "2025-11-24T05:29:21.148Z"
+    "createdAt": "2025-11-26T19:29:21.148Z",
+    "processedAt": "2025-11-26T19:29:21.148Z"
   }
 }
 ```
 
-### 6. Get Donations (Auth Required)
+### 8. Get Donations (Auth Required)
 ```bash
-curl -X GET https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/donations \
+curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/donations \
   -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
 ```
 
@@ -218,10 +288,10 @@ curl -X GET https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/donation
     {
       "donationId": "3e37e94f-7a29-4e65-8a75-6158b0be7496",
       "status": "completed",
-      "createdAt": "2025-11-24T05:29:21.148Z",
+      "createdAt": "2025-11-26T19:29:21.148Z",
       "amount": 25,
       "paymentMethod": "credit_card",
-      "processedAt": "2025-11-24T05:29:21.148Z",
+      "processedAt": "2025-11-26T19:29:21.148Z",
       "id": "3e37e94f-7a29-4e65-8a75-6158b0be7496",
       "email": "test@example.com",
       "name": "John Doe",
@@ -231,16 +301,94 @@ curl -X GET https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/donation
 }
 ```
 
-### 7. Get Donations Without Auth (Should Fail)
+## Stripe Payment Endpoints
+
+### 9. Create Checkout Session
 ```bash
-curl -X GET https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/donations
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/stripe/create-checkout-session \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 50.00,
+    "donor_info": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com"
+    },
+    "donation_type": "one-time"
+  }'
 ```
 
 **Expected Response:**
 ```json
 {
-  "success": false,
-  "message": "Authentication required"
+  "checkout_url": "https://checkout.stripe.com/pay/cs_test_...",
+  "session_id": "cs_test_..."
+}
+```
+
+### 10. Create Payment Intent (For Embedded Checkout)
+```bash
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/stripe/create-payment-intent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 25.00,
+    "donor_info": {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane@example.com"
+    },
+    "donation_type": "one-time"
+  }'
+```
+
+**Expected Response:**
+```json
+{
+  "client_secret": "pi_test_..._secret_..."
+}
+```
+
+### 11. Create Portal Session (Auth Required)
+```bash
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/stripe/create-portal-session \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -d '{
+    "customer_email": "test@example.com",
+    "return_url": "https://yoursite.com/dashboard"
+  }'
+```
+
+**Expected Response:**
+```json
+{
+  "portal_url": "https://billing.stripe.com/session/..."
+}
+```
+
+### 12. List Subscriptions (Auth Required)
+```bash
+curl -X GET "https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/stripe/list-subscriptions?customer_email=test@example.com" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+**Expected Response:**
+```json
+{
+  "active_subscriptions": [
+    {
+      "id": "sub_...",
+      "status": "active",
+      "amount": 25.00,
+      "currency": "usd",
+      "interval": "month",
+      "created": 1732648800,
+      "current_period_end": 1735327200,
+      "cancel_at_period_end": false,
+      "canceled_at": null
+    }
+  ],
+  "inactive_subscriptions": []
 }
 ```
 

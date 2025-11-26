@@ -1,18 +1,37 @@
-const AWS = require('aws-sdk')
-const Stripe = require('stripe')
+// ============================================================================
+// STRIPE WEBHOOK HANDLER - Processes Stripe payment events
+// ============================================================================
+// This Lambda function receives webhook events from Stripe when payments occur
+// and saves donation records to DynamoDB for the Far Too Young donation system
 
-// Initialize Stripe with secret key
+// ============================================================================
+// IMPORTS & DEPENDENCIES
+// ============================================================================
+const AWS = require('aws-sdk')      // AWS SDK for DynamoDB access
+const Stripe = require('stripe')    // Stripe SDK for webhook verification
+
+// ============================================================================
+// SERVICE INITIALIZATION
+// ============================================================================
+// Initialize Stripe with secret key - creates authenticated Stripe client
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
 
-// Initialize DynamoDB
+// Initialize DynamoDB client - creates connection to database
 const dynamodb = new AWS.DynamoDB.DocumentClient({
-  endpoint: process.env.DYNAMODB_ENDPOINT || undefined
+  endpoint: process.env.DYNAMODB_ENDPOINT || undefined  // Local endpoint for testing, AWS default for production
 })
 
+// Get table name from environment variables
 const DONATIONS_TABLE = process.env.DONATIONS_TABLE
 
+// ============================================================================
+// MAIN LAMBDA HANDLER - Entry point for AWS Lambda
+// ============================================================================
 exports.handler = async (event) => {
   try {
+    // ========================================================================
+    // STEP 1: EXTRACT WEBHOOK SIGNATURE
+    // ========================================================================
     // API Gateway may transform header names to lowercase
     const sig = event.headers['stripe-signature'] || event.headers['Stripe-Signature']
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
@@ -20,6 +39,9 @@ exports.handler = async (event) => {
     console.log('Headers received:', JSON.stringify(event.headers))
     console.log('Stripe signature:', sig)
 
+    // ========================================================================
+    // STEP 2: VALIDATE SIGNATURE EXISTS
+    // ========================================================================
     if (!sig) {
       console.error('No stripe-signature header found')
       return {
@@ -28,8 +50,12 @@ exports.handler = async (event) => {
       }
     }
 
+    // ========================================================================
+    // STEP 3: VERIFY WEBHOOK AUTHENTICITY
+    // ========================================================================
     let stripeEvent
     try {
+      // Cryptographically verify this webhook came from Stripe
       stripeEvent = stripe.webhooks.constructEvent(event.body, sig, endpointSecret)
     } catch (err) {
       console.error('Webhook signature verification failed:', err.message)
@@ -41,6 +67,9 @@ exports.handler = async (event) => {
 
     console.log('Received Stripe webhook:', stripeEvent.type)
 
+    // ========================================================================
+    // STEP 4: HANDLE CHECKOUT SESSION COMPLETED (Initial Donations)
+    // ========================================================================
     // Handle checkout session completed (both one-time and subscription setup)
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object
@@ -50,9 +79,10 @@ exports.handler = async (event) => {
       console.log('Session subscription:', session.subscription)
       console.log('Session metadata:', JSON.stringify(session.metadata))
 
-      // Create donation record
+      // Create unique donation ID
       const donationId = `checkout_${session.id}`
       
+      // Build donation object for database storage
       const donation = {
         id: donationId,
         donationId: donationId,
@@ -73,7 +103,7 @@ exports.handler = async (event) => {
         console.log('Added subscription ID:', session.subscription)
       }
 
-      // Save to DynamoDB
+      // Save donation to DynamoDB
       await dynamodb.put({
         TableName: DONATIONS_TABLE,
         Item: donation
@@ -82,6 +112,9 @@ exports.handler = async (event) => {
       console.log('Donation saved to database:', donationId, 'Type:', donation.type)
     }
 
+    // ========================================================================
+    // STEP 5: HANDLE RECURRING SUBSCRIPTION PAYMENTS
+    // ========================================================================
     // Handle recurring subscription payments
     if (stripeEvent.type === 'invoice.payment_succeeded') {
       const invoice = stripeEvent.data.object
@@ -93,6 +126,7 @@ exports.handler = async (event) => {
         // Create donation record for recurring payment
         const donationId = `invoice_${invoice.id}`
         
+        // Build donation object for monthly payment
         const donation = {
           id: donationId,
           donationId: donationId,
@@ -108,7 +142,7 @@ exports.handler = async (event) => {
           processedAt: new Date().toISOString()
         }
 
-        // Save to DynamoDB
+        // Save recurring donation to DynamoDB
         await dynamodb.put({
           TableName: DONATIONS_TABLE,
           Item: donation
@@ -118,6 +152,9 @@ exports.handler = async (event) => {
       }
     }
 
+    // ========================================================================
+    // STEP 6: HANDLE SUBSCRIPTION CREATION (Optional)
+    // ========================================================================
     // Handle subscription creation
     if (stripeEvent.type === 'customer.subscription.created') {
       const subscription = stripeEvent.data.object
@@ -125,12 +162,18 @@ exports.handler = async (event) => {
       // Could add additional logic here if needed
     }
 
+    // ========================================================================
+    // STEP 7: RETURN SUCCESS RESPONSE TO STRIPE
+    // ========================================================================
     return {
       statusCode: 200,
       body: JSON.stringify({ received: true })
     }
 
   } catch (error) {
+    // ========================================================================
+    // ERROR HANDLER - Catch any unexpected errors
+    // ========================================================================
     console.error('Webhook error:', error)
     
     return {

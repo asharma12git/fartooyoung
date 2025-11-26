@@ -1,31 +1,55 @@
-const AWS = require('aws-sdk')
-const jwt = require('jsonwebtoken')
+// ============================================================================
+// UPDATE PROFILE HANDLER - Updates user profile information
+// ============================================================================
+// This Lambda function allows authenticated users to update their profile
+// information including name and phone number with validation
 
+// ============================================================================
+// IMPORTS & DEPENDENCIES
+// ============================================================================
+const AWS = require('aws-sdk')       // AWS SDK for DynamoDB access
+const jwt = require('jsonwebtoken')  // JWT token verification
+
+// ============================================================================
+// SERVICE INITIALIZATION
+// ============================================================================
+// Configure DynamoDB client with Docker-specific endpoint for SAM Local
 const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: 'us-east-1',
   ...(process.env.AWS_SAM_LOCAL && {
-    endpoint: 'http://host.docker.internal:8000'
+    endpoint: 'http://host.docker.internal:8000'  // Docker endpoint for SAM Local
   })
 })
 
+// Environment variables for authentication and database
 const USERS_TABLE = process.env.USERS_TABLE
-
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 
+// ============================================================================
+// MAIN LAMBDA HANDLER - Entry point for profile update requests
+// ============================================================================
 exports.handler = async (event) => {
+  // ==========================================================================
+  // STEP 1: DEFINE CORS HEADERS
+  // ==========================================================================
+  // Standard CORS headers for all responses
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-    'Access-Control-Allow-Methods': 'POST,OPTIONS',
-    'Content-Type': 'application/json'
+    'Access-Control-Allow-Origin': '*',                    // Allow all origins
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization', // Allowed headers
+    'Access-Control-Allow-Methods': 'POST,OPTIONS',       // Allowed HTTP methods
+    'Content-Type': 'application/json'                    // Response content type
   }
 
+  // Handle CORS preflight (OPTIONS) requests
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' }
   }
 
   try {
-    // Verify JWT token
+    // ========================================================================
+    // STEP 2: VERIFY JWT TOKEN AUTHENTICATION
+    // ========================================================================
+    // Extract and validate JWT token from Authorization header
     const authHeader = event.headers.Authorization || event.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return {
@@ -35,9 +59,10 @@ exports.handler = async (event) => {
       }
     }
 
-    const token = authHeader.substring(7)
+    const token = authHeader.substring(7)  // Remove 'Bearer ' prefix
     let decoded
     try {
+      // Verify token signature and decode payload
       decoded = jwt.verify(token, JWT_SECRET)
     } catch (error) {
       return {
@@ -47,9 +72,12 @@ exports.handler = async (event) => {
       }
     }
 
+    // ========================================================================
+    // STEP 3: PARSE AND VALIDATE REQUEST DATA
+    // ========================================================================
     const { firstName, lastName, phone } = JSON.parse(event.body)
 
-    // Basic validation
+    // Validation - first name must be at least 2 characters
     if (!firstName || firstName.trim().length < 2) {
       return {
         statusCode: 400,
@@ -58,6 +86,7 @@ exports.handler = async (event) => {
       }
     }
 
+    // Validation - last name must be at least 2 characters
     if (!lastName || lastName.trim().length < 2) {
       return {
         statusCode: 400,
@@ -66,7 +95,7 @@ exports.handler = async (event) => {
       }
     }
 
-    // Phone validation (optional field)
+    // Phone validation (optional field) - basic regex for international phone numbers
     if (phone && phone.trim() && !/^\+?[\d\s\-\(\)]{10,}$/.test(phone.trim())) {
       return {
         statusCode: 400,
@@ -75,30 +104,43 @@ exports.handler = async (event) => {
       }
     }
 
-    // Update user profile
+    // ========================================================================
+    // STEP 4: BUILD UPDATE PARAMETERS FOR DYNAMODB
+    // ========================================================================
+    // Update user profile in database
     const updateParams = {
       TableName: USERS_TABLE,
-      Key: { email: decoded.email },
+      Key: { email: decoded.email },                       // Primary key (email from JWT)
       UpdateExpression: 'SET firstName = :firstName, lastName = :lastName, #n = :name',
       ExpressionAttributeNames: {
-        '#n': 'name'
+        '#n': 'name'                                       // Use alias because 'name' is a reserved word
       },
       ExpressionAttributeValues: {
-        ':firstName': firstName.trim(),
-        ':lastName': lastName.trim(),
-        ':name': `${firstName.trim()} ${lastName.trim()}`
+        ':firstName': firstName.trim(),                    // Trimmed first name
+        ':lastName': lastName.trim(),                      // Trimmed last name
+        ':name': `${firstName.trim()} ${lastName.trim()}` // Full name combination
       },
-      ReturnValues: 'ALL_NEW'
+      ReturnValues: 'ALL_NEW'                             // Return updated item
     }
 
-    // Add phone if provided
+    // ========================================================================
+    // STEP 5: ADD OPTIONAL PHONE NUMBER IF PROVIDED
+    // ========================================================================
+    // Add phone number to update if provided
     if (phone && phone.trim()) {
-      updateParams.UpdateExpression += ', phone = :phone'
+      updateParams.UpdateExpression += ', phone = :phone'  // Append to update expression
       updateParams.ExpressionAttributeValues[':phone'] = phone.trim()
     }
 
+    // ========================================================================
+    // STEP 6: EXECUTE DATABASE UPDATE
+    // ========================================================================
+    // Execute the update operation
     const result = await dynamodb.update(updateParams).promise()
 
+    // ========================================================================
+    // STEP 7: RETURN SUCCESS RESPONSE WITH UPDATED DATA
+    // ========================================================================
     return {
       statusCode: 200,
       headers,
@@ -106,16 +148,19 @@ exports.handler = async (event) => {
         success: true,
         message: 'Profile updated successfully',
         user: {
-          email: result.Attributes.email,
-          name: result.Attributes.name,
-          firstName: result.Attributes.firstName,
-          lastName: result.Attributes.lastName,
-          phone: result.Attributes.phone || ''
+          email: result.Attributes.email,           // User's email
+          name: result.Attributes.name,             // Full name
+          firstName: result.Attributes.firstName,   // First name
+          lastName: result.Attributes.lastName,     // Last name
+          phone: result.Attributes.phone || ''      // Phone (empty string if not set)
         }
       })
     }
 
   } catch (error) {
+    // ========================================================================
+    // ERROR HANDLER - Catch any unexpected errors
+    // ========================================================================
     console.error('Update profile error:', error)
     return {
       statusCode: 500,

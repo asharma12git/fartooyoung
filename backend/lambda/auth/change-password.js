@@ -1,31 +1,56 @@
-const AWS = require('aws-sdk')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
+// ============================================================================
+// CHANGE PASSWORD HANDLER - Updates password for authenticated users
+// ============================================================================
+// This Lambda function allows authenticated users to change their password
+// by verifying their current password and updating to a new one
 
+// ============================================================================
+// IMPORTS & DEPENDENCIES
+// ============================================================================
+const AWS = require('aws-sdk')       // AWS SDK for DynamoDB access
+const jwt = require('jsonwebtoken')  // JWT token verification
+const bcrypt = require('bcryptjs')   // Password hashing and comparison
+
+// ============================================================================
+// SERVICE INITIALIZATION
+// ============================================================================
+// Configure DynamoDB client with Docker-specific endpoint for SAM Local
 const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: 'us-east-1',
   ...(process.env.AWS_SAM_LOCAL && {
-    endpoint: 'http://host.docker.internal:8000'
+    endpoint: 'http://host.docker.internal:8000'  // Docker endpoint for SAM Local
   })
 })
 
+// Environment variables for authentication and database
 const USERS_TABLE = process.env.USERS_TABLE
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 
+// ============================================================================
+// MAIN LAMBDA HANDLER - Entry point for password change requests
+// ============================================================================
 exports.handler = async (event) => {
+  // ==========================================================================
+  // STEP 1: DEFINE CORS HEADERS
+  // ==========================================================================
+  // Standard CORS headers for all responses
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-    'Access-Control-Allow-Methods': 'POST,OPTIONS',
-    'Content-Type': 'application/json'
+    'Access-Control-Allow-Origin': '*',                    // Allow all origins
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization', // Allowed headers
+    'Access-Control-Allow-Methods': 'POST,OPTIONS',       // Allowed HTTP methods
+    'Content-Type': 'application/json'                    // Response content type
   }
 
+  // Handle CORS preflight (OPTIONS) requests
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' }
   }
 
   try {
-    // Verify JWT token
+    // ========================================================================
+    // STEP 2: VERIFY JWT TOKEN AUTHENTICATION
+    // ========================================================================
+    // Extract and validate JWT token from Authorization header
     const authHeader = event.headers.Authorization || event.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return {
@@ -35,9 +60,10 @@ exports.handler = async (event) => {
       }
     }
 
-    const token = authHeader.substring(7)
+    const token = authHeader.substring(7)  // Remove 'Bearer ' prefix
     let decoded
     try {
+      // Verify token signature and decode payload
       decoded = jwt.verify(token, JWT_SECRET)
     } catch (error) {
       return {
@@ -47,9 +73,12 @@ exports.handler = async (event) => {
       }
     }
 
+    // ========================================================================
+    // STEP 3: PARSE AND VALIDATE REQUEST DATA
+    // ========================================================================
     const { currentPassword, newPassword } = JSON.parse(event.body)
 
-    // Validation
+    // Validation - ensure both passwords are provided
     if (!currentPassword || !newPassword) {
       return {
         statusCode: 400,
@@ -58,6 +87,7 @@ exports.handler = async (event) => {
       }
     }
 
+    // Validation - ensure new password meets minimum length requirement
     if (newPassword.length < 8) {
       return {
         statusCode: 400,
@@ -66,12 +96,16 @@ exports.handler = async (event) => {
       }
     }
 
-    // Get user to verify current password
+    // ========================================================================
+    // STEP 4: RETRIEVE USER FROM DATABASE
+    // ========================================================================
+    // Get user record to verify current password
     const user = await dynamodb.get({
       TableName: USERS_TABLE,
-      Key: { email: decoded.email }
+      Key: { email: decoded.email }  // Email from JWT token
     }).promise()
 
+    // Check if user exists
     if (!user.Item) {
       return {
         statusCode: 404,
@@ -80,7 +114,10 @@ exports.handler = async (event) => {
       }
     }
 
-    // Verify current password
+    // ========================================================================
+    // STEP 5: VERIFY CURRENT PASSWORD
+    // ========================================================================
+    // Compare provided current password with stored hashed password
     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.Item.hashedPassword)
     if (!isCurrentPasswordValid) {
       return {
@@ -90,20 +127,29 @@ exports.handler = async (event) => {
       }
     }
 
-    // Hash new password
-    const saltRounds = process.env.AWS_SAM_LOCAL ? 4 : 10
+    // ========================================================================
+    // STEP 6: HASH NEW PASSWORD
+    // ========================================================================
+    // Hash new password with bcrypt (fewer rounds for local development)
+    const saltRounds = process.env.AWS_SAM_LOCAL ? 4 : 10  // Local: 4 rounds, Production: 10 rounds
     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds)
 
-    // Update password
+    // ========================================================================
+    // STEP 7: UPDATE PASSWORD IN DATABASE
+    // ========================================================================
+    // Update user's password in DynamoDB
     await dynamodb.update({
       TableName: USERS_TABLE,
-      Key: { email: decoded.email },
-      UpdateExpression: 'SET hashedPassword = :newPassword',
+      Key: { email: decoded.email },                       // Primary key (email)
+      UpdateExpression: 'SET hashedPassword = :newPassword', // Update password field
       ExpressionAttributeValues: {
-        ':newPassword': newHashedPassword
+        ':newPassword': newHashedPassword                  // New hashed password
       }
     }).promise()
 
+    // ========================================================================
+    // STEP 8: RETURN SUCCESS RESPONSE
+    // ========================================================================
     return {
       statusCode: 200,
       headers,
@@ -114,6 +160,9 @@ exports.handler = async (event) => {
     }
 
   } catch (error) {
+    // ========================================================================
+    // ERROR HANDLER - Catch any unexpected errors
+    // ========================================================================
     console.error('Change password error:', error)
     return {
       statusCode: 500,

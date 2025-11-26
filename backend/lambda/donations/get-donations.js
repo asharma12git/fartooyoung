@@ -1,36 +1,59 @@
-const AWS = require('aws-sdk');
-const jwt = require('jsonwebtoken');
+// ============================================================================
+// GET DONATIONS HANDLER - Retrieves user's donation history
+// ============================================================================
+// This Lambda function fetches all donations for an authenticated user
+// Requires JWT token authentication to access user-specific donation data
 
-// Configure DynamoDB
+// ============================================================================
+// IMPORTS & DEPENDENCIES
+// ============================================================================
+const AWS = require('aws-sdk');  // AWS SDK for DynamoDB access
+const jwt = require('jsonwebtoken'); // JWT library for token verification
+
+// ============================================================================
+// SERVICE INITIALIZATION
+// ============================================================================
+// Configure DynamoDB client with optional local endpoint for testing
 const dynamodb = new AWS.DynamoDB.DocumentClient({
-    endpoint: process.env.DYNAMODB_ENDPOINT || undefined,
-    region: 'us-east-1'
+    endpoint: process.env.DYNAMODB_ENDPOINT || undefined,  // Local DynamoDB for testing
+    region: 'us-east-1'                                   // AWS region
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
-const DONATIONS_TABLE = process.env.DONATIONS_TABLE || 'fartooyoung-donations';
+// Environment variables for authentication and database
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';           // JWT signing secret
+const DONATIONS_TABLE = process.env.DONATIONS_TABLE || 'fartooyoung-donations'; // Table name
 
+// ============================================================================
+// MAIN LAMBDA HANDLER - Entry point for fetching donations
+// ============================================================================
 exports.handler = async (event) => {
-    // Handle CORS
+    // ========================================================================
+    // STEP 1: HANDLE CORS PREFLIGHT REQUESTS
+    // ========================================================================
+    // Handle CORS preflight (OPTIONS) requests from browsers
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                'Access-Control-Allow-Origin': '*',              // Allow all origins
+                'Access-Control-Allow-Methods': 'GET, OPTIONS',  // Allowed HTTP methods
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
             },
             body: ''
         };
     }
 
     try {
-        // Verify JWT token
+        // ====================================================================
+        // STEP 2: EXTRACT AND VALIDATE JWT TOKEN
+        // ====================================================================
+        // Verify JWT token from Authorization header
         const authHeader = event.headers?.Authorization || event.headers?.authorization;
 
         console.log('Auth header:', authHeader ? 'Present' : 'Missing');
         console.log('Headers:', JSON.stringify(event.headers));
 
+        // Check if Authorization header exists and has Bearer format
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             console.log('Authentication failed: No valid auth header');
             return {
@@ -40,11 +63,15 @@ exports.handler = async (event) => {
             };
         }
 
+        // ====================================================================
+        // STEP 3: VERIFY JWT TOKEN
+        // ====================================================================
         const token = authHeader.substring(7); // Remove 'Bearer ' prefix
         console.log('Token extracted, length:', token.length);
 
         let decoded;
         try {
+            // Verify token signature and decode payload
             decoded = jwt.verify(token, JWT_SECRET);
             console.log('Token verified successfully for:', decoded.email);
         } catch (err) {
@@ -56,6 +83,9 @@ exports.handler = async (event) => {
             };
         }
 
+        // ====================================================================
+        // STEP 4: QUERY USER'S DONATIONS
+        // ====================================================================
         // Extract email from verified token
         const userEmail = decoded.email;
 
@@ -63,27 +93,36 @@ exports.handler = async (event) => {
         // Note: In production, you'd want to use a GSI (Global Secondary Index) on email for better performance
         const result = await dynamodb.scan({
             TableName: DONATIONS_TABLE,
-            FilterExpression: 'email = :email',
+            FilterExpression: 'email = :email',  // Filter by user's email
             ExpressionAttributeValues: {
-                ':email': userEmail
+                ':email': userEmail              // User's email from JWT token
             }
         }).promise();
 
+        // ====================================================================
+        // STEP 5: SORT AND FORMAT RESULTS
+        // ====================================================================
         // Sort by createdAt (most recent first)
         const donations = result.Items.sort((a, b) =>
             new Date(b.createdAt) - new Date(a.createdAt)
         );
 
+        // ====================================================================
+        // STEP 6: RETURN SUCCESS RESPONSE WITH DONATIONS
+        // ====================================================================
         return {
             statusCode: 200,
             headers: { 'Access-Control-Allow-Origin': '*' },
             body: JSON.stringify({
                 success: true,
-                donations
+                donations  // Array of user's donations, sorted by date
             })
         };
 
     } catch (error) {
+        // ====================================================================
+        // ERROR HANDLER - Catch any unexpected errors
+        // ====================================================================
         console.error('Error fetching donations:', error);
         return {
             statusCode: 500,

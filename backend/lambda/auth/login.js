@@ -1,42 +1,68 @@
-const AWS = require('aws-sdk');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+// ============================================================================
+// LOGIN HANDLER - Authenticates users and generates JWT tokens
+// ============================================================================
+// This Lambda function handles user login with password verification,
+// account locking after failed attempts, and JWT token generation
 
+// ============================================================================
+// IMPORTS & DEPENDENCIES
+// ============================================================================
+const AWS = require('aws-sdk');      // AWS SDK for DynamoDB access
+const bcrypt = require('bcryptjs');  // Password hashing and comparison
+const jwt = require('jsonwebtoken'); // JWT token generation and verification
+
+// ============================================================================
+// SERVICE INITIALIZATION
+// ============================================================================
 // Configure DynamoDB - works locally and in AWS
 const dynamodb = new AWS.DynamoDB.DocumentClient({
-  endpoint: process.env.DYNAMODB_ENDPOINT || undefined,
-  region: 'us-east-1'
+  endpoint: process.env.DYNAMODB_ENDPOINT || undefined,  // Local DynamoDB for testing
+  region: 'us-east-1'                                   // AWS region
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
-const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';
+// Environment variables for authentication and database
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';        // JWT signing secret
+const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';   // Users table name
 
+// ============================================================================
+// MAIN LAMBDA HANDLER - Entry point for user login
+// ============================================================================
 exports.handler = async (event) => {
-  // Handle CORS preflight
+  // ==========================================================================
+  // STEP 1: HANDLE CORS PREFLIGHT REQUESTS
+  // ==========================================================================
+  // Handle CORS preflight (OPTIONS) requests from browsers
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        'Access-Control-Allow-Origin': '*',              // Allow all origins
+        'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
       },
       body: ''
     };
   }
 
   try {
+    // ========================================================================
+    // STEP 2: PARSE AND VALIDATE LOGIN CREDENTIALS
+    // ========================================================================
     const { email: rawEmail, password } = JSON.parse(event.body)
-    const email = rawEmail.toLowerCase().trim();
+    const email = rawEmail.toLowerCase().trim();  // Normalize email format
     
-    // Get user from database
+    // ========================================================================
+    // STEP 3: RETRIEVE USER FROM DATABASE
+    // ========================================================================
+    // Get user record from DynamoDB using email as primary key
     const result = await dynamodb.get({
       TableName: USERS_TABLE,
-      Key: { email }
+      Key: { email }  // Email is the primary key in users table
     }).promise();
     
     const user = result.Item;
     
+    // Check if user exists
     if (!user) {
       return {
         statusCode: 401,
@@ -45,7 +71,10 @@ exports.handler = async (event) => {
       };
     }
     
-    // Check if account is locked
+    // ========================================================================
+    // STEP 4: CHECK ACCOUNT LOCK STATUS
+    // ========================================================================
+    // Check if account is locked due to failed login attempts
     const now = new Date();
     if (user.lockedUntil && new Date(user.lockedUntil) > now) {
       const lockTimeRemaining = Math.ceil((new Date(user.lockedUntil) - now) / (1000 * 60)); // minutes
@@ -59,26 +88,33 @@ exports.handler = async (event) => {
       };
     }
     
-    // Check password
+    // ========================================================================
+    // STEP 5: VERIFY PASSWORD
+    // ========================================================================
+    // Compare provided password with stored hashed password
     const passwordValid = await bcrypt.compare(password, user.hashedPassword);
     
     if (!passwordValid) {
-      // Increment failed attempts
+      // ======================================================================
+      // STEP 5A: HANDLE FAILED LOGIN ATTEMPT
+      // ======================================================================
+      // Increment failed attempts counter
       const failedAttempts = (user.failedAttempts || 0) + 1;
       const lockUntil = failedAttempts >= 3 ? new Date(Date.now() + 15 * 60 * 1000).toISOString() : null; // 15 minutes
       
-      // Update failed attempts and lock status
+      // Update failed attempts and lock status in database
       await dynamodb.update({
         TableName: USERS_TABLE,
         Key: { email },
         UpdateExpression: lockUntil 
-          ? 'SET failedAttempts = :attempts, lockedUntil = :lockUntil'
-          : 'SET failedAttempts = :attempts',
+          ? 'SET failedAttempts = :attempts, lockedUntil = :lockUntil'  // Lock account after 3 attempts
+          : 'SET failedAttempts = :attempts',                           // Just increment counter
         ExpressionAttributeValues: lockUntil
           ? { ':attempts': failedAttempts, ':lockUntil': lockUntil }
           : { ':attempts': failedAttempts }
       }).promise();
       
+      // Generate appropriate error message
       const attemptsLeft = 3 - failedAttempts;
       const message = failedAttempts >= 3 
         ? 'Account locked for 15 minutes due to too many failed attempts. Use "Forgot Password" for immediate access.'
@@ -91,16 +127,22 @@ exports.handler = async (event) => {
       };
     }
     
-    // Successful login - clear failed attempts and lock
+    // ========================================================================
+    // STEP 6: SUCCESSFUL LOGIN - CLEAR FAILED ATTEMPTS
+    // ========================================================================
+    // Successful login - clear failed attempts and lock status
     if (user.failedAttempts || user.lockedUntil) {
       await dynamodb.update({
         TableName: USERS_TABLE,
         Key: { email },
-        UpdateExpression: 'REMOVE failedAttempts, lockedUntil'
+        UpdateExpression: 'REMOVE failedAttempts, lockedUntil'  // Clear security flags
       }).promise();
     }
     
-    // Create JWT token with both old and new name formats for compatibility
+    // ========================================================================
+    // STEP 7: GENERATE JWT TOKEN
+    // ========================================================================
+    // Create JWT token with user information for frontend authentication
     const tokenPayload = { 
       email: user.email,
       firstName: user.firstName,
@@ -109,6 +151,9 @@ exports.handler = async (event) => {
     };
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '24h' });
     
+    // ========================================================================
+    // STEP 8: RETURN SUCCESS RESPONSE WITH TOKEN
+    // ========================================================================
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },
@@ -120,11 +165,14 @@ exports.handler = async (event) => {
           lastName: user.lastName,
           name: user.name // Keep for backward compatibility
         },
-        token
+        token  // JWT token for authenticated requests
       })
     };
     
   } catch (error) {
+    // ========================================================================
+    // ERROR HANDLER - Catch any unexpected errors
+    // ========================================================================
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },

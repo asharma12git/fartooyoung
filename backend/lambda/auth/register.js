@@ -11,6 +11,7 @@ const AWS = require('aws-sdk');              // AWS SDK for DynamoDB access
 const bcrypt = require('bcryptjs');          // Password hashing library
 const jwt = require('jsonwebtoken');         // JWT token generation
 const { randomUUID } = require('crypto');    // Node.js built-in UUID generator
+const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -21,8 +22,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: 'us-east-1'                                   // AWS region
 });
 
-// Environment variables for authentication and database
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';        // JWT signing secret
+// Environment variables for database
 const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';   // Users table name
 
 // ============================================================================
@@ -52,7 +52,7 @@ exports.handler = async (event) => {
     console.log('Register function started');
     console.log('Environment variables:', {
       DYNAMODB_ENDPOINT: process.env.DYNAMODB_ENDPOINT,
-      JWT_SECRET: process.env.JWT_SECRET
+      SECRETS_MANAGER_ARN: process.env.SECRETS_MANAGER_ARN
     });
     console.log('DynamoDB config:', {
       endpoint: process.env.DYNAMODB_ENDPOINT || undefined,
@@ -135,7 +135,8 @@ exports.handler = async (event) => {
     // ========================================================================
     console.log('Creating JWT token...');
     // Create JWT token so user is automatically logged in after registration
-    const token = jwt.sign({ email, firstName, lastName }, JWT_SECRET, { expiresIn: '24h' });
+    const secrets = await getSecrets();
+    const token = jwt.sign({ email, firstName, lastName }, secrets.jwt_secret, { expiresIn: '24h' });
     
     // ========================================================================
     // STEP 9: RETURN SUCCESS RESPONSE WITH TOKEN

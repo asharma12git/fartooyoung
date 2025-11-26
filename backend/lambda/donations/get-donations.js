@@ -9,6 +9,7 @@
 // ============================================================================
 const AWS = require('aws-sdk');  // AWS SDK for DynamoDB access
 const jwt = require('jsonwebtoken'); // JWT library for token verification
+const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -19,8 +20,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
     region: 'us-east-1'                                   // AWS region
 });
 
-// Environment variables for authentication and database
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';           // JWT signing secret
+// Environment variables for database
 const DONATIONS_TABLE = process.env.DONATIONS_TABLE || 'fartooyoung-donations'; // Table name
 
 // ============================================================================
@@ -72,7 +72,8 @@ exports.handler = async (event) => {
         let decoded;
         try {
             // Verify token signature and decode payload
-            decoded = jwt.verify(token, JWT_SECRET);
+            const secrets = await getSecrets();
+            decoded = jwt.verify(token, secrets.jwt_secret);
             console.log('Token verified successfully for:', decoded.email);
         } catch (err) {
             console.log('Token verification failed:', err.message);

@@ -9,12 +9,13 @@
 // ============================================================================
 const AWS = require('aws-sdk')      // AWS SDK for DynamoDB access
 const Stripe = require('stripe')    // Stripe SDK for webhook verification
+const { getSecrets } = require('../utils/secrets')  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
 // ============================================================================
-// Initialize Stripe with secret key - creates authenticated Stripe client
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
+// Stripe client will be initialized after retrieving secrets
+let stripe;
 
 // Initialize DynamoDB client - creates connection to database
 const dynamodb = new AWS.DynamoDB.DocumentClient({
@@ -29,12 +30,19 @@ const DONATIONS_TABLE = process.env.DONATIONS_TABLE
 // ============================================================================
 exports.handler = async (event) => {
   try {
+    // Initialize Stripe with secrets from Secrets Manager
+    if (!stripe) {
+      const secrets = await getSecrets();
+      stripe = Stripe(secrets.stripe_secret_key);
+    }
+
     // ========================================================================
     // STEP 1: EXTRACT WEBHOOK SIGNATURE
     // ========================================================================
     // API Gateway may transform header names to lowercase
     const sig = event.headers['stripe-signature'] || event.headers['Stripe-Signature']
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
+    const secrets = await getSecrets();
+    const endpointSecret = secrets.stripe_webhook_secret
 
     console.log('Headers received:', JSON.stringify(event.headers))
     console.log('Stripe signature:', sig)

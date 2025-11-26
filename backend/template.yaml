@@ -14,22 +14,10 @@ Parameters:
     Default: http://host.docker.internal:8000
     Description: Endpoint for local DynamoDB endpoint (leave empty for production)
   
-  JWTSecret:
+  SecretsManagerArn:
     Type: String
-    Default: "dev-secret-key"
-    Description: JWT signing secret
-    NoEcho: true
-
-  StripeSecretKey:
-    Type: String
-    Default: "sk_test_..."
-    Description: Stripe secret key for payment processing
-    NoEcho: true
-
-  StripeWebhookSecret:
-    Type: String
-    Default: "whsec_..."
-    Description: Stripe webhook endpoint secret
+    Default: ""
+    Description: ARN of the Secrets Manager secret containing application secrets
     NoEcho: true
 
 Globals:
@@ -38,7 +26,7 @@ Globals:
     Environment:
       Variables:
         DYNAMODB_ENDPOINT: !Ref DynamoDBEndpoint
-        JWT_SECRET: !Ref JWTSecret
+        SECRETS_MANAGER_ARN: !Ref SecretsManagerArn
         USERS_TABLE: !Sub "${AWS::StackName}-users-table"
         DONATIONS_TABLE: !Sub "${AWS::StackName}-donations-table"
   Api:
@@ -57,6 +45,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         LoginApi:
           Type: Api
@@ -72,6 +66,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         RegisterApi:
           Type: Api
@@ -87,6 +87,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         LogoutApi:
           Type: Api
@@ -132,6 +138,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         UpdateProfileApi:
           Type: Api
@@ -144,9 +156,16 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/change-password.handler
+      Timeout: 30
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         ChangePasswordApi:
           Type: Api
@@ -163,6 +182,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-donations-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         CreateDonationApi:
           Type: Api
@@ -178,6 +203,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-donations-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         GetDonationsApi:
           Type: Api
@@ -191,12 +222,15 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/stripe/create-checkout-session.handler
-      Environment:
-        Variables:
-          STRIPE_SECRET_KEY: !Ref StripeSecretKey
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-donations-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         CreateCheckoutSessionApi:
           Type: Api
@@ -209,9 +243,13 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/stripe/create-payment-intent.handler
-      Environment:
-        Variables:
-          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         CreatePaymentIntentApi:
           Type: Api
@@ -224,9 +262,13 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/stripe/create-portal-session.handler
-      Environment:
-        Variables:
-          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         CreatePortalSessionApi:
           Type: Api
@@ -239,9 +281,13 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/stripe/list-subscriptions.handler
-      Environment:
-        Variables:
-          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         ListSubscriptionsApi:
           Type: Api
@@ -254,13 +300,15 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/stripe/webhook.handler
-      Environment:
-        Variables:
-          STRIPE_SECRET_KEY: !Ref StripeSecretKey
-          STRIPE_WEBHOOK_SECRET: !Ref StripeWebhookSecret
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-donations-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
       Events:
         StripeWebhookApi:
           Type: Api

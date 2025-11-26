@@ -8,34 +8,41 @@
 // IMPORTS & DEPENDENCIES
 // ============================================================================
 const Stripe = require('stripe')    // Stripe SDK for payment processing
+const { getSecrets } = require('../utils/secrets')  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
 // ============================================================================
-// Initialize Stripe with secret key - creates authenticated Stripe client
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
+// Stripe client will be initialized after retrieving secrets
+let stripe;
 
 // ============================================================================
 // MAIN LAMBDA HANDLER - Entry point for listing subscriptions
 // ============================================================================
 exports.handler = async (event) => {
-  // ==========================================================================
-  // STEP 1: HANDLE CORS PREFLIGHT REQUESTS
-  // ==========================================================================
-  // Handle CORS preflight (OPTIONS) requests from browsers
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',             // Allow all origins
-        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allowed HTTP methods (GET for listing)
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
-      },
-      body: ''
-    }
-  }
-
   try {
+    // Initialize Stripe with secrets from Secrets Manager
+    if (!stripe) {
+      const secrets = await getSecrets();
+      stripe = Stripe(secrets.stripe_secret_key);
+    }
+
+    // ==========================================================================
+    // STEP 1: HANDLE CORS PREFLIGHT REQUESTS
+    // ==========================================================================
+    // Handle CORS preflight (OPTIONS) requests from browsers
+    if (event.httpMethod === 'OPTIONS') {
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',             // Allow all origins
+          'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allowed HTTP methods (GET for listing)
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
+        },
+        body: ''
+      }
+    }
+
     // ========================================================================
     // STEP 2: EXTRACT AND VALIDATE QUERY PARAMETERS
     // ========================================================================

@@ -28,6 +28,22 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
     newPassword: '',
     confirmPassword: ''
   })
+
+  // Phone number formatting function
+  const formatPhoneNumber = (value) => {
+    // Remove all non-digits
+    const phoneNumber = value.replace(/[^\d]/g, '')
+    
+    // Limit to 10 digits for US format
+    const limitedPhone = phoneNumber.slice(0, 10)
+    
+    // Format as (123) 456-7890
+    if (limitedPhone.length < 4) return limitedPhone
+    if (limitedPhone.length < 7) {
+      return `(${limitedPhone.slice(0, 3)}) ${limitedPhone.slice(3)}`
+    }
+    return `(${limitedPhone.slice(0, 3)}) ${limitedPhone.slice(3, 6)}-${limitedPhone.slice(6)}`
+  }
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' })
   const [showPasswords, setShowPasswords] = useState({
@@ -453,7 +469,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <span className="text-2xl">📊</span>
                       <h3 className="text-xl font-bold text-white">Your Impact Insights</h3>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-2">
                       {/* Donor Rank */}
                       <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">🏆</div>
@@ -484,7 +500,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               })()}
 
               {/* Impact Stats Cards - Existing */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-6 border border-green-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
@@ -762,7 +778,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     })()}
                   </div>
 
-                  <div className="flex space-x-4 overflow-x-auto pb-2" style={{
+                  <div className="flex space-x-4 overflow-x-auto pb-2 pt-2 px-2" style={{
                     scrollbarWidth: 'thin',
                     scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
                   }}>
@@ -874,7 +890,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           {/* Donations Tab */}
           {activeTab === 'donations' && (
             <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
                 <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-6 border border-orange-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Total Donations</h3>
@@ -1057,9 +1073,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <label className="block text-white/80 text-sm font-medium mb-2">Phone Number (Optional)</label>
                     <input
                       type="tel"
-                      value={formData.phone}
+                      value={formatPhoneNumber(formData.phone)}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="(555) 123-4567"
+                      maxLength={14}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500/50 disabled:opacity-50"
                       disabled={!isEditing}
                     />

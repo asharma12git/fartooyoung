@@ -10,6 +10,7 @@
 const AWS = require('aws-sdk');      // AWS SDK for DynamoDB access
 const bcrypt = require('bcryptjs');  // Password hashing and comparison
 const jwt = require('jsonwebtoken'); // JWT token generation and verification
+const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -20,8 +21,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: 'us-east-1'                                   // AWS region
 });
 
-// Environment variables for authentication and database
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';        // JWT signing secret
+// Environment variables for database
 const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';   // Users table name
 
 // ============================================================================
@@ -143,13 +143,14 @@ exports.handler = async (event) => {
     // STEP 7: GENERATE JWT TOKEN
     // ========================================================================
     // Create JWT token with user information for frontend authentication
+    const secrets = await getSecrets();
     const tokenPayload = { 
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       name: user.name // Keep for backward compatibility
     };
-    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(tokenPayload, secrets.jwt_secret, { expiresIn: '24h' });
     
     // ========================================================================
     // STEP 8: RETURN SUCCESS RESPONSE WITH TOKEN

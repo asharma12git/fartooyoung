@@ -9,6 +9,7 @@
 // ============================================================================
 const AWS = require('aws-sdk');      // AWS SDK for DynamoDB access
 const jwt = require('jsonwebtoken'); // JWT token verification
+const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -19,7 +20,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 });
 
 // Environment variables for authentication and database
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';        // JWT signing secret
+        // JWT signing secret
 const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';   // Users table name
 
 // ============================================================================
@@ -27,6 +28,9 @@ const USERS_TABLE = process.env.USERS_TABLE || 'fartooyoung-users';   // Users t
 // ============================================================================
 exports.handler = async (event) => {
   try {
+    // Get secrets from AWS Secrets Manager
+    const secrets = await getSecrets();
+
     // ========================================================================
     // STEP 1: EXTRACT JWT TOKEN FROM AUTHORIZATION HEADER
     // ========================================================================
@@ -49,7 +53,7 @@ exports.handler = async (event) => {
     // STEP 2: VERIFY JWT TOKEN
     // ========================================================================
     // Verify token signature and decode payload
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, secrets.jwt_secret);
     
     // ========================================================================
     // STEP 3: UPDATE LOGOUT TIMESTAMP (Optional Tracking)

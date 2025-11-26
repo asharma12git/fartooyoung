@@ -9,7 +9,8 @@
 // ============================================================================
 const AWS = require('aws-sdk')       // AWS SDK for DynamoDB access
 const jwt = require('jsonwebtoken')  // JWT token verification
-const bcrypt = require('bcryptjs')   // Password hashing and comparison
+const bcrypt = require('bcryptjs')   // Password hashing
+const { getSecrets } = require('../utils/secrets')  // Secrets Manager utility and comparison
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -24,7 +25,6 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 
 // Environment variables for authentication and database
 const USERS_TABLE = process.env.USERS_TABLE
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 
 // ============================================================================
 // MAIN LAMBDA HANDLER - Entry point for password change requests
@@ -47,6 +47,9 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Get secrets from AWS Secrets Manager
+    const secrets = await getSecrets();
+
     // ========================================================================
     // STEP 2: VERIFY JWT TOKEN AUTHENTICATION
     // ========================================================================
@@ -64,7 +67,7 @@ exports.handler = async (event) => {
     let decoded
     try {
       // Verify token signature and decode payload
-      decoded = jwt.verify(token, JWT_SECRET)
+      decoded = jwt.verify(token, secrets.jwt_secret)
     } catch (error) {
       return {
         statusCode: 401,
@@ -130,8 +133,8 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 6: HASH NEW PASSWORD
     // ========================================================================
-    // Hash new password with bcrypt (fewer rounds for local development)
-    const saltRounds = process.env.AWS_SAM_LOCAL ? 4 : 10  // Local: 4 rounds, Production: 10 rounds
+    // Hash new password with bcrypt (fewer rounds for staging/local to prevent timeouts)
+    const saltRounds = process.env.DYNAMODB_ENDPOINT ? 4 : 6  // Local: 4 rounds, Staging/Production: 6 rounds
     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds)
 
     // ========================================================================

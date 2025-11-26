@@ -9,6 +9,7 @@
 // ============================================================================
 const AWS = require('aws-sdk')       // AWS SDK for DynamoDB access
 const jwt = require('jsonwebtoken')  // JWT token verification
+const { getSecrets } = require('../utils/secrets')  // Secrets Manager utility
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -23,7 +24,6 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
 
 // Environment variables for authentication and database
 const USERS_TABLE = process.env.USERS_TABLE
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 
 // ============================================================================
 // MAIN LAMBDA HANDLER - Entry point for profile update requests
@@ -46,6 +46,9 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Get secrets from AWS Secrets Manager
+    const secrets = await getSecrets();
+
     // ========================================================================
     // STEP 2: VERIFY JWT TOKEN AUTHENTICATION
     // ========================================================================
@@ -63,7 +66,7 @@ exports.handler = async (event) => {
     let decoded
     try {
       // Verify token signature and decode payload
-      decoded = jwt.verify(token, JWT_SECRET)
+      decoded = jwt.verify(token, secrets.jwt_secret)
     } catch (error) {
       return {
         statusCode: 401,
@@ -95,12 +98,26 @@ exports.handler = async (event) => {
       }
     }
 
-    // Phone validation (optional field) - basic regex for international phone numbers
-    if (phone && phone.trim() && !/^\+?[\d\s\-\(\)]{10,}$/.test(phone.trim())) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ success: false, message: 'Please enter a valid phone number' })
+    // Phone validation (optional field) - strict validation for US/international numbers
+    if (phone && phone.trim()) {
+      const cleanPhone = phone.replace(/[^\d]/g, ''); // Remove all non-digits
+      
+      // Check length: US (10 digits) or international (7-15 digits with country code)
+      if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ success: false, message: 'Phone number must be 7-15 digits long' })
+        }
+      }
+      
+      // Check format: must contain only digits, spaces, dashes, parentheses, and optional + prefix
+      if (!/^[\+]?[\d\s\-\(\)]{7,20}$/.test(phone.trim())) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ success: false, message: 'Please enter a valid phone number format' })
+        }
       }
     }
 

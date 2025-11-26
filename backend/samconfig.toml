@@ -10,9 +10,7 @@ region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=local",
-    "JWTSecret=local-jwt-secret",
-    "StripeSecretKey=YOUR_LOCAL_STRIPE_KEY",
-    "StripeWebhookSecret=YOUR_LOCAL_WEBHOOK_SECRET"
+    "SecretsManagerArn="
 ]
 confirm_changeset = false
 
@@ -25,9 +23,8 @@ region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=staging",
-    "JWTSecret=staging-jwt-secret",
-    "StripeSecretKey=${STRIPE_SECRET_KEY}",
-    "StripeWebhookSecret=${STRIPE_WEBHOOK_SECRET}"
+    "DynamoDBEndpoint=\"\"",
+    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-staging-secrets-BjIpQD"
 ]
 confirm_changeset = false
 
@@ -40,8 +37,7 @@ region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=production",
-    "JWTSecret=production-jwt-secret",
-    "StripeSecretKey=YOUR_PRODUCTION_STRIPE_KEY",
-    "StripeWebhookSecret=YOUR_PRODUCTION_WEBHOOK_SECRET"
+    "DynamoDBEndpoint=\"\"",
+    "SecretsManagerArn=YOUR_PRODUCTION_SECRETS_MANAGER_ARN"
 ]
 confirm_changeset = false

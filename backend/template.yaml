@@ -204,6 +204,51 @@ Resources:
             Path: /stripe/create-checkout-session
             Method: post
 
+  CreatePaymentIntentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/stripe/create-payment-intent.handler
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Events:
+        CreatePaymentIntentApi:
+          Type: Api
+          Properties:
+            Path: /stripe/create-payment-intent
+            Method: post
+
+  CreatePortalSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/stripe/create-portal-session.handler
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Events:
+        CreatePortalSessionApi:
+          Type: Api
+          Properties:
+            Path: /stripe/create-portal-session
+            Method: post
+
+  ListSubscriptionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/stripe/list-subscriptions.handler
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+      Events:
+        ListSubscriptionsApi:
+          Type: Api
+          Properties:
+            Path: /stripe/list-subscriptions
+            Method: get
+
   StripeWebhookFunction:
     Type: AWS::Serverless::Function
     Properties:

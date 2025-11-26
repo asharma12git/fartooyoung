@@ -6,6 +6,8 @@ import FounderTeam from './pages/FounderTeam'
 import Partners from './pages/Partners'
 import WhatWeDo from './pages/WhatWeDo'
 import DonorDashboard from './pages/DonorDashboard'
+import PaymentSuccess from './pages/PaymentSuccess'
+import SubscriptionReturn from './pages/SubscriptionReturn'
 import AuthModal from './components/AuthModal'
 import DonationModal from './components/DonationModal'
 import { useState, useEffect } from 'react'
@@ -100,6 +102,8 @@ function AppContent() {
           <Route path="/founder-team" element={<FounderTeam onDonateClick={handleDonateClick} />} />
           <Route path="/partners" element={<Partners onDonateClick={handleDonateClick} />} />
           <Route path="/what-we-do" element={<WhatWeDo onDonateClick={handleDonateClick} />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/subscription-return" element={<SubscriptionReturn />} />
           <Route
             path="/dashboard"
             element={

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import SubscriptionManager from '../components/SubscriptionManager'
 import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKey }) => {
@@ -818,7 +819,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-white/70 text-sm">Total Impact</span>
-                                <span className="text-white font-medium">${yearTotal}</span>
+                                <span className="text-white font-medium">${yearTotal.toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-white/70 text-sm">Girls Supported</span>
@@ -908,65 +909,94 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 </div>
               </div>
 
-              {/* Donation History */}
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-semibold text-white">Donation History</h3>
-                  <button
-                    onClick={() => onDonateClick()}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
-                  >
-                    Donate Now
-                  </button>
+              {/* Donation History & Subscriptions - Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column - Donation History */}
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-semibold text-white">Donation History</h3>
+                    <button
+                      onClick={() => onDonateClick()}
+                      className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
+                    >
+                      Donate Now
+                    </button>
+                  </div>
+                  {userDonations.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-white/60">No donations yet</p>
+                      <p className="text-white/40 text-sm mt-2">Your donation history will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-96 overflow-y-auto" style={{
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
+                    }}>
+                      <style jsx>{`
+                        div::-webkit-scrollbar {
+                          width: 6px;
+                        }
+                        div::-webkit-scrollbar-track {
+                          background: transparent;
+                        }
+                        div::-webkit-scrollbar-thumb {
+                          background: rgba(249, 115, 22, 0.6);
+                          border-radius: 3px;
+                        }
+                        div::-webkit-scrollbar-thumb:hover {
+                          background: rgba(249, 115, 22, 0.8);
+                        }
+                      `}</style>
+                      {userDonations.slice(0, 20).map((donation, index) => (
+                        <div key={donation.id} className={`flex items-center justify-between py-2 px-3 rounded-md border transition-all hover:scale-[1.01] ${
+                          donation.type === 'monthly'
+                            ? 'bg-gradient-to-r from-purple-500/10 to-purple-400/5 border-purple-400/20' 
+                            : 'bg-gradient-to-r from-green-500/10 to-green-400/5 border-green-400/20'
+                        }`}>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              donation.type === 'monthly'
+                                ? 'bg-purple-500/20' 
+                                : 'bg-green-500/20'
+                            }`}>
+                              <span className={`text-sm ${
+                                donation.type === 'monthly'
+                                  ? 'text-purple-400' 
+                                  : 'text-green-400'
+                              }`}>{donation.type === 'monthly' ? '🔄' : '⚡'}</span>
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-3">
+                                <p className="text-white font-medium">${donation.amount}</p>
+                                <p className="text-white/50 text-xs">
+                                  {donation.createdAt ? new Date(donation.createdAt).toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    timeZoneName: 'short'
+                                  }) : 'Date not available'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-white/60 font-medium text-sm">{donation.status}</span>
+                            <p className={`text-xs ${
+                              donation.type === 'monthly' ? 'text-purple-400' : 'text-green-400'
+                            }`}>{donation.type}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {userDonations.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-white/60">No donations yet</p>
-                    <p className="text-white/40 text-sm mt-2">Your donation history will appear here</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {userDonations.map((donation, index) => (
-                      <div key={donation.id} className={`flex items-center justify-between py-4 px-4 rounded-lg border transition-all hover:scale-[1.02] ${
-                        index % 2 === 0 
-                          ? 'bg-gradient-to-r from-green-500/10 to-green-400/5 border-green-400/20' 
-                          : 'bg-gradient-to-r from-blue-500/10 to-blue-400/5 border-blue-400/20'
-                      }`}>
-                        <div className="flex items-center space-x-4">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            index % 2 === 0 
-                              ? 'bg-green-500/20' 
-                              : 'bg-blue-500/20'
-                          }`}>
-                            <span className={`text-lg ${
-                              index % 2 === 0 
-                                ? 'text-green-400' 
-                                : 'text-blue-400'
-                            }`}>💝</span>
-                          </div>
-                          <div>
-                            <p className="text-white font-medium text-lg">${donation.amount}</p>
-                            <p className="text-white/60">{donation.type} donation</p>
-                            <p className="text-white/50 text-sm">
-                              {donation.createdAt ? new Date(donation.createdAt).toLocaleString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                timeZoneName: 'short'
-                              }) : 'Date not available'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-green-400 font-medium">{donation.status}</span>
-                          <p className="text-white/60 text-sm mt-1">Receipt available</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+
+                {/* Right Column - Subscriptions */}
+                <div>
+                  <SubscriptionManager userEmail={user.email} />
+                </div>
               </div>
             </div>
           )}

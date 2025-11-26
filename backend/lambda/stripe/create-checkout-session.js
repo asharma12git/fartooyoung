@@ -65,7 +65,7 @@ exports.handler = async (event) => {
         donation_type: donation_type || 'one-time',
         organization: 'Far Too Young'
       },
-      success_url: `${event.headers.origin || 'http://localhost:4173'}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${event.headers.origin || 'http://localhost:4173'}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${event.headers.origin || 'http://localhost:4173'}?payment=cancelled`,
     }
 

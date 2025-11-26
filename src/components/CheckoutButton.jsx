@@ -62,10 +62,16 @@ const CheckoutButton = ({ amount, donorInfo, donationType, onError, loading, set
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-500/20 border border-blue-400/30 rounded-md p-3">
+      <div className="bg-blue-500/20 border border-blue-400/30 rounded-md p-3 mb-4">
         <p className="text-blue-200 text-sm">
           <strong>Secure Checkout:</strong> You'll be redirected to Stripe's secure payment page
         </p>
+        <div className="flex items-center mt-2 text-xs text-blue-300">
+          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+          </svg>
+          256-bit SSL encryption • PCI DSS compliant
+        </div>
       </div>
 
       <button

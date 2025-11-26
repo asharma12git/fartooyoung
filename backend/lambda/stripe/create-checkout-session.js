@@ -75,14 +75,14 @@ exports.handler = async (event) => {
     // ========================================================================
     // Create checkout session configuration object
     const sessionConfig = {
-      payment_method_types: ['card'],  // Accept credit/debit cards
+      payment_method_types: ['card', 'us_bank_account'],  // Accept cards, ACH bank transfers, Apple Pay, Google Pay
       line_items: [
         {
           price_data: {
             currency: 'usd',                              // US Dollars
             product_data: {
-              name: 'Donation to Far Too Young',          // Product name shown to customer
-              description: 'Help protect children and girls from child marriage', // Product description
+              name: '\n\nHelp Protect Children and Girls\n\n',          // Title with spacing
+              description: '\n\nHelp our organization by donating today!\n\nWe will be grateful. 100% of your donation is tax deductible.\n\n', // Description with spacing
               images: ['https://your-domain.com/donation-image.jpg'], // Optional product image
             },
             unit_amount: Math.round(amount * 100),        // Convert dollars to cents (Stripe requirement)

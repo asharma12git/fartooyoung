@@ -58,8 +58,8 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
             >
               <span className="text-white/90 text-lg font-medium transition-colors duration-300 hover:text-orange-200">
                 {isLoggedIn ? 
-                  (user?.firstName && user?.lastName 
-                    ? `${user.firstName} ${user.lastName}`
+                  (user?.firstName 
+                    ? user.firstName
                     : user?.name || 'Account'
                   ) : 'Login'
                 }

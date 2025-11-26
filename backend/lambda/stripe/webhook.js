@@ -87,6 +87,20 @@ exports.handler = async (event) => {
       console.log('Session subscription:', session.subscription)
       console.log('Session metadata:', JSON.stringify(session.metadata))
 
+      // Skip checkout events for subscriptions - let invoice.payment_succeeded handle them
+      if (session.mode === 'subscription') {
+        console.log('Skipping checkout event for subscription - will be handled by invoice event')
+        return {
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          },
+          body: JSON.stringify({ received: true, skipped: 'subscription checkout event' })
+        }
+      }
+
       // Create unique donation ID
       const donationId = `checkout_${session.id}`
       

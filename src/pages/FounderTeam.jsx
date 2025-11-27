@@ -295,6 +295,7 @@ const FounderTeam = ({ onDonateClick }) => {
           <div className="text-center mt-12 lg:mt-16">
             <Link 
               to="/partners" 
+              onClick={() => window.scrollTo(0, 0)}
               className="inline-block bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 animate-pulse"
             >
               Associations

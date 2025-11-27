@@ -94,9 +94,23 @@ const ProtectRights = () => {
 }
 
 const CountryCard = ({ flag, country, description, frontDescription }) => {
+  const [isFlipped, setIsFlipped] = useState(false)
+
+  const handleCardClick = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsFlipped(prev => !prev)
+  }
+
   return (
-    <div className="group perspective-1000 h-[28rem]">
-      <div className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
+    <div 
+      className="group perspective-1000 h-[28rem] cursor-pointer touch-manipulation"
+      onClick={handleCardClick}
+      onTouchEnd={handleCardClick}
+    >
+      <div className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d md:group-hover:rotate-y-180 ${
+        isFlipped ? 'rotate-y-180' : ''
+      }`}>
         {/* Front */}
         <div className="absolute inset-0 w-full h-full backface-hidden">
           <div className="relative h-full">
@@ -179,7 +193,7 @@ const WhereWeWork = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {countries.map((country, index) => (
-        <CountryCard key={index} {...country} />
+        <CountryCard key={country.country} {...country} />
       ))}
     </div>
   )
@@ -315,10 +329,11 @@ const ChildMarriage = ({ onDonateClick }) => {
       <div className="relative h-screen overflow-hidden">
         {/* Background Image with Filters */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center sm:bg-top bg-no-repeat"
           style={{
             backgroundImage: `url(${heroImage})`,
-            filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.55) contrast(1.0)'
+            filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.55) contrast(1.0)',
+            backgroundPosition: 'center 20%'
           }}
         ></div>
         {/* Content */}

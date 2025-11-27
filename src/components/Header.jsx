@@ -31,13 +31,13 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
         <div className="flex justify-between items-center h-32 sm:h-36 lg:h-40 py-4 sm:py-6 pt-6 sm:pt-8">
           <div className="flex items-center justify-start">
             <Link to="/" className="flex items-center">
-              <img src={logo} alt="Far Too Young" className="h-24 sm:h-32 lg:h-36 w-auto" />
+              <img src={logo} alt="Far Too Young" className="h-24 sm:h-32 md:h-40 lg:h-36 w-auto" />
             </Link>
           </div>
           
           <nav className="flex-1 flex justify-center items-center">
-            {/* Desktop Navigation - Hidden on mobile and tablet */}
-            <div className="hidden lg:flex space-x-8">
+            {/* Desktop Navigation - Hidden on mobile and tablet, show only on larger screens */}
+            <div className="hidden xl:flex space-x-8">
               {navItems.map(item => (
                 <Link
                   key={item.path}
@@ -57,11 +57,11 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
           {/* Mobile Hamburger Button - Visible on mobile and tablet */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-8 sm:w-10 h-8 sm:h-10 rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
+            className="xl:hidden flex items-center justify-center w-8 sm:w-10 md:w-12 lg:w-10 h-8 sm:h-10 md:h-12 lg:h-10 rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
             aria-label="Toggle mobile menu"
           >
             <svg 
-              className="w-5 sm:w-6 h-5 sm:h-6 text-white" 
+              className="w-5 sm:w-6 md:w-7 lg:w-6 h-5 sm:h-6 md:h-7 lg:h-6 text-white" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -74,7 +74,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
             </svg>
           </button>
           
-          <div className="hidden lg:flex items-center justify-end space-x-4">
+          <div className="hidden xl:flex items-center justify-end space-x-4">
             <button
               onClick={handleAuthClick}
               className="flex items-center space-x-2"
@@ -87,7 +87,11 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
                   ) : 'Login'
                 }
               </span>
-              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
+              <div className={`backdrop-blur-sm p-2 rounded-md border transition-colors duration-300 ${
+                isLoggedIn 
+                  ? 'bg-green-500/80 border-green-400/50 hover:bg-green-600/90' 
+                  : 'bg-orange-500/80 border-orange-400/50 hover:bg-orange-600/90'
+              }`}>
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -113,7 +117,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
 
       {/* Mobile Menu Overlay - Only visible when open */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black/95 backdrop-blur-sm overflow-hidden">
+        <div className="xl:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm overflow-hidden">
           <div className="flex flex-col h-full pt-20 px-4 sm:px-6">
             {/* Mobile Menu Header */}
             <div className="flex justify-between items-center mb-6">
@@ -130,7 +134,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
             </div>
 
             {/* Mobile Navigation Links */}
-            <nav className="flex-none p-4 bg-transparent border border-orange-400/50 rounded-md">
+            <nav className="flex-none p-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg ring-1 ring-orange-500/30">
               <div className="space-y-3">
                 {navItems.map(item => (
                   <Link
@@ -139,7 +143,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`block py-3 px-4 text-base sm:text-lg font-medium transition-colors duration-300 rounded-md ${
                       location.pathname === item.path
-                        ? 'text-white bg-orange-500/15 border-l-4 border-orange-400/50'
+                        ? 'text-white bg-orange-500/20 border-l-4 border-orange-400/50'
                         : 'text-white/90 hover:text-orange-200 hover:bg-white/10'
                     }`}
                   >
@@ -156,7 +160,11 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
                   handleAuthClick()
                   setIsMobileMenuOpen(false)
                 }}
-                className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
+                className={`flex-1 backdrop-blur-sm border transition-all duration-300 shadow-lg text-sm px-4 py-3 rounded-lg font-medium ${
+                  isLoggedIn 
+                    ? 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:text-white' 
+                    : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:text-white'
+                }`}
               >
                 {isLoggedIn ? 
                   (user?.firstName 
@@ -171,7 +179,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
                   onDonateClick()
                   setIsMobileMenuOpen(false)
                 }}
-                className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
+                className="flex-1 bg-gradient-to-r from-orange-500/80 to-orange-600/80 backdrop-blur-sm border border-orange-400/50 hover:from-orange-600/90 hover:to-orange-700/90 text-white px-4 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg text-sm"
               >
                 Donate
               </button>

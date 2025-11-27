@@ -187,7 +187,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
           <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-white/20">
             <form onSubmit={handleSubmit} className="min-h-[400px] lg:min-h-[650px] flex flex-col justify-center">
               {currentStep === 1 ? (
-                <div className="flex flex-col justify-evenly flex-1 space-y-0">
+                <div className="flex flex-col justify-evenly flex-1 space-y-4 sm:space-y-0">
                   <div className="text-center mb-4 -mt-8">
                     <p className="text-white/70 text-sm leading-relaxed">Monthly giving helps Far Too Young keep girls at school. The more time a girl spends in education, the greater the reduction in risk of child marriage.</p>
 
@@ -198,14 +198,14 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                   </div>
 
                   <div>
-                    <label className="block text-lg font-medium text-white mb-3">
+                    <label className="block text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">
                       Donation Type
                     </label>
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mb-4 sm:mb-0">
                       <button
                         type="button"
                         onClick={() => setDonationType('one-time')}
-                        className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${donationType === 'one-time'
+                        className={`flex-1 py-3 sm:py-3 px-4 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${donationType === 'one-time'
                           ? 'bg-orange-500/80 text-white border border-orange-400/50'
                           : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
                           }`}
@@ -218,7 +218,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                           setDonationType('monthly')
                           setShowMonthlyPopup(true)
                         }}
-                        className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${donationType === 'monthly'
+                        className={`flex-1 py-3 sm:py-3 px-4 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${donationType === 'monthly'
                           ? 'bg-orange-500/80 text-white border border-orange-400/50'
                           : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
                           }`}
@@ -229,16 +229,16 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                   </div>
 
                   <div>
-                    <label className="block text-lg font-medium text-white mb-3">
+                    <label className="block text-base sm:text-lg font-medium text-white mb-2 sm:mb-3">
                       Amount
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mb-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-3">
                       {presetAmounts.map(preset => (
                         <button
                           key={preset}
                           type="button"
                           onClick={() => setAmount(preset)}
-                          className={`py-2 sm:py-3 px-2 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${amount === preset
+                          className={`py-3 sm:py-3 px-3 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${amount === preset
                             ? 'bg-orange-500/80 text-white border border-orange-400/50'
                             : 'bg-white/10 text-white border border-white/30 hover:bg-white/20'
                             }`}
@@ -278,7 +278,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                     )}
                   </div>
 
-                  <div>
+                  <div className="mt-4 sm:mt-0">
                     <label className="flex items-start">
                       <input
                         type="checkbox"
@@ -296,7 +296,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                   <button
                     type="submit"
                     disabled={!amount || (amount === 'custom' && !customAmount) || !agreeToTerms}
-                    className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-500/80 disabled:cursor-not-allowed text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md text-sm sm:text-base font-bold transition-colors border border-orange-400/50"
+                    className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-500/80 disabled:cursor-not-allowed text-white px-4 sm:px-6 py-3 sm:py-3 rounded-md text-sm sm:text-base font-bold transition-colors border border-orange-400/50 mt-4 sm:mt-0"
                   >
                     Continue to Payment
                   </button>

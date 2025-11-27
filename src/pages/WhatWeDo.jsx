@@ -578,14 +578,32 @@ const WhatWeDo = ({ onDonateClick }) => {
                   >
                     <span className="text-gray-600">‹</span>
                   </button>
-                  <div className="flex space-x-2 items-center">
-                    {Array.from({ length: totalSlides }, (_, i) => (
-                      <div
-                        key={i}
-                        className={`w-2 h-2 rounded-full ${i === currentSlide ? 'bg-orange-500' : 'bg-gray-300'}`}
-                      ></div>
-                    ))}
+                  
+                  {/* Mobile: Show slide counter, Desktop: Show dots */}
+                  <div className="flex items-center">
+                    {/* Slide counter for mobile */}
+                    <div className="sm:hidden bg-white px-3 py-1 rounded-full shadow-lg border border-gray-300">
+                      <span className="text-sm text-gray-600">{currentSlide + 1} / {totalSlides}</span>
+                    </div>
+                    
+                    {/* Dots for desktop - limit to 10 dots max */}
+                    <div className="hidden sm:flex space-x-2">
+                      {totalSlides <= 10 ? (
+                        Array.from({ length: totalSlides }, (_, i) => (
+                          <div
+                            key={i}
+                            className={`w-2 h-2 rounded-full cursor-pointer ${i === currentSlide ? 'bg-orange-500' : 'bg-gray-300'}`}
+                            onClick={() => setCurrentSlide(i)}
+                          ></div>
+                        ))
+                      ) : (
+                        <div className="bg-white px-3 py-1 rounded-full shadow-lg border border-gray-300">
+                          <span className="text-sm text-gray-600">{currentSlide + 1} / {totalSlides}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  
                   <button
                     onClick={nextSlide}
                     className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
@@ -645,14 +663,14 @@ const WhatWeDo = ({ onDonateClick }) => {
                 </div>
               </div>
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
-                <h3 className="text-2xl sm:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Honoring Father Moran</h3>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Honoring Father Moran</h3>
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   Father Marshall D. Moran, a pioneering American Jesuit priest, revolutionized education in Nepal. In 1951, he founded St. Xavier's School in Godavari, Kathmandu, providing accessible and quality education to children from all socioeconomic backgrounds, with particular focus on those from impoverished families.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   A renowned Ham Radio Operator with call sign 9N1MM, Father Moran connected with a global community, leveraging his network to support numerous relief efforts in Nepal and beyond. His unwavering commitment to empowering young minds led to the establishment of several schools across Nepal, offering educational opportunities to countless children who would otherwise have been denied the fundamental right to education.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   In honor of his enduring legacy and to galvanize global action against child abuse and exploitation, Far Too Young, Inc. is spearheading 'Far Too Young,' a poignant film project dedicated to Reverend Fr. Moran. This collaborative effort, in partnership with the Media Alert & Relief Foundation, aims to illuminate the critical issues of child abuse and the importance of quality education through the Fr. Moran Education Fund, which actively supports countless children through scholarships and provides vital grants to educational institutions throughout Nepal.
                 </p>
               </div>
@@ -663,8 +681,8 @@ const WhatWeDo = ({ onDonateClick }) => {
           <div className="mb-16 lg:mb-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1 h-full flex flex-col justify-start">
-                <h3 className="text-2xl sm:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
-                <p className="text-base leading-snug text-gray-600 italic mb-4"
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
+                <p className="text-sm sm:text-base leading-snug text-gray-600 italic mb-4"
                   style={{
                     fontFamily: 'Dancing Script, cursive',
                     letterSpacing: '0.5px',
@@ -672,10 +690,10 @@ const WhatWeDo = ({ onDonateClick }) => {
                   }}>
                   'In every classroom, in every community, in every country of the world'
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   Following years of research and screenplay development based on actual case studies, an educational feature film centered on the fundamental right to education and the urgent fight against all forms of Gender-Based Violence, with a particular focus on the devastating impact of child marriage, is poised to enter full production in the near future.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   Upon completion, this impactful film will be widely disseminated across diverse global audiences through a multi-lingual distribution strategy, aiming to raise awareness and inspire action towards a more equitable and just society.
                 </p>
               </div>
@@ -741,8 +759,8 @@ const WhatWeDo = ({ onDonateClick }) => {
                 </div>
               </div>
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
-                <h3 className="text-2xl sm:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">The Tara Campaign</h3>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">The Tara Campaign</h3>
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   The Tara Campaign uses illustrations and comic for awareness and advocacy. It tells the story of Tara, a child bride and a young mother who now fights against all forms of Gender Based Violence including child, underage and forced marriages.
                 </p>
               </div>
@@ -805,7 +823,7 @@ const WhatWeDo = ({ onDonateClick }) => {
         <div className="text-center mt-12">
           <button
             onClick={() => onDonateClick()}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 sm:px-8 lg:px-12 py-2 sm:py-3 lg:py-4 text-sm sm:text-base lg:text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
           >
             DONATE NOW
           </button>

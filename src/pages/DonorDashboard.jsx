@@ -388,9 +388,9 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-3">
                           <span className="text-2xl">🎯</span>
-                          <h3 className="text-xl font-bold text-white">Smart Suggestion for You</h3>
+                          <h3 className="text-lg sm:text-xl font-bold text-white">Smart Suggestion for You</h3>
                         </div>
-                        <p className="text-white/90 text-lg mb-4">
+                        <p className="text-white/90 text-base sm:text-lg mb-4">
                           {user.firstName && user.lastName 
                             ? `${user.firstName} ${user.lastName}` 
                             : user.name || 'Friend'}, based on your giving pattern, a <span className="font-bold text-orange-300">${suggestedAmount}</span> donation this month would help you reach your goal of educating {goalGirls} girls this year. You're <span className="font-bold text-green-400">{Math.round(progressPercent)}%</span> there!
@@ -468,7 +468,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                     <div className="flex items-center space-x-2 mb-4">
                       <span className="text-2xl">📊</span>
-                      <h3 className="text-xl font-bold text-white">Your Impact Insights</h3>
+                      <h3 className="text-lg sm:text-xl font-bold text-white">Your Impact Insights</h3>
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 p-2">
                       {/* Donor Rank */}
@@ -635,7 +635,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
               {/* Progress Towards Goals */}
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-6">Your Impact Goals for 2025</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-6">Your Impact Goals for 2025</h3>
 
                 {/* Current Month Summary - Three Column Format */}
                 <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
@@ -671,7 +671,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         ${(() => {
                           const currentMonth = new Date().toISOString().slice(0, 7)
                           const monthlyDonations = userDonations.filter(d => d.createdAt?.startsWith(currentMonth))
-                          return monthlyDonations.reduce((sum, d) => sum + d.amount, 0)
+                          return monthlyDonations.reduce((sum, d) => sum + d.amount, 0).toFixed(2)
                         })()}
                       </p>
                     </div>
@@ -680,25 +680,25 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   {/* Cost Breakdown */}
                   <div className="mt-3 pt-3 border-t border-white/10">
                     <p className="text-white/70 text-xs mb-2">$50/month per girl covers:</p>
-                    <div className="grid grid-cols-5 gap-2 text-xs">
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
                       <div className="flex items-center space-x-1">
-                        <span className="text-orange-400 text-base">📚</span>
+                        <span className="text-orange-400 text-sm">📚</span>
                         <span className="text-white/60">School fees</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <span className="text-orange-400 text-base">👕</span>
+                        <span className="text-orange-400 text-sm">👕</span>
                         <span className="text-white/60">Uniforms</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <span className="text-orange-400 text-base">🚌</span>
+                        <span className="text-orange-400 text-sm">🚌</span>
                         <span className="text-white/60">Transport</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <span className="text-orange-400 text-base">🏠</span>
+                        <span className="text-orange-400 text-sm">🏠</span>
                         <span className="text-white/60">Welfare checks</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <span className="text-orange-400 text-base">🤝</span>
+                        <span className="text-orange-400 text-sm">🤝</span>
                         <span className="text-white/60">Support</span>
                       </div>
                     </div>
@@ -708,47 +708,47 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 <div className="space-y-6">
                   {/* Goal 1: Support 1 Girl for 1 Year */}
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-white/80">Support 1 Girl for 1 Year ($600)</span>
-                      <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$600</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
+                      <span className="text-white/80 text-sm">Support 1 Girl for 1 Year ($600)</span>
+                      <span className="text-orange-400 font-medium text-sm">${userStats.lifetimeTotal}/$600</span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-3">
+                    <div className="w-full bg-white/10 rounded-full h-2 sm:h-3">
                       <div
-                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 sm:h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 600) * 100, 100)}%` }}
                       ></div>
                     </div>
-                    <p className="text-white/60 text-sm mt-1">${Math.max(600 - userStats.lifetimeTotal, 0)} more to reach goal</p>
+                    <p className="text-white/60 text-xs mt-1">${Math.max(600 - userStats.lifetimeTotal, 0).toFixed(2)} more to reach goal</p>
                   </div>
 
                   {/* Goal 2: Complete Elementary Education */}
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-white/80">Fund Complete Elementary (5 years - $3,000)</span>
-                      <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$3,000</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
+                      <span className="text-white/80 text-sm">Fund Complete Elementary (5 years - $3,000)</span>
+                      <span className="text-orange-400 font-medium text-sm">${userStats.lifetimeTotal}/$3,000</span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-3">
+                    <div className="w-full bg-white/10 rounded-full h-2 sm:h-3">
                       <div
-                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 sm:h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 3000) * 100, 100)}%` }}
                       ></div>
                     </div>
-                    <p className="text-white/60 text-sm mt-1">Ages 5-10: Foundation for life</p>
+                    <p className="text-white/60 text-xs mt-1">Ages 5-10: Foundation for life</p>
                   </div>
 
                   {/* Goal 3: Life-Changing Champion */}
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-white/80">Life-Changing Champion ($6,000)</span>
-                      <span className="text-orange-400 font-medium">${userStats.lifetimeTotal}/$6,000</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
+                      <span className="text-white/80 text-sm">Life-Changing Champion ($6,000)</span>
+                      <span className="text-orange-400 font-medium text-sm">${userStats.lifetimeTotal}/$6,000</span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-3">
+                    <div className="w-full bg-white/10 rounded-full h-2 sm:h-3">
                       <div
-                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 sm:h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 6000) * 100, 100)}%` }}
                       ></div>
                     </div>
-                    <p className="text-white/60 text-sm mt-1">Complete education: Age 5-14 (10 years)</p>
+                    <p className="text-white/60 text-xs mt-1">Complete education: Age 5-14 (10 years)</p>
                   </div>
                 </div>
               </div>
@@ -779,7 +779,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     })()}
                   </div>
 
-                  <div className="flex space-x-4 overflow-x-auto pb-2 pt-2 px-2" style={{
+                  <div className="flex space-x-3 sm:space-x-4 overflow-x-auto pb-3 pt-2 px-1" style={{
                     scrollbarWidth: 'thin',
                     scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
                   }}>
@@ -809,7 +809,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         const girlsSupported = Math.floor(yearTotal / 50)
 
                         return (
-                          <div key={year} className={`rounded-lg p-4 min-w-[280px] flex-shrink-0 border transition-all hover:scale-[1.02] ${
+                          <div key={year} className={`rounded-lg p-3 sm:p-4 min-w-[240px] sm:min-w-[280px] flex-shrink-0 border transition-all hover:scale-[1.02] ${
                             years.indexOf(year) % 2 === 0
                               ? 'bg-gradient-to-br from-green-500/10 to-green-400/5 border-green-400/20'
                               : 'bg-gradient-to-br from-blue-500/10 to-blue-400/5 border-blue-400/20'
@@ -899,7 +899,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <span className="text-orange-400 text-lg">🎯</span>
                     </div>
                   </div>
-                  <p className="text-3xl font-bold text-white">{userStats.totalDonations}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-white">{userStats.totalDonations}</p>
                   <p className="text-white/60 text-sm mt-1">donations made</p>
                 </div>
 
@@ -910,7 +910,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <span className="text-green-400 text-lg">💰</span>
                     </div>
                   </div>
-                  <p className="text-3xl font-bold text-white">${userStats.lifetimeTotal.toLocaleString()}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-white">${userStats.lifetimeTotal.toLocaleString()}</p>
                   <p className="text-white/60 text-sm mt-1">total contributed</p>
                 </div>
 
@@ -921,7 +921,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <span className="text-blue-400 text-lg">📈</span>
                     </div>
                   </div>
-                  <p className="text-3xl font-bold text-white">${userStats.averageDonation}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-white">${userStats.averageDonation}</p>
                   <p className="text-white/60 text-sm mt-1">per donation</p>
                 </div>
               </div>
@@ -931,7 +931,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 {/* Left Column - Donation History */}
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-semibold text-white">Donation History</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold text-white">Donation History</h3>
                     <button
                       onClick={() => onDonateClick()}
                       className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
@@ -1022,7 +1022,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           {activeTab === 'settings' && (
             <div className="space-y-6">
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-6">Profile Settings</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-6">Profile Settings</h3>
                 
                 <div className="space-y-4">
                   {message.text && (
@@ -1133,7 +1133,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-6">Change Password</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-6">Change Password</h3>
                 
                 <form onSubmit={handlePasswordChange} className="space-y-4">
                   {passwordMessage.text && (
@@ -1283,7 +1283,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-6">Preferences</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-6">Preferences</h3>
                 <div className="space-y-4">
                   <label className="flex items-center space-x-3 cursor-pointer">
                     <input type="checkbox" className="rounded border-white/30 bg-transparent text-orange-500 focus:ring-orange-500/50" defaultChecked />
@@ -1309,7 +1309,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-4xl">📦</span>
                 </div>
-                <h3 className="text-2xl font-semibold text-white mb-4">E-commerce Coming Soon</h3>
+                <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4">E-commerce Coming Soon</h3>
                 <p className="text-white/60 mb-6">We're working on bringing you merchandise and educational materials to support our cause.</p>
               </div>
             </div>
@@ -1321,7 +1321,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-4xl">⭐</span>
                 </div>
-                <h3 className="text-2xl font-semibold text-white mb-4">Wishlist Coming Soon</h3>
+                <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4">Wishlist Coming Soon</h3>
                 <p className="text-white/60 mb-6">Save your favorite items and get notified when they become available.</p>
               </div>
             </div>

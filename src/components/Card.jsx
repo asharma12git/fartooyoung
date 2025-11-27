@@ -11,7 +11,7 @@ const Card = ({
   border = BORDERS.GRAY,
   className = '',
   hover = true,
-  padding = 'p-8'
+  padding = 'p-4 sm:p-6 lg:p-8'
 }) => {
   return (
     <div className="relative h-full">

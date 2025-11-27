@@ -113,9 +113,9 @@ const Partners = ({ onDonateClick }) => {
           }}
         ></div>
         
-        <div className="relative z-10 flex flex-col justify-end items-start h-full pb-32">
+        <div className="relative z-10 flex flex-col justify-end items-start h-full pb-16 sm:pb-24 lg:pb-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <h2 className="text-4xl font-medium text-white">Partners</h2>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-white">Partners</h2>
           </div>
         </div>
       </div>
@@ -128,12 +128,12 @@ const Partners = ({ onDonateClick }) => {
             <div className="w-full h-0.5 bg-black"></div>
           </div>
           
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">AFFILIATE</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-12 lg:mb-16 leading-tight">AFFILIATE</h2>
           
-          <Card gradient={GRADIENTS.METALLIC_GRAY} border={BORDERS.GRAY} padding="p-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <Card gradient={GRADIENTS.METALLIC_GRAY} border={BORDERS.GRAY} padding="p-8 lg:p-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="text-center">
-                <div className="w-80 h-80 mx-auto mb-8 flex items-center justify-center p-6">
+                <div className="w-60 sm:w-72 lg:w-80 h-60 sm:h-72 lg:h-80 mx-auto mb-6 lg:mb-8 flex items-center justify-center p-4 lg:p-6">
                   <img 
                     src={mediaAlertLogo} 
                     alt="Media Alert Logo" 
@@ -142,16 +142,16 @@ const Partners = ({ onDonateClick }) => {
                 </div>
                 
                 <div className="text-left">
-                  <p className="text-gray-600 text-base leading-relaxed mb-4">
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
                     Established in 1993 as a non-profit NGO under the Social Welfare Council of Nepal. For the past 30 years, Media Alert has worked in Nepal, South Asia, and internationally on communication projects with various partner community-based organizations.
                   </p>
-                  <p className="text-gray-600 text-base leading-relaxed">
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                     Media Alert's expertise lies in community-based programs, enter-educate approach, skill and capacity building, advocacy, social marketing, research and planning, monitoring and evaluation.
                   </p>
                 </div>
               </div>
               
-              <div className="text-gray-600 text-base leading-relaxed space-y-4">
+              <div className="text-gray-600 text-sm sm:text-base leading-relaxed space-y-4">
                 <p>Media Alert uses behavior change communication (BCC) in creating awareness, increasing knowledge base, building approval, and influencing behavior. It has designed and implemented many unique campaigns especially targeting marginalized grassroots audiences.</p>
                 <p>The organization has produced and disseminated scores of shorts and documentaries, public service spots, and several edutainment film campaigns against modern day slavery, human trafficking, child marriage, HIV/AIDS, on gender equality, women empowerment, human rights, health, the environment, democracy, and peace building to educate and empower people and communities.</p>
                 <p>Media Alert regularly conducts seminars and workshops on communication and strategies, campaign development, social marketing, and BCC with development partners, government bodies, and international non-governmental organizations.</p>
@@ -167,7 +167,7 @@ const Partners = ({ onDonateClick }) => {
         <div className={LAYOUT.CONTAINER}>
           <SectionTitle>MENTORS</SectionTitle>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {mentors.map((mentor, index) => (
               <PersonCard
                 key={index}
@@ -188,7 +188,7 @@ const Partners = ({ onDonateClick }) => {
         <div className={LAYOUT.CONTAINER}>
           <SectionTitle>LOCAL LEVEL PARTNERSHIP</SectionTitle>
           
-          <div className="relative h-96 bg-gray-900 rounded-lg overflow-hidden">
+          <div className="relative h-64 sm:h-80 lg:h-96 bg-gray-900 rounded-lg overflow-hidden">
             {/* Background Image */}
             <div 
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -201,49 +201,49 @@ const Partners = ({ onDonateClick }) => {
             {/* Animated Text */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative w-full h-full">
-                <div className="absolute text-white font-bold float-1" style={{top: '10%', left: '10%', animationDelay: '0s', fontSize: '18px'}}>
+                <div className="absolute text-white font-bold float-1" style={{top: '10%', left: '10%', animationDelay: '0s', fontSize: 'clamp(12px, 2.5vw, 18px)'}}>
                   Health Posts
                 </div>
-                <div className="absolute text-white font-medium float-2" style={{top: '25%', right: '15%', animationDelay: '1s', fontSize: '14px'}}>
+                <div className="absolute text-white font-medium float-2" style={{top: '25%', right: '15%', animationDelay: '1s', fontSize: 'clamp(10px, 2vw, 14px)'}}>
                   Civil Societies
                 </div>
-                <div className="absolute text-white font-bold float-3" style={{top: '40%', left: '20%', animationDelay: '2s', fontSize: '20px'}}>
+                <div className="absolute text-white font-bold float-3" style={{top: '40%', left: '20%', animationDelay: '2s', fontSize: 'clamp(14px, 3vw, 20px)'}}>
                   Hospitals
                 </div>
-                <div className="absolute text-white font-light float-1" style={{top: '15%', left: '50%', animationDelay: '3s', fontSize: '12px'}}>
+                <div className="absolute text-white font-light float-1" style={{top: '15%', left: '50%', animationDelay: '3s', fontSize: 'clamp(8px, 1.5vw, 12px)'}}>
                   Community Based Organizations
                 </div>
-                <div className="absolute text-white font-semibold float-2" style={{top: '55%', right: '25%', animationDelay: '4s', fontSize: '16px'}}>
+                <div className="absolute text-white font-semibold float-2" style={{top: '55%', right: '25%', animationDelay: '4s', fontSize: 'clamp(11px, 2.2vw, 16px)'}}>
                   Co-operatives
                 </div>
-                <div className="absolute text-white font-bold float-3" style={{top: '70%', left: '15%', animationDelay: '5s', fontSize: '15px'}}>
+                <div className="absolute text-white font-bold float-3" style={{top: '70%', left: '15%', animationDelay: '5s', fontSize: 'clamp(10px, 2vw, 15px)'}}>
                   Women Leaders
                 </div>
-                <div className="absolute text-white font-medium float-1" style={{top: '30%', right: '35%', animationDelay: '6s', fontSize: '13px'}}>
+                <div className="absolute text-white font-medium float-1" style={{top: '30%', right: '35%', animationDelay: '6s', fontSize: 'clamp(9px, 1.8vw, 13px)'}}>
                   Elected Leaders
                 </div>
-                <div className="absolute text-white font-light float-2" style={{top: '85%', left: '40%', animationDelay: '7s', fontSize: '11px'}}>
+                <div className="absolute text-white font-light float-2" style={{top: '85%', left: '40%', animationDelay: '7s', fontSize: 'clamp(8px, 1.5vw, 11px)'}}>
                   Village Development Committees
                 </div>
-                <div className="absolute text-white font-bold float-3" style={{top: '20%', left: '75%', animationDelay: '0.5s', fontSize: '17px'}}>
+                <div className="absolute text-white font-bold float-3" style={{top: '20%', left: '75%', animationDelay: '0.5s', fontSize: 'clamp(12px, 2.5vw, 17px)'}}>
                   Municipalities
                 </div>
-                <div className="absolute text-white font-medium float-1" style={{top: '50%', left: '60%', animationDelay: '1.5s', fontSize: '12px'}}>
+                <div className="absolute text-white font-medium float-1" style={{top: '50%', left: '60%', animationDelay: '1.5s', fontSize: 'clamp(8px, 1.5vw, 12px)'}}>
                   Community Support Groups
                 </div>
-                <div className="absolute text-white font-semibold float-2" style={{top: '75%', right: '10%', animationDelay: '2.5s', fontSize: '19px'}}>
+                <div className="absolute text-white font-semibold float-2" style={{top: '75%', right: '10%', animationDelay: '2.5s', fontSize: 'clamp(13px, 2.8vw, 19px)'}}>
                   Media
                 </div>
-                <div className="absolute text-white font-bold float-3" style={{top: '35%', left: '5%', animationDelay: '3.5s', fontSize: '14px'}}>
+                <div className="absolute text-white font-bold float-3" style={{top: '35%', left: '5%', animationDelay: '3.5s', fontSize: 'clamp(10px, 2vw, 14px)'}}>
                   Local Governments
                 </div>
-                <div className="absolute text-white font-medium float-1" style={{top: '65%', left: '70%', animationDelay: '4.5s', fontSize: '13px'}}>
+                <div className="absolute text-white font-medium float-1" style={{top: '65%', left: '70%', animationDelay: '4.5s', fontSize: 'clamp(9px, 1.8vw, 13px)'}}>
                   Education Institutions
                 </div>
-                <div className="absolute text-white font-light float-2" style={{top: '5%', right: '30%', animationDelay: '5.5s', fontSize: '21px'}}>
+                <div className="absolute text-white font-light float-2" style={{top: '5%', right: '30%', animationDelay: '5.5s', fontSize: 'clamp(15px, 3.2vw, 21px)'}}>
                   Wards
                 </div>
-                <div className="absolute text-white font-bold float-3" style={{top: '80%', left: '25%', animationDelay: '6.5s', fontSize: '16px'}}>
+                <div className="absolute text-white font-bold float-3" style={{top: '80%', left: '25%', animationDelay: '6.5s', fontSize: 'clamp(11px, 2.2vw, 16px)'}}>
                   Schools
                 </div>
               </div>
@@ -257,13 +257,13 @@ const Partners = ({ onDonateClick }) => {
         <div className={LAYOUT.CONTAINER}>
           <SectionTitle>PAST & PRESENT COLLABORATION</SectionTitle>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
             {collaborationPartners.map((partner, index) => (
               <div 
                 key={index}
-                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
+                className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
               >
-                <div className="w-24 h-24 flex items-center justify-center mb-3">
+                <div className="w-16 sm:w-20 lg:w-24 h-16 sm:h-20 lg:h-24 flex items-center justify-center mb-2 sm:mb-3">
                   <img 
                     src={partner.logo} 
                     alt={`${partner.name} logo`}
@@ -285,7 +285,7 @@ const Partners = ({ onDonateClick }) => {
           <div className="text-center">
             <button
               onClick={() => onDonateClick()}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 sm:px-10 lg:px-12 py-3 sm:py-4 text-base sm:text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
             >
               DONATE NOW
             </button>

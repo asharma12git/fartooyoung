@@ -218,12 +218,12 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-7xl mx-4 shadow-2xl ring-1 ring-orange-500/50 relative max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-7xl shadow-2xl ring-1 ring-orange-500/50 relative max-h-[95vh] sm:max-h-[90vh] flex flex-col">
         {/* Sign Out Button - Top Left */}
         <button
           onClick={handleLogout}
-          className="absolute top-4 left-4 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white px-4 py-2 rounded-lg transition-all duration-300 text-sm font-medium border border-white/20 z-10"
+          className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-300 text-xs sm:text-sm font-medium border border-white/20 z-10"
         >
           Sign Out
         </button>
@@ -231,15 +231,15 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
         {/* Close Button - Top Right */}
         <button
           onClick={() => navigate('/')}
-          className="absolute top-0 right-0 w-10 h-10 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg z-20"
+          className="absolute top-0 right-0 w-8 sm:w-10 h-8 sm:h-10 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg z-20"
           style={{ borderBottomLeftRadius: '0.5rem' }}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+          <svg className="w-4 sm:w-6 h-4 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <div className="p-8 flex-1 overflow-y-auto" style={{
+        <div className="p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto" style={{
           scrollbarWidth: 'thin',
           scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
         }}>
@@ -260,10 +260,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           `}</style>
 
           {/* Hero Header with Impact Summary */}
-          <div className="mb-8">
+          <div className="mb-6 lg:mb-8">
             {/* Welcome Message */}
-            <div className="text-center mb-6">
-              <h2 className="text-4xl font-medium text-orange-400 mb-4">
+            <div className="text-center mb-4 lg:mb-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-orange-400 mb-3 lg:mb-4">
                 {(() => {
                   const displayName = user.firstName && user.lastName 
                     ? `${user.firstName} ${user.lastName}`
@@ -292,31 +292,31 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   return welcomeMessages[messageIndex]
                 })()}
               </h2>
-              <div className="flex justify-center mb-4">
-                <img src={logo} alt="Far Too Young" className="h-48 w-auto opacity-90" />
+              <div className="flex justify-center mb-3 lg:mb-4">
+                <img src={logo} alt="Far Too Young" className="h-32 sm:h-40 lg:h-48 w-auto opacity-90" />
               </div>
             </div>
 
             {/* Hero Impact Banner - Only show if user has donations */}
             {userDonations.length > 0 && (
-              <div className="bg-gradient-to-r from-orange-500/30 via-orange-400/20 to-purple-500/30 backdrop-blur-sm border border-orange-400/50 rounded-xl p-8 text-center">
-                <p className="text-white/90 text-lg mb-4 italic">
+              <div className="bg-gradient-to-r from-orange-500/30 via-orange-400/20 to-purple-500/30 backdrop-blur-sm border border-orange-400/50 rounded-xl p-4 sm:p-6 lg:p-8 text-center">
+                <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 italic">
                   "Every donation creates ripples of hope across the world"
                 </p>
-                <div className="flex justify-center items-center space-x-8">
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-8">
                   <div>
-                    <div className="text-5xl font-bold text-white mb-1">{Math.floor(userStats.lifetimeTotal / 50)}</div>
-                    <div className="text-white/70 text-sm">Girls Educated</div>
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1">{Math.floor(userStats.lifetimeTotal / 50)}</div>
+                    <div className="text-white/70 text-xs sm:text-sm">Girls Educated</div>
                   </div>
-                  <div className="h-12 w-px bg-white/30"></div>
+                  <div className="hidden sm:block h-12 w-px bg-white/30"></div>
                   <div>
-                    <div className="text-5xl font-bold text-orange-300 mb-1">${userStats.lifetimeTotal}</div>
-                    <div className="text-white/70 text-sm">Total Impact</div>
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-orange-300 mb-1">${userStats.lifetimeTotal}</div>
+                    <div className="text-white/70 text-xs sm:text-sm">Total Impact</div>
                   </div>
-                  <div className="h-12 w-px bg-white/30"></div>
+                  <div className="hidden sm:block h-12 w-px bg-white/30"></div>
                   <div>
-                    <div className="text-5xl font-bold text-green-400 mb-1">{userStats.totalDonations}</div>
-                    <div className="text-white/70 text-sm">Donations</div>
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-400 mb-1">{userStats.totalDonations}</div>
+                    <div className="text-white/70 text-xs sm:text-sm">Donations</div>
                   </div>
                 </div>
               </div>
@@ -324,16 +324,16 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
             {/* First-time donor message */}
             {userDonations.length === 0 && (
-              <div className="bg-gradient-to-r from-orange-500/20 to-orange-400/10 backdrop-blur-sm border border-orange-400/40 rounded-xl p-8 text-center">
-                <p className="text-white/90 text-xl mb-4">
+              <div className="bg-gradient-to-r from-orange-500/20 to-orange-400/10 backdrop-blur-sm border border-orange-400/40 rounded-xl p-4 sm:p-6 lg:p-8 text-center">
+                <p className="text-white/90 text-lg sm:text-xl mb-3 sm:mb-4">
                   Ready to make your first impact?
                 </p>
-                <p className="text-white/70 text-base mb-6">
+                <p className="text-white/70 text-sm sm:text-base mb-4 sm:mb-6">
                   Every donation helps girls around the world access education and build brighter futures.
                 </p>
                 <button
                   onClick={() => onDonateClick()}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-bold text-lg transition-all transform hover:scale-105"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg font-bold text-base sm:text-lg transition-all transform hover:scale-105"
                 >
                   Make Your First Donation
                 </button>
@@ -342,7 +342,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex space-x-1 mb-8 bg-white/5 p-1 rounded-lg">
+          <div className="flex flex-wrap sm:flex-nowrap space-x-1 mb-6 lg:mb-8 bg-white/5 p-1 rounded-lg overflow-x-auto">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: '📊' },
               { id: 'donations', label: 'Donations', icon: '❤️' },
@@ -353,20 +353,21 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-lg font-medium transition-all duration-300 ${activeTab === tab.id
+                className={`flex-1 min-w-max flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 px-2 sm:px-4 rounded-md text-sm sm:text-lg font-medium transition-all duration-300 ${activeTab === tab.id
                   ? 'bg-orange-500/80 text-white border border-orange-400/50'
                   : 'text-white/70 hover:text-white hover:bg-white/10'
                   }`}
               >
-                <span>{tab.icon}</span>
-                <span>{tab.label}</span>
+                <span className="text-sm sm:text-base">{tab.icon}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden text-xs">{tab.label.split(' ')[0]}</span>
               </button>
             ))}
           </div>
 
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
-            <div className="space-y-8">
+            <div className="space-y-6 lg:space-y-8">
               {/* Smart Donation Suggestion - AI Feature #1 */}
               {(() => {
                 if (userDonations.length === 0) return null
@@ -469,7 +470,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <span className="text-2xl">📊</span>
                       <h3 className="text-xl font-bold text-white">Your Impact Insights</h3>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-2">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 p-2">
                       {/* Donor Rank */}
                       <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">🏆</div>
@@ -500,7 +501,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               })()}
 
               {/* Impact Stats Cards - Existing */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 p-2">
                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-6 border border-green-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
@@ -869,7 +870,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               {/* Quick Actions */}
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <button
                     onClick={() => onDonateClick()}
                     className="bg-orange-500/80 hover:bg-orange-600/90 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium"
@@ -889,8 +890,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
           {/* Donations Tab */}
           {activeTab === 'donations' && (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
+            <div className="space-y-6 lg:space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 p-2">
                 <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-6 border border-orange-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Total Donations</h3>
@@ -926,7 +927,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               </div>
 
               {/* Donation History & Subscriptions - Two Column Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
                 {/* Left Column - Donation History */}
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-6">
@@ -1033,7 +1034,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-white/80 text-sm font-medium mb-2">First Name</label>
                       <input
@@ -1175,7 +1176,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-white/80 text-sm font-medium mb-2">New Password</label>
                       <div className="relative">

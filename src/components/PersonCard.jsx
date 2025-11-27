@@ -20,14 +20,14 @@ const PersonCard = ({
       <h3 className={TYPOGRAPHY.CARD_TITLE}>{name}</h3>
       
       {/* Divider line */}
-      <div className="w-full h-px bg-gray-400 mb-6"></div>
+      <div className="w-full h-px bg-gray-400 mb-4 sm:mb-6"></div>
       
       {/* Profile photo */}
-      <div className="w-full h-80 mb-6">
+      <div className="w-full h-60 sm:h-72 lg:h-80 mb-4 sm:mb-6">
         <img 
           src={image} 
           alt={alt} 
-          className="w-full h-full object-cover object-center rounded-2xl"
+          className="w-full h-full object-cover object-center rounded-xl sm:rounded-2xl"
         />
       </div>
       

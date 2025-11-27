@@ -85,7 +85,7 @@ const ProtectRights = () => {
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
       {panels.map((panel, index) => (
         <ProtectRightsPanel key={index} {...panel} />
       ))}
@@ -177,7 +177,7 @@ const WhereWeWork = () => {
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {countries.map((country, index) => (
         <CountryCard key={index} {...country} />
       ))}
@@ -203,19 +203,21 @@ const SDGCarousel = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
 
       {/* Content Container */}
-      <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-amber-100/30 overflow-hidden">
+      <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-4 sm:p-6 lg:p-8 shadow-lg border border-amber-100/30 overflow-hidden">
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-700 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * (100 / 6)}%)` }}
+            style={{ 
+              transform: `translateX(-${currentIndex * (100 / 2)}%)` // Mobile: 2 cards
+            }}
             onTransitionEnd={() => {
               if (currentIndex >= sdgImages.length) {
                 setCurrentIndex(0)
               }
             }}
           >
-            {[...sdgImages, ...sdgImages.slice(0, 6)].map((image, index) => (
-              <div key={index} className="flex-shrink-0 w-1/6 px-3">
+            {[...sdgImages, ...sdgImages.slice(0, 2)].map((image, index) => (
+              <div key={index} className="flex-shrink-0 w-1/2 sm:w-1/3 lg:w-1/6 px-2 sm:px-3">
                 <div className="group relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <img
@@ -230,12 +232,12 @@ const SDGCarousel = () => {
         </div>
 
         {/* Progress Indicators */}
-        <div className="flex justify-center mt-6 space-x-2">
+        <div className="flex justify-center mt-4 sm:mt-6 space-x-2">
           {sdgImages.map((_, index) => (
             <div
               key={index}
               className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex % sdgImages.length
-                ? 'w-8 bg-orange-500'
+                ? 'w-6 sm:w-8 bg-orange-500'
                 : 'w-2 bg-gray-300'
                 }`}
             />
@@ -320,30 +322,30 @@ const ChildMarriage = ({ onDonateClick }) => {
           }}
         ></div>
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-end items-center h-full text-center px-4 pb-32">
-          <h2 className="text-4xl font-medium mb-8" style={{ color: '#f09819' }}>
+        <div className="relative z-10 flex flex-col justify-center items-center h-full text-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 lg:pt-32">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-4 sm:mb-6 lg:mb-8" style={{ color: '#f09819' }}>
             Restoring Hopes, Restoring Smiles ®
           </h2>
 
-          <p className="text-small text-white mb-8 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base lg:text-lg text-white mb-4 sm:mb-6 lg:mb-8 leading-relaxed max-w-xs sm:max-w-2xl lg:max-w-3xl mx-auto">
             Far Too Young envisions a society free from child, underage and forced marriages -
             a society where girls and women feel valued and reach their full potential.
           </p>
 
-          <p className="text-small text-white mb-12">
+          <p className="text-sm sm:text-base text-white mb-6 sm:mb-8 lg:mb-12">
             Please Support Us.
           </p>
 
-          <div className="text-center mb-8">
+          <div className="text-center mb-4 sm:mb-6 lg:mb-8">
             <button
               onClick={() => onDonateClick()}
-              className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="group/btn relative inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span>DONATE</span>
             </button>
           </div>
 
-          <div className="text-xs text-white/80 italic text-center space-y-1">
+          <div className="text-xs sm:text-sm text-white/80 italic text-center space-y-1 max-w-xs sm:max-w-md lg:max-w-lg mx-auto">
             <p>Tax ID: 87-3583633</p>
             <p>Far Too Young is a United States 501(c)(3) Non-Profit Organization.</p>
             <p>Our work is supported entirely through donations. 100 percent of your contribution is tax deductible.</p>
@@ -361,19 +363,19 @@ const ChildMarriage = ({ onDonateClick }) => {
           </div>
 
           {/* Content Grid */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left - Title and Description */}
             <div>
-              <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">A CHILD BRIDE</h2>
-              <p className="text-lg text-gray-700 leading-relaxed mb-6 text-justify">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 sm:mb-8 leading-tight">A CHILD BRIDE</h2>
+              <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 text-justify">
                 Gender discrimination is embedded in
                 the legal system and social structures and that along with poverty is the root cause of child marriages. Every year 4 million girls under the age of 15 are victims of child, underage and forced marriages in South Asia. This illegal practice robs them of their rights to education, their reproductive rights and consensual marriage.
               </p>
 
               {/* Subtle divider line */}
-              <div className="w-full h-px bg-gray-400 mb-6"></div>
+              <div className="w-full h-px bg-gray-400 mb-4 sm:mb-6"></div>
 
-              <p className="text-lg text-gray-700 leading-relaxed text-justify">
+              <p className="text-base sm:text-lg text-gray-700 leading-relaxed text-justify">
                 Once married as children, the child brides are victims of lifelong servitude, domestic violence, pregnancy complications and death through early childbirth. Child brides are at risk of being trafficked and sold. Child marriage reinforces the gendered nature of poverty, with limited education and skills, bringing down the potential of the girl, her family, her community and her country. These hinder a girl throughout her adult life and into the next generation.
               </p>
             </div>
@@ -397,14 +399,14 @@ const ChildMarriage = ({ onDonateClick }) => {
           <div className="w-full h-px bg-black mb-8"></div>
 
           {/* Title */}
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">HEAR RANJU, BINITA & HEMA</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 sm:mb-8 leading-tight">HEAR RANJU, BINITA & HEMA</h2>
 
           {/* YouTube Video */}
           <div className="relative">
             {/* iPad Frame */}
-            <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300 bg-gradient-to-r from-orange-200/20 via-purple-200/20 to-purple-300/20">
+            <div className="relative p-3 sm:p-6 lg:p-8 rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl border border-gray-300 bg-gradient-to-r from-orange-200/20 via-purple-200/20 to-purple-300/20">
               {/* Screen */}
-              <div className="relative bg-black rounded-[1.5rem] overflow-hidden shadow-inner">
+              <div className="relative bg-black rounded-[1rem] sm:rounded-[1.25rem] lg:rounded-[1.5rem] overflow-hidden shadow-inner">
                 {/* Video Container */}
                 <div className="w-full aspect-video">
                   <iframe
@@ -419,8 +421,8 @@ const ChildMarriage = ({ onDonateClick }) => {
               </div>
 
               {/* Home Button */}
-              <div className="flex justify-center mt-6">
-                <div className="w-12 h-12 bg-slate-200 rounded-full shadow-inner border-2 border-slate-400"></div>
+              <div className="flex justify-center mt-3 sm:mt-4 lg:mt-6">
+                <div className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 bg-slate-200 rounded-full shadow-inner border-2 border-slate-400"></div>
               </div>
             </div>
           </div>
@@ -434,7 +436,7 @@ const ChildMarriage = ({ onDonateClick }) => {
           <div className="w-full h-px bg-black mb-8"></div>
 
           {/* Title */}
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-12 lg:mb-16 leading-tight">
             SOUTH ASIA HAS WORLD'S HIGHEST NUMBER OF CHILD BRIDES
           </h2>
 
@@ -447,10 +449,10 @@ const ChildMarriage = ({ onDonateClick }) => {
       <div className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
-          <div className="w-full h-px bg-black mb-8"></div>
+          <div className="hidden lg:block w-full h-px bg-black mb-6 lg:mb-8"></div>
 
           {/* Title */}
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">WHERE WE WORK</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-12 lg:mb-16 leading-tight">WHERE WE WORK</h2>
 
           {/* Flip Cards Grid */}
           <WhereWeWork />
@@ -462,10 +464,10 @@ const ChildMarriage = ({ onDonateClick }) => {
       <div className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Single Line Separator */}
-          <div className="w-full h-px bg-black mb-8"></div>
+          <div className="hidden lg:block w-full h-px bg-black mb-8"></div>
 
           {/* Title */}
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">PROTECT THE RIGHTS OF THE GIRL CHILD</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-12 lg:mb-16 leading-tight">PROTECT THE RIGHTS OF THE GIRL CHILD</h2>
 
           {/* Panels Grid */}
           <ProtectRights />
@@ -479,7 +481,7 @@ const ChildMarriage = ({ onDonateClick }) => {
           <div className="w-full h-px bg-black mb-8"></div>
 
           {/* Title */}
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-16 leading-tight">IF WE DO NOT END CHILD MARRIAGE, NINE SUSTAINABLE DEVELOPMENT GOALS CANNOT BE MET</h2>
+          <h2 className="text-xl sm:text-2xl lg:text-4xl font-medium text-left text-gray-900 mb-12 lg:mb-16 leading-tight">IF WE DO NOT END CHILD MARRIAGE, NINE SUSTAINABLE DEVELOPMENT GOALS CANNOT BE MET</h2>
 
           {/* SDG Carousel */}
           <SDGCarousel />

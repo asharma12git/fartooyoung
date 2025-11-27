@@ -116,7 +116,7 @@ const WhatWeDo = ({ onDonateClick }) => {
     }, [isVisible, end, duration])
 
     return (
-      <div ref={ref} className="text-6xl font-bold text-black mb-4">
+      <div ref={ref} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-black mb-4">
         {count.toLocaleString()}{suffix}
       </div>
     )
@@ -229,9 +229,9 @@ const WhatWeDo = ({ onDonateClick }) => {
         ></div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-end items-start h-full pb-32">
+        <div className="relative z-10 flex flex-col justify-end items-start h-full pb-16 sm:pb-24 lg:pb-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <h2 className="text-4xl font-medium text-white">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-white">
               What We Do
             </h2>
           </div>
@@ -246,11 +246,11 @@ const WhatWeDo = ({ onDonateClick }) => {
             <div className="w-full h-0.5 bg-black"></div>
           </div>
 
-          <h2 className="text-4xl font-medium text-left text-gray-900 mb-8 leading-tight">FAR TOO YOUNG</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 lg:mb-8 leading-tight">FAR TOO YOUNG</h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="border border-gray-300 rounded-lg p-4 shadow-sm h-full flex flex-col justify-start">
-              <div className="text-lg leading-snug text-gray-700 italic"
+              <div className="text-base sm:text-lg leading-snug text-gray-700 italic"
                 style={{
                   fontFamily: 'Dancing Script, cursive',
                   letterSpacing: '0.5px',
@@ -297,31 +297,32 @@ const WhatWeDo = ({ onDonateClick }) => {
           </div>
 
           {/* SoundCloud Player Section */}
-          <div className="mt-12">
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-200">
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-800 mb-2">🎵 Listen to the Poem Above</h3>
+          <div className="mt-8 lg:mt-12">
+            <div className="bg-white rounded-lg p-4 sm:p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-200">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-medium text-gray-800 mb-2">🎵 Listen to the Poem Above</h3>
                 <p className="text-gray-600 text-sm">Experience the words as a song</p>
               </div>
               <div className="w-full">
                 {/* SoundCloud embed iframe will go here */}
                 <iframe
                   width="100%"
-                  height="166"
+                  height="200"
                   scrolling="no"
                   frameBorder="no"
                   allow="autoplay"
                   src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/far-too-young/far-too-young-new-final-version-effects-will-be-added&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
-                  className="rounded-lg"
+                  className="rounded-lg min-h-[180px] sm:min-h-[200px]"
+                  style={{ minHeight: '180px' }}
                 >
                 </iframe>
               </div>
 
               {/* Donate Button */}
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 <button
                   onClick={() => onDonateClick()}
-                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-12 py-4 text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 sm:px-10 lg:px-12 py-3 sm:py-4 text-base sm:text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 rounded-full"
                 >
                   DONATE NOW
                 </button>
@@ -334,14 +335,14 @@ const WhatWeDo = ({ onDonateClick }) => {
       {/* Multi-Pronged Approach Section */}
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Multi-Pronged Approach</h2>
-            <p className="text-xl text-gray-600 whitespace-nowrap">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-900 mb-4 lg:mb-6 underline decoration-2 underline-offset-8">Our Multi-Pronged Approach</h2>
+            <p className="text-lg sm:text-xl text-gray-600">
               Helping reduce and eventually eradicate child marriage and save the child brides from harm.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* First Row */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards] border border-orange-200">
               <div className="text-3xl font-bold text-orange-500 mb-4">01</div>
@@ -398,31 +399,31 @@ const WhatWeDo = ({ onDonateClick }) => {
       {/* Our Presence Section */}
       <div className="bg-gradient-to-br from-gray-50 to-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Presence</h2>
-            <p className="text-xl text-gray-600">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-900 mb-4 lg:mb-6 underline decoration-2 underline-offset-8">Our Presence</h2>
+            <p className="text-lg sm:text-xl text-gray-600">
               Locations across South Asia where we work to end child marriage.
             </p>
           </div>
 
           {/* Map Card */}
-          <div className="relative p-8 rounded-[2.5rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-orange-200/20 via-purple-200/20 to-purple-300/20">
-            <div className="relative bg-white rounded-[1.5rem] overflow-hidden shadow-inner">
+          <div className="relative p-4 sm:p-6 lg:p-8 rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-orange-200/20 via-purple-200/20 to-purple-300/20">
+            <div className="relative bg-white rounded-[1rem] sm:rounded-[1.25rem] lg:rounded-[1.5rem] overflow-hidden shadow-inner">
               <iframe
                 src="https://www.google.com/maps/d/u/0/embed?mid=1ymaVHjK-zm-DYGNl6btbiPcJA9JJ-Nc&ehbc=2E312F&noprof=1"
                 width="100%"
-                height="600"
+                height="400"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="w-full"
+                className="w-full sm:h-[500px] lg:h-[600px]"
               ></iframe>
             </div>
           </div>
 
           {/* Country Panels */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-8 lg:mt-12">
             {/* Nepal */}
             <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-blue-500">
               <h3 className="text-xl font-medium text-gray-900 mb-4 flex items-center">
@@ -539,15 +540,15 @@ const WhatWeDo = ({ onDonateClick }) => {
           </div>
 
           {/* Work Showcase Carousel */}
-          <div className="mt-16">
-            <div className="text-center mb-12">
-              <h3 className="text-3xl font-medium text-gray-900 mb-4">Our Work in Action</h3>
-              <p className="text-lg text-gray-600">Documenting our impact across communities.</p>
+          <div className="mt-12 lg:mt-16">
+            <div className="text-center mb-8 lg:mb-12">
+              <h3 className="text-2xl sm:text-3xl font-medium text-gray-900 mb-3 lg:mb-4">Our Work in Action</h3>
+              <p className="text-base sm:text-lg text-gray-600">Documenting our impact across communities.</p>
             </div>
 
             {/* Carousel Container */}
-            <div className="relative p-6 rounded-[2rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="relative p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).map((image, index) => (
                   <div key={index} className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
                     <img
@@ -611,16 +612,16 @@ const WhatWeDo = ({ onDonateClick }) => {
       {/* Story-telling for Advocacy Section */}
       <div className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Story-telling for Advocacy</h2>
-            <p className="text-xl text-gray-600">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-900 mb-4 lg:mb-6 underline decoration-2 underline-offset-8">Story-telling for Advocacy</h2>
+            <p className="text-lg sm:text-xl text-gray-600">
               Real stories that drive change and inspire action against child marriage.
             </p>
           </div>
 
           {/* Story 1 - Image Left, Text Right */}
-          <div className="mb-20">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="mb-16 lg:mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="relative space-y-3">
                 {/* First Image - Ham Radio */}
                 <div className="aspect-[3/2] rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
@@ -644,7 +645,7 @@ const WhatWeDo = ({ onDonateClick }) => {
                 </div>
               </div>
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
-                <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Honoring Father Moran</h3>
+                <h3 className="text-2xl sm:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Honoring Father Moran</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
                   Father Marshall D. Moran, a pioneering American Jesuit priest, revolutionized education in Nepal. In 1951, he founded St. Xavier's School in Godavari, Kathmandu, providing accessible and quality education to children from all socioeconomic backgrounds, with particular focus on those from impoverished families.
                 </p>
@@ -659,10 +660,10 @@ const WhatWeDo = ({ onDonateClick }) => {
           </div>
 
           {/* Story 2 - Text Left, Image Right */}
-          <div className="mb-20">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="mb-16 lg:mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm lg:order-1 h-full flex flex-col justify-start">
-                <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
+                <h3 className="text-2xl sm:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
                 <p className="text-base leading-snug text-gray-600 italic mb-4"
                   style={{
                     fontFamily: 'Dancing Script, cursive',
@@ -693,10 +694,10 @@ const WhatWeDo = ({ onDonateClick }) => {
           </div>
 
           {/* Story 3 - Image Left, Text Right */}
-          <div className="mb-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="mb-8 lg:mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="relative">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   {/* Top Left Image */}
                   <div className="aspect-square rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20 cursor-pointer" onClick={() => setZoomedImage(taraImage1)}>
                     <div className="bg-white rounded-lg overflow-hidden shadow-inner h-full">
@@ -740,7 +741,7 @@ const WhatWeDo = ({ onDonateClick }) => {
                 </div>
               </div>
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
-                <h3 className="text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">The Tara Campaign</h3>
+                <h3 className="text-2xl sm:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">The Tara Campaign</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
                   The Tara Campaign uses illustrations and comic for awareness and advocacy. It tells the story of Tara, a child bride and a young mother who now fights against all forms of Gender Based Violence including child, underage and forced marriages.
                 </p>
@@ -753,15 +754,15 @@ const WhatWeDo = ({ onDonateClick }) => {
       {/* Our Target for 2025 | 2026 Section */}
       <div className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-medium text-gray-900 mb-6 underline decoration-2 underline-offset-8">Our Target for 2025 | 2026</h2>
-            <p className="text-xl text-gray-600">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-900 mb-4 lg:mb-6 underline decoration-2 underline-offset-8">Our Target for 2025 | 2026</h2>
+            <p className="text-lg sm:text-xl text-gray-600">
               Strategic goals and milestones for advancing our mission against child marriage.
             </p>
           </div>
 
           {/* Target content - 3x2 Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Target 1 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
               <Counter end={20} suffix="M+" />

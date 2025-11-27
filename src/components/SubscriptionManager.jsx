@@ -64,8 +64,8 @@ const SubscriptionManager = ({ userEmail }) => {
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-      <h3 className="text-xl font-bold text-orange-400 mb-4">Subscriptions</h3>
+    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 sm:p-6">
+      <h3 className="text-lg sm:text-xl font-bold text-orange-400 mb-3 sm:mb-4">Subscriptions</h3>
       
       {/* Active Subscriptions List */}
       {loadingSubscriptions ? (
@@ -74,23 +74,23 @@ const SubscriptionManager = ({ userEmail }) => {
           <span className="ml-2 text-white/60">Loading subscriptions...</span>
         </div>
       ) : (
-        <div className="space-y-4 mb-6">
+        <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
           {/* Active Subscriptions */}
           {subscriptions.length > 0 && (
             <div>
-              <h4 className="text-white font-medium mb-3 flex items-center">
+              <h4 className="text-white font-medium mb-2 sm:mb-3 flex items-center text-sm sm:text-base">
                 <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
                 Active Subscriptions
               </h4>
               <div className="space-y-2">
                 {subscriptions.map((sub) => (
-                  <div key={sub.id} className="bg-white/5 border border-white/10 rounded-lg p-3">
+                  <div key={sub.id} className="bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-white font-medium">
+                        <p className="text-white font-medium text-sm sm:text-base">
                           ${sub.amount} / {sub.interval}
                         </p>
-                        <p className="text-white/60 text-sm">
+                        <p className="text-white/60 text-xs sm:text-sm">
                           {sub.cancel_at_period_end 
                             ? `Cancels on ${new Date(sub.current_period_end * 1000).toLocaleDateString()}`
                             : `Next payment: ${new Date(sub.current_period_end * 1000).toLocaleDateString()}`
@@ -116,19 +116,19 @@ const SubscriptionManager = ({ userEmail }) => {
           {/* Inactive Subscriptions */}
           {inactiveSubscriptions.length > 0 && (
             <div>
-              <h4 className="text-white font-medium mb-3 flex items-center">
+              <h4 className="text-white font-medium mb-2 sm:mb-3 flex items-center text-sm sm:text-base">
                 <span className="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
                 Past Subscriptions
               </h4>
               <div className="space-y-2">
                 {inactiveSubscriptions.map((sub) => (
-                  <div key={sub.id} className="bg-white/5 border border-gray-400/20 rounded-lg p-3 opacity-75">
+                  <div key={sub.id} className="bg-white/5 border border-gray-400/20 rounded-lg p-2 sm:p-3 opacity-75">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-white/80 font-medium">
+                        <p className="text-white/80 font-medium text-sm sm:text-base">
                           ${sub.amount} / {sub.interval}
                         </p>
-                        <p className="text-white/50 text-sm">
+                        <p className="text-white/50 text-xs sm:text-sm">
                           Canceled on {new Date(sub.canceled_at * 1000).toLocaleDateString()}
                         </p>
                       </div>
@@ -146,8 +146,8 @@ const SubscriptionManager = ({ userEmail }) => {
 
           {/* No Subscriptions */}
           {subscriptions.length === 0 && inactiveSubscriptions.length === 0 && (
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-              <p className="text-white/60 text-center">No subscriptions found</p>
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3 sm:p-4">
+              <p className="text-white/60 text-center text-sm sm:text-base">No subscriptions found</p>
             </div>
           )}
         </div>

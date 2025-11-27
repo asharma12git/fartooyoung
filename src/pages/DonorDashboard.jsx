@@ -465,12 +465,17 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   Math.round(((thisYearTotal - lastYearTotal) / lastYearTotal) * 100) : 0
 
                 return (
-                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <span className="text-2xl">📊</span>
-                      <h3 className="text-lg sm:text-xl font-bold text-white">Your Impact Insights</h3>
-                    </div>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 p-2">
+                  <>
+                    {/* Elegant Divider */}
+                    <div className="my-8 mx-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                    
+                    {/* Your Impact Insights Section */}
+                    <div className="px-6 py-4">
+                      <div className="flex items-center space-x-2 mb-4">
+                        <span className="text-2xl">📊</span>
+                        <h3 className="text-lg sm:text-xl font-bold text-white">Your Impact Insights</h3>
+                      </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                       {/* Donor Rank */}
                       <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-4 border border-orange-400/30 hover:scale-105 transform transition-transform">
                         <div className="text-3xl mb-2">🏆</div>
@@ -496,12 +501,13 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         <div className="text-white font-bold text-lg">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </>
                 )
               })()}
 
               {/* Impact Stats Cards - Existing */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 p-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-lg p-6 border border-green-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
@@ -566,12 +572,17 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 const impact = calculateImpact(calculatorAmount)
 
                 return (
-                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-2xl">🔮</span>
-                        <h3 className="text-xl font-bold text-white">Impact Calculator</h3>
-                      </div>
+                  <>
+                    {/* Elegant Divider */}
+                    <div className="my-8 mx-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                    
+                    {/* Impact Calculator Section */}
+                    <div className="px-6 py-4">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-2xl">🔮</span>
+                          <h3 className="text-lg sm:text-xl font-bold text-white">Impact Calculator</h3>
+                        </div>
                       <button
                         onClick={() => onDonateClick(calculatorAmount)}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
@@ -629,13 +640,19 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         <div className="text-white/50 text-xs mt-1">(monthly)</div>
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </>
                 )
               })()}
 
               {/* Progress Towards Goals */}
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-lg sm:text-xl font-semibold text-white mb-6">Your Impact Goals for 2025</h3>
+              <>
+                {/* Elegant Divider */}
+                <div className="my-8 mx-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                
+                {/* Your Impact Goals for 2025 Section */}
+                <div className="px-6 py-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-6">Your Impact Goals for 2025</h3>
 
                 {/* Current Month Summary - Three Column Format */}
                 <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
@@ -751,11 +768,17 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <p className="text-white/60 text-xs mt-1">Complete education: Age 5-14 (10 years)</p>
                   </div>
                 </div>
-              </div>
+                </div>
+              </>
 
               {/* Annual Impact History */}
               {userDonations.length > 0 && (
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+                <>
+                  {/* Elegant Divider */}
+                  <div className="my-8 mx-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                  
+                  {/* Your Impact Journey Section */}
+                  <div className="px-6 py-4">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-semibold text-white">Your Impact Journey</h3>
                     {/* Kindest Donation - Compact Version */}
@@ -864,12 +887,18 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       })
                     })()}
                   </div>
-                </div>
+                  </div>
+                </>
               )}
 
               {/* Quick Actions */}
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
+              <>
+                {/* Elegant Divider */}
+                <div className="my-8 mx-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                
+                {/* Continue Your Impact Section */}
+                <div className="px-6 py-4">
+                  <h3 className="text-lg font-semibold text-white mb-4">Continue Your Impact</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <button
                     onClick={() => onDonateClick()}
@@ -884,14 +913,15 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     📢 Share Our Mission
                   </button>
                 </div>
-              </div>
+                </div>
+              </>
             </div>
           )}
 
           {/* Donations Tab */}
           {activeTab === 'donations' && (
             <div className="space-y-6 lg:space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 p-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 rounded-lg p-6 border border-orange-400/30 hover:scale-105 transform transition-transform">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Total Donations</h3>

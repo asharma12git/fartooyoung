@@ -135,20 +135,24 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
 
             {/* Mobile Navigation Links */}
             <nav className="flex-none p-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg ring-1 ring-orange-500/30">
-              <div className="space-y-3">
-                {navItems.map(item => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block py-3 px-4 text-base sm:text-lg font-medium transition-colors duration-300 rounded-md ${
-                      location.pathname === item.path
-                        ? 'text-white bg-orange-500/20 border-l-4 border-orange-400/50'
-                        : 'text-white/90 hover:text-orange-200 hover:bg-white/10'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+              <div className="space-y-0">
+                {navItems.map((item, index) => (
+                  <div key={item.path}>
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`block py-3 px-4 text-base sm:text-lg font-medium transition-colors duration-300 rounded-md ${
+                        location.pathname === item.path
+                          ? 'text-white bg-orange-500/20 border-l-4 border-orange-400/50'
+                          : 'text-white/90 hover:text-orange-200 hover:bg-white/10'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                    {index < navItems.length - 1 && (
+                      <div className="mx-4 my-2 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                    )}
+                  </div>
                 ))}
               </div>
             </nav>

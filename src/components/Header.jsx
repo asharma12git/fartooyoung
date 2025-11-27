@@ -89,7 +89,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
               </span>
               <div className={`backdrop-blur-sm p-2 rounded-md border transition-colors duration-300 ${
                 isLoggedIn 
-                  ? 'bg-green-500/80 border-green-400/50 hover:bg-green-600/90' 
+                  ? 'bg-gradient-to-br from-green-500/65 to-emerald-600/65 border-green-400/65' 
                   : 'bg-orange-500/80 border-orange-400/50 hover:bg-orange-600/90'
               }`}>
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

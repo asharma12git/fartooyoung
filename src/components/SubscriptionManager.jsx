@@ -64,8 +64,22 @@ const SubscriptionManager = ({ userEmail }) => {
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 sm:p-6">
-      <h3 className="text-lg sm:text-xl font-bold text-orange-400 mb-3 sm:mb-4">Subscriptions</h3>
+    <div className="bg-white/5 border border-white/10 rounded-lg p-4 sm:p-6">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></div>
+          <h3 className="text-lg sm:text-xl font-bold text-white">Subscriptions</h3>
+        </div>
+        <button
+          onClick={handleManageSubscription}
+          disabled={isLoading}
+          className={`bg-gradient-to-r from-white/10 to-purple-500/20 hover:from-white/20 hover:to-purple-500/30 text-white/80 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 border border-white/20 text-sm ${
+            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          {isLoading ? 'Loading...' : 'Manage'}
+        </button>
+      </div>
       
       {/* Active Subscriptions List */}
       {loadingSubscriptions ? (
@@ -153,37 +167,10 @@ const SubscriptionManager = ({ userEmail }) => {
         </div>
       )}
 
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <p className="text-white/80 text-sm">
           Manage your recurring donations and payment methods
         </p>
-        <button
-          onClick={handleManageSubscription}
-          disabled={isLoading}
-          className={`backdrop-blur-sm text-white px-4 py-2 rounded-md font-medium transition-all duration-300 flex items-center space-x-2 border border-orange-400/50 hover:scale-105 ${
-            isLoading
-              ? 'bg-orange-500/50 cursor-not-allowed' 
-              : 'bg-orange-500/80 hover:bg-orange-600/90 hover:shadow-lg'
-          }`}
-        >
-          {isLoading ? (
-            <>
-              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>Loading...</span>
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>Manage</span>
-            </>
-          )}
-        </button>
       </div>
 
       {error && (

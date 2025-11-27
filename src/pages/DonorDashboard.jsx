@@ -667,11 +667,19 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         </div>
                         <div className="text-white/70 text-sm font-medium">School Kits</div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-4 border border-green-400/20">
-                        <div className="text-3xl mb-2">👩‍🏫</div>
-                        <div className="text-white font-bold text-2xl">{impact.teacherTraining}</div>
-                        <div className="text-white/70 text-sm">Teacher Training</div>
-                        <div className="text-white/50 text-xs mt-1">(sessions)</div>
+                      <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-6 border border-green-400/20">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-white">{impact.teacherTraining}</div>
+                            <div className="text-green-400 text-xs font-medium">(sessions)</div>
+                          </div>
+                        </div>
+                        <div className="text-white/70 text-sm font-medium">Teacher Training</div>
                       </div>
                       <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-4 border border-green-400/20">
                         <div className="flex items-center justify-between mb-4">

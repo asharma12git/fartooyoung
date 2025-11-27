@@ -226,17 +226,20 @@ const SDGCarousel = () => {
             }}
             onTransitionEnd={() => {
               if (currentIndex >= sdgImages.length) {
-                setCurrentIndex(0)
+                // Instantly reset to beginning without animation
+                setTimeout(() => {
+                  setCurrentIndex(0)
+                }, 50)
               }
             }}
           >
-            {[...sdgImages, ...sdgImages.slice(0, 2)].map((image, index) => (
+            {[...sdgImages, ...sdgImages].map((image, index) => (
               <div key={index} className="flex-shrink-0 w-1/2 sm:w-1/3 lg:w-1/6 px-2 sm:px-3">
                 <div className="group relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <img
                     src={image}
-                    alt={`SDG ${index + 1}`}
+                    alt={`SDG ${(index % sdgImages.length) + 1}`}
                     className="w-full h-auto rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform group-hover:scale-105"
                   />
                 </div>

@@ -299,7 +299,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
             {/* Hero Impact Banner - Only show if user has donations */}
             {userDonations.length > 0 && (
-              <div className="bg-gradient-to-br from-orange-500/15 to-purple-600/10 border border-orange-400/20 rounded-xl p-4 sm:p-6 lg:p-8 text-center">
+              <div className="bg-gradient-to-r from-orange-500/30 via-orange-400/20 to-purple-500/30 backdrop-blur-sm border border-orange-400/50 rounded-xl p-4 sm:p-6 lg:p-8 text-center">
                 <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 italic">
                   "Every donation creates ripples of hope across the world"
                 </p>

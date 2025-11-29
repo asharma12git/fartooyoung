@@ -1,17 +1,17 @@
 // ============================================================================
-// REGISTER HANDLER - Creates new user accounts
+// REGISTER HANDLER - Creates new user accounts with email verification
 // ============================================================================
 // This Lambda function handles user registration with password hashing,
-// duplicate email checking, and automatic JWT token generation
+// duplicate email checking, and email verification
 
 // ============================================================================
 // IMPORTS & DEPENDENCIES
 // ============================================================================
 const AWS = require('aws-sdk');              // AWS SDK for DynamoDB access
 const bcrypt = require('bcryptjs');          // Password hashing library
-const jwt = require('jsonwebtoken');         // JWT token generation
 const { randomUUID } = require('crypto');    // Node.js built-in UUID generator
 const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
+const { generateVerificationToken, sendVerificationEmail } = require('../../utils/emailService');
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -96,7 +96,14 @@ exports.handler = async (event) => {
     const hashedPassword = await bcrypt.hash(password, 4); // Reduced from 10 to 4 for local testing
     
     // ========================================================================
-    // STEP 6: CREATE NEW USER OBJECT
+    // STEP 6: GENERATE EMAIL VERIFICATION TOKEN
+    // ========================================================================
+    console.log('Generating verification token...');
+    const verificationToken = generateVerificationToken();
+    const verificationExpires = Date.now() + 3600000; // 1 hour from now
+    
+    // ========================================================================
+    // STEP 7: CREATE NEW USER OBJECT
     // ========================================================================
     // Create new user object (matches database-design.md schema)
     console.log('Creating user object...');
@@ -110,6 +117,12 @@ exports.handler = async (event) => {
       createdAt: new Date().toISOString(),     // Account creation timestamp
       lastLogin: new Date().toISOString(),     // Last login timestamp
       
+      // User role and verification fields
+      role: 'donor',                           // Default role for new users
+      email_verified: false,                   // Email not verified yet
+      verification_token: verificationToken,   // Token for email verification
+      verification_expires: verificationExpires, // Token expiration time
+      
       // Future-ready fields (start as defaults for extensibility)
       shippingAddress: null,                   // For future e-commerce features
       billingAddress: null,                    // For future billing features
@@ -121,7 +134,7 @@ exports.handler = async (event) => {
     };
     
     // ========================================================================
-    // STEP 7: SAVE USER TO DATABASE
+    // STEP 8: SAVE USER TO DATABASE
     // ========================================================================
     console.log('Saving user to database...');
     // Save new user record to DynamoDB
@@ -131,15 +144,19 @@ exports.handler = async (event) => {
     }).promise();
     
     // ========================================================================
-    // STEP 8: GENERATE JWT TOKEN FOR IMMEDIATE LOGIN
+    // STEP 9: SEND VERIFICATION EMAIL
     // ========================================================================
-    console.log('Creating JWT token...');
-    // Create JWT token so user is automatically logged in after registration
-    const secrets = await getSecrets();
-    const token = jwt.sign({ email, firstName, lastName }, secrets.jwt_secret, { expiresIn: '24h' });
+    console.log('Sending verification email...');
+    try {
+      await sendVerificationEmail(email, verificationToken);
+      console.log('Verification email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with registration even if email fails
+    }
     
     // ========================================================================
-    // STEP 9: RETURN SUCCESS RESPONSE WITH TOKEN
+    // STEP 10: RETURN SUCCESS RESPONSE
     // ========================================================================
     console.log('Registration successful');
     return {
@@ -147,8 +164,8 @@ exports.handler = async (event) => {
       headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         success: true,
-        user: { email, firstName, lastName },  // User info (no sensitive data)
-        token  // JWT token for immediate authentication
+        message: 'Registration successful! Please check your email to verify your account.',
+        user: { email, firstName, lastName }  // User info (no sensitive data)
       })
     };
     

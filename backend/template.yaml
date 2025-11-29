@@ -29,6 +29,8 @@ Globals:
         SECRETS_MANAGER_ARN: !Ref SecretsManagerArn
         USERS_TABLE: !Sub "${AWS::StackName}-users-table"
         DONATIONS_TABLE: !Sub "${AWS::StackName}-donations-table"
+        SES_FROM_EMAIL: admin@fartooyoung.org
+        SES_REGION: !Ref AWS::Region
   Api:
     Cors:
       AllowMethods: "'GET,POST,OPTIONS'"
@@ -72,6 +74,11 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: !Ref SecretsManagerArn
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
       Events:
         RegisterApi:
           Type: Api
@@ -108,6 +115,13 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
       Events:
         ForgotPasswordApi:
           Type: Api
@@ -171,6 +185,43 @@ Resources:
           Type: Api
           Properties:
             Path: /auth/change-password
+            Method: post
+
+  VerifyEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/auth/verify-email.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
+      Events:
+        VerifyEmailApi:
+          Type: Api
+          Properties:
+            Path: /auth/verify-email
+            Method: get
+
+  ResendVerificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: lambda/auth/resend-verification.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-users-table"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
+      Events:
+        ResendVerificationApi:
+          Type: Api
+          Properties:
+            Path: /auth/resend-verification
             Method: post
 
   # Donation Functions
@@ -281,6 +332,7 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/stripe/list-subscriptions.handler
+      Timeout: 30
       Policies:
         - Version: '2012-10-17'
           Statement:

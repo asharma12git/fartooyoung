@@ -15,6 +15,7 @@ const AuthModal = ({ onClose, onLogin }) => {
   const [currentView, setCurrentView] = useState('login') // 'login' | 'register' | 'forgot' | 'reset'
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [resetToken, setResetToken] = useState('')
   const [formData, setFormData] = useState({
@@ -142,10 +143,20 @@ const AuthModal = ({ onClose, onLogin }) => {
       const data = await response.json()
 
       if (data.success) {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        onLogin(data.user)
-        onClose()
+        if (currentView === 'login') {
+          // Login flow - set token and log user in
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('user', JSON.stringify(data.user))
+          onLogin(data.user)
+          onClose()
+        } else {
+          // Registration flow - show verification message
+          setError('')
+          setSuccess(data.message || 'Registration successful! Please check your email to verify your account.')
+          setLoading(false) // Stop loading to show the message
+          // Don't auto-login, don't close modal - let user see the message
+          // Form will be disabled due to success state
+        }
       } else {
         // Record failed attempt for rate limiting
         rateLimiter.recordAttempt(rateLimitKey)
@@ -251,6 +262,7 @@ const AuthModal = ({ onClose, onLogin }) => {
   const switchView = (view) => {
     setCurrentView(view)
     setError('')
+    setSuccess('')
     setShowPassword(false)
     if (view !== 'reset') {
       setResetToken('')
@@ -299,16 +311,21 @@ const AuthModal = ({ onClose, onLogin }) => {
         </div>
 
         {/* Error/Success Messages */}
-        {(error || rateLimitError) && (
-          <div className={`px-4 py-3 rounded-md backdrop-blur-sm mb-6 ${(error && error.startsWith('✅'))
+        {(error || rateLimitError || success) && (
+          <div className={`px-4 py-3 rounded-md backdrop-blur-sm mb-6 ${
+            success || (error && error.startsWith('✅'))
               ? 'bg-green-500/20 border border-green-400/50 text-green-200'
               : 'bg-red-500/20 border border-red-400/50 text-red-200'
             }`}>
             <div className="flex items-center">
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                {success || (error && error.startsWith('✅')) ? (
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                ) : (
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                )}
               </svg>
-              {rateLimitError || error}
+              {success || rateLimitError || error}
             </div>
           </div>
         )}
@@ -445,7 +462,8 @@ const AuthModal = ({ onClose, onLogin }) => {
                     setFormData({ ...formData, firstName: e.target.value })
                     setError('')
                   }}
-                  className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                  disabled={success || loading}
+                  className={`w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer ${success ? 'opacity-50 cursor-not-allowed' : ''}`}
                   required
                 />
                 <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.firstName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
@@ -462,7 +480,8 @@ const AuthModal = ({ onClose, onLogin }) => {
                     setFormData({ ...formData, lastName: e.target.value })
                     setError('')
                   }}
-                  className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                  disabled={success || loading}
+                  className={`w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer ${success ? 'opacity-50 cursor-not-allowed' : ''}`}
                   required
                 />
                 <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.lastName ? '-top-4 text-orange-400' : 'top-3 text-white/60'
@@ -481,7 +500,8 @@ const AuthModal = ({ onClose, onLogin }) => {
                   setFormData({ ...formData, email: e.target.value })
                   setError('')
                 }}
-                className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                disabled={success || loading}
+                className={`w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer ${success ? 'opacity-50 cursor-not-allowed' : ''}`}
                 required
               />
               <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.email ? '-top-4 text-orange-400' : 'top-3 text-white/60'
@@ -499,7 +519,8 @@ const AuthModal = ({ onClose, onLogin }) => {
                   setFormData({ ...formData, password: e.target.value })
                   setError('')
                 }}
-                className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer"
+                disabled={success || loading}
+                className={`w-full px-0 py-3 bg-transparent border-0 border-b border-white/30 text-white focus:outline-none focus:border-orange-500 transition-all duration-300 peer ${success ? 'opacity-50 cursor-not-allowed' : ''}`}
                 required
               />
               <label className={`absolute left-0 transition-all duration-300 pointer-events-none ${formData.password ? '-top-4 text-orange-400' : 'top-3 text-white/60'
@@ -509,7 +530,8 @@ const AuthModal = ({ onClose, onLogin }) => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-3 text-white/60 hover:text-white transition-colors duration-300"
+                disabled={success || loading}
+                className={`absolute right-0 top-3 text-white/60 hover:text-white transition-colors duration-300 ${success ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {showPassword ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -527,7 +549,7 @@ const AuthModal = ({ onClose, onLogin }) => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || success}
               className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-300/60 text-white py-3 rounded-md text-base font-bold transition-all duration-300 border border-orange-400/50"
             >
               {loading ? (
@@ -535,21 +557,25 @@ const AuthModal = ({ onClose, onLogin }) => {
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Creating account...
                 </div>
+              ) : success ? (
+                'Check Your Email'
               ) : (
                 'Register'
               )}
             </button>
 
-            {/* Switch to Login */}
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => switchView('login')}
-                className="text-white/80 hover:text-orange-200 text-base transition-colors duration-300"
-              >
-                Already have an account? <span className="font-medium text-gray-300">Login</span>
-              </button>
-            </div>
+            {/* Switch to Login - Hide when success */}
+            {!success && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => switchView('login')}
+                  className="text-white/80 hover:text-orange-200 text-base transition-colors duration-300"
+                >
+                  Already have an account? <span className="font-medium text-gray-300">Login</span>
+                </button>
+              </div>
+            )}
           </form>
         )}
 

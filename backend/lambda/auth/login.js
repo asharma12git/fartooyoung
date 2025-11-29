@@ -72,7 +72,23 @@ exports.handler = async (event) => {
     }
     
     // ========================================================================
-    // STEP 4: CHECK ACCOUNT LOCK STATUS
+    // STEP 4: CHECK EMAIL VERIFICATION STATUS
+    // ========================================================================
+    // Check if email is verified (backward compatibility: undefined = verified)
+    if (user.email_verified === false) {
+      return {
+        statusCode: 401,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ 
+          success: false, 
+          message: 'Please verify your email address before logging in. Check your inbox for the verification link.',
+          needsVerification: true
+        })
+      };
+    }
+    
+    // ========================================================================
+    // STEP 5: CHECK ACCOUNT LOCK STATUS
     // ========================================================================
     // Check if account is locked due to failed login attempts
     const now = new Date();
@@ -89,14 +105,14 @@ exports.handler = async (event) => {
     }
     
     // ========================================================================
-    // STEP 5: VERIFY PASSWORD
+    // STEP 6: VERIFY PASSWORD
     // ========================================================================
     // Compare provided password with stored hashed password
     const passwordValid = await bcrypt.compare(password, user.hashedPassword);
     
     if (!passwordValid) {
       // ======================================================================
-      // STEP 5A: HANDLE FAILED LOGIN ATTEMPT
+      // STEP 6A: HANDLE FAILED LOGIN ATTEMPT
       // ======================================================================
       // Increment failed attempts counter
       const failedAttempts = (user.failedAttempts || 0) + 1;
@@ -128,7 +144,7 @@ exports.handler = async (event) => {
     }
     
     // ========================================================================
-    // STEP 6: SUCCESSFUL LOGIN - CLEAR FAILED ATTEMPTS
+    // STEP 7: SUCCESSFUL LOGIN - CLEAR FAILED ATTEMPTS
     // ========================================================================
     // Successful login - clear failed attempts and lock status
     if (user.failedAttempts || user.lockedUntil) {
@@ -140,7 +156,7 @@ exports.handler = async (event) => {
     }
     
     // ========================================================================
-    // STEP 7: GENERATE JWT TOKEN
+    // STEP 8: GENERATE JWT TOKEN
     // ========================================================================
     // Create JWT token with user information for frontend authentication
     const secrets = await getSecrets();
@@ -153,7 +169,7 @@ exports.handler = async (event) => {
     const token = jwt.sign(tokenPayload, secrets.jwt_secret, { expiresIn: '24h' });
     
     // ========================================================================
-    // STEP 8: RETURN SUCCESS RESPONSE WITH TOKEN
+    // STEP 9: RETURN SUCCESS RESPONSE WITH TOKEN
     // ========================================================================
     return {
       statusCode: 200,

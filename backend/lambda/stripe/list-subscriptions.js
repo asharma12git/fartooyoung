@@ -63,8 +63,11 @@ exports.handler = async (event) => {
     // Search for existing Stripe customer using email address
     const customers = await stripe.customers.list({
       email: customer_email,  // Filter by email address
-      limit: 1               // Only need the first match
+      limit: 10               // Get up to 10 customers (in case of duplicates)
     })
+
+    console.log(`Found ${customers.data.length} customers for email ${customer_email}`)
+    console.log('Customers:', JSON.stringify(customers.data.map(c => ({id: c.id, email: c.email, created: c.created})), null, 2))
 
     // If no customer found, return empty subscriptions list
     if (customers.data.length === 0) {
@@ -75,22 +78,32 @@ exports.handler = async (event) => {
       }
     }
 
-    const customer = customers.data[0]  // Get the first (and only) customer
+    // Check subscriptions for ALL customers with this email
+    let allActiveSubscriptions = []
+    let allInactiveSubscriptions = []
 
-    // ========================================================================
-    // STEP 4: FETCH ACTIVE AND CANCELED SUBSCRIPTIONS
-    // ========================================================================
-    // Get customer's active subscriptions
-    const activeSubscriptions = await stripe.subscriptions.list({
-      customer: customer.id,  // Stripe customer ID
-      status: 'active'        // Only active subscriptions
-    })
+    for (const customer of customers.data) {
+      console.log(`Checking subscriptions for customer ${customer.id}`)
+      
+      // Get customer's active subscriptions
+      const activeSubscriptions = await stripe.subscriptions.list({
+        customer: customer.id,  // Stripe customer ID
+        status: 'active',       // Only active subscriptions
+        limit: 100              // Fetch up to 100 subscriptions (default is 10)
+      })
 
-    // Get customer's canceled subscriptions for history
-    const inactiveSubscriptions = await stripe.subscriptions.list({
-      customer: customer.id,  // Stripe customer ID
-      status: 'canceled'      // Only canceled subscriptions
-    })
+      // Get customer's canceled subscriptions
+      const inactiveSubscriptions = await stripe.subscriptions.list({
+        customer: customer.id,  // Stripe customer ID
+        status: 'canceled',     // Only canceled subscriptions
+        limit: 100              // Fetch up to 100 subscriptions (default is 10)
+      })
+
+      console.log(`Customer ${customer.id}: ${activeSubscriptions.data.length} active, ${inactiveSubscriptions.data.length} inactive`)
+      
+      allActiveSubscriptions = allActiveSubscriptions.concat(activeSubscriptions.data)
+      allInactiveSubscriptions = allInactiveSubscriptions.concat(inactiveSubscriptions.data)
+    }
 
     // ========================================================================
     // STEP 5: FORMAT SUBSCRIPTION DATA FOR FRONTEND
@@ -109,8 +122,10 @@ exports.handler = async (event) => {
     })
 
     // Format both active and inactive subscriptions
-    const formattedActiveSubscriptions = activeSubscriptions.data.map(formatSubscription)
-    const formattedInactiveSubscriptions = inactiveSubscriptions.data.map(formatSubscription)
+    const formattedActiveSubscriptions = allActiveSubscriptions.map(formatSubscription)
+    const formattedInactiveSubscriptions = allInactiveSubscriptions.map(formatSubscription)
+
+    console.log(`Total: ${formattedActiveSubscriptions.length} active, ${formattedInactiveSubscriptions.length} inactive subscriptions`)
 
     // ========================================================================
     // STEP 6: RETURN FORMATTED SUBSCRIPTION DATA

@@ -599,7 +599,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         </div>
                       <button
                         onClick={() => onDonateClick(calculatorAmount)}
-                        className="bg-gradient-to-r from-orange-400/20 to-orange-600/30 hover:from-orange-400/30 hover:to-orange-600/40 text-white/80 hover:text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm border border-orange-400/20"
+                        className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm"
                       >
                         Donate Now
                       </button>
@@ -970,7 +970,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <button
                     onClick={() => onDonateClick()}
-                    className="bg-gradient-to-r from-orange-400/20 to-orange-600/30 hover:from-orange-400/30 hover:to-orange-600/40 text-white/80 hover:text-white py-3 px-4 rounded-lg transition-all duration-300 text-sm font-medium border border-orange-400/20"
+                    className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white py-3 px-4 rounded-lg transition-all duration-300 text-sm font-medium"
                   >
                     🎯 Make Another Donation
                   </button>
@@ -1041,7 +1041,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     </div>
                     <button
                       onClick={() => onDonateClick()}
-                      className="bg-gradient-to-r from-orange-400/20 to-orange-600/30 hover:from-orange-400/30 hover:to-orange-600/40 text-white/80 hover:text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm border border-orange-400/20"
+                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm"
                     >
                       Donate Now
                     </button>
@@ -1468,7 +1468,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <p className="text-white/60 mb-6">We're working on bringing you merchandise and educational materials to support our cause.</p>
                     <button
                       onClick={() => onDonateClick()}
-                      className="bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
                     >
                       Make a Donation Instead
                     </button>
@@ -1489,7 +1489,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <p className="text-white/60 mb-6">Save your favorite items and get notified when they become available.</p>
                     <button
                       onClick={() => onDonateClick()}
-                      className="bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
                     >
                       Make a Donation Instead
                     </button>

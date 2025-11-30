@@ -185,7 +185,116 @@ exports.handler = async (event) => {
     }
 
     // ========================================================================
-    // STEP 7: RETURN SUCCESS RESPONSE TO STRIPE
+    // STEP 7: HANDLE SUBSCRIPTION CANCELLATION
+    // ========================================================================
+    // Handle subscription cancellation/deletion
+    if (stripeEvent.type === 'customer.subscription.deleted') {
+      const subscription = stripeEvent.data.object
+      console.log('Subscription cancelled:', subscription.id)
+
+      // Create cancellation record
+      const cancellationId = `cancel_${subscription.id}_${Date.now()}`
+      
+      const cancellationRecord = {
+        id: cancellationId,
+        donationId: cancellationId,
+        amount: 0,
+        type: 'subscription_cancelled',
+        paymentMethod: 'stripe-subscription',
+        email: subscription.customer_email || 'unknown',
+        name: subscription.customer_name || 'Subscriber',
+        status: 'cancelled',
+        stripeSubscriptionId: subscription.id,
+        cancelledAt: new Date(subscription.canceled_at * 1000).toISOString(),
+        createdAt: new Date().toISOString(),
+        processedAt: new Date().toISOString()
+      }
+
+      // Save cancellation record to DynamoDB
+      await dynamodb.put({
+        TableName: DONATIONS_TABLE,
+        Item: cancellationRecord
+      }).promise()
+
+      console.log('Subscription cancellation saved to database:', cancellationId)
+    }
+
+    // ========================================================================
+    // STEP 8: HANDLE SUBSCRIPTION UPDATES
+    // ========================================================================
+    // Handle subscription status changes (paused, resumed, etc.)
+    if (stripeEvent.type === 'customer.subscription.updated') {
+      const subscription = stripeEvent.data.object
+      const previousAttributes = stripeEvent.data.previous_attributes
+      
+      console.log('Subscription updated:', subscription.id)
+      console.log('Status:', subscription.status)
+      console.log('Cancel at period end:', subscription.cancel_at_period_end)
+      console.log('Previous attributes:', JSON.stringify(previousAttributes))
+
+      // Track when user schedules a cancellation (cancel_at_period_end changes to true)
+      if (previousAttributes && 
+          previousAttributes.cancel_at_period_end === false && 
+          subscription.cancel_at_period_end === true) {
+        
+        const scheduleId = `cancel_scheduled_${subscription.id}_${Date.now()}`
+        
+        const scheduleRecord = {
+          id: scheduleId,
+          donationId: scheduleId,
+          amount: 0,
+          type: 'subscription_cancel_scheduled',
+          paymentMethod: 'stripe-subscription',
+          email: subscription.customer_email || 'unknown',
+          name: subscription.customer_name || 'Subscriber',
+          status: 'pending_cancellation',
+          stripeSubscriptionId: subscription.id,
+          cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000).toISOString() : null,
+          scheduledAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          processedAt: new Date().toISOString()
+        }
+
+        // Save scheduled cancellation record to DynamoDB
+        await dynamodb.put({
+          TableName: DONATIONS_TABLE,
+          Item: scheduleRecord
+        }).promise()
+
+        console.log('Scheduled cancellation saved to database:', scheduleId)
+      }
+
+      // Track significant status changes
+      if (previousAttributes && previousAttributes.status) {
+        const updateId = `update_${subscription.id}_${Date.now()}`
+        
+        const updateRecord = {
+          id: updateId,
+          donationId: updateId,
+          amount: 0,
+          type: 'subscription_updated',
+          paymentMethod: 'stripe-subscription',
+          email: subscription.customer_email || 'unknown',
+          name: subscription.customer_name || 'Subscriber',
+          status: subscription.status,
+          previousStatus: previousAttributes.status,
+          stripeSubscriptionId: subscription.id,
+          createdAt: new Date().toISOString(),
+          processedAt: new Date().toISOString()
+        }
+
+        // Save update record to DynamoDB
+        await dynamodb.put({
+          TableName: DONATIONS_TABLE,
+          Item: updateRecord
+        }).promise()
+
+        console.log('Subscription update saved to database:', updateId)
+      }
+    }
+
+    // ========================================================================
+    // STEP 9: RETURN SUCCESS RESPONSE TO STRIPE
     // ========================================================================
     return {
       statusCode: 200,

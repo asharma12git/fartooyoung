@@ -22,8 +22,9 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
   endpoint: process.env.DYNAMODB_ENDPOINT || undefined  // Local endpoint for testing, AWS default for production
 })
 
-// Get donations table name from environment variables
+// Get table names from environment variables
 const DONATIONS_TABLE = process.env.DONATIONS_TABLE
+const USERS_TABLE = process.env.USERS_TABLE
 
 // ============================================================================
 // MAIN LAMBDA HANDLER - Entry point for creating checkout sessions
@@ -71,7 +72,66 @@ exports.handler = async (event) => {
     }
 
     // ========================================================================
-    // STEP 3: BUILD STRIPE CHECKOUT SESSION CONFIGURATION
+    // STEP 3: GET OR CREATE STRIPE CUSTOMER
+    // ========================================================================
+    let stripeCustomerId = null
+    
+    // Check if user exists in DynamoDB and has a Stripe customer ID
+    try {
+      const userResult = await dynamodb.get({
+        TableName: USERS_TABLE,
+        Key: { email: donor_info.email.toLowerCase().trim() }
+      }).promise()
+      
+      if (userResult.Item && userResult.Item.stripeCustomerId) {
+        stripeCustomerId = userResult.Item.stripeCustomerId
+        console.log('Found existing Stripe customer:', stripeCustomerId)
+      }
+    } catch (err) {
+      console.log('User not found in DB, will create new Stripe customer')
+    }
+    
+    // If no existing customer, search Stripe by email
+    if (!stripeCustomerId) {
+      const existingCustomers = await stripe.customers.list({
+        email: donor_info.email,
+        limit: 1
+      })
+      
+      if (existingCustomers.data.length > 0) {
+        stripeCustomerId = existingCustomers.data[0].id
+        console.log('Found existing Stripe customer by email:', stripeCustomerId)
+      } else {
+        // Create new Stripe customer
+        const customer = await stripe.customers.create({
+          email: donor_info.email,
+          name: `${donor_info.firstName} ${donor_info.lastName}`,
+          metadata: {
+            organization: 'Far Too Young'
+          }
+        })
+        stripeCustomerId = customer.id
+        console.log('Created new Stripe customer:', stripeCustomerId)
+      }
+      
+      // Store Stripe customer ID in DynamoDB if user exists
+      try {
+        await dynamodb.update({
+          TableName: USERS_TABLE,
+          Key: { email: donor_info.email.toLowerCase().trim() },
+          UpdateExpression: 'SET stripeCustomerId = :customerId',
+          ExpressionAttributeValues: {
+            ':customerId': stripeCustomerId
+          }
+        }).promise()
+        console.log('Saved Stripe customer ID to DynamoDB')
+      } catch (err) {
+        console.log('Could not save customer ID to DB (user may not exist):', err.message)
+      }
+    }
+
+    // ========================================================================
+    // STEP 4: BUILD STRIPE CHECKOUT SESSION CONFIGURATION
     // ========================================================================
     // Create checkout session configuration object
     const sessionConfig = {
@@ -90,7 +150,7 @@ exports.handler = async (event) => {
           quantity: 1,                                    // Always 1 for donations
         },
       ],
-      customer_email: donor_info.email,                   // Pre-fill customer email
+      customer: stripeCustomerId,                         // Use existing or new customer ID
       metadata: {
         // Custom data that will be included in webhook events
         donor_name: `${donor_info.firstName} ${donor_info.lastName}`,
@@ -104,7 +164,7 @@ exports.handler = async (event) => {
     }
 
     // ========================================================================
-    // STEP 4: CONFIGURE FOR ONE-TIME OR RECURRING DONATIONS
+    // STEP 5: CONFIGURE FOR ONE-TIME OR RECURRING DONATIONS
     // ========================================================================
     // Add recurring configuration for monthly donations
     if (donation_type === 'monthly') {
@@ -117,13 +177,13 @@ exports.handler = async (event) => {
     }
 
     // ========================================================================
-    // STEP 5: CREATE STRIPE CHECKOUT SESSION
+    // STEP 6: CREATE STRIPE CHECKOUT SESSION
     // ========================================================================
     // Call Stripe API to create the checkout session
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
     // ========================================================================
-    // STEP 6: RETURN CHECKOUT URL TO FRONTEND
+    // STEP 7: RETURN CHECKOUT URL TO FRONTEND
     // ========================================================================
     return {
       statusCode: 200,

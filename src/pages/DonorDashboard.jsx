@@ -6,6 +6,7 @@ import logo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKey }) => {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [activeShopSubtab, setActiveShopSubtab] = useState('orders') // For Shop subtabs
   const [userDonations, setUserDonations] = useState([])
   const [loading, setLoading] = useState(true)
   const [calculatorAmount, setCalculatorAmount] = useState(100)
@@ -346,8 +347,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
             {[
               { id: 'dashboard', label: 'Dashboard', icon: '📊' },
               { id: 'donations', label: 'Donations', icon: '❤️' },
-              { id: 'orders', label: 'Orders', icon: '📦' },
-              { id: 'wishlist', label: 'Wishlist', icon: '⭐' },
+              { id: 'shop', label: 'Shop', icon: '🛍️' },
               { id: 'settings', label: 'Settings', icon: '⚙️' }
             ].map(tab => (
               <button
@@ -1042,7 +1042,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               {/* Donation History & Subscriptions - Two Column Layout */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
                 {/* Left Column - Donation History */}
-                <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+                <div className="bg-white/5 border border-white/10 rounded-lg p-6 flex flex-col h-[600px]">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-2">
                       <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-pink-600 rounded-full"></div>
@@ -1061,7 +1061,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <p className="text-white/40 text-sm mt-2">Your donation history will appear here</p>
                     </div>
                   ) : (
-                    <div className="space-y-3 max-h-96 overflow-y-auto" style={{
+                    <div className="space-y-3 flex-1 overflow-y-auto overflow-x-hidden" style={{
                       scrollbarWidth: 'thin',
                       scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
                     }}>
@@ -1081,7 +1081,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         }
                       `}</style>
                       {userDonations.slice(0, 20).map((donation, index) => (
-                        <div key={donation.id} className={`flex items-center justify-between py-2 px-3 rounded-md border transition-all hover:scale-[1.01] ${
+                        <div key={donation.id} className={`flex items-center justify-between py-2 px-3 rounded-md border hover:bg-white/10 transition-all ${
                           donation.type === 'monthly'
                             ? 'bg-gradient-to-r from-purple-500/10 to-purple-400/5 border-purple-400/20' 
                             : 'bg-white/5 border border-white/10'
@@ -1440,32 +1440,71 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
             </div>
           )}
 
-          {/* Other tabs */}
-          {activeTab === 'orders' && (
-            <div className="bg-white/5 border border-white/10 rounded-lg p-12">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4">E-commerce Coming Soon</h3>
-                <p className="text-white/60 mb-6">We're working on bringing you merchandise and educational materials to support our cause.</p>
+          {/* Shop Tab with Subtabs */}
+          {activeTab === 'shop' && (
+            <div className="space-y-6">
+              {/* Shop Subtabs */}
+              <div className="flex space-x-2 bg-white/5 p-1 rounded-lg w-fit">
+                {[
+                  { id: 'orders', label: 'Orders', icon: '📦' },
+                  { id: 'wishlist', label: 'Wishlist', icon: '⭐' }
+                ].map(subtab => (
+                  <button
+                    key={subtab.id}
+                    onClick={() => setActiveShopSubtab(subtab.id)}
+                    className={`flex items-center space-x-2 py-2 px-4 rounded-md text-sm font-medium transition-all duration-300 ${
+                      activeShopSubtab === subtab.id
+                        ? 'bg-orange-500/20 text-white'
+                        : 'text-white/70 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <span>{subtab.icon}</span>
+                    <span>{subtab.label}</span>
+                  </button>
+                ))}
               </div>
-            </div>
-          )}
 
-          {activeTab === 'wishlist' && (
-            <div className="bg-white/5 border border-white/10 rounded-lg p-12">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
+              {/* Orders Subtab Content */}
+              {activeShopSubtab === 'orders' && (
+                <div className="bg-white/5 border border-white/10 rounded-lg p-12">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4">E-commerce Coming Soon</h3>
+                    <p className="text-white/60 mb-6">We're working on bringing you merchandise and educational materials to support our cause.</p>
+                    <button
+                      onClick={() => onDonateClick()}
+                      className="bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                    >
+                      Make a Donation Instead
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4">Wishlist Coming Soon</h3>
-                <p className="text-white/60 mb-6">Save your favorite items and get notified when they become available.</p>
-              </div>
+              )}
+
+              {/* Wishlist Subtab Content */}
+              {activeShopSubtab === 'wishlist' && (
+                <div className="bg-white/5 border border-white/10 rounded-lg p-12">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4">Wishlist Coming Soon</h3>
+                    <p className="text-white/60 mb-6">Save your favorite items and get notified when they become available.</p>
+                    <button
+                      onClick={() => onDonateClick()}
+                      className="bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                    >
+                      Make a Donation Instead
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

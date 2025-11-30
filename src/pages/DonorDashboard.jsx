@@ -300,24 +300,30 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
             {/* Hero Impact Banner - Only show if user has donations */}
             {userDonations.length > 0 && (
-              <div className="bg-gradient-to-r from-orange-500/30 via-orange-400/20 to-purple-500/30 backdrop-blur-sm border border-orange-400/50 rounded-xl p-4 sm:p-6 lg:p-8 text-center">
-                <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 italic">
-                  "Every donation creates ripples of hope across the world"
+              <div className="bg-white/5 rounded-lg p-6 sm:p-8 lg:p-10 text-center">
+                <p className="text-lg sm:text-xl mb-6 sm:mb-8 font-medium tracking-wide bg-gradient-to-r from-orange-300 via-orange-200 to-orange-400 bg-clip-text text-transparent">
+                  Your Impact Journey
                 </p>
-                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-8">
-                  <div>
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1">{Math.floor(userStats.lifetimeTotal / 50)}</div>
-                    <div className="text-white/70 text-xs sm:text-sm">Girls Educated</div>
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-6 sm:space-y-0 sm:space-x-12 lg:space-x-16">
+                  <div className="group">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-light mb-2 bg-gradient-to-r from-orange-300 via-orange-200 to-orange-400 bg-clip-text text-transparent">
+                      {Math.floor(userStats.lifetimeTotal / 50)}
+                    </div>
+                    <div className="text-white/50 text-xs sm:text-sm uppercase tracking-wider font-light">Girls Educated</div>
                   </div>
-                  <div className="hidden sm:block h-12 w-px bg-white/30"></div>
-                  <div>
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-orange-300 mb-1">${userStats.lifetimeTotal}</div>
-                    <div className="text-white/70 text-xs sm:text-sm">Total Impact</div>
+                  <div className="hidden sm:block h-16 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+                  <div className="group">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-light mb-2 bg-gradient-to-r from-orange-300 via-orange-200 to-orange-400 bg-clip-text text-transparent">
+                      ${userStats.lifetimeTotal}
+                    </div>
+                    <div className="text-white/50 text-xs sm:text-sm uppercase tracking-wider font-light">Total Impact</div>
                   </div>
-                  <div className="hidden sm:block h-12 w-px bg-white/30"></div>
-                  <div>
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-400 mb-1">{userStats.totalDonations}</div>
-                    <div className="text-white/70 text-xs sm:text-sm">Donations</div>
+                  <div className="hidden sm:block h-16 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+                  <div className="group">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-light mb-2 bg-gradient-to-r from-orange-300 via-orange-200 to-orange-400 bg-clip-text text-transparent">
+                      {userStats.totalDonations}
+                    </div>
+                    <div className="text-white/50 text-xs sm:text-sm uppercase tracking-wider font-light">Donations</div>
                   </div>
                 </div>
               </div>
@@ -477,44 +483,44 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       </div>
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                         {/* Donor Rank */}
-                        <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-4 border border-rose-400/30 hover:scale-105 transform transition-transform">
-                          <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center mb-2">
-                            <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
+                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                             </svg>
                           </div>
-                          <div className="text-white/60 text-sm mb-1">Donor Rank</div>
-                          <div className="text-white font-bold text-lg">Top {100 - percentile}%</div>
+                          <div className="text-white font-bold text-xl mb-1">Top {100 - percentile}%</div>
+                          <div className="text-white/60 text-xs">Donor Rank</div>
                         </div>
                         {/* Year Growth */}
-                        <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-4 border border-rose-400/30 hover:scale-105 transform transition-transform">
-                          <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center mb-2">
-                            <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
+                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                             </svg>
                           </div>
-                          <div className="text-white/60 text-sm mb-1">Year Growth</div>
-                          <div className="text-white font-bold text-lg">{growthPercent > 0 ? '+' : ''}{growthPercent}%</div>
+                          <div className="text-white font-bold text-xl mb-1">{growthPercent > 0 ? '+' : ''}{growthPercent}%</div>
+                          <div className="text-white/60 text-xs">Year Growth</div>
                         </div>
                         {/* To Goal */}
-                        <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-4 border border-rose-400/30 hover:scale-105 transform transition-transform">
-                          <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center mb-2">
-                            <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
+                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
                             </svg>
                           </div>
-                          <div className="text-white/60 text-sm mb-1">To Goal</div>
-                          <div className="text-white font-bold text-lg">{Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls</div>
+                          <div className="text-white font-bold text-xl mb-1">{Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls</div>
+                          <div className="text-white/60 text-xs">To Goal</div>
                         </div>
                         {/* This Year Donations */}
-                        <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-4 border border-rose-400/30 hover:scale-105 transform transition-transform">
-                          <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center mb-2">
-                            <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
+                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                             </svg>
                           </div>
-                          <div className="text-white/60 text-sm mb-1">This Year</div>
-                          <div className="text-white font-bold text-lg">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>
+                          <div className="text-white font-bold text-xl mb-1">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>
+                          <div className="text-white/60 text-xs">This Year</div>
                         </div>
                       </div>
                     </div>
@@ -524,11 +530,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
               {/* Impact Stats Cards - Existing */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-6 border border-rose-400/30 hover:scale-105 transform transition-transform">
+                <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-6 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
-                    <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -537,11 +543,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <p className="text-white/60 text-sm mt-1">girls in school this month</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-6 border border-rose-400/30 hover:scale-105 transform transition-transform">
+                <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-6 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Years of Education Funded</h3>
-                    <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                     </div>
@@ -550,11 +556,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <p className="text-white/60 text-sm mt-1">years of education provided</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-rose-500/20 to-pink-600/10 rounded-lg p-6 border border-rose-400/30 hover:scale-105 transform transition-transform">
+                <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-6 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Lives Completely Changed</h3>
-                    <div className="w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
@@ -563,22 +569,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   </div>
                   <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 6000)}</p>
                   <p className="text-white/60 text-sm mt-1">girls fully educated (age 5-14)</p>
-                </div>
-              </div>
-
-              {/* Thank You Note - Slimmed */}
-              <div className="bg-gradient-to-r from-orange-500/10 to-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-lg p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-orange-400">💌</span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-white font-medium mb-1">A Message from the Field</h3>
-                    <p className="text-white/80 text-sm italic">
-                      "Every donation brings hope to girls like me. Thank you for caring about our education and future!"
-                    </p>
-                    <p className="text-orange-400 text-xs mt-1">- From all the girls at Far Too Young</p>
-                  </div>
                 </div>
               </div>
 
@@ -639,61 +629,45 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-6 border border-green-400/20">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-white">{impact.girlsEducated}</div>
-                            <div className="text-green-400 text-xs font-medium">(1 year)</div>
-                          </div>
+                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
+                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
                         </div>
-                        <div className="text-white/70 text-sm font-medium">Girls Educated</div>
+                        <div className="text-2xl font-bold text-white mb-1">{impact.girlsEducated}</div>
+                        <div className="text-green-300 text-xs font-medium mb-1">(1 year)</div>
+                        <div className="text-white/60 text-xs">Girls Educated</div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-6 border border-green-400/20">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-white">{impact.schoolKits}</div>
-                            <div className="text-green-400 text-xs font-medium">(supplies)</div>
-                          </div>
+                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
+                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
                         </div>
-                        <div className="text-white/70 text-sm font-medium">School Kits</div>
+                        <div className="text-2xl font-bold text-white mb-1">{impact.schoolKits}</div>
+                        <div className="text-green-300 text-xs font-medium mb-1">(supplies)</div>
+                        <div className="text-white/60 text-xs">School Kits</div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-6 border border-green-400/20">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-white">{impact.teacherTraining}</div>
-                            <div className="text-green-400 text-xs font-medium">(sessions)</div>
-                          </div>
+                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
+                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
                         </div>
-                        <div className="text-white/70 text-sm font-medium">Teacher Training</div>
+                        <div className="text-2xl font-bold text-white mb-1">{impact.teacherTraining}</div>
+                        <div className="text-green-300 text-xs font-medium mb-1">(sessions)</div>
+                        <div className="text-white/60 text-xs">Teacher Training</div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg p-4 border border-green-400/20">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-white">{impact.schoolsSupported}</div>
-                            <div className="text-green-400 text-xs font-medium">(monthly)</div>
-                          </div>
+                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
+                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
                         </div>
-                        <div className="text-white/70 text-sm font-medium">Schools Supported</div>
+                        <div className="text-2xl font-bold text-white mb-1">{impact.schoolsSupported}</div>
+                        <div className="text-green-300 text-xs font-medium mb-1">(monthly)</div>
+                        <div className="text-white/60 text-xs">Schools Supported</div>
                       </div>
                     </div>
                     </div>
@@ -976,6 +950,23 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <div className="w-1 h-5 bg-gradient-to-b from-emerald-400 to-green-600 rounded-full"></div>
                     <h3 className="text-lg font-semibold text-white">Continue Your Impact</h3>
                   </div>
+
+                  {/* Message from the Field */}
+                  <div className="bg-gradient-to-r from-orange-500/10 to-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-lg p-4 mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-orange-400">💌</span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white font-medium mb-1">A Message from the Field</h3>
+                        <p className="text-white/80 text-sm italic">
+                          "Every donation brings hope to girls like me. Thank you for caring about our education and future!"
+                        </p>
+                        <p className="text-orange-400 text-xs mt-1">- From all the girls at Far Too Young</p>
+                      </div>
+                    </div>
+                  </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <button
                     onClick={() => onDonateClick()}
@@ -999,11 +990,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           {activeTab === 'donations' && (
             <div className="space-y-6 lg:space-y-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-6 border border-blue-400/30 hover:scale-105 transform transition-transform">
+                <div className="bg-gradient-to-br from-blue-500/5 to-white/5 rounded-lg p-6 border border-blue-400/10 hover:from-blue-500/10 hover:to-white/10 transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Total Donations</h3>
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
                       </svg>
                     </div>
@@ -1012,11 +1003,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <p className="text-white/60 text-sm mt-1">donations made</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-6 border border-blue-400/30 hover:scale-105 transform transition-transform">
+                <div className="bg-gradient-to-br from-blue-500/5 to-white/5 rounded-lg p-6 border border-blue-400/10 hover:from-blue-500/10 hover:to-white/10 transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Lifetime Total</h3>
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                       </svg>
                     </div>
@@ -1025,11 +1016,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <p className="text-white/60 text-sm mt-1">total contributed</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-lg p-6 border border-blue-400/30 hover:scale-105 transform transition-transform">
+                <div className="bg-gradient-to-br from-blue-500/5 to-white/5 rounded-lg p-6 border border-blue-400/10 hover:from-blue-500/10 hover:to-white/10 transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white/80 text-sm font-medium">Average Donation</h3>
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
                     </div>

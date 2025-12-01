@@ -1,14 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import sadGirlBg from '../assets/images/pages/partners/Sad-Girl.jpg'
 
 const VerifyEmail = ({ onAuthClick }) => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [status, setStatus] = useState('verifying') // 'verifying' | 'success' | 'error'
   const [message, setMessage] = useState('Verifying your email...')
+  const hasVerified = useRef(false) // Prevent duplicate API calls
 
   useEffect(() => {
     const verifyEmail = async () => {
+      // Prevent running twice
+      if (hasVerified.current) return
+      hasVerified.current = true
+      
       const token = searchParams.get('token')
       
       if (!token) {
@@ -24,12 +30,7 @@ const VerifyEmail = ({ onAuthClick }) => {
 
         if (data.success) {
           setStatus('success')
-          setMessage('Email verified successfully!')
-          // Auto-redirect to login after 2 seconds
-          setTimeout(() => {
-            navigate('/')
-            onAuthClick() // Open login modal
-          }, 2000)
+          setMessage('Email verified successfully! You can now log in.')
         } else {
           setStatus('error')
           setMessage(data.message || 'Verification failed')
@@ -44,37 +45,59 @@ const VerifyEmail = ({ onAuthClick }) => {
   }, [searchParams, navigate, onAuthClick])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-900 via-red-900 to-pink-900 flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-8 max-w-md w-full text-center">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
+      style={{ backgroundImage: `url(${sadGirlBg})` }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-8 max-w-md w-full text-center relative z-10">
         <div className="mb-6">
           {status === 'verifying' && (
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-400 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-orange-400 mx-auto mb-4"></div>
           )}
           {status === 'success' && (
-            <svg className="w-12 h-12 text-green-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <div className="border-4 border-green-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
           )}
           {status === 'error' && (
-            <svg className="w-12 h-12 text-red-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
+            <div className="border-4 border-red-400 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
           )}
         </div>
         
-        <h2 className="text-2xl font-medium text-white mb-4">Email Verification</h2>
-        <p className="text-white/80 mb-6">{message}</p>
+        <h2 className="text-2xl font-bold text-white mb-4">
+          {status === 'verifying' && 'Verifying Email...'}
+          {status === 'success' && 'Email Verified!'}
+          {status === 'error' && 'Verification Failed'}
+        </h2>
+        <p className="text-white/90 mb-6 text-lg">{message}</p>
         
         {status === 'success' && (
-          <p className="text-green-400 text-sm">Redirecting to login...</p>
+          <button
+            onClick={() => {
+              navigate('/')
+              onAuthClick() // Open login modal
+            }}
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-md transition-all duration-300 font-medium shadow-lg"
+          >
+            Continue to Login
+          </button>
         )}
         
         {status === 'error' && (
           <button
             onClick={() => navigate('/')}
-            className="bg-orange-500/80 hover:bg-orange-600/90 text-white px-6 py-2 rounded-md transition-all duration-300"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-md transition-all duration-300 font-medium shadow-lg"
           >
-            Go to Home
+            Return to Home
           </button>
         )}
       </div>

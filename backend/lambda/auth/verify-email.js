@@ -1,5 +1,5 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
-const { DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb')
+const { DynamoDBDocumentClient, GetCommand, UpdateCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb')
 
 // Initialize DynamoDB client
 const client = new DynamoDBClient({
@@ -51,7 +51,7 @@ exports.handler = async (event) => {
       }
     }
 
-    const scanResult = await docClient.scan(scanParams)
+    const scanResult = await docClient.send(new ScanCommand(scanParams))
     
     if (!scanResult.Items || scanResult.Items.length === 0) {
       return {
@@ -59,7 +59,7 @@ exports.handler = async (event) => {
         headers,
         body: JSON.stringify({
           success: false,
-          message: 'Invalid or expired verification token'
+          message: 'This verification link has already been used or is invalid. If you already verified your email, you can log in now.'
         })
       }
     }

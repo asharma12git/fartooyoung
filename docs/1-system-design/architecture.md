@@ -22,13 +22,26 @@ High-level visual representation of the entire Far Too Young platform showing fr
 │                                                                                 │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
 │  │   Pages Layer   │  │ Components Layer│  │  State Layer    │                │
+│  │  (Production)   │  │  (Production)   │  │  (Production)   │                │
 │  │─────────────────│  │─────────────────│  │─────────────────│                │
-│  │• ChildMarriage  │  │• Header         │  │• User Context   │                │
-│  │• FounderTeam    │  │• AuthModal      │  │• Auth State     │                │
-│  │• Partners       │  │• DonationModal  │  │• API Calls      │                │
-│  │• WhatWeDo       │  │• DonorDashboard │  │• Local Storage  │                │
-│  │• Dashboard      │  │• Navigation     │  │• Error Handling │                │
+│  │• Home           │  │• Navbar         │  │• User Context   │                │
+│  │• ChildMarriage  │  │• Footer         │  │• Auth State     │                │
+│  │• FounderTeam    │  │• AuthModal      │  │• API Calls      │                │
+│  │• Partners       │  │• DonationModal  │  │• Local Storage  │                │
+│  │• WhatWeDo       │  │• Subscription   │  │• Error Handling │                │
+│  │• Dashboard      │  │  Manager        │  │• Rate Limiting  │                │
+│  │• VerifyEmail    │  │• Dashboard Tabs │  │                 │                │
+│  │• PaymentSuccess │  │                 │  │                 │                │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────┐              │
+│  │              Future Pages (Planned)                         │              │
+│  │─────────────────────────────────────────────────────────────│              │
+│  │• Books (showcase with external links)                       │              │
+│  │• Shop (product catalog, cart, checkout, orders)             │              │
+│  │• Blog (public blog posts, categories)                       │              │
+│  │• Admin Dashboard (blog management, content control)         │              │
+│  └─────────────────────────────────────────────────────────────┘              │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                                         │ API Calls (JSON)
@@ -39,14 +52,28 @@ High-level visual representation of the entire Far Too Young platform showing fr
 │─────────────────────────────────────────────────────────────────────────────────│
 │                                                                                 │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
-│  │ Authentication  │  │   Future APIs   │  │  Integrations   │                │
-│  │─────────────────│  │─────────────────│  │─────────────────│                │
-│  │• login.js       │  │• donations.js   │  │• Stripe API     │                │
-│  │• register.js    │  │• products.js    │  │• PayPal API     │                │
-│  │• logout.js      │  │• orders.js      │  │• Email Service  │                │
-│  │• forgot-pwd.js  │  │• books.js       │  │• AWS Services   │                │
-│  │• reset-pwd.js   │  │• analytics.js   │  │• External APIs  │                │
+│  │ Authentication  │  │  Donations &    │  │  Integrations   │                │
+│  │  (Production)   │  │  Payments       │  │  (Production)   │                │
+│  │─────────────────│  │  (Production)   │  │─────────────────│                │
+│  │• login.js       │  │─────────────────│  │• Stripe API     │                │
+│  │• register.js    │  │• create-        │  │• AWS SES        │                │
+│  │• logout.js      │  │  donation.js    │  │• AWS Secrets    │                │
+│  │• verify-email   │  │• get-donations  │  │  Manager        │                │
+│  │• forgot-pwd.js  │  │• create-        │  │                 │                │
+│  │• reset-pwd.js   │  │  checkout.js    │  │                 │                │
+│  │• update-        │  │• create-portal  │  │                 │                │
+│  │  profile.js     │  │• list-          │  │                 │                │
+│  │• change-pwd.js  │  │  subscriptions  │  │                 │                │
+│  │                 │  │• stripe-webhook │  │                 │                │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────┐              │
+│  │              Future APIs (Planned)                          │              │
+│  │─────────────────────────────────────────────────────────────│              │
+│  │• Shop: products.js, orders.js, cart.js, wishlist.js        │              │
+│  │• Books: books.js (external links management)                │              │
+│  │• Blog: blog-posts.js, categories.js (admin management)      │              │
+│  └─────────────────────────────────────────────────────────────┘              │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                                         │ Database Queries
@@ -57,16 +84,15 @@ High-level visual representation of the entire Far Too Young platform showing fr
 │─────────────────────────────────────────────────────────────────────────────────│
 │                                                                                 │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
-│  │  Core Tables    │  │ Business Tables │  │ Analytics Tables│                │
+│  │  Core Tables    │  │ Business Tables │  │ Future Tables   │                │
+│  │  (Production)   │  │  (Production)   │  │   (Planned)     │                │
 │  │─────────────────│  │─────────────────│  │─────────────────│                │
-│  │• fartooyoung-   │  │• fartooyoung-   │  │• fartooyoung-   │                │
-│  │  users          │  │  donations      │  │  book-clicks    │                │
-│  │                 │  │• fartooyoung-   │  │• fartooyoung-   │                │
-│  │                 │  │  products       │  │  book-royalties │                │
-│  │                 │  │• fartooyoung-   │  │                 │                │
-│  │                 │  │  orders         │  │                 │                │
-│  │                 │  │• fartooyoung-   │  │                 │                │
-│  │                 │  │  books          │  │                 │                │
+│  │• users          │  │• donations      │  │• products       │                │
+│  │• rate-limits    │  │                 │  │• orders         │                │
+│  │  (with TTL)     │  │                 │  │• wishlist       │                │
+│  │                 │  │                 │  │• books          │                │
+│  │                 │  │                 │  │• blog-posts     │                │
+│  │                 │  │                 │  │• categories     │                │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -186,17 +212,44 @@ High-level visual representation of the entire Far Too Young platform showing fr
 
 ## Key System Features
 
-### Current Capabilities (Phase 1)
-- ✅ **User Authentication** - Login, register, password reset
-- ✅ **Responsive Design** - Mobile-first UI with dark theme
-- ✅ **Secure Backend** - JWT tokens, password hashing
-- ✅ **Local Development** - Full stack testing environment
+### ✅ Current Capabilities (Production Ready)
+- **User Authentication** - Login, register, logout, password reset, email verification
+- **Donation System** - Stripe integration for one-time and recurring donations
+- **Subscription Management** - Monthly subscriptions with customer portal
+- **User Dashboard** - Donation history, subscription management, profile settings
+- **Security** - Backend rate limiting, email verification, input validation, honeypot detection
+- **Responsive Design** - Mobile-first UI with professional branding
+- **Email System** - AWS SES integration for transactional emails
 
-### Future Capabilities (Phase 2)
-- 🔄 **Donation Processing** - Stripe/PayPal integration
-- 🔄 **E-commerce Platform** - Product catalog and orders
-- 🔄 **Book Management** - Author profiles and Amazon integration
-- 🔄 **Analytics Dashboard** - Revenue and user insights
+### 🔮 Future Capabilities (Planned)
+
+#### **Books Page** (Simple - Showcase)
+- Display book covers and descriptions
+- External links to Amazon/retailers
+- Promotional page for donor-supported books
+- No checkout on site (external links only)
+
+#### **E-Commerce Shop** (Complex - Full Integration)
+- Product catalog and detail pages
+- Shopping cart functionality
+- Checkout integration with Stripe
+- Order management system
+- Wishlist feature for users
+- Inventory tracking
+
+#### **Blog System** (Medium Complexity)
+- Public blog page for articles
+- Admin dashboard for blog management
+- Create/edit/delete blog posts
+- Rich text editor
+- Categories and tags
+- SEO optimization
+
+#### **Enhanced Features**
+- Analytics dashboard for donations and engagement
+- Admin panel for content management
+- Advanced reporting and insights
+- Email marketing integration
 
 ### Scalability Features
 - **Serverless Architecture** - Auto-scaling Lambda functions
@@ -206,22 +259,100 @@ High-level visual representation of the entire Far Too Young platform showing fr
 
 ---
 
-## System Benefits
+## 💰 Serverless Architecture Cost Breakdown
 
-### For Users
-- **Fast Performance** - Optimized loading and interactions
-- **Secure Experience** - Industry-standard security practices
-- **Mobile Friendly** - Responsive design for all devices
-- **Intuitive Interface** - Clean, accessible user experience
+### **Current Monthly Costs (Staging + Production)**
 
-### For Organization
-- **Cost Effective** - Pay-per-use serverless pricing
-- **Highly Scalable** - Handles growth automatically
-- **Easy Maintenance** - Managed AWS services
-- **Future Ready** - Extensible architecture for new features
+**Note:** Running two separate stacks (staging for testing, production for live users)
 
-### For Developers
-- **Modern Stack** - Latest React and AWS technologies
-- **Local Testing** - Complete development environment
-- **Clear Architecture** - Well-documented system design
-- **Deployment Ready** - One-command AWS deployment
+**AWS Services Used:**
+
+| Service              | Staging Cost | Production Cost | Total Cost | Free Tier                          | Notes                        |
+|---------------------|--------------|-----------------|------------|-------------------------------------|------------------------------|
+| **Lambda**          | $0           | $0              | $0         | 1M requests/month per account       | Shared free tier             |
+| **API Gateway**     | $0           | $0              | $0         | 1M calls/month (12 months)          | Shared free tier             |
+| **DynamoDB**        | $0           | $0              | $0         | 25GB storage, 25 RCU/WCU            | 3 staging + 3 production tables |
+| **S3**              | $0           | $0              | $0         | 5GB storage, 20K GET requests       | Staging not deployed yet     |
+| **CloudFront**      | $0           | $0              | $0         | 1TB transfer, 10M requests          | Staging not deployed yet     |
+| **Route 53**        | $0.50        | $0.50           | $1.00      | $0.50 per hosted zone               | 2 hosted zones (staging + prod) |
+| **SES**             | $0           | $0              | $0         | 62,000 emails/month per account     | Shared free tier             |
+| **Secrets Manager** | $0.40        | $0.40           | $0.80      | None                                | 1 secret per stack           |
+| **CloudFormation**  | $0           | $0              | $0         | Free (SAM templates)                | 2 stacks                     |
+| **IAM**             | $0           | $0              | $0         | Always free                         | Shared across stacks         |
+
+**Total Current Cost: $1.80/month** (both environments)
+
+**Breakdown:**
+- Staging environment: $0.90/month (testing only, minimal usage)
+- Production environment: $0.90/month (not deployed yet)
+
+---
+
+### **Projected Costs at Scale**
+
+**At 10,000 users/month (Production only, Staging minimal):**
+
+| Service              | Staging Cost | Production Cost | Total Cost | Notes                                    |
+|---------------------|--------------|-----------------|------------|------------------------------------------|
+| **Lambda**          | $0           | $0              | $0         | Still within free tier                   |
+| **API Gateway**     | $0           | $3.50           | $3.50      | Production traffic only                  |
+| **DynamoDB**        | $0           | $2-5            | $2-5       | Production data volume                   |
+| **S3**              | $0           | $0.50           | $0.50      | Static hosting                           |
+| **CloudFront**      | $0           | $5-10           | $5-10      | Production CDN traffic                   |
+| **Route 53**        | $0.50        | $0.50           | $1.00      | 2 hosted zones                           |
+| **SES**             | $0           | $0              | $0         | Within free tier                         |
+| **Secrets Manager** | $0.40        | $0.40           | $0.80      | 2 secrets                                |
+| **CloudFormation**  | $0           | $0              | $0         | Free                                     |
+| **IAM**             | $0           | $0              | $0         | Free                                     |
+
+**Estimated Total: $13-21/month** (both environments)
+
+---
+
+**At 100,000 users/month (Production only, Staging minimal):**
+
+| Service              | Staging Cost | Production Cost | Total Cost | Notes                                    |
+|---------------------|--------------|-----------------|------------|------------------------------------------|
+| **Lambda**          | $0           | $20-40          | $20-40     | Production traffic                       |
+| **API Gateway**     | $0           | $35             | $35        | Production requests                      |
+| **DynamoDB**        | $1           | $50-100         | $51-101    | Staging minimal, production high         |
+| **S3**              | $0           | $2              | $2         | Production storage                       |
+| **CloudFront**      | $0           | $50-80          | $50-80     | Production CDN                           |
+| **Route 53**        | $0.50        | $1              | $1.50      | 2 hosted zones                           |
+| **SES**             | $0           | $10             | $10        | Production emails                        |
+| **Secrets Manager** | $0.40        | $0.40           | $0.80      | 2 secrets                                |
+| **CloudFormation**  | $0           | $0              | $0         | Free                                     |
+| **IAM**             | $0           | $0              | $0         | Free                                     |
+
+**Estimated Total: $170-270/month** (both environments)
+
+---
+
+### **Cost Optimization Features**
+
+✅ **Pay-per-use pricing** - Only pay for actual usage  
+✅ **Auto-scaling** - No over-provisioning  
+✅ **Free tier benefits** - 12 months free for most services  
+✅ **No idle costs** - Lambda only charges during execution  
+✅ **Efficient caching** - CloudFront reduces origin requests  
+✅ **DynamoDB on-demand** - No capacity planning  
+✅ **IAM & CloudFormation** - Always free  
+
+---
+
+### **Key Cost Drivers**
+
+1. **Lambda invocations** - Scales with user activity
+2. **DynamoDB reads/writes** - Depends on data access patterns
+3. **CloudFront data transfer** - Grows with traffic
+4. **API Gateway requests** - Tied to Lambda invocations
+
+**Cost Control Strategies:**
+- Use CloudFront caching to reduce API calls
+- Optimize DynamoDB queries (use indexes)
+- Implement client-side caching
+- Monitor with CloudWatch (free)
+
+---
+
+**Last Updated:** November 30, 2025

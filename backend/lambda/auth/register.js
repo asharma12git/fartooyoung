@@ -87,6 +87,9 @@ exports.handler = async (event) => {
       };
     }
     
+    // Record this attempt immediately
+    await recordAttempt(rateLimitKey, 3600000);
+    
     // ========================================================================
     // STEP 4: CHECK FOR EXISTING USER
     // ========================================================================
@@ -101,7 +104,6 @@ exports.handler = async (event) => {
     
     // Return error if user already exists
     if (existingUser.Item) {
-      await recordAttempt(rateLimitKey, 3600000); // Record failed attempt
       return {
         statusCode: 400,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -180,7 +182,6 @@ exports.handler = async (event) => {
     // STEP 10: RETURN SUCCESS RESPONSE
     // ========================================================================
     console.log('Registration successful');
-    await recordAttempt(rateLimitKey, 3600000); // Record successful attempt
     return {
       statusCode: 201,  // 201 Created - new resource was successfully created
       headers: { 'Access-Control-Allow-Origin': '*' },

@@ -20,6 +20,10 @@ Parameters:
     Description: ARN of the Secrets Manager secret containing application secrets
     NoEcho: true
 
+Conditions:
+  IsProduction: !Equals [!Ref Environment, production]
+  IsStaging: !Equals [!Ref Environment, staging]
+
 Globals:
   Function:
     Runtime: nodejs18.x
@@ -31,6 +35,13 @@ Globals:
         DONATIONS_TABLE: !Sub "${AWS::StackName}-donations-table"
         SES_FROM_EMAIL: admin@fartooyoung.org
         SES_REGION: !Ref AWS::Region
+        FRONTEND_URL: !If 
+          - IsProduction
+          - "https://fartooyoung.org"
+          - !If
+            - IsStaging
+            - "https://staging.fartooyoung.org"
+            - "http://localhost:5173"
   Api:
     Cors:
       AllowMethods: "'GET,POST,OPTIONS'"

@@ -71,6 +71,9 @@ exports.handler = async (event) => {
       };
     }
     
+    // Record this attempt immediately
+    await recordAttempt(rateLimitKey, 900000);
+    
     // ========================================================================
     // STEP 3: RETRIEVE USER FROM DATABASE
     // ========================================================================
@@ -84,7 +87,6 @@ exports.handler = async (event) => {
     
     // Check if user exists
     if (!user) {
-      await recordAttempt(rateLimitKey, 900000); // Record failed attempt
       return {
         statusCode: 401,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -157,7 +159,6 @@ exports.handler = async (event) => {
         ? 'Account locked for 15 minutes due to too many failed attempts. Use "Forgot Password" for immediate access.'
         : `Invalid credentials. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`;
       
-      await recordAttempt(rateLimitKey, 900000); // Record failed attempt
       return {
         statusCode: 401,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -193,7 +194,6 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 9: RETURN SUCCESS RESPONSE WITH TOKEN
     // ========================================================================
-    await recordAttempt(rateLimitKey, 900000); // Record successful attempt
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },

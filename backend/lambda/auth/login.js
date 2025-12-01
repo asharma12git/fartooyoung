@@ -11,6 +11,7 @@ const AWS = require('aws-sdk');      // AWS SDK for DynamoDB access
 const bcrypt = require('bcryptjs');  // Password hashing and comparison
 const jwt = require('jsonwebtoken'); // JWT token generation and verification
 const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
+const { checkRateLimit, recordAttempt, getClientIP } = require('../../utils/rateLimiter');
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -52,6 +53,25 @@ exports.handler = async (event) => {
     const email = rawEmail.toLowerCase().trim();  // Normalize email format
     
     // ========================================================================
+    // STEP 2.5: CHECK RATE LIMITING
+    // ========================================================================
+    const clientIP = getClientIP(event);
+    const rateLimitKey = `login:${clientIP}:${email}`;
+    
+    const rateCheck = await checkRateLimit(rateLimitKey, 5, 900000); // 5 attempts per 15 minutes
+    if (!rateCheck.allowed) {
+      const minutes = Math.ceil(rateCheck.remainingTime / 60);
+      return {
+        statusCode: 429,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ 
+          success: false, 
+          message: `Too many login attempts. Please try again in ${minutes} minute${minutes > 1 ? 's' : ''}.`
+        })
+      };
+    }
+    
+    // ========================================================================
     // STEP 3: RETRIEVE USER FROM DATABASE
     // ========================================================================
     // Get user record from DynamoDB using email as primary key
@@ -64,6 +84,7 @@ exports.handler = async (event) => {
     
     // Check if user exists
     if (!user) {
+      await recordAttempt(rateLimitKey, 900000); // Record failed attempt
       return {
         statusCode: 401,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -136,6 +157,7 @@ exports.handler = async (event) => {
         ? 'Account locked for 15 minutes due to too many failed attempts. Use "Forgot Password" for immediate access.'
         : `Invalid credentials. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`;
       
+      await recordAttempt(rateLimitKey, 900000); // Record failed attempt
       return {
         statusCode: 401,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -171,6 +193,7 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 9: RETURN SUCCESS RESPONSE WITH TOKEN
     // ========================================================================
+    await recordAttempt(rateLimitKey, 900000); // Record successful attempt
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },

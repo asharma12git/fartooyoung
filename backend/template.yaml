@@ -44,9 +44,14 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/login.handler
+      Environment:
+        Variables:
+          RATE_LIMIT_TABLE: !Sub "${AWS::StackName}-rate-limits"
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-rate-limits"
         - Version: '2012-10-17'
           Statement:
             - Effect: Allow
@@ -65,9 +70,14 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/register.handler
+      Environment:
+        Variables:
+          RATE_LIMIT_TABLE: !Sub "${AWS::StackName}-rate-limits"
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - DynamoDBCrudPolicy:
+            TableName: !Sub "${AWS::StackName}-rate-limits"
         - Version: '2012-10-17'
           Statement:
             - Effect: Allow
@@ -392,6 +402,21 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+
+  RateLimitsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-rate-limits"
+      AttributeDefinitions:
+        - AttributeName: limitKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: limitKey
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
 
 Outputs:
   ApiGatewayApi:

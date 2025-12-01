@@ -12,6 +12,7 @@ const bcrypt = require('bcryptjs');          // Password hashing library
 const { randomUUID } = require('crypto');    // Node.js built-in UUID generator
 const { getSecrets } = require('../utils/secrets');  // Secrets Manager utility
 const { generateVerificationToken, sendVerificationEmail } = require('../../utils/emailService');
+const { checkRateLimit, recordAttempt, getClientIP } = require('../../utils/rateLimiter');
 
 // ============================================================================
 // SERVICE INITIALIZATION
@@ -68,6 +69,25 @@ exports.handler = async (event) => {
     console.log('Parsed input:', { email, firstName, lastName });
     
     // ========================================================================
+    // STEP 3.5: CHECK RATE LIMITING
+    // ========================================================================
+    const clientIP = getClientIP(event);
+    const rateLimitKey = `register:${clientIP}:${email}`;
+    
+    const rateCheck = await checkRateLimit(rateLimitKey, 5, 3600000); // 5 attempts per hour
+    if (!rateCheck.allowed) {
+      const minutes = Math.ceil(rateCheck.remainingTime / 60);
+      return {
+        statusCode: 429,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ 
+          success: false, 
+          message: `Too many registration attempts. Please try again in ${minutes} minute${minutes > 1 ? 's' : ''}.`
+        })
+      };
+    }
+    
+    // ========================================================================
     // STEP 4: CHECK FOR EXISTING USER
     // ========================================================================
     // Check if user already exists to prevent duplicate accounts
@@ -81,6 +101,7 @@ exports.handler = async (event) => {
     
     // Return error if user already exists
     if (existingUser.Item) {
+      await recordAttempt(rateLimitKey, 3600000); // Record failed attempt
       return {
         statusCode: 400,
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -159,6 +180,7 @@ exports.handler = async (event) => {
     // STEP 10: RETURN SUCCESS RESPONSE
     // ========================================================================
     console.log('Registration successful');
+    await recordAttempt(rateLimitKey, 3600000); // Record successful attempt
     return {
       statusCode: 201,  // 201 Created - new resource was successfully created
       headers: { 'Access-Control-Allow-Origin': '*' },

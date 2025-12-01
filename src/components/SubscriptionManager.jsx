@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
-const SubscriptionManager = ({ userEmail }) => {
+const SubscriptionManager = ({ userEmail, onDonateClick }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [subscriptions, setSubscriptions] = useState([])
@@ -75,15 +75,23 @@ const SubscriptionManager = ({ userEmail }) => {
           <div className="w-1 h-6 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></div>
           <h3 className="text-lg sm:text-xl font-bold text-white">Subscriptions</h3>
         </div>
-        <button
-          onClick={handleManageSubscription}
-          disabled={isLoading}
-          className={`bg-gradient-to-r from-white/10 to-purple-500/20 hover:from-white/20 hover:to-purple-500/30 text-white/80 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 border border-white/20 text-sm ${
-            isLoading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          {isLoading ? 'Loading...' : 'Manage'}
-        </button>
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <button
+            onClick={() => onDonateClick(100, 'monthly')}
+            className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-2 sm:px-4 py-2 rounded-md font-medium transition-all duration-300 text-xs sm:text-sm whitespace-nowrap"
+          >
+            Donate Monthly
+          </button>
+          <button
+            onClick={handleManageSubscription}
+            disabled={isLoading}
+            className={`bg-gradient-to-r from-white/10 to-purple-500/20 hover:from-white/20 hover:to-purple-500/30 text-white/80 hover:text-white px-2 sm:px-4 py-2 rounded-lg font-medium transition-all duration-300 border border-white/20 text-xs sm:text-sm ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {isLoading ? 'Loading...' : 'Manage'}
+          </button>
+        </div>
       </div>
       
       {/* Active Subscriptions List */}
@@ -209,7 +217,8 @@ const SubscriptionManager = ({ userEmail }) => {
 }
 
 SubscriptionManager.propTypes = {
-  userEmail: PropTypes.string.isRequired
+  userEmail: PropTypes.string.isRequired,
+  onDonateClick: PropTypes.func.isRequired
 }
 
 export default SubscriptionManager

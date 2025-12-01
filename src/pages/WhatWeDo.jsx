@@ -220,11 +220,14 @@ const WhatWeDo = ({ onDonateClick }) => {
       <div className="relative h-screen overflow-hidden">
         {/* Background Image with Filters */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-no-repeat"
           style={{
             backgroundImage: `url(${heroImage})`,
             filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.6) contrast(1.0)',
-            backgroundPosition: 'center 30%'
+            backgroundPosition: 'center 30%',
+            backgroundSize: 'cover',
+            minHeight: '100%',
+            minWidth: '100%'
           }}
         ></div>
 

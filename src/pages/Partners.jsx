@@ -106,10 +106,14 @@ const Partners = ({ onDonateClick }) => {
       {/* Hero Section with Background Image */}
       <div className="relative h-screen overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-no-repeat"
           style={{ 
             backgroundImage: `url(${heroImage})`,
-            filter: 'sepia(25%) saturate(0.8) brightness(.65) contrast(1.0)'
+            filter: 'sepia(25%) saturate(0.8) brightness(.65) contrast(1.0)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            minHeight: '100%',
+            minWidth: '100%'
           }}
         ></div>
         

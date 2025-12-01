@@ -31,7 +31,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
         <div className="flex justify-between items-center h-32 sm:h-36 lg:h-40 py-4 sm:py-6 pt-6 sm:pt-8">
           <div className="flex items-center justify-start">
             <Link to="/" className="flex items-center">
-              <img src={logo} alt="Far Too Young" className="h-24 sm:h-32 md:h-40 lg:h-36 w-auto" />
+              <img src={logo} alt="Far Too Young" className="h-28 sm:h-32 md:h-40 lg:h-36 w-auto" />
             </Link>
           </div>
           
@@ -57,11 +57,11 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
           {/* Mobile Hamburger Button - Visible on mobile and tablet */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="xl:hidden flex items-center justify-center w-8 sm:w-10 md:w-12 lg:w-10 h-8 sm:h-10 md:h-12 lg:h-10 rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
+            className="xl:hidden flex items-center justify-center w-11 sm:w-10 md:w-12 lg:w-10 h-11 sm:h-10 md:h-12 lg:h-10 rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
             aria-label="Toggle mobile menu"
           >
             <svg 
-              className="w-5 sm:w-6 md:w-7 lg:w-6 h-5 sm:h-6 md:h-7 lg:h-6 text-white" 
+              className="w-6 sm:w-6 md:w-7 lg:w-6 h-6 sm:h-6 md:h-7 lg:h-6 text-white" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -120,14 +120,13 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
         <div className="xl:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm overflow-hidden">
           <div className="flex flex-col h-full pt-20 px-4 sm:px-6">
             {/* Mobile Menu Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-white text-xl font-medium">Menu</h2>
+            <div className="flex justify-end items-center mb-6">
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
+                className="w-11 h-11 flex items-center justify-center rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
                 aria-label="Close menu"
               >
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -166,7 +165,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
                 }}
                 className={`flex-1 backdrop-blur-sm border transition-all duration-300 shadow-lg text-sm px-4 py-3 rounded-lg font-medium ${
                   isLoggedIn 
-                    ? 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:text-white' 
+                    ? 'bg-gradient-to-br from-green-500/65 to-emerald-600/65 border-green-400/65 text-white hover:from-green-500/75 hover:to-emerald-600/75' 
                     : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:text-white'
                 }`}
               >

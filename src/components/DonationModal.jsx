@@ -11,14 +11,15 @@ import {
   isBot
 } from '../utils/security'
 
-const DonationModal = ({ onClose, user, initialAmount = null }) => {
-  const [donationType, setDonationType] = useState('one-time')
+const DonationModal = ({ onClose, user, initialAmount = null, initialType = null }) => {
+  const [donationType, setDonationType] = useState(initialType || 'one-time')
   const [amount, setAmount] = useState(initialAmount || 100)
   const [customAmount, setCustomAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('stripe')
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [showTerms, setShowTerms] = useState(false)
-  const [currentStep, setCurrentStep] = useState(initialAmount ? 2 : 1) // Skip to step 2 if amount provided
+  // Only skip to step 2 if amount provided AND no type specified (quick donate from other pages)
+  const [currentStep, setCurrentStep] = useState((initialAmount && !initialType) ? 2 : 1)
   const [donorInfo, setDonorInfo] = useState({
     firstName: '',
     lastName: '',
@@ -174,17 +175,17 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
             </div>
 
             {/* Image */}
-            <div className="flex-1 flex items-center justify-center min-h-[200px] sm:min-h-[300px] lg:min-h-[400px]">
+            <div className="flex-1 flex items-center justify-center min-h-[240px] sm:min-h-[340px] lg:min-h-[440px] mb-6 lg:mb-0">
               <img
                 src={donationImage}
                 alt="Children in need of protection"
-                className="w-full h-auto max-h-[200px] sm:max-h-[300px] lg:max-h-[400px] object-cover object-top rounded-lg"
+                className="w-full h-auto max-h-[240px] sm:max-h-[340px] lg:max-h-[440px] object-contain rounded-lg"
               />
             </div>
           </div>
 
           {/* Right Column - Donation Form */}
-          <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-white/20">
+          <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 lg:border-l border-white/20">
             <form onSubmit={handleSubmit} className="min-h-[400px] lg:min-h-[650px] flex flex-col justify-center">
               {currentStep === 1 ? (
                 <div className="flex flex-col justify-evenly flex-1 space-y-4 sm:space-y-0">
@@ -278,7 +279,7 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
                     )}
                   </div>
 
-                  <div className="mt-4 sm:mt-0">
+                  <div>
                     <label className="flex items-start">
                       <input
                         type="checkbox"
@@ -614,7 +615,8 @@ const DonationModal = ({ onClose, user, initialAmount = null }) => {
 DonationModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   user: PropTypes.object,
-  initialAmount: PropTypes.number
+  initialAmount: PropTypes.number,
+  initialType: PropTypes.string
 }
 
 export default DonationModal

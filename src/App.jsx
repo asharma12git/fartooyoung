@@ -23,6 +23,7 @@ function AppContent() {
   const [showAuth, setShowAuth] = useState(false)
   const [showDonation, setShowDonation] = useState(false)
   const [donationAmount, setDonationAmount] = useState(null)
+  const [donationType, setDonationType] = useState(null)
 
   // Global authentication state
   const [user, setUser] = useState(null)
@@ -73,6 +74,7 @@ function AppContent() {
   const handleDonationClose = () => {
     setShowDonation(false)
     setDonationAmount(null) // Reset amount
+    setDonationType(null) // Reset type
     setRefreshKey(prev => prev + 1) // Trigger dashboard refresh
   }
 
@@ -81,8 +83,9 @@ function AppContent() {
     localStorage.setItem('user', JSON.stringify(updatedUser))
   }
 
-  const handleDonateClick = (amount = null) => {
+  const handleDonateClick = (amount = null, type = null) => {
     setDonationAmount(amount)
+    setDonationType(type)
     setShowDonation(true)
   }
 
@@ -135,7 +138,7 @@ function AppContent() {
         />
       )}
       {showDonation && (
-        <DonationModal onClose={handleDonationClose} user={user} initialAmount={donationAmount} />
+        <DonationModal onClose={handleDonationClose} user={user} initialAmount={donationAmount} initialType={donationType} />
       )}
     </div>
   )

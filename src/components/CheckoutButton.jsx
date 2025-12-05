@@ -1,6 +1,22 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
+/**
+ * CheckoutButton - Stripe Checkout Integration
+ * 
+ * ARCHITECTURE NOTE:
+ * This component uses Stripe Checkout (hosted payment page), which redirects users
+ * to Stripe's secure checkout page. This approach does NOT require the Stripe
+ * publishable key (VITE_STRIPE_PUBLISHABLE_KEY) in the frontend.
+ * 
+ * The publishable key is only needed if using Stripe Elements (custom embedded
+ * payment forms with CardElement, PaymentElement, etc.).
+ * 
+ * Current flow:
+ * 1. Backend creates Stripe Checkout Session (using secret key from Secrets Manager)
+ * 2. Backend returns checkout_url
+ * 3. Frontend redirects to Stripe's hosted page: window.location.href = checkout_url
+ */
 const CheckoutButton = ({ amount, donorInfo, donationType, onError, loading, setLoading }) => {
   const [isProcessing, setIsProcessing] = useState(false)
 

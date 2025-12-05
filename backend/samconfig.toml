@@ -38,6 +38,6 @@ capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=production",
     "DynamoDBEndpoint=\"\"",
-    "SecretsManagerArn=YOUR_PRODUCTION_SECRETS_MANAGER_ARN"
+    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-production-secrets-tEmB4i"
 ]
 confirm_changeset = false

@@ -53,7 +53,7 @@ exports.handler = async (event) => {
     // STEP 2: VERIFY JWT TOKEN
     // ========================================================================
     // Verify token signature and decode payload
-    const decoded = jwt.verify(token, secrets.jwt_secret);
+    const decoded = jwt.verify(token, secrets.JWT_SECRET);
     
     // ========================================================================
     // STEP 3: UPDATE LOGOUT TIMESTAMP (Optional Tracking)

@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Far Too Young Authentication API
+# Updated: 2024-12-19 - Fixed secret key case consistency
 
 Parameters:
   Environment:
@@ -37,7 +38,7 @@ Globals:
         SES_REGION: !Ref AWS::Region
         FRONTEND_URL: !If 
           - IsProduction
-          - "https://fartooyoung.org"
+          - "https://app.fartooyoung.org"
           - !If
             - IsStaging
             - "https://staging.fartooyoung.org"

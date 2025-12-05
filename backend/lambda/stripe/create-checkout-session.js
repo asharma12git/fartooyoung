@@ -34,7 +34,7 @@ exports.handler = async (event) => {
     // Initialize Stripe with secrets from Secrets Manager
     if (!stripe) {
       const secrets = await getSecrets();
-      stripe = Stripe(secrets.stripe_secret_key);
+      stripe = Stripe(secrets.STRIPE_SECRET_KEY);
     }
 
     // ==========================================================================

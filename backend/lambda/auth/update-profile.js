@@ -66,7 +66,7 @@ exports.handler = async (event) => {
     let decoded
     try {
       // Verify token signature and decode payload
-      decoded = jwt.verify(token, secrets.jwt_secret)
+      decoded = jwt.verify(token, secrets.JWT_SECRET)
     } catch (error) {
       return {
         statusCode: 401,

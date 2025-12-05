@@ -73,7 +73,7 @@ exports.handler = async (event) => {
         try {
             // Verify token signature and decode payload
             const secrets = await getSecrets();
-            decoded = jwt.verify(token, secrets.jwt_secret);
+            decoded = jwt.verify(token, secrets.JWT_SECRET);
             console.log('Token verified successfully for:', decoded.email);
         } catch (err) {
             console.log('Token verification failed:', err.message);

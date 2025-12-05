@@ -189,7 +189,7 @@ exports.handler = async (event) => {
       lastName: user.lastName,
       name: user.name // Keep for backward compatibility
     };
-    const token = jwt.sign(tokenPayload, secrets.jwt_secret, { expiresIn: '24h' });
+    const token = jwt.sign(tokenPayload, secrets.JWT_SECRET, { expiresIn: '24h' });
     
     // ========================================================================
     // STEP 9: RETURN SUCCESS RESPONSE WITH TOKEN

@@ -37,7 +37,7 @@ Globals:
         SES_REGION: !Ref AWS::Region
         FRONTEND_URL: !If 
           - IsProduction
-          - "https://fartooyoung.org"
+          - "https://app.fartooyoung.org"
           - !If
             - IsStaging
             - "https://staging.fartooyoung.org"

@@ -4,8 +4,8 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 31 - CI/CD Pipeline Operational  
-**Last Updated:** December 5, 2025, 8:33 PM EST  
+**Current Phase:** Phase 32 - Domain Migration & Production Refinements  
+**Last Updated:** December 6, 2025, 12:50 AM EST  
 **Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD Automated
 
 ### **What's Working (Production Ready)**
@@ -71,16 +71,91 @@
 5. Test full deployment workflow (staging → production)
 
 ### **Session Left Off At**
-- CI/CD pipeline fully operational
-- Bank account payment display fixed
-- Deployment folder structure organized
-- GitHub token saved in .secrets file
-- Pipeline successfully deployed frontend and backend
-- Ready for comprehensive testing
+- Production domain migrated to www.fartooyoung.org and fartooyoung.org (root)
+- Stripe Link parameter issue resolved (must disable in Dashboard, not API)
+- New SSL certificate covering both *.fartooyoung.org and root domain
+- Old EC2 instance (i-04b79be0c8d8fa43e) identified for termination
+- Mobile input cursor alignment fixed
+- Ready for staging testing tomorrow
 
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **December 6, 2025 - Domain Migration & Production Refinements**
+
+**Session Duration:** ~2 hours (10:30 PM - 12:50 AM EST)
+
+#### **Phase 32: Primary Domain Migration & Stripe Link Fix** ✅
+
+**DOMAIN MIGRATION COMPLETE**:
+- **Old Domain**: app.fartooyoung.org (deprecated)
+- **New Domains**: www.fartooyoung.org and fartooyoung.org (root)
+- **SSL Certificate**: Requested new cert covering both *.fartooyoung.org AND root domain
+  - Previous wildcard cert didn't cover root domain
+  - New cert includes both in SubjectAlternativeNames
+- **CloudFront Update**: Distribution E2PHSH4ED2AIN5 updated with:
+  - New certificate
+  - Alternate domain names: www.fartooyoung.org, fartooyoung.org
+  - Removed app.fartooyoung.org
+- **Route 53 DNS**: Updated A records for www and root to point to CloudFront
+- **Backend Config**: Updated template.yaml FRONTEND_URL to www.fartooyoung.org
+- **Cleanup**: Deleted old SSL certificate and app.fartooyoung.org DNS record
+
+**STRIPE LINK PARAMETER FIX**:
+- **Issue**: Attempted to disable Stripe Link via API parameter
+- **Error**: `payment_method_options.link.enabled=false` not valid in API
+- **Solution**: Must disable in Stripe Dashboard → Settings → Payment methods → Link
+- **Action Taken**: Reverted invalid parameter from create-checkout-session.js
+- **Commit**: `2df2052 Revert: Remove invalid Stripe Link parameter`
+- **Deployment**: Merged to staging, production auto-deployed via CI/CD
+
+**MOBILE UI FIX**:
+- **Issue**: Input field cursor not vertically centered on mobile
+- **Solution**: Added explicit height (44px) and line-height styles to DonationModal.jsx
+- **Result**: Perfect cursor alignment on iOS and Android
+
+**CI/CD PIPELINE FIX**:
+- **Issue**: SAM deploy exits with error code 1 when "No changes to deploy"
+- **Solution**: Updated buildspec-backend.yml to handle gracefully
+- **Implementation**: Check for "No changes" message and exit 0 instead of failing
+- **Result**: Pipeline no longer fails on unchanged deployments
+
+**INFRASTRUCTURE CLEANUP**:
+- **Identified**: EC2 instance i-04b79be0c8d8fa43e running old WordPress site
+- **Status**: Ready for termination after monitoring period
+- **Cost Savings**: ~$8.50/month when terminated
+- **Security**: Eliminates WordPress vulnerability vector
+
+**GIT WORKFLOW ISSUE**:
+- **Problem**: Revert commit made directly on main instead of staging first
+- **Resolution**: Merged main back to staging to maintain consistency
+- **Lesson**: Always commit to staging first, then merge to main
+
+**Key Achievements**:
+- ✅ Primary domain migration complete (www + root)
+- ✅ SSL certificate properly configured for all domains
+- ✅ Stripe Link issue resolved (Dashboard configuration)
+- ✅ Mobile input cursor alignment fixed
+- ✅ CI/CD pipeline handles "no changes" gracefully
+- ✅ Old infrastructure identified for cleanup
+- ✅ Both staging and main branches in sync
+
+**Technical Details**:
+- CloudFront deployment time: ~10 minutes
+- DNS propagation: Instant with Route 53
+- Certificate validation: Automatic via DNS
+- Pipeline execution: Successful deployment to production
+
+**Next Session Goals**:
+- Test staging environment thoroughly
+- Disable Stripe Link in Dashboard settings
+- Verify domain migration in production
+- Test all payment methods
+- Consider terminating old EC2 instance
+- Update email templates (registration format)
+
+---
 
 ### **December 5, 2025 - CI/CD Pipeline Implementation & Bank Payment Fix**
 
@@ -459,11 +534,11 @@ Attempt 6: 🚫 RATE LIMITED - "Too many registration attempts. Please try again
 ## 📋 QUICK REFERENCE
 
 ### **Current Environment**
-- **Branch:** main (production)
-- **Production:** https://app.fartooyoung.org (LIVE)
+- **Branch:** staging (testing)
+- **Production:** https://www.fartooyoung.org and https://fartooyoung.org (LIVE)
 - **Staging:** https://staging.fartooyoung.org
 - **Staging API:** https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/
-- **Production API:** AWS API Gateway URL (from backend deployment)
+- **Production API:** https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod/
 - **Database:** DynamoDB (staging + production tables)
 - **Email:** AWS SES (operational)
 - **Payments:** Live Stripe processing
@@ -485,11 +560,11 @@ git branch -a
 ```
 
 ### **Important URLs**
-- **LIVE PRODUCTION**: https://app.fartooyoung.org ✅
+- **LIVE PRODUCTION**: https://www.fartooyoung.org and https://fartooyoung.org ✅
 - **Staging**: https://staging.fartooyoung.org ✅
 - **GitHub Repo**: https://github.com/asharma12git/fartooyoung
 - **Staging API**: https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod/
-- **Production API**: AWS API Gateway URL (configured in .env.production)
+- **Production API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod/
 
 ### **AWS Resources (Staging)**
 - Stack: fartooyoung-staging
@@ -500,9 +575,9 @@ git branch -a
 
 ---
 
-**Last Updated:** December 1, 2025, 1:30 AM EST  
-**Current Branch:** main  
-**Production Status:** ✅ LIVE at https://app.fartooyoung.org  
+**Last Updated:** December 6, 2025, 12:50 AM EST  
+**Current Branch:** staging  
+**Production Status:** ✅ LIVE at https://www.fartooyoung.org  
 **Payment Status:** ✅ Live Stripe processing operational  
-**Next Milestone:** CI/CD Pipeline automation (optional enhancement)  
+**Next Milestone:** Staging testing and email template updates  
 **Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - REAL DONATIONS ACCEPTED

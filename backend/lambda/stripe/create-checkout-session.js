@@ -136,6 +136,11 @@ exports.handler = async (event) => {
     // Create checkout session configuration object
     const sessionConfig = {
       payment_method_types: ['card', 'us_bank_account'],  // Accept cards, ACH bank transfers, Apple Pay, Google Pay
+      payment_method_options: {
+        link: {
+          enabled: false  // Disable Stripe Link
+        }
+      },
       line_items: [
         {
           price_data: {

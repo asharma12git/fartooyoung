@@ -15,7 +15,19 @@ phases:
       - cd backend
       - sam build
       - echo "Deploying to production..."
-      - sam deploy --config-env production --no-confirm-changeset
+      - sam deploy --config-env production --no-confirm-changeset 2>&1 | tee deploy.log || true
+      - |
+        if grep -q "No changes to deploy" deploy.log; then
+          echo "✅ No changes detected - stack is up to date"
+          exit 0
+        elif grep -q "Successfully created/updated stack" deploy.log; then
+          echo "✅ Stack deployed successfully"
+          exit 0
+        else
+          echo "❌ Deployment failed"
+          cat deploy.log
+          exit 1
+        fi
 
 artifacts:
   files:

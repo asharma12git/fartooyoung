@@ -29,7 +29,7 @@ echo "✅ Found CloudFront Distribution: $CLOUDFRONT_ID"
 # Deploy the pipeline stack
 echo "📦 Deploying CloudFormation stack..."
 aws cloudformation deploy \
-    --template-file pipeline.yml \
+    --template-file deployment/production/pipeline.yml \
     --stack-name fartooyoung-production-pipeline \
     --parameter-overrides \
         GitHubToken=$GITHUB_TOKEN \

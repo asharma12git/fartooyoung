@@ -29,7 +29,8 @@ export GITHUB_TOKEN=your_github_personal_access_token
 
 ### 2. Deploy the Pipeline
 ```bash
-./deploy-pipeline.sh
+cd /Users/avinashsharma/WebstormProjects/fartooyoung
+./deployment/production/deploy-pipeline.sh
 ```
 
 This will create:
@@ -68,16 +69,12 @@ Staging remains manual:
 
 ### Frontend
 ```bash
-npm run build -- --mode staging
-aws s3 sync dist/ s3://fartooyoung-frontend-staging --delete
-aws cloudfront create-invalidation --distribution-id EYHMCS1M0XJX1 --paths "/*"
+./deployment/staging/deploy-frontend.sh
 ```
 
 ### Backend
 ```bash
-cd backend
-sam build
-sam deploy --config-env staging
+./deployment/staging/deploy-backend.sh
 ```
 
 ## Monitoring

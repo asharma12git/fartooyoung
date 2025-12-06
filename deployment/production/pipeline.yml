@@ -87,7 +87,7 @@ Resources:
             Value: !Ref CloudFrontDistributionId
       Source:
         Type: CODEPIPELINE
-        BuildSpec: buildspec-frontend.yml
+        BuildSpec: deployment/production/buildspec-frontend.yml
 
   # CodeBuild Project for Backend
   BackendBuildProject:
@@ -103,7 +103,7 @@ Resources:
         Image: aws/codebuild/standard:7.0
       Source:
         Type: CODEPIPELINE
-        BuildSpec: buildspec-backend.yml
+        BuildSpec: deployment/production/buildspec-backend.yml
 
   # CodePipeline Service Role
   CodePipelineServiceRole:

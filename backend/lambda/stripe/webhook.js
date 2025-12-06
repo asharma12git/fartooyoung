@@ -101,6 +101,61 @@ exports.handler = async (event) => {
         }
       }
 
+      // Retrieve payment method details
+      let paymentMethodDetails = { type: 'unknown' }
+      try {
+        if (session.payment_intent) {
+          // Retrieve PaymentIntent
+          const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
+          
+          console.log('PaymentIntent retrieved:', paymentIntent.id)
+          console.log('Latest charge:', paymentIntent.latest_charge)
+          console.log('Payment method:', paymentIntent.payment_method)
+          
+          // Try to get details from charge first (for card payments)
+          if (paymentIntent.latest_charge) {
+            const chargeId = typeof paymentIntent.latest_charge === 'string' 
+              ? paymentIntent.latest_charge 
+              : paymentIntent.latest_charge.id
+            
+            const charge = await stripe.charges.retrieve(chargeId)
+            if (charge.payment_method_details) {
+              paymentMethodDetails = charge.payment_method_details
+              console.log('Got payment details from charge:', paymentMethodDetails.type)
+            }
+          } 
+          // For bank accounts, charge doesn't exist yet - get from payment method
+          else if (paymentIntent.payment_method) {
+            const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method)
+            console.log('Retrieved payment method:', paymentMethod.type)
+            
+            if (paymentMethod.type === 'us_bank_account') {
+              paymentMethodDetails = {
+                type: 'us_bank_account',
+                us_bank_account: {
+                  bank_name: paymentMethod.us_bank_account.bank_name,
+                  last4: paymentMethod.us_bank_account.last4,
+                  account_type: paymentMethod.us_bank_account.account_type
+                }
+              }
+            } else if (paymentMethod.type === 'card') {
+              paymentMethodDetails = {
+                type: 'card',
+                card: {
+                  brand: paymentMethod.card.brand,
+                  last4: paymentMethod.card.last4
+                }
+              }
+            }
+            console.log('Got payment details from payment method:', paymentMethodDetails.type)
+          }
+        }
+      } catch (err) {
+        console.error('Error retrieving payment method:', err.message)
+      }
+      
+      console.log('Final payment method details:', JSON.stringify(paymentMethodDetails))
+
       // Create unique donation ID
       const donationId = `checkout_${session.id}`
       
@@ -110,7 +165,8 @@ exports.handler = async (event) => {
         donationId: donationId,
         amount: session.amount_total / 100, // Convert from cents to dollars
         type: session.mode === 'subscription' ? 'monthly' : 'one-time',
-        paymentMethod: 'stripe-checkout',
+        paymentMethod: paymentMethodDetails.type || 'card',
+        paymentMethodDetails: paymentMethodDetails,
         email: session.customer_email || session.metadata?.donor_email,
         name: session.metadata?.donor_name || 'Anonymous',
         status: 'completed',
@@ -145,6 +201,17 @@ exports.handler = async (event) => {
       if (invoice.subscription) {
         console.log('Subscription payment succeeded:', invoice.id)
 
+        // Retrieve payment method details from charge
+        let paymentMethodDetails = { type: 'unknown' }
+        try {
+          if (invoice.charge) {
+            const charge = await stripe.charges.retrieve(invoice.charge)
+            paymentMethodDetails = charge.payment_method_details
+          }
+        } catch (err) {
+          console.error('Error retrieving payment method:', err.message)
+        }
+
         // Create donation record for recurring payment
         const donationId = `invoice_${invoice.id}`
         
@@ -154,7 +221,8 @@ exports.handler = async (event) => {
           donationId: donationId,
           amount: invoice.amount_paid / 100, // Convert from cents to dollars
           type: 'monthly',
-          paymentMethod: 'stripe-subscription',
+          paymentMethod: paymentMethodDetails.type || 'card',
+          paymentMethodDetails: paymentMethodDetails,
           email: invoice.customer_email,
           name: invoice.customer_name || 'Subscriber',
           status: 'completed',

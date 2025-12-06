@@ -199,6 +199,34 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
   if (!user) return null
 
+  // Helper function to format payment method display with icon
+  const formatPaymentMethod = (donation) => {
+    const details = donation.paymentMethodDetails
+    if (!details || !details.type) return { iconType: 'card', text: donation.paymentMethod || 'Unknown' }
+
+    switch (details.type) {
+      case 'card':
+        const cardBrand = details.card?.brand?.charAt(0).toUpperCase() + details.card?.brand?.slice(1) || 'Card'
+        return { 
+          iconType: 'card',
+          text: `${cardBrand} ••••${details.card?.last4 || '****'}`,
+          wallet: details.card?.wallet?.type
+        }
+      
+      case 'us_bank_account':
+        return { 
+          iconType: 'bank',
+          text: `${details.us_bank_account?.bank_name || 'Bank Account'} ••••${details.us_bank_account?.last4 || '****'}`
+        }
+      
+      default:
+        return { 
+          iconType: 'unknown',
+          text: details.type?.replace(/_/g, ' ').toUpperCase() || 'Unknown'
+        }
+    }
+  }
+
   // Calculate real stats from user's donations
   const userStats = {
     totalDonations: userDonations.length,
@@ -1106,6 +1134,35 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                                     timeZoneName: 'short'
                                   }) : 'Date not available'}
                                 </p>
+                              </div>
+                              <div className="flex items-center space-x-2 mt-1">
+                                {(() => {
+                                  const paymentMethod = formatPaymentMethod(donation)
+                                  return (
+                                    <>
+                                      {paymentMethod.iconType === 'bank' ? (
+                                        <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                                        </svg>
+                                      ) : paymentMethod.iconType === 'card' ? (
+                                        <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                      ) : (
+                                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                        </svg>
+                                      )}
+                                      <p className="text-white/40 text-xs">{paymentMethod.text}</p>
+                                      {paymentMethod.wallet === 'apple_pay' && (
+                                        <span className="text-xs bg-black/30 text-white/70 px-2 py-0.5 rounded"> Pay</span>
+                                      )}
+                                      {paymentMethod.wallet === 'google_pay' && (
+                                        <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">G Pay</span>
+                                      )}
+                                    </>
+                                  )
+                                })()}
                               </div>
                             </div>
                           </div>

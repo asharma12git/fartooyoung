@@ -334,11 +334,12 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                           setDonorInfo({ ...donorInfo, firstName: e.target.value })
                           setValidationErrors({ ...validationErrors, firstName: '' })
                         }}
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                        className={`w-full px-3 sm:px-4 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
                           validationErrors.firstName 
                             ? 'border-red-400 focus:ring-red-500/50 focus:border-red-500' 
                             : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
                         }`}
+                        style={{ height: '44px', lineHeight: '44px' }}
                         required
                       />
                       {validationErrors.firstName && (
@@ -356,11 +357,12 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                           setDonorInfo({ ...donorInfo, lastName: e.target.value })
                           setValidationErrors({ ...validationErrors, lastName: '' })
                         }}
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                        className={`w-full px-3 sm:px-4 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
                           validationErrors.lastName 
                             ? 'border-red-400 focus:ring-red-500/50 focus:border-red-500' 
                             : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
                         }`}
+                        style={{ height: '44px', lineHeight: '44px' }}
                         required
                       />
                       {validationErrors.lastName && (
@@ -380,11 +382,12 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                         setDonorInfo({ ...donorInfo, email: e.target.value })
                         setValidationErrors({ ...validationErrors, email: '' })
                       }}
-                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                      className={`w-full px-3 sm:px-4 bg-white/10 backdrop-blur-sm border rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 transition-all duration-300 ${
                         validationErrors.email 
                           ? 'border-red-400 focus:ring-red-500/50 focus:border-red-500' 
                           : 'border-white/30 focus:ring-orange-500/50 focus:border-orange-500/50'
                       }`}
+                      style={{ height: '44px', lineHeight: '44px' }}
                       required
                     />
                     {validationErrors.email && (

@@ -23,9 +23,18 @@ This CI/CD pipeline automatically deploys to production when code is merged to t
 ## Setup Instructions
 
 ### 1. Set GitHub Token
+
+**Option A: Use the saved token (recommended)**
+```bash
+source .secrets
+```
+
+**Option B: Set manually**
 ```bash
 export GITHUB_TOKEN=your_github_personal_access_token
 ```
+
+**Note**: The GitHub token is saved in `.secrets` file (git-ignored) for convenience.
 
 ### 2. Deploy the Pipeline
 ```bash

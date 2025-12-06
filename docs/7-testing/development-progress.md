@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 30 - Secret Key Standardization Complete  
-**Last Updated:** December 4, 2025, 11:50 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ Secrets Standardized
+**Current Phase:** Phase 31 - CI/CD Pipeline Operational  
+**Last Updated:** December 5, 2025, 8:33 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD Automated
 
 ### **What's Working (Production Ready)**
 
@@ -31,6 +31,8 @@
 - Subscription management portal
 - Webhook processing for payment events
 - Subscription cancellation tracking
+- Bank account payment support (ACH)
+- Proper payment method display (cards, bank accounts, wallets)
 
 ✅ **User Dashboard**
 - Donation history with filters
@@ -38,6 +40,7 @@
 - Profile settings (name, email)
 - Password change functionality
 - Responsive design (mobile + desktop)
+- Payment method icons (card, bank, Google Pay, Apple Pay)
 
 ✅ **Infrastructure**
 - Backend: AWS Lambda + API Gateway (staging + production deployed)
@@ -49,34 +52,124 @@
 - Production URL: https://app.fartooyoung.org (LIVE)
 - Live Stripe payments operational
 
+✅ **CI/CD Pipeline (NEW)**
+- AWS CodePipeline for automated deployments
+- Separate CodeBuild projects for frontend and backend
+- GitHub webhook integration (auto-deploys on push to main)
+- Automated frontend build and S3 deployment
+- Automated backend SAM deployment
+- CloudFront cache invalidation
+- IAM roles with proper permissions
+
 ### **What's Next - IMMEDIATE**
 
-⏳ **CI/CD Pipeline Automation** (Next Session - MEDIUM PRIORITY)
-1. Set up AWS CodePipeline for automated deployments
-2. Configure CodeBuild for frontend (S3 + CloudFront)
-3. Configure CodeBuild for backend (SAM deployment)
-4. Set up GitHub integration for automatic deployments
-5. Implement blue-green deployment strategy
-6. Configure automated testing in pipeline
-7. Set up CloudWatch alarms and monitoring
-
-✅ **Production Infrastructure Complete**
-- Production backend deployed with live Stripe keys
-- CloudFront distribution with SSL certificate
-- Route 53 DNS configured for app.fartooyoung.org
-- Real money processing operational
+⏳ **Testing & Monitoring** (Next Session - HIGH PRIORITY)
+1. Test bank account payments in production
+2. Verify all payment methods display correctly
+3. Set up CloudWatch dashboards for monitoring
+4. Configure alerts for pipeline failures
+5. Test full deployment workflow (staging → production)
 
 ### **Session Left Off At**
-- Secret key standardization complete (all uppercase)
-- Both staging and production deployed with consistent secrets
-- Removed redundant FRONTEND_URL from Secrets Manager
-- All changes committed to git (staging → main)
-- Ready for thorough staging testing tomorrow
-- Next: Test staging thoroughly, then test production, implement CI/CD
+- CI/CD pipeline fully operational
+- Bank account payment display fixed
+- Deployment folder structure organized
+- GitHub token saved in .secrets file
+- Pipeline successfully deployed frontend and backend
+- Ready for comprehensive testing
 
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **December 5, 2025 - CI/CD Pipeline Implementation & Bank Payment Fix**
+
+**Session Duration:** ~3 hours (5:00 PM - 8:33 PM EST)
+
+#### **Phase 31: CI/CD Pipeline & Payment Method Display** ✅
+
+**BANK ACCOUNT PAYMENT FIX**:
+- **Issue**: Bank account payments showed "Unknown" with card icon
+- **Root Cause**: Webhook couldn't get payment details from charge (charge doesn't exist yet for ACH)
+- **Solution**: Retrieve payment method directly from PaymentIntent
+- **Files Modified**:
+  - `backend/lambda/stripe/webhook.js` - Added PaymentMethod retrieval
+  - `src/pages/DonorDashboard.jsx` - Fixed icon rendering logic
+- **Result**: Bank accounts now show proper bank icon and bank name
+
+**CI/CD PIPELINE IMPLEMENTATION**:
+- **Created Pipeline Infrastructure**:
+  - `deployment/production/pipeline.yml` - CloudFormation template
+  - `deployment/production/deploy-pipeline.sh` - Deployment script
+  - `deployment/production/README.md` - Complete documentation
+  - `buildspec-frontend.yml` - Frontend build configuration
+  - `buildspec-backend.yml` - Backend build configuration
+
+- **Pipeline Components**:
+  - CodePipeline: `fartooyoung-production-pipeline`
+  - CodeBuild Projects: Frontend and Backend
+  - S3 Artifacts Bucket: `fartooyoung-pipeline-artifacts-{account-id}`
+  - IAM Roles: CodeBuild and CodePipeline service roles
+  - GitHub Integration: Webhook on main branch
+
+- **Pipeline Stages**:
+  1. **Source**: Pulls code from GitHub main branch
+  2. **BuildFrontend**: Builds React app, deploys to S3, invalidates CloudFront
+  3. **BuildBackend**: Builds with SAM, deploys Lambda functions
+
+- **Deployment Workflow**:
+  - Staging: Manual deployment using scripts in `deployment/staging/`
+  - Production: Automated via pipeline on merge to main
+
+**PROJECT ORGANIZATION**:
+- Created `deployment/` folder structure:
+  ```
+  deployment/
+  ├── staging/
+  │   ├── deploy-frontend.sh
+  │   └── deploy-backend.sh
+  └── production/
+      ├── pipeline.yml
+      ├── deploy-pipeline.sh
+      └── README.md
+  ```
+- Buildspec files in root (required by CodeBuild)
+- GitHub token saved in `.secrets` file (git-ignored)
+
+**TROUBLESHOOTING & FIXES**:
+- Fixed buildspec file paths (moved to root for CodeBuild)
+- Added IAMFullAccess to CodeBuild role for SAM deployments
+- Fixed S3 bucket name in staging deploy script
+- Resolved CloudFormation rollback issues
+
+**TESTING**:
+- ✅ Pipeline successfully deployed frontend to S3
+- ✅ Pipeline successfully deployed backend with SAM
+- ✅ CloudFront cache invalidation working
+- ✅ Bank account payments displaying correctly
+- ✅ All payment methods (card, bank, wallets) showing proper icons
+
+**Technical Details**:
+- GitHub Token: Stored in `.secrets` file (git-ignored)
+- CloudFront Distribution: E2PHSH4ED2AIN5 (production)
+- Pipeline URL: https://console.aws.amazon.com/codesuite/codepipeline/pipelines/fartooyoung-production-pipeline/view
+
+**Key Achievements**:
+- ✅ Fully automated production deployments
+- ✅ Bank account payment support complete
+- ✅ Clean deployment folder structure
+- ✅ Comprehensive documentation
+- ✅ Staging remains manual (cost-effective)
+- ✅ Production auto-deploys on git merge
+
+**Next Session Goals**:
+- Test bank account payments end-to-end in production
+- Verify all payment method displays
+- Set up CloudWatch monitoring and alerts
+- Test complete deployment workflow
+- Consider blue-green deployment strategy
+
+---
 
 ### **December 4, 2025 - Secret Key Standardization & Deployment Workflow**
 

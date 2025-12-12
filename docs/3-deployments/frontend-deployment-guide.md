@@ -2,7 +2,7 @@
 
 This guide documents the step-by-step process to deploy the Far Too Young frontend to AWS using the AWS CLI.
 
-> **Note:** This guide uses **staging environment** values as examples. For production deployment, follow the same steps but replace staging-specific values (domain, bucket names, etc.) with production equivalents.
+> **Status:** Production system is LIVE at https://www.fartooyoung.org and https://fartooyoung.org with automated CI/CD pipeline operational.
 
 ## AWS Services Used
 
@@ -19,14 +19,15 @@ This guide documents the step-by-step process to deploy the Far Too Young fronte
 
 ## Environment-Specific Values
 
-This guide uses staging values. Replace with production values as needed:
-
-| Resource        | Staging                            | Production                                  |
+| Resource        | Staging                            | Production (LIVE)                          |
 |-----------------|------------------------------------|--------------------------------------------|
-| Domain          | `staging.fartooyoung.org`          | `fartooyoung.org` or `www.fartooyoung.org` |
-| S3 Bucket       | `fartooyoung-staging-frontend`     | `fartooyoung-production-frontend`          |
-| Build Command   | `npm run build --mode staging`     | `npm run build --mode production`          |
-| Deploy Script   | `deploy-staging.sh`                | `deploy-production.sh`                     |
+| Domain          | `staging.fartooyoung.org`          | `www.fartooyoung.org` & `fartooyoung.org`  |
+| S3 Bucket       | `fartooyoung-staging-frontend`     | `fartooyoung-frontend-production`          |
+| CloudFront ID   | `EYHMCS1M0XJX1`                    | `E2PHSH4ED2AIN5`                           |
+| Build Command   | `npm run build -- --mode staging`  | `npm run build -- --mode production`      |
+| SSL Certificate | Staging cert ARN                   | `*.fartooyoung.org` wildcard cert         |
+
+**Production Status:** ✅ LIVE with automated CI/CD pipeline and global CDN distribution.
 
 ## Deployment Steps Overview
 
@@ -319,14 +320,66 @@ chmod +x deploy-staging.sh
 
 ---
 
+## Automated CI/CD Deployment (Production)
+
+The production environment uses automated deployment via AWS CodePipeline. Manual deployment is still available but not recommended for production.
+
+### Pipeline Overview
+
+**Trigger:** Push to `main` branch on GitHub
+**Pipeline:** `fartooyoung-production-pipeline`
+**Build Project:** `fartooyoung-frontend-production`
+
+### Pipeline Configuration Files
+
+- **`buildspec-frontend.yml`** - Build instructions for CodeBuild
+- **`pipeline.yml`** - CloudFormation template that creates the CI/CD infrastructure
+- **`.secrets`** - GitHub token for pipeline authentication
+
+### Automated Deployment Flow
+
+```bash
+git push origin main  # Triggers automatic deployment
+```
+
+**What happens:**
+1. CodePipeline detects GitHub push
+2. CodeBuild runs `buildspec-frontend.yml`:
+   ```bash
+   npm run build -- --mode production                    # Build React app
+   aws s3 sync dist/ s3://fartooyoung-frontend-production --delete  # Upload to S3
+   aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"  # Clear cache
+   ```
+3. Website updated automatically with zero downtime
+4. Global CDN cache refreshed
+
+### Manual Override (Emergency)
+
+If you need to deploy manually to production:
+
+```bash
+npm run build -- --mode production
+aws s3 sync dist/ s3://fartooyoung-frontend-production --delete
+aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
+```
+
+---
+
 ## Key Resources
 
+### Production (LIVE)
+- **S3 Bucket:** fartooyoung-frontend-production
+- **CloudFront Distribution ID:** E2PHSH4ED2AIN5
+- **Custom Domains:** www.fartooyoung.org, fartooyoung.org
+- **SSL Certificate:** Wildcard `*.fartooyoung.org` + root domain
+- **Route 53 Hosted Zone ID:** Z10244882P83IUVL8IHLM
+
+### Staging
 - **S3 Bucket:** fartooyoung-staging-frontend
 - **CloudFront Distribution ID:** EYHMCS1M0XJX1
 - **CloudFront Domain:** db9gpqewllpi7.cloudfront.net
 - **Custom Domain:** staging.fartooyoung.org
 - **SSL Certificate ARN:** arn:aws:acm:us-east-1:538781441544:certificate/98a7fa0a-8462-45c4-9009-d26411fe89a1
-- **Route 53 Hosted Zone ID:** Z10244882P83IUVL8IHLM
 
 ---
 

@@ -2,11 +2,11 @@
 
 This guide documents the step-by-step process to deploy the Far Too Young backend to AWS using AWS SAM (Serverless Application Model).
 
-> **Note:** This guide uses **staging environment** values as examples. For production deployment, follow the same steps but use `--config-env production` and update production-specific values in `samconfig.toml`.
+> **Status:** Production system is LIVE at https://www.fartooyoung.org with automated CI/CD pipeline operational.
 
 ## AWS Services Used
 
-- **Lambda**: Serverless compute for 18 API functions
+- **Lambda**: Serverless compute for 17 API functions
 - **API Gateway**: REST API with CORS configuration
 - **DynamoDB**: NoSQL database for users, donations, and rate limits
 - **Secrets Manager**: Secure storage for JWT secrets and Stripe API keys
@@ -25,17 +25,16 @@ This guide documents the step-by-step process to deploy the Far Too Young backen
 
 ## Environment-Specific Values
 
-This guide uses staging values. Replace with production values as needed:
-
-| Resource        | Staging                              | Production                                |
+| Resource        | Staging                              | Production (LIVE)                         |
 |-----------------|--------------------------------------|-------------------------------------------|
 | Stack Name      | `fartooyoung-staging`                | `fartooyoung-production`                  |
 | S3 Bucket       | `fartooyoung-backend-staging`        | `fartooyoung-backend-production`          |
 | Secrets Name    | `fartooyoung-staging-secrets`        | `fartooyoung-production-secrets`          |
 | Deploy Command  | `sam deploy --config-env staging`    | `sam deploy --config-env production`      |
-| API Domain      | `staging-api.fartooyoung.org` (opt)  | `api.fartooyoung.org` (optional)          |
+| API URL         | `https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com` | `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com` |
+| Secrets ARN     | `fartooyoung-staging-secrets-BjIpQD` | `fartooyoung-production-secrets-tEmB4i`   |
 
-**Note:** Production configuration already exists in `samconfig.toml` - just update the Secrets Manager ARN.
+**Production Status:** ✅ LIVE and accepting real donations with automated CI/CD pipeline.
 
 ## Deployment Steps Overview
 
@@ -88,7 +87,7 @@ capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=production",
     "DynamoDBEndpoint=\"\"",
-    "SecretsManagerArn=YOUR_PRODUCTION_SECRETS_MANAGER_ARN"
+    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-production-secrets-tEmB4i"
 ]
 ```
 
@@ -284,6 +283,51 @@ This watches for file changes and auto-deploys (useful for development).
 
 ---
 
+## Automated CI/CD Deployment (Production)
+
+The production environment uses automated deployment via AWS CodePipeline. Manual deployment is still available but not recommended for production.
+
+### Pipeline Overview
+
+**Trigger:** Push to `main` branch on GitHub
+**Pipeline:** `fartooyoung-production-pipeline`
+**Build Project:** `fartooyoung-backend-production`
+
+### Pipeline Configuration Files
+
+- **`buildspec-backend.yml`** - Build instructions for CodeBuild
+- **`pipeline.yml`** - CloudFormation template that creates the CI/CD infrastructure
+- **`.secrets`** - GitHub token for pipeline authentication
+
+### Automated Deployment Flow
+
+```bash
+git push origin main  # Triggers automatic deployment
+```
+
+**What happens:**
+1. CodePipeline detects GitHub push
+2. CodeBuild runs `buildspec-backend.yml`:
+   ```bash
+   cd backend
+   sam build                         # Package Lambda functions
+   sam deploy --config-env production # Deploy to production
+   ```
+3. All 17 Lambda functions updated automatically
+4. Zero downtime deployment
+
+### Manual Override (Emergency)
+
+If you need to deploy manually to production:
+
+```bash
+cd backend
+sam build
+sam deploy --config-env production --force-upload
+```
+
+---
+
 ## Deploying to Production
 
 Update `samconfig.toml` with production Secrets Manager ARN, then:
@@ -296,7 +340,7 @@ sam build && sam deploy --config-env production
 
 ## Resources Created
 
-### Lambda Functions (18 total)
+### Lambda Functions (17 total)
 - **Auth**: Login, Register, Logout, ForgotPassword, ResetPassword, UpdateProfile, ChangePassword, VerifyEmail, ResendVerification
 - **Donations**: CreateDonation, GetDonations
 - **Stripe**: CreateCheckoutSession, CreatePaymentIntent, CreatePortalSession, ListSubscriptions, StripeWebhook

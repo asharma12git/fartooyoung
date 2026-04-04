@@ -21,7 +21,7 @@ const Footer = () => {
             <div className="text-center">
               <h3 className="text-sm font-medium text-gray-300 mb-4 tracking-wide">ADDRESS</h3>
               <div className="space-y-1 text-gray-400 text-xs">
-                <p>Far Too Young Inc.</p>
+                <p>Far Too Young, Inc.</p>
                 <p>United States</p>
               </div>
             </div>
@@ -73,7 +73,7 @@ const Footer = () => {
             <div className="text-center">
               <h3 className="text-base font-medium text-gray-300 mb-6 tracking-wide">ADDRESS</h3>
               <div className="space-y-1 text-gray-400 text-xs text-center">
-                <p>Far Too Young Inc.</p>
+                <p>Far Too Young, Inc.</p>
                 <p>United States</p>
               </div>
             </div>

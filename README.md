@@ -1,164 +1,77 @@
-# Far Too Young - Child Marriage Prevention Organization
+# Far Too Young - Child Marriage Prevention Platform
 
-A responsive React application built with Vite and Tailwind CSS for an organization focused on ending child marriage globally.
-
-## Features
-
-- **Responsive Design**: Mobile-first approach with dark theme
-- **4 Core Pages**: Child Marriage, Founder & Team, Partners, What We Do
-- **Authentication Modal**: Sign up/Login functionality
-- **Donation System**: One-time and recurring donation options with Stripe/PayPal integration mockups
-- **Modern UI**: Clean, professional design with Tailwind CSS
+A full-stack serverless web application for an organization focused on ending child marriage globally. Live at [www.fartooyoung.org](https://www.fartooyoung.org).
 
 ## Tech Stack
 
-- **Frontend**: React 18, Vite, Tailwind CSS
-- **Routing**: React Router DOM
-- **Styling**: Tailwind CSS with custom dark theme
+- **Frontend**: React 18, Vite, Tailwind CSS, React Router
+- **Backend**: 17 AWS Lambda functions (Node.js 18) via API Gateway
+- **Database**: DynamoDB (3 tables: Users, Donations, Rate Limits)
+- **Payments**: Stripe (live checkout, subscriptions, webhooks)
+- **Email**: AWS SES (verification, password reset, notifications)
+- **Infrastructure**: CloudFront CDN, S3, Route 53, Secrets Manager, SAM
 
-## Quick Start
+## Features
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
-
-3. **Build for Production**
-   ```bash
-   npm run build
-   ```
-
-## Testing
-
-See `test-credentials.md` for login credentials and testing instructions.
+- User authentication with email verification
+- One-time and recurring donations via Stripe
+- User dashboard (donation history, subscription management, profile settings)
+- Rate limiting and bot protection
+- Mobile-responsive dark theme UI
+- 5 public pages: Child Marriage, Founder & Team, Partners, What We Do, Home
 
 ## Project Structure
 
 ```
-src/
-├── components/
-│   ├── Header.jsx          # Navigation with auth/donate buttons
-│   ├── AuthModal.jsx       # Login/signup modal
-│   └── DonationModal.jsx   # Donation processing modal
-├── pages/
-│   ├── ChildMarriage.jsx   # Main landing page
-│   ├── FounderTeam.jsx     # Team information
-│   ├── Partners.jsx        # Partner organizations
-│   └── WhatWeDo.jsx        # Programs and impact
-├── App.jsx                 # Main app component with routing
-├── main.jsx               # React entry point
-└── index.css              # Tailwind imports and global styles
+fartooyoung/
+├── src/                        # React frontend (components, pages)
+├── backend/
+│   ├── lambda/                 # 17 Lambda functions
+│   ├── template.yaml           # SAM infrastructure definition
+│   └── samconfig.toml          # Deployment targets per environment
+├── deployment/                 # CI/CD pipeline and deploy scripts
+├── docs/                       # System design documentation
+├── .env.local                  # Local dev config
+├── .env.staging                # Staging config
+├── .env.production             # Production config
+├── buildspec-frontend.yml      # CI/CD frontend build steps
+└── buildspec-backend.yml       # CI/CD backend build steps
 ```
 
-## AWS Architecture (Future Deployment)
+## Environments
 
-### Serverless Architecture Components
+| Environment | Frontend | Backend | Stripe |
+|-------------|----------|---------|--------|
+| Local | localhost:5173 | SAM local :3001 + DynamoDB Docker :8000 | Test keys |
+| Staging | staging.fartooyoung.org | AWS API Gateway (staging) | Test keys |
+| Production | www.fartooyoung.org | AWS API Gateway (production) | Live keys |
 
-1. **CloudFront Distribution**
-   - Global CDN for static asset delivery
-   - SSL/TLS termination
-   - Caching strategy for optimal performance
+## Quick Start (Local)
 
-2. **Lambda Functions**
-   - Authentication API endpoints
-   - Donation processing logic
-   - Data validation and business logic
-   - Integration with payment gateways
+```bash
+# Terminal 1: Database
+docker run -p 8000:8000 amazon/dynamodb-local
 
-3. **DynamoDB Tables**
-   ```
-   Users Table:
-   - PK: userId
-   - email, name, createdAt, lastLogin
-   
-   Donations Table:
-   - PK: donationId
-   - userId, amount, type (one-time/recurring), paymentMethod
-   - status, createdAt, processedAt
-   
-   Transactions Table:
-   - PK: transactionId
-   - donationId, stripePaymentId, status, amount
-   - createdAt, completedAt
-   ```
+# Terminal 2: Backend
+cd backend && sam local start-api --port 3001
 
-4. **Route 53**
-   - Domain management
-   - DNS routing
-   - Health checks
+# Terminal 3: Frontend
+npm install && npm run dev
+```
 
-5. **AWS Secrets Manager**
-   - Stripe API keys
-   - PayPal credentials
-   - JWT signing secrets
-   - Database connection strings
+## Deployment
 
-### Data Strategy
+- **Staging**: Manual deploy via SAM + S3 sync (see `docs/3-deployments/`)
+- **Production**: Auto-deploys via CI/CD on push to `main` branch
 
-**Primary Focus**: Donor and transaction data capture for reporting and analysis
+> ⚠️ Pushing to `main` immediately deploys to the live production site. Always test on staging first.
 
-**Key Metrics to Track**:
-- Donor acquisition and retention
-- Donation patterns and trends
-- Geographic distribution of supporters
-- Campaign effectiveness
-- Payment method preferences
+## Documentation
 
-**Future E-commerce Considerations** (5+ years):
-- Product catalog structure
-- Inventory management
-- Order processing workflows
-- Customer relationship management
-
-### Security Considerations
-
-- All API keys stored in AWS Secrets Manager
-- Lambda functions with minimal IAM permissions
-- DynamoDB encryption at rest
-- CloudFront with WAF protection
-- HTTPS enforcement across all endpoints
-
-### Deployment Strategy
-
-1. **Static Assets**: Deploy to S3, serve via CloudFront
-2. **API Layer**: Lambda functions with API Gateway
-3. **Database**: DynamoDB with backup and point-in-time recovery
-4. **Monitoring**: CloudWatch for logs and metrics
-5. **CI/CD**: AWS CodePipeline for automated deployments
-
-## Payment Integration
-
-### Stripe Integration (Mock)
-- One-time payments
-- Recurring subscriptions
-- Webhook handling for payment confirmations
-- Customer portal for subscription management
-
-### PayPal Integration (Mock)
-- PayPal Checkout experience
-- Subscription billing
-- IPN (Instant Payment Notification) handling
-
-## Development Notes
-
-- Components are functional with React hooks
-- Responsive design tested on mobile, tablet, and desktop
-- Dark theme optimized for accessibility
-- Form validation and error handling included
-- Mock payment processing for development
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+Detailed system design docs are in `docs/`:
+- `1-project-overview/` — Project background and goals
+- `2-system-design/` — Architecture, frontend, backend, database, and environment design
+- `3-deployments/` — Deployment processes and CI/CD
 
 ## License
 

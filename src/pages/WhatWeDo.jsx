@@ -255,7 +255,7 @@ const WhatWeDo = ({ onDonateClick }) => {
             <div className="border border-gray-300 rounded-lg p-4 shadow-sm h-full flex flex-col justify-start">
               <div className="text-base sm:text-lg leading-snug text-gray-700 italic"
                 style={{
-                  fontFamily: 'Dancing Script, cursive',
+                  fontFamily: 'Lora, serif',
                   letterSpacing: '0.5px',
                   lineHeight: '1.4'
                 }}>
@@ -687,7 +687,7 @@ const WhatWeDo = ({ onDonateClick }) => {
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Far Too Young - The Film</h3>
                 <p className="text-sm sm:text-base leading-snug text-gray-600 italic mb-4"
                   style={{
-                    fontFamily: 'Dancing Script, cursive',
+                    fontFamily: 'Lora, serif',
                     letterSpacing: '0.5px',
                     lineHeight: '1.4'
                   }}>

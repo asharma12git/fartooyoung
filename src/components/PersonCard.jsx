@@ -12,7 +12,9 @@ const PersonCard = ({
   alt, 
   biography, 
   gradient,
-  border 
+  border,
+  imageClassName,
+  imageStyle
 }) => {
   return (
     <Card gradient={gradient} border={border}>
@@ -27,7 +29,8 @@ const PersonCard = ({
         <img 
           src={image} 
           alt={alt} 
-          className="w-full h-full object-cover object-center rounded-xl sm:rounded-2xl"
+          className={`w-full h-full object-cover rounded-xl sm:rounded-2xl ${imageClassName || 'object-center'}`}
+          style={imageStyle}
         />
       </div>
       
@@ -56,7 +59,9 @@ PersonCard.propTypes = {
     PropTypes.arrayOf(PropTypes.string)
   ]).isRequired,
   gradient: PropTypes.string,
-  border: PropTypes.string
+  border: PropTypes.string,
+  imageClassName: PropTypes.string,
+  imageStyle: PropTypes.object
 }
 
 export default PersonCard

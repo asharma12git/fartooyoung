@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import heroImage from '../assets/images/pages/partners/Sad-Girl.jpg'
 import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert.png'
 import empowerWomenImage from '../assets/images/pages/partners/empower-women.jpg'
-import chadaniJoshiImage from '../assets/images/pages/partners/mentors/Chanadani-Joshi.jpg'
+import chadaniJoshiImage from '../assets/images/pages/partners/mentors/Chandni-Joshi-2.jpeg'
 import ritaThapaImage from '../assets/images/pages/partners/mentors/Rita-Thapa-bw.jpg'
 import pramilaRijalImage from '../assets/images/pages/partners/mentors/Pramila-Rijal-Acharya-bw.jpg'
+import kamalaBhasinImage from '../assets/images/pages/partners/mentors/Kamla-Bhasin.jpg'
 import undpLogo from '../assets/images/pages/partners/past-present-collabs/UNDP.png'
 import unicefLogo from '../assets/images/pages/partners/past-present-collabs/UNICEF.png'
 import usaidLogo from '../assets/images/pages/partners/past-present-collabs/USAID.png'
@@ -32,6 +33,8 @@ const Partners = ({ onDonateClick }) => {
       name: "MRS. CHADANI JOSHI",
       image: chadaniJoshiImage,
       alt: "Mrs. Chadani Joshi",
+      imageClassName: "grayscale",
+      imageStyle: { objectPosition: 'center top' },
       biography: [
         "Mrs. Joshi is a gender, rights, and policy specialist with over 52 years of experience. In her initial years, she served as the Joint Secretary as well as the Chief of Development Programs for the Government of Nepal. During her tenure, she initiated the pioneering PCRW Program that gave rural women in Nepal access to production credit.",
         "She has also contributed immensely to gender-responsive budgets in the country. In 1990, she set up the UNIFEM (now known as UN Women) South Asia Regional Office and devoted 18 years molding it into a knowledge-based organization. As the Regional Director, she furthered UNIFEM's development agenda by supporting innovative and experimental programs benefiting women while keeping in mind national and regional priorities.",
@@ -46,6 +49,19 @@ const Partners = ({ onDonateClick }) => {
         "Mrs. Thapa is widely recognized for her groundbreaking work in founding Tewa, Nepal's first and only fund for women. She has over thirty-five years of experience as a feminist educator, community activist, initiating and supporting institutions for women's empowerment and for peace.",
         "Thapa also founded and led (2001-2009) Nagarik Aawaz, an initiative for conflict transformation and peace-building in Nepal. In recognition of this exceptional \"innovative contribution to the public good,\" Rita received the rare honor of being named an Ashoka Fellow.",
         "She served as a past Board Member and Chair of the Global Fund for Women and the Urgent Action Fund. In 2005, she was included in the 1000 Women for Peace Nomination for the Nobel Peace Prize. She also served on the Board of the Global Fund for Community Foundation and the South Asian Women's Fund."
+      ]
+    },
+    {
+      name: "THE LATE KAMALA BHASIN",
+      image: kamalaBhasinImage,
+      alt: "The Late Kamala Bhasin",
+      imageClassName: "grayscale object-center",
+      biography: [
+        "Kamala Bhasin (1946–2021) was a pioneering feminist thinker, educator, poet, and activist whose work transformed conversations on gender equality, development, and social justice across South Asia and beyond. She dedicated her life to challenging deeply rooted inequalities and advancing the rights and dignity of women.",
+        "Beginning her career in grassroots development and later working with international organizations such as the United Nations Food and Agriculture Organization, Bhasin became a strong advocate for participatory, community-led approaches. She emphasized that true development must center women's voices and address structural injustice. As a co-founder of the South Asian feminist network Sangat and a key figure in Jagori, she helped build powerful platforms for regional solidarity, education, and activism.",
+        "Renowned for her ability to communicate complex ideas with clarity and creativity, Bhasin used songs, stories, and dialogue to engage communities—from rural women to policymakers. Her call for \"Azadi\" (freedom) became a defining message of liberation from patriarchy and inequality. Through her writings and lifelong advocacy, she challenged social norms and inspired generations to envision a more just and equitable world.",
+        "Throughout her life, Kamala Bhasin remained a passionate advocate for justice, known for her warmth, wit, and unwavering commitment to change. Even in her later years, she continued to speak out against rising authoritarianism and gender-based violence, inspiring new generations of activists. Her legacy endures in the movements she helped build and the countless individuals she empowered to question inequality and imagine a more just world.",
+        "Far Too Young, Inc. had the privilege and honor of receiving her guidance and mentorship until her passing in 2021."
       ]
     },
     {
@@ -171,7 +187,7 @@ const Partners = ({ onDonateClick }) => {
         <div className={LAYOUT.CONTAINER}>
           <SectionTitle>MENTORS</SectionTitle>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {mentors.map((mentor, index) => (
               <PersonCard
                 key={index}
@@ -181,6 +197,8 @@ const Partners = ({ onDonateClick }) => {
                 biography={mentor.biography}
                 gradient={GRADIENTS.METALLIC_GRAY}
                 border={BORDERS.GRAY}
+                imageClassName={mentor.imageClassName}
+                imageStyle={mentor.imageStyle}
               />
             ))}
           </div>

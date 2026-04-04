@@ -59,51 +59,57 @@ const FounderTeam = ({ onDonateClick }) => {
           </div>
           
           {/* Section Title */}
-          <h3 className="text-xl sm:text-2xl font-medium text-center text-gray-900 mb-8 lg:mb-12 leading-tight">ENDING GENDER BASED VIOLENCE: A CALL TO ACTION</h3>
+          <h3 className="text-xl sm:text-2xl font-medium text-center text-gray-900 mb-8 lg:mb-12 leading-tight">Ending Child Marriage: A Call to Action</h3>
           
           <div className="w-full">
             <Card gradient={GRADIENTS.METALLIC_GRAY} border={BORDERS.GRAY} padding="p-8 lg:p-16" hover={false}>
               <p className="text-lg sm:text-xl text-gray-900 mb-6 lg:mb-8 leading-relaxed font-serif">Dear Friends,</p>
-                
-                <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
-                  From a young age, I've been deeply drawn to social service with a passion to serve the communities and give back to society. Witnessing the struggles of those less fortunate, both in my native Nepal and later in the United States, ignited a desire within me to make a difference. I believe that everyone deserves a chance to live a life free from violence, poverty and injustice.
+              <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
+                  Right now, as you read this, a girl somewhere in the world is being told her life will take a different path, one she did not choose. Her education ends. Her independence fades. Her future narrows.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
-                  I am a Data Scientist by profession and also the Founder of Far Too Young, Inc., a non-profit dedicated to ending all forms of gender based violence and child marriage in particular. Child marriage is a form of gender-based violence as it denies girls their fundamental rights and bodily autonomy. It has severe consequences, including limited education, increased risk of domestic violence, and significant health risks for both mother and child.
+                  This happens nearly 12 million times every year, across continents, cultures, and communities. While the numbers are highest in South Asia and Sub-Saharan Africa, the reality exists far beyond borders, often hidden in plain sight.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
-                  Having witnessed the devastating impact of poverty and inequality in both Nepal and the US, I'm committed to creating a more just world. Child marriage is a grave violation of human rights, robbing children of their childhoods, education, and health. It perpetuates poverty and hinders social progress.
+                  Child marriage reshapes the course of a girl's life. It pulls her out of school, limits her ability to earn, and places her in situations she is neither physically nor emotionally prepared for. Early pregnancies bring serious health risks for both mother and child. Economic dependence becomes the norm. In many cases, so do isolation, violence, and the weight of responsibilities far beyond her years. What begins as a single decision often becomes a cycle, repeating across generations.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
-                  Through Far Too Young, we are conducting research, supporting community organizations, providing education to children and raising awareness about this issue. We believe that by working together, we can make a significant impact in ending child marriage and empowering young boys and girls.
+                  For years, efforts to address this issue have made progress, but not at the pace or scale required. The systems in place are not enough on their own. Real change demands something deeper: a shift in awareness, in attitudes, and in the choices communities make every day.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
-                  Large organizations and governments are not doing enough. And at the current rate of progress, Gender Based Violence and particularly child marriage will not end anytime soon unless individuals and charities come together.
+                  That is why <em>Far Too Young</em> is producing a social impact film, also called <strong>Far Too Young</strong>, born from years of research, writing, and direct engagement with the communities most affected by child marriage and the vulnerable children at its center. The story is grounded in real experiences and designed to do what statistics alone cannot: make people feel the urgency of this crisis and move them to act.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
-                  I urge you to consider supporting our work with a generous donation. Every contribution, no matter the size, will help us make a difference.
+                  This social impact film project has completed all pre-production. Our goal is to bring the film, once completed, to the global stage, including international forums, film festivals, and policy circles, while simultaneously placing it in classrooms and communities worldwide, where its impact can be most immediate and lasting. The film is not just a piece of storytelling. It is a tool for sustained, measurable change.
+                </p>
+                
+                <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
+                  Because change does not happen in isolation. It grows through collective effort, when individuals, communities, and institutions begin to see differently and respond with intention. We invite you to be part of that shift.
+                </p>
+                
+                <p className="text-base sm:text-lg text-gray-800 mb-6 lg:mb-8 leading-relaxed text-justify font-serif">
+                  Your support helps extend this work: into classrooms, into communities, into the policy conversations that shape how the next generation thinks and acts. It helps create space for girls to remain in school, to gain knowledge, and to shape their own futures. This is not only about preventing harm. It is about creating possibility.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-8 lg:mb-10 leading-relaxed font-serif">
-                  Thank you for your compassion and support.
+                  Thank you for standing with us.
                 </p>
                 
                 <p className="text-base sm:text-lg text-gray-800 mb-10 lg:mb-12 leading-relaxed font-serif">
-                  Best Wishes for 2025.
+                  <strong>Best wishes for {new Date().getFullYear()},</strong>
                 </p>
                 
                 <div className="flex items-start justify-start">
                   <div>
-                    <p className="text-base sm:text-lg text-gray-800 mb-3 font-serif">Sincerely,</p>
                     <div className="w-48 sm:w-80 lg:w-[28rem] h-32 sm:h-40 lg:h-48 -ml-8 sm:-ml-12 lg:-ml-16 mb-4">
                       <img src={signatureImage} alt="Avinash Sharma signature" className="w-full h-full object-contain object-left" />
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 italic font-serif">
+                    <p className="text-sm sm:text-base text-gray-600 italic font-serif">
                       "Love cannot remain by itself — it has no meaning. Love has to be put into action and that action is service." – Mother Teresa
                     </p>
                   </div>
@@ -171,7 +177,7 @@ const FounderTeam = ({ onDonateClick }) => {
             <div className="relative h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
               <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-slate-100/30 hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
-                <h3 className="text-lg sm:text-xl font-medium text-left text-gray-700 mb-6">SENIOR PARTNER</h3>
+                <h3 className="text-lg sm:text-xl font-medium text-left text-gray-700 mb-6">CO-FOUNDER</h3>
                 <div className="w-full h-px bg-gray-400 mb-6"></div>
                 
                 {/* Photo */}
@@ -186,16 +192,31 @@ const FounderTeam = ({ onDonateClick }) => {
                 {/* Biography */}
                 <div className="flex-1">
                   <p className="text-gray-700 leading-relaxed text-justify">
-                    Mr. Ravi Baral is an award-winning and critically acclaimed filmmaker based in Nepal with 30 years of experience in the industry. He has led over three dozen film projects (writing, directing) in domains like public health communication, human trafficking, reproductive and child health, and gender equality with partners like USAID, DFID, UN Women, the World Bank, and others. He has also produced a documentary on the tripartite (China-Japan-Nepal) expedition to Mount Everest.
+                    Ravi Baral is an award-winning filmmaker with over three decades of experience using cinema as a tool for social change. His work sits at the intersection of storytelling, advocacy, and public communication, bringing critical issues into public consciousness and driving meaningful action.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Ravi Baral founded Media Alert and Relief Foundation in 1993, a non-profit that alerts the public through education on areas of health, population, women empowerment, the environment, and other social issues. He writes and directs infomercials, edutainment film projects, PSAs, documentaries, and awareness campaigns.
+                    He has written, directed, and produced more than three dozen films and campaigns addressing public health, human trafficking, gender equality, and social justice, in collaboration with leading global institutions including the World Bank, USAID, DFID, the European Union, UN Women, UNICEF, and Johns Hopkins University.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Ravi produced and directed Chameli, a full-length feature on anti-girl trafficking which was partly funded by UNIFEM and USAID and won four Nepal Motion Picture Awards. He also directed and produced Ramjham, a musical for peace. The motive of the film was to recover the lost peace of Nepal and its eroding democracy through a celluloid campaign.
+                    Baral began his career in 1987 with NTV, producing documentaries and anchoring Spotlight, while also becoming South and Southeast Asia's first VJ through Music Magazine, a pioneering platform that engaged youth on social issues through entertainment.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Ravi was also the co-producer of the internationally acclaimed documentary on child trafficking, The Day My God Died, which was nominated for the Emmys in 2005. Ravi has been a media consultant to many communications projects undertaken by INGOs and other private, government, and donor organizations in Nepal and South Asia. He will be directing Far Too Young, a full-length edutainment film which he also wrote after many years of joint research. The film project is currently in pre-production.
+                    In 1993, he co-founded multiple nonprofit initiatives focused on public education, producing impactful documentaries, edutainment films, and large-scale behavior change campaigns.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
+                    His feature film Chameli (1999/2000), on girl trafficking, won four National Awards in Nepal and gained international recognition, supported by global partners and praised by leaders including Madeleine Albright and Kofi Annan for its role in raising awareness. He also worked as co-producer on the Emmy-nominated documentary The Day My God Died (2005), further amplifying global attention on child trafficking.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
+                    Beyond filmmaking, Baral has served as a media consultant to international organizations, shaping communication strategies that connect policy, communities, and storytelling. His advocacy extends into publishing, including Maynati, a collection addressing modern-day slavery.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
+                    Importantly, Baral has been working on the issue of child marriage since the early 1990s, well before it gained global attention, contributing to awareness efforts across South Asia and engaging with regional initiatives linked to UNICEF.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
+                    In recent years, he has renewed this focus through short films such as Kalikai Umerama (2022) and <em>Far Too Young</em> (2021), building toward his most ambitious project yet.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
+                    He will direct <em>Far Too Young</em>, a feature-length social impact film developed through years of research across South Asia, representing the culmination of his life's work: a powerful fusion of storytelling, advocacy, and lived experience aimed at inspiring global action.
                   </p>
                 </div>
               </div>

@@ -249,7 +249,7 @@ const WhatWeDo = ({ onDonateClick }) => {
             <div className="w-full h-0.5 bg-black"></div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 lg:mb-8 leading-tight">Far Too Young — A Child Bride's Song</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 lg:mb-8 leading-tight">Far Too Young<br /><span className="text-xl sm:text-2xl lg:text-3xl">A Child Bride's Song</span></h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="border border-gray-300 rounded-lg p-4 shadow-sm h-full flex flex-col justify-start">

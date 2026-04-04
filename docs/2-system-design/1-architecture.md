@@ -18,78 +18,101 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
                                         │
                                         │ HTTPS (SSL)
                                         ▼
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              CLOUDFRONT CDN                                     │
-│                         Global Edge Locations                                  │
-│                        Distribution: E2PHSH4ED2AIN5                            │
-└─────────────────────────────────────────────────────────────────────────────────┘
+╔═════════════════════════════════════════════════════════════════════════════════╗
+║                        🎨 FRONTEND LAYER                                       ║
+║          Serves the React app to users (no logic, just static files)          ║
+║═════════════════════════════════════════════════════════════════════════════════║
+║                                                                                ║
+║  ┌─────────────────────────────────────────────────────────────────────────┐   ║
+║  │                          CLOUDFRONT CDN                                │   ║
+║  │                     Global Edge Locations                              │   ║
+║  │                    Distribution: E2PHSH4ED2AIN5                        │   ║
+║  │              (Caches and delivers React app worldwide)                 │   ║
+║  └─────────────────────────────────┬───────────────────────────────────────┘   ║
+║                                    │ Cache Miss                                ║
+║                                    ▼                                           ║
+║  ┌─────────────────────────────────────────────────────────────────────────┐   ║
+║  │                          S3 BUCKET                                     │   ║
+║  │                 fartooyoung-frontend-production                        │   ║
+║  │              (Stores built React files: HTML, CSS, JS)                 │   ║
+║  │─────────────────────────────────────────────────────────────────────────│   ║
+║  │                                                                         │   ║
+║  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐        │   ║
+║  │  │     Pages       │  │   Components    │  │   Features      │        │   ║
+║  │  │─────────────────│  │─────────────────│  │─────────────────│        │   ║
+║  │  │• Home           │  │• Navigation     │  │• Authentication │        │   ║
+║  │  │• Child Marriage │  │• Auth Modal     │  │• Donations      │        │   ║
+║  │  │• Founder & Team │  │• Donation Modal │  │• Subscriptions  │        │   ║
+║  │  │• Partners       │  │• Dashboard      │  │• User Profile   │        │   ║
+║  │  │• What We Do     │  │• Payment Forms  │  │• Email Verify   │        │   ║
+║  │  │• User Dashboard │  │• Success Pages  │  │• Rate Limiting  │        │   ║
+║  │  └─────────────────┘  └─────────────────┘  └─────────────────┘        │   ║
+║  └─────────────────────────────────────────────────────────────────────────┘   ║
+║                                                                                ║
+║  Also includes: Route 53 (DNS) + ACM (SSL Certificate)                        ║
+╚════════════════════════════════════════════════════════════════════════════════╝
                                         │
-                                        │ Cache Miss
+                                        │ API Calls (fetch requests from browser)
                                         ▼
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              FRONTEND (S3)                                     │
-│                    React App - Static Files                                    │
-│                 fartooyoung-frontend-production                                │
-│─────────────────────────────────────────────────────────────────────────────────│
-│                                                                                 │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
-│  │     Pages       │  │   Components    │  │   Features      │                │
-│  │─────────────────│  │─────────────────│  │─────────────────│                │
-│  │• Home           │  │• Navigation     │  │• Authentication │                │
-│  │• Child Marriage │  │• Auth Modal     │  │• Donations      │                │
-│  │• Founder & Team │  │• Donation Modal │  │• Subscriptions  │                │
-│  │• Partners       │  │• Dashboard      │  │• User Profile   │                │
-│  │• What We Do     │  │• Payment Forms  │  │• Email Verify   │                │
-│  │• User Dashboard │  │• Success Pages  │  │• Rate Limiting  │                │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
-└─────────────────────────────────────────────────────────────────────────────────┘
+╔═════════════════════════════════════════════════════════════════════════════════╗
+║                        ⚡ BACKEND LAYER                                       ║
+║       Processes all logic: auth, payments, emails, security                   ║
+║═════════════════════════════════════════════════════════════════════════════════║
+║                                                                                ║
+║  ┌─────────────────────────────────────────────────────────────────────────┐   ║
+║  │                          API GATEWAY                                   │   ║
+║  │                 0o7onj0dr7.execute-api.us-east-1                       │   ║
+║  │           (Receives API calls, routes to correct Lambda)               │   ║
+║  │              17 Endpoints (14 POST, 3 GET)                             │   ║
+║  │        See 4-backend-design.md for full endpoint details                │   ║
+║  └─────────────────────────────────┬───────────────────────────────────────┘   ║
+║                                    │ Route to Functions                         ║
+║                                    ▼                                           ║
+║  ┌─────────────────────────────────────────────────────────────────────────┐   ║
+║  │                       LAMBDA FUNCTIONS                                 │   ║
+║  │                (Runs business logic, talks to database)                │   ║
+║  │─────────────────────────────────────────────────────────────────────────│   ║
+║  │                                                                         │   ║
+║  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐        │   ║
+║  │  │ Authentication  │  │ Donations &     │  │ Integrations    │        │   ║
+║  │  │─────────────────│  │ Payments        │  │─────────────────│        │   ║
+║  │  │• Login          │  │─────────────────│  │• Stripe API     │        │   ║
+║  │  │• Register       │  │• Create Donation│  │• AWS SES        │        │   ║
+║  │  │• Logout         │  │• Get Donations  │  │• Secrets Mgr    │        │   ║
+║  │  │• Email Verify   │  │• Checkout       │  │• Rate Limiting  │        │   ║
+║  │  │• Password Reset │  │• Portal Session │  │                 │        │   ║
+║  │  │• Update Profile │  │• Subscriptions  │  │                 │        │   ║
+║  │  │• Change Password│  │• Webhook        │  │                 │        │   ║
+║  │  └─────────────────┘  └─────────────────┘  └─────────────────┘        │   ║
+║  └─────────────────────────────────────────────────────────────────────────┘   ║
+║                                                                                ║
+║  Also includes: Secrets Manager (API keys) + SES (emails)                     ║
+╚════════════════════════════════════════════════════════════════════════════════╝
                                         │
-                                        │ API Calls
+                                        │ Database Queries (read/write data)
                                         ▼
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                            API GATEWAY                                          │
-│                 0o7onj0dr7.execute-api.us-east-1                               │
-│                          17 Endpoints                                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        │ Route to Functions
-                                        ▼
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           LAMBDA FUNCTIONS                                      │
-│                          Serverless Backend                                    │
-│─────────────────────────────────────────────────────────────────────────────────│
-│                                                                                 │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
-│  │ Authentication  │  │ Donations &     │  │ Integrations    │                │
-│  │─────────────────│  │ Payments        │  │─────────────────│                │
-│  │• Login          │  │─────────────────│  │• Stripe API     │                │
-│  │• Register       │  │• Create Donation│  │• AWS SES        │                │
-│  │• Logout         │  │• Get Donations  │  │• Secrets Mgr    │                │
-│  │• Email Verify   │  │• Checkout       │  │• Rate Limiting  │                │
-│  │• Password Reset │  │• Portal Session │  │                 │                │
-│  │• Update Profile │  │• Subscriptions  │  │                 │                │
-│  │• Change Password│  │• Webhook        │  │                 │                │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
-└─────────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        │ Database Queries
-                                        ▼
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              DYNAMODB                                           │
-│                          NoSQL Database                                        │
-│─────────────────────────────────────────────────────────────────────────────────│
-│                                                                                 │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
-│  │ Users Table     │  │ Donations Table │  │ Rate Limits     │                │
-│  │─────────────────│  │─────────────────│  │─────────────────│                │
-│  │• Email (PK)     │  │• ID (PK)        │  │• Key (PK)       │                │
-│  │• Password Hash  │  │• User Email     │  │• Attempts       │                │
-│  │• Name           │  │• Amount         │  │• TTL (Auto-Del) │                │
-│  │• Verified       │  │• Stripe ID      │  │                 │                │
-│  │• Created Date   │  │• Type           │  │                 │                │
-│  │                 │  │• Status         │  │                 │                │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
-└─────────────────────────────────────────────────────────────────────────────────┘
+╔═════════════════════════════════════════════════════════════════════════════════╗
+║                        🗄️ DATABASE LAYER                                      ║
+║            Stores and retrieves data (no logic, just storage)                 ║
+║═════════════════════════════════════════════════════════════════════════════════║
+║                                                                                ║
+║  ┌─────────────────────────────────────────────────────────────────────────┐   ║
+║  │                          DYNAMODB                                      │   ║
+║  │                       NoSQL Database                                   │   ║
+║  │─────────────────────────────────────────────────────────────────────────│   ║
+║  │                                                                         │   ║
+║  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐        │   ║
+║  │  │ Users Table     │  │ Donations Table │  │ Rate Limits     │        │   ║
+║  │  │─────────────────│  │─────────────────│  │─────────────────│        │   ║
+║  │  │• Email (PK)     │  │• ID (PK)        │  │• Key (PK)       │        │   ║
+║  │  │• Password Hash  │  │• User Email     │  │• Attempts       │        │   ║
+║  │  │• Name           │  │• Amount         │  │• TTL (Auto-Del) │        │   ║
+║  │  │• Verified       │  │• Stripe ID      │  │                 │        │   ║
+║  │  │• Created Date   │  │• Type           │  │                 │        │   ║
+║  │  │                 │  │• Status         │  │                 │        │   ║
+║  │  └─────────────────┘  └─────────────────┘  └─────────────────┘        │   ║
+║  └─────────────────────────────────────────────────────────────────────────┘   ║
+╚════════════════════════════════════════════════════════════════════════════════╝
 ```
 
 ## CI/CD Deployment Architecture
@@ -225,53 +248,7 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 
 ## Deployment Architecture
 
-### Local Development Environment
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Developer Machine                            │
-│─────────────────────────────────────────────────────────────────│
-│                                                                 │
-│  React Dev Server     SAM CLI Local      DynamoDB Local        │
-│  (localhost:5173)    (localhost:3001)   (Docker:8000)         │
-│       │                   │                   │                │
-│       └───────────────────┼───────────────────┘                │
-│                           │                                    │
-│                      Local Testing                             │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Production Environment (LIVE)
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        AWS Cloud                               │
-│─────────────────────────────────────────────────────────────────│
-│                                                                 │
-│  CloudFront + S3      API Gateway        DynamoDB              │
-│  (Global CDN)         (17 Endpoints)     (3 Tables)            │
-│       │                   │                   │                │
-│       └───────────────────┼───────────────────┘                │
-│                           │                                    │
-│                    Lambda Functions                            │
-│                  (Serverless Backend)                          │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### CI/CD Pipeline
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Automated Deployment                        │
-│─────────────────────────────────────────────────────────────────│
-│                                                                 │
-│  GitHub Push → CodePipeline → CodeBuild → Production Deploy    │
-│       │              │            │              │            │
-│       └──────────────┼────────────┼──────────────┘            │
-│                      │            │                           │
-│                 Source Stage   Build Stage                    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+*For environment-specific details (local, staging, production), see `2-environments.md`.*
 
 ---
 

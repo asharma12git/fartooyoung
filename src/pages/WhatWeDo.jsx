@@ -249,7 +249,7 @@ const WhatWeDo = ({ onDonateClick }) => {
             <div className="w-full h-0.5 bg-black"></div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 lg:mb-8 leading-tight">FAR TOO YOUNG</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-6 lg:mb-8 leading-tight">Far Too Young — A Child Bride's Song</h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="border border-gray-300 rounded-lg p-4 shadow-sm h-full flex flex-col justify-start">
@@ -283,6 +283,7 @@ const WhatWeDo = ({ onDonateClick }) => {
                   Please keep us children safe,<br />
                   Please stop this curse,<br />
                   Before this gets much too worse...</p>
+                <p className="text-sm text-gray-500 mt-4 not-italic">© Far Too Young, Inc.</p>
               </div>
             </div>
 

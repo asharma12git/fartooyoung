@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import heroImage from '../assets/images/pages/partners/Sad-Girl.jpg'
-import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert.png'
+import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert-33.png'
+import viscomLogo from '../assets/images/pages/partners/Viscom.png'
 import empowerWomenImage from '../assets/images/pages/partners/empower-women.jpg'
-import chadaniJoshiImage from '../assets/images/pages/partners/mentors/Chandni-Joshi-2.jpeg'
+import chandniJoshiImage from '../assets/images/pages/partners/mentors/Chandni-Joshi-2.jpeg'
 import ritaThapaImage from '../assets/images/pages/partners/mentors/Rita-Thapa-bw.jpg'
 import pramilaRijalImage from '../assets/images/pages/partners/mentors/Pramila-Rijal-Acharya-bw.jpg'
 import kamalaBhasinImage from '../assets/images/pages/partners/mentors/Kamla-Bhasin.jpg'
@@ -30,9 +31,9 @@ const Partners = ({ onDonateClick }) => {
 
   const mentors = [
     {
-      name: "MRS. CHADANI JOSHI",
-      image: chadaniJoshiImage,
-      alt: "Mrs. Chadani Joshi",
+      name: "MRS. CHANDNI JOSHI",
+      image: chandniJoshiImage,
+      alt: "Mrs. Chandni Joshi",
       imageClassName: "grayscale",
       imageStyle: { objectPosition: 'center top' },
       biography: [
@@ -151,9 +152,9 @@ const Partners = ({ onDonateClick }) => {
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-left text-gray-900 mb-12 lg:mb-16 leading-tight">AFFILIATE</h2>
           
           <Card gradient={GRADIENTS.METALLIC_GRAY} border={BORDERS.GRAY} padding="p-8 lg:p-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center">
-                <div className="w-60 sm:w-72 lg:w-80 h-60 sm:h-72 lg:h-80 mx-auto mb-6 lg:mb-8 flex items-center justify-center p-4 lg:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              <div>
+                <div className="w-48 sm:w-56 lg:w-64 h-48 sm:h-56 lg:h-64 mx-auto mb-6 lg:mb-8 flex items-center justify-center p-4 lg:p-6">
                   <img 
                     src={mediaAlertLogo} 
                     alt="Media Alert Logo" 
@@ -163,19 +164,56 @@ const Partners = ({ onDonateClick }) => {
                 
                 <div className="text-left">
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
-                    Established in 1993 as a non-profit NGO under the Social Welfare Council of Nepal. For the past 30 years, Media Alert has worked in Nepal, South Asia, and internationally on communication projects with various partner community-based organizations.
+                    Established in 1993 as a non-profit NGO under the Social Welfare Council of Nepal. For the past 33 years, Media Alert has worked in Nepal, South Asia, and internationally on communication projects with various partner community-based organizations.
+                  </p>
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                    Media Alert's expertise lies in community-based programs, enter-educate approach, skill and capacity building, advocacy, social marketing, research and planning, monitoring and evaluation.
                   </p>
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                    Media Alert's expertise lies in community-based programs, enter-educate approach, skill and capacity building, advocacy, social marketing, research and planning, monitoring and evaluation.
+                    As a long-standing partner of Far Too Young, Inc., Media Alert collaborates on media awareness campaigns, community advocacy, and educational outreach across Nepal, India, and border communities along the Nepal-India-Bangladesh corridor.
+                  </p>
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed mt-4">
+                    Media Alert also served as the primary field partner during eight years of research and development for the <em>Far Too Young</em> film project.
                   </p>
                 </div>
               </div>
               
               <div className="text-gray-600 text-sm sm:text-base leading-relaxed space-y-4">
-                <p>Media Alert uses behavior change communication (BCC) in creating awareness, increasing knowledge base, building approval, and influencing behavior. It has designed and implemented many unique campaigns especially targeting marginalized grassroots audiences.</p>
+                <p>Media Alert will continue to support dissemination, advocacy to policymakers, and grassroots engagement alongside other partner NGOs and community-based organizations working specifically on child marriage issues.</p>
+                <p>Media Alert uses behavior change communication (BCC) in creating awareness, increasing knowledge base, and building approval. Through BCC, Media Alert influences behavior and has designed and implemented many unique campaigns especially targeting marginalized grassroots audiences.</p>
                 <p>The organization has produced and disseminated scores of shorts and documentaries, public service spots, and several edutainment film campaigns against modern day slavery, human trafficking, child marriage, HIV/AIDS, on gender equality, women empowerment, human rights, health, the environment, democracy, and peace building to educate and empower people and communities.</p>
                 <p>Media Alert regularly conducts seminars and workshops on communication and strategies, campaign development, social marketing, and BCC with development partners, government bodies, and international non-governmental organizations.</p>
                 <p>Since its establishment, Media Alert runs the Fr. Moran Education Fund which provides scholarships to needy children across Nepal, runs regular free clinics and health camps, and has been providing help and support to victims of man-made disasters and people with health emergencies.</p>
+              </div>
+            </div>
+          </Card>
+
+          {/* Viscom Card */}
+          <Card gradient={GRADIENTS.METALLIC_GRAY} border={BORDERS.GRAY} padding="p-8 lg:p-16" className="mt-8 lg:mt-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+              <div>
+                <div className="w-48 sm:w-56 lg:w-64 h-48 sm:h-56 lg:h-64 mx-auto mb-6 lg:mb-8 flex items-center justify-center p-4 lg:p-6">
+                  <img 
+                    src={viscomLogo} 
+                    alt="VISCOM Logo" 
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                
+                <div className="text-left">
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                    Established in September 2000, Visual Communication Ltd. (VISCOM) is a pioneering Social Behavior Change (SBC) communication entity based in Dhaka, Bangladesh. For over 25 years, VISCOM has delivered innovative and diversified development communication products and services, offering comprehensive one-stop communication solutions tailored to the unique needs of clients across diverse sectors.
+                  </p>
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    VISCOM&#39;s fields of work span health and wellbeing, gender equality, education, governance, migration, climate change, disaster resilience, and agriculture — with a particular focus on safe migration and combating trafficking in persons.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="text-gray-600 text-sm sm:text-base leading-relaxed space-y-4">
+                <p>VISCOM partners with leading creative professionals to produce high-quality mass awareness campaigns and Social &amp; Behavior Change initiatives for the Government of Bangladesh, UN agencies, and national and international NGOs. An ISO 9001-certified organization, VISCOM adheres to UN principles on Human Rights, Environmental Sustainability, and Gender Equality.</p>
+                <p>Their specialized services include SBC strategy and implementation, community mobilization, advocacy, multimedia production, digital inclusion, capacity building, and campaign management. VISCOM&#39;s communication approach is guided by the globally recognized &ldquo;5 Rights&rdquo; — delivering the right message, to the right audience, at the right time, through the right channel, and by the right person.</p>
+                <p>As a key partner of Far Too Young, Inc. in Bangladesh, VISCOM collaborates on media awareness campaigns, community mobilization, and advocacy efforts in key areas where child marriage is of serious concern. VISCOM also played a critical role during the eight-year research phase of the <em>Far Too Young</em> film project, working alongside the Far Too Young team and partner NGOs. VISCOM continues to support dissemination strategies, advocacy to planners and policymakers, empowerment of local community leaders, and bringing awareness programs directly into classrooms.</p>
               </div>
             </div>
           </Card>

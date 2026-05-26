@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import heroImage from '../assets/images/pages/what-we-do/Child-Bride-Mom.jpeg'
 import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
@@ -10,65 +10,83 @@ import taraImage2 from '../assets/images/pages/what-we-do/the-tara-campaign/02-d
 import taraImage3 from '../assets/images/pages/what-we-do/the-tara-campaign/03-a.jpg'
 import taraImage4 from '../assets/images/pages/what-we-do/the-tara-campaign/03-c.jpg'
 
-// Import carousel images
-import img0709 from '../assets/images/pages/what-we-do/carousel/IMG_0709.webp'
-import img0728 from '../assets/images/pages/what-we-do/carousel/IMG_0728.webp'
-import img0731 from '../assets/images/pages/what-we-do/carousel/IMG_0731.webp'
-import img0740 from '../assets/images/pages/what-we-do/carousel/IMG_0740.webp'
-import img0742 from '../assets/images/pages/what-we-do/carousel/IMG_0742.webp'
-import img0748 from '../assets/images/pages/what-we-do/carousel/IMG_0748.webp'
-import img0749 from '../assets/images/pages/what-we-do/carousel/IMG_0749.webp'
-import img0751 from '../assets/images/pages/what-we-do/carousel/IMG_0751.webp'
-import img0752 from '../assets/images/pages/what-we-do/carousel/IMG_0752.webp'
-import img0757 from '../assets/images/pages/what-we-do/carousel/IMG_0757.webp'
-import img0758 from '../assets/images/pages/what-we-do/carousel/IMG_0758.webp'
-import img0767 from '../assets/images/pages/what-we-do/carousel/IMG_0767.webp'
-import img0770 from '../assets/images/pages/what-we-do/carousel/IMG_0770.webp'
-import img0774 from '../assets/images/pages/what-we-do/carousel/IMG_0774.webp'
-import img0775 from '../assets/images/pages/what-we-do/carousel/IMG_0775.webp'
-import img0780 from '../assets/images/pages/what-we-do/carousel/IMG_0780.webp'
-import img0800 from '../assets/images/pages/what-we-do/carousel/IMG_0800.webp'
-import img0803 from '../assets/images/pages/what-we-do/carousel/IMG_0803.webp'
-import img0808 from '../assets/images/pages/what-we-do/carousel/IMG_0808.webp'
-import img0811 from '../assets/images/pages/what-we-do/carousel/IMG_0811.webp'
-import img0812 from '../assets/images/pages/what-we-do/carousel/IMG_0812.webp'
-import img0815 from '../assets/images/pages/what-we-do/carousel/IMG_0815.webp'
-import img0819 from '../assets/images/pages/what-we-do/carousel/IMG_0819.webp'
-import img0821 from '../assets/images/pages/what-we-do/carousel/IMG_0821.webp'
-import img0827 from '../assets/images/pages/what-we-do/carousel/IMG_0827.webp'
-import img0832 from '../assets/images/pages/what-we-do/carousel/IMG_0832.webp'
-import img0833 from '../assets/images/pages/what-we-do/carousel/IMG_0833.webp'
-import img0834 from '../assets/images/pages/what-we-do/carousel/IMG_0834.webp'
-import img0837 from '../assets/images/pages/what-we-do/carousel/IMG_0837.webp'
-import img0850 from '../assets/images/pages/what-we-do/carousel/IMG_0850.webp'
-import img0851 from '../assets/images/pages/what-we-do/carousel/IMG_0851.webp'
-import img0853 from '../assets/images/pages/what-we-do/carousel/IMG_0853.webp'
-import img0856 from '../assets/images/pages/what-we-do/carousel/IMG_0856.webp'
-import img0867 from '../assets/images/pages/what-we-do/carousel/IMG_0867.webp'
-import img0897 from '../assets/images/pages/what-we-do/carousel/IMG_0897.webp'
-import img0908 from '../assets/images/pages/what-we-do/carousel/IMG_0908.webp'
-import img0910 from '../assets/images/pages/what-we-do/carousel/IMG_0910.webp'
-import img0915 from '../assets/images/pages/what-we-do/carousel/IMG_0915.webp'
-import img0916 from '../assets/images/pages/what-we-do/carousel/IMG_0916.webp'
-import img0918 from '../assets/images/pages/what-we-do/carousel/IMG_0918.webp'
-import img0919 from '../assets/images/pages/what-we-do/carousel/IMG_0919.webp'
-import img0924 from '../assets/images/pages/what-we-do/carousel/IMG_0924.webp'
-import img0930 from '../assets/images/pages/what-we-do/carousel/IMG_0930.webp'
-import img0955 from '../assets/images/pages/what-we-do/carousel/IMG_0955.webp'
-import img0956 from '../assets/images/pages/what-we-do/carousel/IMG_0956.webp'
-import img0957 from '../assets/images/pages/what-we-do/carousel/IMG_0957.webp'
-import img0958 from '../assets/images/pages/what-we-do/carousel/IMG_0958.webp'
-import img0962 from '../assets/images/pages/what-we-do/carousel/IMG_0962.webp'
-import img0972 from '../assets/images/pages/what-we-do/carousel/IMG_0972.webp'
-import img0983 from '../assets/images/pages/what-we-do/carousel/IMG_0983.webp'
-import photo1 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-16.webp'
-import photo2 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-17-3.webp'
-import photo3 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-19-2.webp'
-import photo4 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-20-2.webp'
-import photo5 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-21-3.webp'
-import photo6 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-10-22-3.webp'
-import photo7 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-11-44.webp'
-import photo8 from '../assets/images/pages/what-we-do/carousel/PHOTO-2024-10-16-09-11-45-2.webp'
+// Nepal field photos — research and community engagement across Nepal
+import img0709 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0709.webp'
+import img0728 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0728.webp'
+import img0731 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0731.webp'
+import img0740 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0740.webp'
+import img0742 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0742.webp'
+import img0748 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0748.webp'
+import img0749 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0749.webp'
+import img0751 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0751.webp'
+import img0752 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0752.webp'
+import img0757 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0757.webp'
+import img0758 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0758.webp'
+import img0767 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0767.webp'
+import img0770 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0770.webp'
+import img0774 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0774.webp'
+import img0775 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0775.webp'
+import img0780 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0780.webp'
+import img0800 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0800.webp'
+import img0803 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0803.webp'
+import img0808 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0808.webp'
+import img0811 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0811.webp'
+import img0812 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0812.webp'
+import img0815 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0815.webp'
+import img0819 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0819.webp'
+import img0821 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0821.webp'
+import img0827 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0827.webp'
+import img0832 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0832.webp'
+import img0833 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0833.webp'
+import img0834 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0834.webp'
+import img0837 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0837.webp'
+import img0850 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0850.webp'
+import img0851 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0851.webp'
+import img0853 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0853.webp'
+import img0856 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0856.webp'
+import img0867 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0867.webp'
+import img0897 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0897.webp'
+import img0908 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0908.webp'
+import img0910 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0910.webp'
+import img0915 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0915.webp'
+import img0916 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0916.webp'
+import img0918 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0918.webp'
+import img0919 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0919.webp'
+import img0924 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0924.webp'
+import img0930 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0930.webp'
+import img0955 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0955.webp'
+import img0956 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0956.webp'
+import img0957 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0957.webp'
+import img0958 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0958.webp'
+import img0962 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0962.webp'
+import img0972 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0972.webp'
+import img0983 from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0983.webp'
+import photo1 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-10-16.webp'
+import photo2 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-10-17-3.webp'
+import photo3 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-10-19-2.webp'
+import photo4 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-10-20-2.webp'
+import photo5 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-10-21-3.webp'
+import photo6 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-10-22-3.webp'
+import photo7 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-11-44.webp'
+import photo8 from '../assets/images/pages/what-we-do/carousel/nepal/PHOTO-2024-10-16-09-11-45-2.webp'
+
+// Bangladesh field photos — collaboration with VISCOM (Visual Communication Ltd.)
+// Source: Far Too Young research phase, key areas in Bangladesh
+import bdFilmScreening1 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/1-community-film-screening/DSC08205.JPG'
+import bdFilmScreening2 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/1-community-film-screening/DSC08296.JPG'
+import bdFilmScreening3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/1-community-film-screening/DSC08299.JPG'
+import bdInteraction1 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/2-interactions-with-community-members/DSC03870.JPG'
+import bdInteraction2 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/2-interactions-with-community-members/DSC05334.JPG'
+import bdInteraction3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/2-interactions-with-community-members/DSC05354.JPG'
+import bdClassroom1 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/3-classroom-interaction/DSCN8359.JPG'
+import bdClassroom2 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/3-classroom-interaction/DSCN8756.JPG'
+import bdClassroom3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/3-classroom-interaction/IMG_4500.JPG'
+import bdFocusGroup1 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/4-focus-group-discussions/DOT_WHASH_Koyra_038 (1 of 1).jpg'
+import bdFocusGroup2 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/4-focus-group-discussions/SA_Ab. Gani. pri. school  (11).jpg'
+import bdFocusGroup3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/4-focus-group-discussions/SA_Ab. Gani. pri. school  (4).jpg'
+import bdTraining1 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/5-training-and-education/DSCN3491.JPG'
+import bdTraining2 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/5-training-and-education/DSCN8153.JPG'
+import bdTraining3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/5-training-and-education/WP_20141221_087.jpg'
 
 const WhatWeDo = ({ onDonateClick }) => {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -181,10 +199,36 @@ const WhatWeDo = ({ onDonateClick }) => {
     { src: photo5, name: 'Community Development' },
     { src: photo6, name: 'Awareness Activities' },
     { src: photo7, name: 'Youth Engagement' },
-    { src: photo8, name: 'Empowerment Programs' }
+    { src: photo8, name: 'Empowerment Programs' },
+    // Bangladesh — VISCOM partnership
+    { src: bdFilmScreening1, name: 'Community Film Screening - Bangladesh' },
+    { src: bdFilmScreening2, name: 'Community Film Screening - Bangladesh' },
+    { src: bdFilmScreening3, name: 'Community Film Screening - Bangladesh' },
+    { src: bdInteraction1, name: 'Community Interaction - Bangladesh' },
+    { src: bdInteraction2, name: 'Community Interaction - Bangladesh' },
+    { src: bdInteraction3, name: 'Community Interaction - Bangladesh' },
+    { src: bdClassroom1, name: 'Classroom Interaction - Bangladesh' },
+    { src: bdClassroom2, name: 'Classroom Interaction - Bangladesh' },
+    { src: bdClassroom3, name: 'Classroom Interaction - Bangladesh' },
+    { src: bdFocusGroup1, name: 'Focus Group Discussion - Bangladesh' },
+    { src: bdFocusGroup2, name: 'Focus Group Discussion - Bangladesh' },
+    { src: bdFocusGroup3, name: 'Focus Group Discussion - Bangladesh' },
+    { src: bdTraining1, name: 'Training & Education - Bangladesh' },
+    { src: bdTraining2, name: 'Training & Education - Bangladesh' },
+    { src: bdTraining3, name: 'Training & Education - Bangladesh' }
   ]
 
-  const totalSlides = Math.ceil(imageArray.length / 2)
+  // Shuffle images once per page visit
+  const shuffledImages = useMemo(() => {
+    const arr = [...imageArray]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  }, [])
+
+  const totalSlides = Math.ceil(shuffledImages.length / 2)
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides)
@@ -553,7 +597,7 @@ const WhatWeDo = ({ onDonateClick }) => {
             {/* Carousel Container */}
             <div className="relative p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).map((image, index) => (
+                {shuffledImages.slice(currentSlide * 2, currentSlide * 2 + 2).map((image, index) => (
                   <div key={index} className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
                     <img
                       src={image.src}
@@ -564,7 +608,7 @@ const WhatWeDo = ({ onDonateClick }) => {
                 ))}
 
                 {/* Fill empty slots if odd number of images */}
-                {imageArray.slice(currentSlide * 2, currentSlide * 2 + 2).length === 1 && (
+                {shuffledImages.slice(currentSlide * 2, currentSlide * 2 + 2).length === 1 && (
                   <div className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                       <span className="text-gray-500 text-lg">Add more images</span>
@@ -669,13 +713,13 @@ const WhatWeDo = ({ onDonateClick }) => {
               <div className="space-y-6 border border-gray-300 rounded-lg p-6 shadow-sm h-full flex flex-col justify-start">
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-medium text-red-600 underline decoration-2 underline-offset-4">Honoring Father Moran</h3>
                 <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
-                  Father Marshall D. Moran, a pioneering American Jesuit priest, revolutionized education in Nepal. In 1951, he founded St. Xavier's School in Godavari, Kathmandu, providing accessible and quality education to children from all socioeconomic backgrounds, with particular focus on those from impoverished families.
+                  Father Marshall D. Moran, a pioneering American Jesuit priest, transformed education in Nepal through his belief that quality education protects and empowers children. In 1951, he founded St. Xavier&#39;s School in Godavari, Kathmandu, expanding access to high school and college education for boys and girls from all socioeconomic backgrounds, while also supporting girls from marginalized communities to attend schools across Nepal. Father Moran believed that education brings knowledge, health awareness, dignity, empowerment, and the ability to challenge harmful social norms that place children at risk.
                 </p>
                 <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
-                  A renowned Ham Radio Operator with call sign 9N1MM, Father Moran connected with a global community, leveraging his network to support numerous relief efforts in Nepal and beyond. His unwavering commitment to empowering young minds led to the establishment of several schools across Nepal, offering educational opportunities to countless children who would otherwise have been denied the fundamental right to education.
+                  A renowned Ham Radio operator with the call sign 9N1MM, he also mobilized global networks to support humanitarian efforts across Nepal and Asia. His lifelong commitment to education led to the establishment of several schools that provided opportunities to countless children who would otherwise have been denied the fundamental right to education.
                 </p>
                 <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
-                  In honor of his enduring legacy and to galvanize global action against child abuse and exploitation, Far Too Young, Inc. is spearheading 'Far Too Young,' a poignant film project dedicated to Reverend Fr. Moran. This collaborative effort, in partnership with the Media Alert & Relief Foundation, aims to illuminate the critical issues of child abuse and the importance of quality education through the Fr. Moran Education Fund, which actively supports countless children through scholarships and provides vital grants to educational institutions throughout Nepal.
+                  In honor of his enduring legacy, Far Too Young, Inc. continues to advance the importance of quality education through the Fr. Moran Education Fund with its partners. The initiative provides scholarships and small financial grants to help marginalized boys and girls complete high school, protecting them from exploitation, abuse, gender-based violence, and harmful practices such as child marriage. Thousands of children and their families across Nepal have benefited from the fund.
                 </p>
               </div>
             </div>
@@ -773,11 +817,11 @@ const WhatWeDo = ({ onDonateClick }) => {
         </div>
       </div>
 
-      {/* Our Target for 2025 | 2026 Section */}
+      {/* Our Target for 2026 | 2027 Section */}
       <div className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-900 mb-4 lg:mb-6 underline decoration-2 underline-offset-8">Our Target for 2025 | 2026</h2>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-900 mb-4 lg:mb-6 underline decoration-2 underline-offset-8">Our Target for 2026 | 2027</h2>
             <p className="text-lg sm:text-xl text-gray-600">
               Strategic goals and milestones for advancing our mission against child marriage.
             </p>

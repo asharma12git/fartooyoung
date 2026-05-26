@@ -38,7 +38,8 @@ const Footer = () => {
             <div className="text-center">
               <h3 className="text-sm font-medium text-gray-300 mb-4 tracking-wide">CONTACT</h3>
               <div className="space-y-1 text-gray-400 text-xs">
-                <p>info@fartooyoung.org</p>
+                <p>ravi.baral@fartooyoung.org</p>
+                <p>avinash.sharma@fartooyoung.org</p>
               </div>
             </div>
             
@@ -109,7 +110,8 @@ const Footer = () => {
             <div className="text-center">
               <h3 className="text-base font-medium text-gray-300 mb-6 tracking-wide">CONTACT</h3>
               <div className="space-y-1 text-gray-400 text-xs text-center">
-                <p>info@fartooyoung.org</p>
+                <p>ravi.baral@fartooyoung.org</p>
+                <p>avinash.sharma@fartooyoung.org</p>
               </div>
             </div>
             

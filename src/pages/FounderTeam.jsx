@@ -192,31 +192,19 @@ const FounderTeam = ({ onDonateClick }) => {
                 {/* Biography */}
                 <div className="flex-1">
                   <p className="text-gray-700 leading-relaxed text-justify">
-                    Ravi Baral is an award-winning filmmaker with over three decades of experience using cinema as a tool for social change. His work sits at the intersection of storytelling, advocacy, and public communication, bringing critical issues into public consciousness and driving meaningful action.
+                    Ravi Baral is an award-winning filmmaker with over three decades of experience using cinema as a tool for social change. He has written, directed, and produced more than three dozen films and campaigns addressing public health, human trafficking, gender equality, and social justice, in collaboration with the World Bank, USAID, DFID, the European Union, UN Women, UNICEF, and Johns Hopkins University.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    He has written, directed, and produced more than three dozen films and campaigns addressing public health, human trafficking, gender equality, and social justice, in collaboration with leading global institutions including the World Bank, USAID, DFID, the European Union, UN Women, UNICEF, and Johns Hopkins University.
+                    Baral began his career in 1987 with NTV, producing documentaries and anchoring Spotlight, while becoming South and Southeast Asia&#39;s first VJ through Music Magazine—a pioneering platform that engaged youth on social issues through entertainment. In 1993, he co-founded multiple nonprofit initiatives focused on public education, producing impactful documentaries, edutainment films, and large-scale behavior change campaigns.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Baral began his career in 1987 with NTV, producing documentaries and anchoring Spotlight, while also becoming South and Southeast Asia's first VJ through Music Magazine, a pioneering platform that engaged youth on social issues through entertainment.
+                    His feature film Chameli (1999/2000), on girl trafficking, won four National Awards in Nepal and gained international recognition, praised by leaders including Madeleine Albright and Kofi Annan. He also co-produced the Emmy-nominated documentary The Day My God Died (2005). Beyond filmmaking, Baral has served as a media consultant and communication specialist to international organizations, shaping strategies that bridge policy, communities, and storytelling. His advocacy extends into publishing, including Maynati, a collection addressing modern-day slavery.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    In 1993, he co-founded multiple nonprofit initiatives focused on public education, producing impactful documentaries, edutainment films, and large-scale behavior change campaigns.
+                    Importantly, Baral has been working on the issue of child marriage since the early 1990s, well before it gained global attention, contributing to awareness efforts across South Asia. In recent years, he has renewed this focus through short films such as Kalikai Umerama (2022) and <em>Far Too Young</em> (2021), building toward his most ambitious project yet.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    His feature film Chameli (1999/2000), on girl trafficking, won four National Awards in Nepal and gained international recognition, supported by global partners and praised by leaders including Madeleine Albright and Kofi Annan for its role in raising awareness. He also worked as co-producer on the Emmy-nominated documentary The Day My God Died (2005), further amplifying global attention on child trafficking.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Beyond filmmaking, Baral has served as a media consultant to international organizations, shaping communication strategies that connect policy, communities, and storytelling. His advocacy extends into publishing, including Maynati, a collection addressing modern-day slavery.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Importantly, Baral has been working on the issue of child marriage since the early 1990s, well before it gained global attention, contributing to awareness efforts across South Asia and engaging with regional initiatives linked to UNICEF.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    In recent years, he has renewed this focus through short films such as Kalikai Umerama (2022) and <em>Far Too Young</em> (2021), building toward his most ambitious project yet.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    He will direct <em>Far Too Young</em>, a feature-length social impact film developed through years of research across South Asia, representing the culmination of his life's work: a powerful fusion of storytelling, advocacy, and lived experience aimed at inspiring global action.
+                    He will direct <em>Far Too Young</em>, a feature-length social impact film developed through years of research across South Asia, representing the culmination of his life&#39;s work: a powerful fusion of storytelling, advocacy, and lived experience aimed at inspiring global action.
                   </p>
                 </div>
               </div>
@@ -225,18 +213,18 @@ const FounderTeam = ({ onDonateClick }) => {
           
           {/* Second Row - Three Panels */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-8 lg:mt-12">
-            {/* VP & Chief of Operations Panel */}
+            {/* Chief of Operations Panel */}
             <div className="relative h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-3xl"></div>
               <div className="relative bg-white/85 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-orange-100/30 hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
-                <h3 className="text-base sm:text-lg lg:text-xl font-medium text-left text-gray-700 mb-6">VP & CHIEF OF OPERATIONS</h3>
+                <h3 className="text-base sm:text-lg lg:text-xl font-medium text-left text-gray-700 mb-6">CHIEF OF OPERATIONS</h3>
                 <div className="w-full h-px bg-gray-400 mb-6"></div>
                 
                 {/* Photo */}
                 <div className="w-full h-80 mb-6">
                   <img 
                     src={ashutoshSharmaImage} 
-                    alt="Ashutosh Sharma - VP & Chief of Operations" 
+                    alt="Ashutosh Sharma - Chief of Operations" 
                     className="w-full h-full object-cover object-center rounded-2xl"
                   />
                 </div>
@@ -244,10 +232,10 @@ const FounderTeam = ({ onDonateClick }) => {
                 {/* Biography */}
                 <div className="flex-1">
                   <p className="text-gray-700 leading-relaxed text-justify">
-                    Mr. Ashutosh Sharma, after completing his education in computer science, joined Norfolk Southern. There he is a technical lead and senior full-stack engineer. He oversees multiple initiatives and is recognized as a leader in developing and managing large-scope projects. He works closely with the executive team to understand and fine-tune the roadmap for overall direction and aims of the programs and company's vision.
+                    After completing his education in computer science, Ashutosh Sharma joined Norfolk Southern, where he serves as a Technical Lead and Senior Full-Stack Engineer. In this role, he oversees key technical initiatives and is recognized for designing and executing large-scale projects. He collaborates closely with the executive leadership team to align engineering roadmaps with the company&#39;s long-term strategic vision.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    At Far Too Young, Ashutosh, with his vast knowledge and skills, leads to guide the organization's mission. As VP and Chief of Operations, he oversees the activities of Far Too Young in South Asia and the US. A value-driven leader, he enables those around him to be relentless and curious in taking challenges head-on. Mr. Sharma believes in giving back to the community, which he says brings joy and fulfillment in life. He has supported many charitable causes around the world from an early age.
+                    At Far Too Young, Ashutosh leverages his extensive technical expertise to guide the organization&#39;s global mission. Serving as Chief Operating Officer, he directs operational activities across South Asia. A purpose-driven leader, he empowers cross-functional teams to tackle complex gender-based violence issues with curiosity and resilience. Deeply committed to community service from an early age, Ashutosh believes that serving communities brings profound joy and fulfillment.
                   </p>
                 </div>
               </div>
@@ -272,7 +260,7 @@ const FounderTeam = ({ onDonateClick }) => {
                 {/* Biography */}
                 <div className="flex-1">
                   <p className="text-gray-700 leading-relaxed text-justify">
-                    Ms. Oshin Bista, MA in Anthropology from Columbia University, is based in New York. As a Nepali girl born during the decade-long civil war, she witnessed violence and discrimination against vulnerable populations like women and girls from an early age. Moving to Bosnia and Herzegovina at 16 and later to the US at 19, she saw even more nuanced ways conflict and inequality affected children's well-being and life opportunities.
+                    Ms. Oshin Bista, MA in Anthropology from Columbia University. As a Nepali girl born during the decade-long civil war, she witnessed violence and discrimination against vulnerable populations like women and girls from an early age. Moving to Bosnia and Herzegovina at 16 and later to the US at 19, she saw even more nuanced ways conflict and inequality affected children's well-being and life opportunities.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
                     She realized that violence against children, women, and other vulnerable groups was not limited to developing economies but was inherent to many institutions worldwide. This realization motivated her to pursue sociocultural issues academically.
@@ -303,13 +291,13 @@ const FounderTeam = ({ onDonateClick }) => {
                 {/* Biography */}
                 <div className="flex-1">
                   <p className="text-gray-700 leading-relaxed text-justify">
-                    Mr. Soorya Baral has led several innovative campaigns against HIV/AIDS, human trafficking, and violence against women in South Asia. He has about a dozen short films to his credit on subjects like environment, sustainable tourism, nutrition, good governance, and gender-based violence. He has also worked as a consultant to private organizations in developing and implementing communications and marketing plans.
+                    Mr. Soorya Baral has led innovative campaigns addressing HIV/AIDS, human trafficking, violence against women, and other critical social issues across South Asia. He has produced over a dozen short films on environmental conservation, sustainable tourism, nutrition, good governance, economic empowerment, and gender-based violence, and has consulted for various organizations on communication strategies and social marketing campaigns.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    Soorya Baral has been involved in Far Too Young since its inception and is responsible for the development, production, and dissemination of communications materials. He also liaises with various community-based organizations, target audiences, as well as local governments in countries Far Too Young works with its partner NGOs.
+                    Involved with Far Too Young since its inception, Soorya has played a key role in developing, producing, and disseminating communication materials for the initiative. He works closely with community-based organizations, local governments, partner NGOs, and target communities in the countries where Far Too Young operates. During the project&#39;s eight-year research and writing process, he served as chief field coordinator, overseeing community engagement, participatory storytelling, and grassroots outreach. Through Far Too Young and its partner initiatives, he has also supported programs focused on education, economic upliftment, and the empowerment of marginalized men, women, and children.
                   </p>
                   <p className="text-gray-700 leading-relaxed text-justify mt-4">
-                    With an education in management, Soorya also received training at the New York-based prestigious Stella Adler Studio of Acting. He finds happiness in spreading love and compassion to the greater community.
+                    With a background in management and training at the New York-based Stella Adler Studio of Acting, Soorya finds happiness in spreading love, dignity, and compassion throughout the greater community.
                   </p>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // LOGOUT HANDLER - Handles user logout and session tracking
 // ============================================================================
@@ -41,7 +42,7 @@ exports.handler = async (event) => {
     if (!authHeader) {
       return {
         statusCode: 401,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: false, message: 'No token provided' })
       };
     }
@@ -73,7 +74,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: true, message: 'Logged out successfully' })
     };
     
@@ -85,7 +86,7 @@ exports.handler = async (event) => {
     // This prevents errors when tokens are already expired or invalid
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: true, message: 'Logged out successfully' })
     };
   }

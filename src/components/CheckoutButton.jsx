@@ -40,6 +40,7 @@ const CheckoutButton = ({ amount, donorInfo, donationType, onError, loading, set
         headers: {
           'Content-Type': 'application/json',
         },
+        mode: 'cors',
         body: JSON.stringify({
           amount: amount,
           donor_info: donorInfo,
@@ -69,7 +70,9 @@ const CheckoutButton = ({ amount, donorInfo, donationType, onError, loading, set
 
     } catch (err) {
       console.error('Checkout error:', err)
-      const errorMessage = err.message || 'Failed to start checkout. Please try again.'
+      const errorMessage = err.message === 'Load failed' || err.message === 'Failed to fetch'
+        ? 'Connection issue. Please tap the button again.'
+        : err.message || 'Failed to start checkout. Please try again.'
       onError(errorMessage)
       setLoading(false)
       setIsProcessing(false)

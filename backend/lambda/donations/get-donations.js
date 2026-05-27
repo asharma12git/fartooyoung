@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // GET DONATIONS HANDLER - Retrieves user's donation history
 // ============================================================================
@@ -35,7 +36,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
+                'Access-Control-Allow-Origin': getAllowedOrigin(event),              
                 'Access-Control-Allow-Methods': 'GET, OPTIONS',  // Allowed HTTP methods
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
             },
@@ -58,7 +59,7 @@ exports.handler = async (event) => {
             console.log('Authentication failed: No valid auth header');
             return {
                 statusCode: 401,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+                headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
                 body: JSON.stringify({ success: false, message: 'Authentication required' })
             };
         }
@@ -79,7 +80,7 @@ exports.handler = async (event) => {
             console.log('Token verification failed:', err.message);
             return {
                 statusCode: 401,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+                headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
                 body: JSON.stringify({ success: false, message: 'Invalid or expired token' })
             };
         }
@@ -113,7 +114,7 @@ exports.handler = async (event) => {
         // ====================================================================
         return {
             statusCode: 200,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+            headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
             body: JSON.stringify({
                 success: true,
                 donations  // Array of user's donations, sorted by date
@@ -127,7 +128,7 @@ exports.handler = async (event) => {
         console.error('Error fetching donations:', error);
         return {
             statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+            headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
             body: JSON.stringify({ success: false, message: 'Server error fetching donations' })
         };
     }

@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // STRIPE WEBHOOK HANDLER - Processes Stripe payment events
 // ============================================================================
@@ -93,7 +94,7 @@ exports.handler = async (event) => {
         return {
           statusCode: 200,
           headers: {
-            'Access-Control-Allow-Origin': process.env.FRONTEND_URL,
+            'Access-Control-Allow-Origin': getAllowedOrigin(event),
             'Access-Control-Allow-Methods': 'POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization'
           },
@@ -158,27 +159,29 @@ exports.handler = async (event) => {
 
       // Create unique donation ID
       const donationId = `checkout_${session.id}`
+
+      // Extract flat payment fields
+      const card = paymentMethodDetails.card
+      const cardBrand = card?.brand || null
+      const cardLast4 = card?.last4 || null
+      const wallet = card?.wallet?.type || null
       
-      // Build donation object for database storage
+      // Build donation object for database storage (14-field format)
       const donation = {
         id: donationId,
-        donationId: donationId,
-        amount: session.amount_total / 100, // Convert from cents to dollars
-        type: session.mode === 'subscription' ? 'monthly' : 'one-time',
-        paymentMethod: paymentMethodDetails.type || 'card',
-        paymentMethodDetails: paymentMethodDetails,
         email: session.customer_email || session.metadata?.donor_email,
         name: session.metadata?.donor_name || 'Anonymous',
+        amount: session.amount_total / 100,
+        type: session.mode === 'subscription' ? 'monthly' : 'one-time',
         status: 'completed',
+        paymentMethod: paymentMethodDetails.type || 'card',
+        cardBrand,
+        cardLast4,
+        wallet,
+        stripeInvoiceId: null,
+        stripeSubscriptionId: session.mode === 'subscription' ? session.subscription : null,
         stripeSessionId: session.id,
         createdAt: new Date().toISOString(),
-        processedAt: new Date().toISOString()
-      }
-
-      // Add subscription info if it's a subscription
-      if (session.mode === 'subscription' && session.subscription) {
-        donation.stripeSubscriptionId = session.subscription
-        console.log('Added subscription ID:', session.subscription)
       }
 
       // Save donation to DynamoDB
@@ -214,22 +217,29 @@ exports.handler = async (event) => {
 
         // Create donation record for recurring payment
         const donationId = `invoice_${invoice.id}`
+
+        // Extract flat payment fields
+        const card = paymentMethodDetails.card
+        const cardBrand = card?.brand || null
+        const cardLast4 = card?.last4 || null
+        const wallet = card?.wallet?.type || null
         
-        // Build donation object for monthly payment
+        // Build donation object for monthly payment (14-field format)
         const donation = {
           id: donationId,
-          donationId: donationId,
-          amount: invoice.amount_paid / 100, // Convert from cents to dollars
-          type: 'monthly',
-          paymentMethod: paymentMethodDetails.type || 'card',
-          paymentMethodDetails: paymentMethodDetails,
           email: invoice.customer_email,
           name: invoice.customer_name || 'Subscriber',
+          amount: invoice.amount_paid / 100,
+          type: 'monthly',
           status: 'completed',
+          paymentMethod: paymentMethodDetails.type || 'card',
+          cardBrand,
+          cardLast4,
+          wallet,
           stripeInvoiceId: invoice.id,
           stripeSubscriptionId: invoice.subscription,
+          stripeSessionId: null,
           createdAt: new Date().toISOString(),
-          processedAt: new Date().toISOString()
         }
 
         // Save recurring donation to DynamoDB
@@ -265,17 +275,19 @@ exports.handler = async (event) => {
       
       const cancellationRecord = {
         id: cancellationId,
-        donationId: cancellationId,
-        amount: 0,
-        type: 'subscription_cancelled',
-        paymentMethod: 'stripe-subscription',
         email: subscription.customer_email || 'unknown',
         name: subscription.customer_name || 'Subscriber',
+        amount: 0,
+        type: 'subscription_cancelled',
         status: 'cancelled',
+        paymentMethod: 'stripe-subscription',
+        cardBrand: null,
+        cardLast4: null,
+        wallet: null,
+        stripeInvoiceId: null,
         stripeSubscriptionId: subscription.id,
-        cancelledAt: new Date(subscription.canceled_at * 1000).toISOString(),
+        stripeSessionId: null,
         createdAt: new Date().toISOString(),
-        processedAt: new Date().toISOString()
       }
 
       // Save cancellation record to DynamoDB
@@ -309,18 +321,19 @@ exports.handler = async (event) => {
         
         const scheduleRecord = {
           id: scheduleId,
-          donationId: scheduleId,
-          amount: 0,
-          type: 'subscription_cancel_scheduled',
-          paymentMethod: 'stripe-subscription',
           email: subscription.customer_email || 'unknown',
           name: subscription.customer_name || 'Subscriber',
+          amount: 0,
+          type: 'subscription_cancel_scheduled',
           status: 'pending_cancellation',
+          paymentMethod: 'stripe-subscription',
+          cardBrand: null,
+          cardLast4: null,
+          wallet: null,
+          stripeInvoiceId: null,
           stripeSubscriptionId: subscription.id,
-          cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000).toISOString() : null,
-          scheduledAt: new Date().toISOString(),
+          stripeSessionId: null,
           createdAt: new Date().toISOString(),
-          processedAt: new Date().toISOString()
         }
 
         // Save scheduled cancellation record to DynamoDB
@@ -338,17 +351,19 @@ exports.handler = async (event) => {
         
         const updateRecord = {
           id: updateId,
-          donationId: updateId,
-          amount: 0,
-          type: 'subscription_updated',
-          paymentMethod: 'stripe-subscription',
           email: subscription.customer_email || 'unknown',
           name: subscription.customer_name || 'Subscriber',
+          amount: 0,
+          type: 'subscription_updated',
           status: subscription.status,
-          previousStatus: previousAttributes.status,
+          paymentMethod: 'stripe-subscription',
+          cardBrand: null,
+          cardLast4: null,
+          wallet: null,
+          stripeInvoiceId: null,
           stripeSubscriptionId: subscription.id,
+          stripeSessionId: null,
           createdAt: new Date().toISOString(),
-          processedAt: new Date().toISOString()
         }
 
         // Save update record to DynamoDB

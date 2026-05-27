@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
 const { DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb')
 const { generateVerificationToken, sendVerificationEmail } = require('../../utils/emailService')
@@ -11,7 +12,7 @@ const docClient = DynamoDBDocumentClient.from(client)
 
 exports.handler = async (event) => {
   const headers = {
-    'Access-Control-Allow-Origin': process.env.FRONTEND_URL,
+    'Access-Control-Allow-Origin': getAllowedOrigin(event),
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     'Access-Control-Allow-Methods': 'POST,OPTIONS',
     'Content-Type': 'application/json'

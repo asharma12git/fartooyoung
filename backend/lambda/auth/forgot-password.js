@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // FORGOT PASSWORD HANDLER - Initiates password reset process
 // ============================================================================
@@ -36,7 +37,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
+        'Access-Control-Allow-Origin': getAllowedOrigin(event),              
         'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
         'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
       },
@@ -65,7 +66,7 @@ exports.handler = async (event) => {
       // Return success even if user doesn't exist (security best practice)
       return {
         statusCode: 200,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: true, message: 'Reset email sent if account exists' })
       };
     }
@@ -134,7 +135,7 @@ exports.handler = async (event) => {
     
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ 
         success: true, 
         message: 'Reset email sent if account exists',
@@ -149,7 +150,7 @@ exports.handler = async (event) => {
     console.error('Forgot password error:', error);
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: false, message: 'Server error' })
     };
   }

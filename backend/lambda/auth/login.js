@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // LOGIN HANDLER - Authenticates users and generates JWT tokens
 // ============================================================================
@@ -37,7 +38,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
+        'Access-Control-Allow-Origin': getAllowedOrigin(event),              
         'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
         'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
       },
@@ -49,8 +50,16 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 2: PARSE AND VALIDATE LOGIN CREDENTIALS
     // ========================================================================
-    const { email: rawEmail, password } = JSON.parse(event.body)
-    const email = rawEmail.toLowerCase().trim();  // Normalize email format
+    const body = JSON.parse(event.body);
+    if (!body || !body.email || !body.password) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
+        body: JSON.stringify({ success: false, message: 'Email and password are required.' })
+      };
+    }
+    const email = body.email.toLowerCase().trim();
+    const password = body.password;
     
     // ========================================================================
     // STEP 2.5: CHECK RATE LIMITING
@@ -63,7 +72,7 @@ exports.handler = async (event) => {
       const minutes = Math.ceil(rateCheck.remainingTime / 60);
       return {
         statusCode: 429,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ 
           success: false, 
           message: `Too many login attempts. Please try again in ${minutes} minute${minutes > 1 ? 's' : ''}.`
@@ -89,7 +98,7 @@ exports.handler = async (event) => {
     if (!user) {
       return {
         statusCode: 401,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: false, message: 'Invalid credentials' })
       };
     }
@@ -101,7 +110,7 @@ exports.handler = async (event) => {
     if (user.email_verified === false) {
       return {
         statusCode: 401,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ 
           success: false, 
           message: 'Please verify your email address before logging in. Check your inbox for the verification link.',
@@ -119,7 +128,7 @@ exports.handler = async (event) => {
       const lockTimeRemaining = Math.ceil((new Date(user.lockedUntil) - now) / (1000 * 60)); // minutes
       return {
         statusCode: 401,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ 
           success: false, 
           message: `Account locked for ${lockTimeRemaining} more minutes due to failed login attempts. Use 'Forgot Password' for immediate access.`
@@ -161,7 +170,7 @@ exports.handler = async (event) => {
       
       return {
         statusCode: 401,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: false, message })
       };
     }
@@ -196,7 +205,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({
         success: true,
         user: { 
@@ -215,7 +224,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: false, message: 'Server error' })
     };
   }

@@ -45,3 +45,6 @@ setup-aws.sh
 # OS
 .DS_Store
 Thumbs.db
+
+# Production data backups
+backup/

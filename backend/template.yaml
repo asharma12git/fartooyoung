@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Far Too Young Authentication API
+Description: Far Too Young Authentication API - CORS wildcard preflight
 # Updated: 2024-12-19 - Fixed secret key case consistency
 
 Parameters:
@@ -47,13 +47,7 @@ Globals:
     Cors:
       AllowMethods: "'GET,POST,OPTIONS'"
       AllowHeaders: "'Content-Type,Authorization'"
-      AllowOrigin: !If
-        - IsProduction
-        - "'https://www.fartooyoung.org'"
-        - !If
-          - IsStaging
-          - "'https://staging.fartooyoung.org'"
-          - "'http://localhost:5173'"
+      AllowOrigin: "'*'"
 
 Resources:
   # Authentication Functions

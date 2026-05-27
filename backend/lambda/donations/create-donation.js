@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // CREATE DONATION HANDLER - Manually creates donation records
 // ============================================================================
@@ -34,7 +35,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': process.env.FRONTEND_URL,           
+                'Access-Control-Allow-Origin': getAllowedOrigin(event),           
                 'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
             },
@@ -55,7 +56,7 @@ exports.handler = async (event) => {
         if (!amount || !paymentMethod) {
             return {
                 statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+                headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
                 body: JSON.stringify({ success: false, message: 'Missing required fields' })
             };
         }
@@ -66,18 +67,22 @@ exports.handler = async (event) => {
         const donationId = uuidv4();                    // Generate unique ID
         const timestamp = new Date().toISOString();     // Current timestamp
 
-        // Build donation object for database storage
+        // Build donation object for database storage (14-field format)
         const donation = {
-            id: donationId, // Use 'id' as primary key to match DynamoDB table schema
-            donationId,     // Duplicate for consistency with webhook handler
-            amount,         // Donation amount (should be in dollars, not cents)
-            type: type || 'one-time',  // Default to one-time if not specified
-            paymentMethod,  // How payment was processed (e.g., 'stripe', 'paypal')
-            email,          // Optional: if user is logged in or provides email
-            name,           // Optional: donor name
-            status: 'completed', // In real app, this would be 'pending' until payment confirms
-            createdAt: timestamp,    // When donation was created
-            processedAt: timestamp   // When donation was processed
+            id: donationId,
+            email,
+            name,
+            amount,
+            type: type || 'one-time',
+            status: 'completed',
+            paymentMethod,
+            cardBrand: null,
+            cardLast4: null,
+            wallet: null,
+            stripeInvoiceId: null,
+            stripeSubscriptionId: null,
+            stripeSessionId: null,
+            createdAt: timestamp,
         };
 
         // ====================================================================
@@ -94,7 +99,7 @@ exports.handler = async (event) => {
         // ====================================================================
         return {
             statusCode: 200,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+            headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
             body: JSON.stringify({
                 success: true,
                 message: 'Donation recorded successfully',
@@ -109,7 +114,7 @@ exports.handler = async (event) => {
         console.error('Error creating donation:', error);
         return {
             statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+            headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
             body: JSON.stringify({ success: false, message: 'Server error processing donation' })
         };
     }

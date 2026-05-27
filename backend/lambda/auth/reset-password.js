@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // RESET PASSWORD HANDLER - Completes password reset process
 // ============================================================================
@@ -33,7 +34,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
+        'Access-Control-Allow-Origin': getAllowedOrigin(event),              
         'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
         'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
       },
@@ -63,7 +64,7 @@ exports.handler = async (event) => {
     if (result.Items.length === 0) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: false, message: 'Invalid or expired reset token' })
       };
     }
@@ -77,7 +78,7 @@ exports.handler = async (event) => {
     if (new Date() > new Date(user.resetExpires)) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: false, message: 'Reset token has expired' })
       };
     }
@@ -107,7 +108,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: true, message: 'Password updated successfully' })
     };
     
@@ -118,7 +119,7 @@ exports.handler = async (event) => {
     console.error('Reset password error:', error);
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: false, message: 'Server error' })
     };
   }

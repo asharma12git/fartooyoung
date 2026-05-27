@@ -201,28 +201,28 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
   // Helper function to format payment method display with icon
   const formatPaymentMethod = (donation) => {
-    const details = donation.paymentMethodDetails
-    if (!details || !details.type) return { iconType: 'card', text: donation.paymentMethod || 'Unknown' }
+    const { paymentMethod, cardBrand, cardLast4, wallet } = donation
+    if (!paymentMethod || paymentMethod === 'unknown') return { iconType: 'card', text: 'Unknown' }
 
-    switch (details.type) {
+    switch (paymentMethod) {
       case 'card':
-        const cardBrand = details.card?.brand?.charAt(0).toUpperCase() + details.card?.brand?.slice(1) || 'Card'
+        const brand = cardBrand ? cardBrand.charAt(0).toUpperCase() + cardBrand.slice(1) : 'Card'
         return { 
           iconType: 'card',
-          text: `${cardBrand} ••••${details.card?.last4 || '****'}`,
-          wallet: details.card?.wallet?.type
+          text: `${brand} ••••${cardLast4 || '****'}`,
+          wallet: wallet
         }
       
       case 'us_bank_account':
         return { 
           iconType: 'bank',
-          text: `${details.us_bank_account?.bank_name || 'Bank Account'} ••••${details.us_bank_account?.last4 || '****'}`
+          text: `Bank Account ••••${cardLast4 || '****'}`
         }
       
       default:
         return { 
           iconType: 'unknown',
-          text: details.type?.replace(/_/g, ' ').toUpperCase() || 'Unknown'
+          text: paymentMethod.replace(/_/g, ' ').toUpperCase()
         }
     }
   }

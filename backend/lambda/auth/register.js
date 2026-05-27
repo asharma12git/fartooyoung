@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // ============================================================================
 // REGISTER HANDLER - Creates new user accounts with email verification
 // ============================================================================
@@ -38,7 +39,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
+        'Access-Control-Allow-Origin': getAllowedOrigin(event),              
         'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
         'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
       },
@@ -64,9 +65,60 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 3: PARSE AND VALIDATE REGISTRATION DATA
     // ========================================================================
-    const { email: rawEmail, password, firstName, lastName } = JSON.parse(event.body);
-    const email = rawEmail.toLowerCase().trim();  // Normalize email format
-    console.log('Parsed input:', { email, firstName, lastName });
+    const body = JSON.parse(event.body);
+    const { password, firstName, lastName } = body;
+    const rawEmail = body.email;
+
+    // --- Required fields ---
+    if (!rawEmail || !password || !firstName || !lastName) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
+        body: JSON.stringify({ success: false, message: 'All fields are required: email, password, first name, and last name.' })
+      };
+    }
+
+    // --- Email validation ---
+    const email = rawEmail.toLowerCase().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
+        body: JSON.stringify({ success: false, message: 'Please enter a valid email address.' })
+      };
+    }
+
+    // --- Password validation (min 8 chars, uppercase, lowercase, number, special char) ---
+    if (password.length < 8) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
+        body: JSON.stringify({ success: false, message: 'Password must be at least 8 characters long.' })
+      };
+    }
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
+        body: JSON.stringify({ success: false, message: 'Password must include uppercase, lowercase, number, and special character.' })
+      };
+    }
+
+    // --- Sanitize name fields (strip HTML tags) ---
+    const sanitize = (str) => str.replace(/<[^>]*>/g, '').trim();
+    const cleanFirstName = sanitize(firstName);
+    const cleanLastName = sanitize(lastName);
+
+    if (!cleanFirstName || !cleanLastName) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
+        body: JSON.stringify({ success: false, message: 'Please enter a valid first and last name.' })
+      };
+    }
+
+    console.log('Parsed input:', { email, firstName: cleanFirstName, lastName: cleanLastName });
     
     // ========================================================================
     // STEP 3.5: CHECK RATE LIMITING
@@ -79,7 +131,7 @@ exports.handler = async (event) => {
       const minutes = Math.ceil(rateCheck.remainingTime / 60);
       return {
         statusCode: 429,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ 
           success: false, 
           message: `Too many registration attempts. Please try again in ${minutes} minute${minutes > 1 ? 's' : ''}.`
@@ -106,7 +158,7 @@ exports.handler = async (event) => {
     if (existingUser.Item) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+        headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
         body: JSON.stringify({ success: false, message: 'User already exists' })
       };
     }
@@ -133,8 +185,8 @@ exports.handler = async (event) => {
     const newUser = {
       // Required fields for registration
       email,                                    // Primary key - user's email
-      firstName,                               // User's first name
-      lastName,                                // User's last name
+      firstName: cleanFirstName,               // User's first name (sanitized)
+      lastName: cleanLastName,                 // User's last name (sanitized)
       hashedPassword,                          // Securely hashed password
       userId: randomUUID(),                    // Unique user identifier
       createdAt: new Date().toISOString(),     // Account creation timestamp
@@ -184,11 +236,11 @@ exports.handler = async (event) => {
     console.log('Registration successful');
     return {
       statusCode: 201,  // 201 Created - new resource was successfully created
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({
         success: true,
         message: 'Registration successful! Please check your email to verify your account.',
-        user: { email, firstName, lastName }  // User info (no sensitive data)
+        user: { email, firstName: cleanFirstName, lastName: cleanLastName }  // User info (no sensitive data)
       })
     };
     
@@ -199,7 +251,7 @@ exports.handler = async (event) => {
     console.error('Registration error:', error);
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
+      headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },
       body: JSON.stringify({ success: false, message: 'Server error' })
     };
   }

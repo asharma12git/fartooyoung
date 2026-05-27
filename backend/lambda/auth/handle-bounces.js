@@ -1,3 +1,4 @@
+const { getAllowedOrigin } = require("../utils/cors");
 // Example bounce handling Lambda function for when SES is restored
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb')
 const { DynamoDBDocumentClient, UpdateCommand } = require('@aws-sdk/lib-dynamodb')

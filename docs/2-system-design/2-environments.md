@@ -11,13 +11,22 @@ The system design (architecture, components, Lambda functions, database schemas)
 |---|---|---|---|
 | **Frontend URL** | `localhost:5173` | `staging.fartooyoung.org` | `www.fartooyoung.org` |
 | **Backend API URL** | `localhost:3001` | `https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod` | `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod` |
-| **Database** | DynamoDB Local (Docker `:8000`) | AWS DynamoDB (`fartooyoung-staging-*`) | AWS DynamoDB (`fartooyoung-production-*`) |
-| **Stripe Keys** | Test (`sk_test_...`, `pk_test_...`) | Test (`sk_test_...`, `pk_test_...`) | Live (`sk_live_...`, `pk_live_...`) |
-| **Payments** | Fake (test cards) | Fake (test cards) | Real money |
-| **Emails (SES)** | Not available locally | Real emails via SES | Real emails via SES |
+| **Lambda Functions** | SAM Local (17 functions) | AWS Lambda (`fartooyoung-staging-*`) | AWS Lambda (`fartooyoung-production-*`) |
+| **API Gateway** | SAM Local | `71z0wz0dg9` (REST API) | `0o7onj0dr7` (REST API) |
+| **DynamoDB** | DynamoDB Local (Docker `:8000`) | `fartooyoung-staging-*` (3 tables) | `fartooyoung-production-*` (3 tables) |
+| **S3 (Frontend)** | N/A | `fartooyoung-frontend-staging` | `fartooyoung-frontend-production` |
+| **S3 (SAM Artifacts)** | N/A | `fartooyoung-backend-staging` | `fartooyoung-backend-production` |
+| **CloudFront** | N/A | `EYHMCS1M0XJX1` (`db9gpqewllpi7.cloudfront.net`) | `E2PHSH4ED2AIN5` (`d13239btyxegco.cloudfront.net`) |
+| **Route 53** | N/A | `staging.fartooyoung.org` (A record) | `www.fartooyoung.org` + `fartooyoung.org` (A records) |
+| **ACM (SSL)** | N/A | Shared cert: `*.fartooyoung.org` | Shared cert: `*.fartooyoung.org` |
+| **SES (Email)** | Not available | Real emails via SES (`admin@fartooyoung.org`) | Real emails via SES (`admin@fartooyoung.org`) |
 | **Secrets Manager** | Not used (empty ARN) | `fartooyoung-staging-secrets-BjIpQD` | `fartooyoung-production-secrets-tEmB4i` |
-| **CloudFront** | N/A | `EYHMCS1M0XJX1` | `E2PHSH4ED2AIN5` |
-| **S3 Bucket** | N/A | `fartooyoung-frontend-staging` | `fartooyoung-frontend-production` |
+| **Stripe Keys** | Test (`sk_test_...`) | Test (`sk_test_...`) | Live (`sk_live_...`) |
+| **Payments** | Fake (test cards) | Fake (test cards) | Real money |
+| **CodePipeline V2** | N/A | `fartooyoung-staging-frontend-pipeline` + `fartooyoung-staging-backend-pipeline` | `fartooyoung-production-frontend-pipeline` + `fartooyoung-production-backend-pipeline` |
+| **CodeBuild** | N/A | `fartooyoung-staging-frontend-build` + `fartooyoung-staging-backend-build` | `fartooyoung-production-frontend-build` + `fartooyoung-production-backend-build` |
+| **CodeStar Connection** | N/A | Shared: `fartooyoung-github` | Shared: `fartooyoung-github` |
+| **IAM Roles** | N/A | `fartooyoung-staging-*` (Lambda, CodeBuild, Pipeline) | `fartooyoung-production-*` (Lambda, CodeBuild, Pipeline) |
 | **SAM Stack** | `fartooyoung-local` | `fartooyoung-staging` | `fartooyoung-production` |
 
 ---

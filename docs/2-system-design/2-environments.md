@@ -26,18 +26,28 @@ The system design (architecture, components, Lambda functions, database schemas)
 
 | Branch | Deploys To | How |
 |---|---|---|
-| `main` | Production (`www.fartooyoung.org`) | Auto via CI/CD on push |
-| `staging` | Staging (`staging.fartooyoung.org`) | Manual deploy |
+| `staging` | Staging (`staging.fartooyoung.org`) | Auto via V2 pipeline on push |
+| `main` | Production (`www.fartooyoung.org`) | Auto via V2 pipeline on push |
 
-**⚠️ Important: Always deploy to staging first before production.**
-Production has CI/CD — any push to `main` auto-deploys to the live site. Never push untested changes directly to `main`.
+**Pipelines (4 total, all V2 with instant webhook triggers):**
 
-> 🚨 **WARNING:** Pushing to `main` immediately deploys to the LIVE production site (`www.fartooyoung.org`) with real users and real payments. There is no approval step. Always test on staging first.
+| Pipeline | Branch | Triggers On |
+|----------|--------|-------------|
+| `fartooyoung-staging-frontend-pipeline` | `staging` | `src/**`, `public/**`, `package.json`, `vite.config.js` |
+| `fartooyoung-staging-backend-pipeline` | `staging` | `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml` |
+| `fartooyoung-production-frontend-pipeline` | `main` | Same as staging frontend |
+| `fartooyoung-production-backend-pipeline` | `main` | Same as staging backend |
+
+Changes to `docs/`, `deployment/`, `backend/scripts/`, or `README.md` do **not** trigger any pipeline.
+
+**⚠️ Important: Always test on staging first before merging to main.**
+
+> 🚨 **WARNING:** Merging to `main` immediately deploys to the LIVE production site (`www.fartooyoung.org`) with real users and real payments. There is no approval step.
 
 **Workflow:**
 1. Work on `staging` branch → test locally with `npm run dev`
-2. Deploy to staging → verify on `staging.fartooyoung.org`
-3. Once verified, merge `staging` into `main` → CI/CD auto-deploys to production
+2. Push to `staging` → pipeline auto-deploys to staging → verify on `staging.fartooyoung.org`
+3. Once verified, merge `staging` into `main` → pipeline auto-deploys to production
 
 ---
 
@@ -110,10 +120,14 @@ All paths relative to project root (`fartooyoung/`):
 | `.env.production` | Production | Frontend API URL + live Stripe key |
 | `backend/samconfig.toml` | All | SAM deploy targets (`[default]`, `[staging]`, `[production]`) |
 | `backend/template.yaml` | All | Shared infrastructure definition (same for all environments) |
-| `deployment/staging/deploy-frontend.sh` | Staging | Script to build and deploy frontend to staging |
-| `deployment/staging/deploy-backend.sh` | Staging | Script to build and deploy backend to staging |
-| `deployment/production/pipeline.yml` | Production | CloudFormation template that creates the CI/CD pipeline |
-| `deployment/production/deploy-pipeline.sh` | Production | Script to create/update the CI/CD pipeline |
+| `deployment/stg-frontend-pipeline.yml` | Staging | V2 pipeline for staging frontend |
+| `deployment/stg-backend-pipeline.yml` | Staging | V2 pipeline for staging backend |
+| `deployment/prod-frontend-pipeline.yml` | Production | V2 pipeline for production frontend |
+| `deployment/prod-backend-pipeline.yml` | Production | V2 pipeline for production backend |
+| `deployment/stg-manual-deploy-frontend.sh` | Staging | Emergency manual frontend deploy |
+| `deployment/stg-manual-deploy-backend.sh` | Staging | Emergency manual backend deploy |
+| `deployment/prod-manual-deploy-frontend.sh` | Production | Emergency manual frontend deploy |
+| `deployment/prod-manual-deploy-backend.sh` | Production | Emergency manual backend deploy |
 
 ---
 
@@ -141,4 +155,4 @@ All paths relative to project root (`fartooyoung/`):
 - `4-backend-design.md` — Lambda functions and API endpoints
 - `5-database-design.md` — DynamoDB table schemas
 
-*Last Updated: April 4, 2026*
+*Last Updated: May 27, 2026*

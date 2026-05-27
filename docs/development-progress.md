@@ -83,7 +83,7 @@
 
 | Priority | Plan | Effort | Status |
 |----------|------|--------|--------|
-| 1 | Deployment Optimization (security + pipeline split) | 5-6 hrs | 📋 Ready |
+| 1 | Deployment Optimization (security + pipeline split) | 5-6 hrs | ✅ Done |
 | 2 | SEO Implementation (meta tags, sitemap, structured data) | 3-4 hrs | 📋 Ready |
 | 3 | Donor Retention & Tracking (A/B testing, analytics) | 8-10 hrs | 📋 Ready |
 | 4 | Mobile App (PWA) | 2-3 hrs | 📋 Ready |
@@ -91,6 +91,8 @@
 | 6 | Social Media Automation (Twitter/Facebook) | 3-4 hrs | 📋 Depends on #5 |
 | 7 | Dashboard Restructure (admin + blog UI) | 8-10 hrs | 📋 Depends on #5 |
 | 8 | E-commerce (merchandise shop) | 20+ hrs | 📋 Future |
+| 9 | AWS SDK v3 Migration | 2-3 hrs | 📋 Backlog |
+| 10 | Frontend Lint Cleanup | 1-2 hrs | 📋 Backlog |
 
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 

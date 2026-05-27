@@ -4,7 +4,7 @@ Description: Far Too Young - Staging Frontend Pipeline (V2 with CodeStar)
 Parameters:
   ConnectionArn:
     Type: String
-    Default: arn:aws:codestar-connections:us-east-1:538781441544:connection/9170dc7d-2d4f-4e58-a389-63acb8187a84
+    Default: arn:aws:codeconnections:us-east-1:538781441544:connection/2b096c20-2f8f-4def-8be1-030bbc00df07
   RepositoryName:
     Type: String
     Default: asharma12git/fartooyoung

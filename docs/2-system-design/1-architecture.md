@@ -131,21 +131,21 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 │                    asharma12git/fartooyoung                                    │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
-                                        │ Webhook Trigger
+                                        │ Instant Webhook (CodeStar)
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           AWS CODEPIPELINE                                      │
-│                    fartooyoung-production-pipeline                             │
+│                        AWS CODEPIPELINE V2 (Path-Based Triggers)                │
 │─────────────────────────────────────────────────────────────────────────────────│
 │                                                                                 │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
-│  │  Source Stage   │  │ Frontend Build  │  │ Backend Build   │                │
-│  │─────────────────│  │─────────────────│  │─────────────────│                │
-│  │• GitHub Pull    │  │• npm build      │  │• sam build      │                │
-│  │• Code Download  │  │• S3 Upload      │  │• sam deploy     │                │
-│  │                 │  │• CloudFront     │  │• Lambda Update  │                │
-│  │                 │  │  Invalidation   │  │                 │                │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
+│  ┌─────────────────────────────────┐  ┌─────────────────────────────────┐      │
+│  │  Frontend Pipeline              │  │  Backend Pipeline               │      │
+│  │─────────────────────────────────│  │─────────────────────────────────│      │
+│  │• Triggers on: src/, public/,    │  │• Triggers on: backend/lambda/,  │      │
+│  │  package.json, vite.config.js   │  │  backend/template.yaml          │      │
+│  │• npm build → S3 → CloudFront   │  │• sam build → sam deploy         │      │
+│  │• Staging: staging branch        │  │• Staging: staging branch        │      │
+│  │• Production: main branch        │  │• Production: main branch        │      │
+│  └─────────────────────────────────┘  └─────────────────────────────────┘      │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                                         │ Parallel Deployment
@@ -240,7 +240,7 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 
 ### DevOps & Deployment
 - **GitHub** - Source code repository
-- **CodePipeline** - CI/CD automation
+- **CodePipeline V2** - CI/CD automation (4 pipelines: staging + production × frontend + backend)
 - **CodeBuild** - Build and deployment
 - **CloudFormation** - Infrastructure management
 
@@ -308,7 +308,7 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 | **SES**             | $0           | $0              | $0         | Within free tier (62K emails/month)     |
 | **Secrets Manager** | $0.40        | $0.40           | $0.80      | $0.40 per secret per month               |
 | **ACM (SSL)**       | $0           | $0              | $0         | Free when used with CloudFront           |
-| **CodePipeline**    | $0           | $1.00           | $1.00      | $1 per active pipeline per month         |
+| **CodePipeline V2** | $0           | ~$0.20          | ~$0.20     | $0.002 per action execution              |
 
 **Total Current Cost: $2.80/month** (both environments)
 

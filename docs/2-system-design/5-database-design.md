@@ -33,16 +33,20 @@
 ┌─────────────────────────────────────┐
 │  fartooyoung-production-donations   │
 │─────────────────────────────────────│
-│ donationId (PK)                     │
-│ userId (FK) [optional]              │
+│ id (PK)                             │
+│ email                               │
+│ name                                │
 │ amount                              │
 │ type                                │
-│ paymentMethod                       │
-│ stripePaymentId                     │
-│ stripeCustomerId                    │
 │ status                              │
+│ paymentMethod                       │
+│ cardBrand                           │
+│ cardLast4                           │
+│ wallet                              │
+│ stripeInvoiceId                     │
+│ stripeSubscriptionId                │
+│ stripeSessionId                     │
 │ createdAt                           │
-│ processedAt                         │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -131,16 +135,20 @@
 
 | Field | Type | Purpose | Production Status |
 |-------|------|---------|------------------|
-| `donationId` | String (PK) | Primary key (UUID) | ✅ Active |
-| `userId` | String (Optional) | Links to users (anonymous donations allowed) | ✅ Active |
-| `amount` | Number | Donation amount in USD cents | ✅ Active |
-| `type` | String | one-time, recurring | ✅ Active |
-| `paymentMethod` | String | stripe (primary method) | ✅ Active |
-| `stripePaymentId` | String | Stripe payment intent ID | ✅ Active |
-| `stripeCustomerId` | String | Stripe customer ID for recurring | ✅ Active |
-| `status` | String | pending, completed, failed | ✅ Active |
-| `createdAt` | ISO String | Donation initiation timestamp | ✅ Active |
-| `processedAt` | ISO String | Payment completion timestamp | ✅ Active |
+| `id` | String (PK) | Primary key (prefixed: `checkout_` or `invoice_`) | ✅ Active |
+| `email` | String | Donor email address | ✅ Active |
+| `name` | String | Donor display name | ✅ Active |
+| `amount` | Number | Donation amount in USD (dollars) | ✅ Active |
+| `type` | String | one-time, monthly, subscription_cancelled, subscription_updated | ✅ Active |
+| `status` | String | completed, cancelled, pending_cancellation | ✅ Active |
+| `paymentMethod` | String | card, us_bank_account, stripe-subscription | ✅ Active |
+| `cardBrand` | String (Nullable) | visa, amex, mastercard, etc. | ✅ Active |
+| `cardLast4` | String (Nullable) | Last 4 digits of card | ✅ Active |
+| `wallet` | String (Nullable) | apple_pay, google_pay, or null | ✅ Active |
+| `stripeInvoiceId` | String (Nullable) | Stripe invoice ID (recurring payments) | ✅ Active |
+| `stripeSubscriptionId` | String (Nullable) | Stripe subscription ID | ✅ Active |
+| `stripeSessionId` | String (Nullable) | Stripe checkout session ID (one-time) | ✅ Active |
+| `createdAt` | ISO String | Donation timestamp | ✅ Active |
 
 ### `fartooyoung-production-rate-limits`
 **Purpose**: 🛡️ Anti-spam protection and API rate limiting  
@@ -148,10 +156,10 @@
 
 | Field | Type | Purpose | Production Status |
 |-------|------|---------|------------------|
-| `ipAddress` | String (PK) | Client IP address | ✅ Active |
-| `requestCount` | Number | Requests in current window | ✅ Active |
-| `windowStart` | ISO String | Rate limit window start time | ✅ Active |
-| `ttl` | Number | DynamoDB TTL for auto-expiration | ✅ Active |
+| `limitKey` | String (PK) | Rate limit key (e.g., `login:IP:email`) | ✅ Active |
+| `attempts` | List | Timestamps of recent attempts | ✅ Active |
+| `ttl` | Number | DynamoDB TTL for auto-expiration (Unix timestamp) | ✅ Active |
+| `expiresAt` | Number | Window expiry in milliseconds | ✅ Active |
 
 ---
 
@@ -293,7 +301,7 @@
 
 **Primary Keys:**
 - `fartooyoung-production-users-table`: email (natural key)
-- `fartooyoung-production-donations-table`: donationId (UUID)
+- `fartooyoung-production-donations-table`: id (prefixed string: checkout_ or invoice_)
 - `fartooyoung-production-rate-limits`: ipAddress (natural key)
 
 **Data Types in Production:**

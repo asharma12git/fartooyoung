@@ -43,10 +43,13 @@
    aws cloudfront create-invalidation --distribution-id YOUR-ID --paths "/*" # Clear CDN cache
    ```
 
-### **Phase 5: Automation (Optional)**
-10. **`buildspec-frontend.yml`** - Automate frontend deployments *(CI/CD for frontend)*
-11. **`buildspec-backend.yml`** - Automate backend deployments *(CI/CD for backend)*
-12. **`pipeline.yml`** - Create the CI/CD infrastructure *(CI/CD automation)*
+### **Phase 5: Automation (CI/CD)**
+10. **V2 Pipelines (CodeStar + path-based triggers)** - Instant auto-deploy on push to git
+    - Frontend pipeline: triggers on `src/`, `public/`, `package.json`, `vite.config.js`
+    - Backend pipeline: triggers on `backend/lambda/`, `backend/template.yaml`, `backend/samconfig.toml`
+    - Staging pipelines watch `staging` branch
+    - Production pipelines watch `main` branch
+11. **Pipeline templates** in `deployment/` folder (CloudFormation YAML)
 
 ### **🎯 Why This Order?**
 - **Start local, deploy later** - Initially, all infrastructure runs locally (React dev server, local DynamoDB via Docker) for development and testing
@@ -76,10 +79,15 @@ fartooyoung/
 │   └── backend/lambda/          # 💻 Function code (17 functions)
 │
 └── 🔄 CI/CD FILES
-    ├── buildspec-frontend.yml   # 🚀 Auto-deploy React app
-    ├── buildspec-backend.yml    # 🚀 Auto-deploy Lambda functions
-    └── deployment/production/
-        └── pipeline.yml         # 🏗️ Creates CI/CD infrastructure
+    └── deployment/
+        ├── stg-frontend-pipeline.yml    # 🚀 Staging frontend V2 pipeline
+        ├── stg-backend-pipeline.yml     # 🚀 Staging backend V2 pipeline
+        ├── prod-frontend-pipeline.yml   # 🚀 Production frontend V2 pipeline
+        ├── prod-backend-pipeline.yml    # 🚀 Production backend V2 pipeline
+        ├── stg-manual-deploy-frontend.sh  # 🛠️ Manual staging frontend deploy
+        ├── stg-manual-deploy-backend.sh   # 🛠️ Manual staging backend deploy
+        ├── prod-manual-deploy-frontend.sh # 🛠️ Manual production frontend deploy
+        └── prod-manual-deploy-backend.sh  # 🛠️ Manual production backend deploy
 ```
 
 ---

@@ -43,7 +43,7 @@ fartooyoung/
 | Environment | Frontend | Backend | Stripe |
 |-------------|----------|---------|--------|
 | Local | localhost:5173 | SAM local :3001 + DynamoDB Docker :8000 | Test keys |
-| Staging | staging.fartooyoung.org | AWS API Gateway (staging) | Test keys |
+| Staging | staging.fartooyoung.org (DNS disabled) | AWS API Gateway (staging) | Test keys |
 | Production | www.fartooyoung.org | AWS API Gateway (production) | Live keys |
 
 ## Quick Start (Local)
@@ -69,9 +69,11 @@ npm install && npm run dev
 ## Documentation
 
 Detailed system design docs are in `docs/`:
-- `1-project-overview/` — Project background and goals
+- `1-planning/` — Prioritized feature plans (deployment, SEO, blog, e-commerce, etc.)
 - `2-system-design/` — Architecture, frontend, backend, database, and environment design
 - `3-deployments/` — Deployment processes and CI/CD
+- `4-testing/` — API testing commands, Stripe test cards, webhook setup
+- `development-progress.md` — Full development history and session log
 
 ## License
 

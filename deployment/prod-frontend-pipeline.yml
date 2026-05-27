@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Far Too Young - Staging Frontend Pipeline (V2 with CodeStar)
+Description: Far Too Young - Production Frontend Pipeline (V2 with CodeStar)
 
 Parameters:
   ConnectionArn:
@@ -10,19 +10,19 @@ Parameters:
     Default: asharma12git/fartooyoung
   BranchName:
     Type: String
-    Default: staging
+    Default: main
   FrontendBucket:
     Type: String
-    Default: fartooyoung-frontend-staging
+    Default: fartooyoung-frontend-production
   CloudFrontDistributionId:
     Type: String
-    Default: EYHMCS1M0XJX1
+    Default: E2PHSH4ED2AIN5
 
 Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: fartooyoung-staging-frontend-pipeline-artifacts
+      BucketName: fartooyoung-production-frontend-pipeline-artifacts
       LifecycleConfiguration:
         Rules:
           - Id: CleanupOldArtifacts
@@ -70,7 +70,7 @@ Resources:
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: fartooyoung-staging-frontend-build
+      Name: fartooyoung-production-frontend-build
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -84,7 +84,7 @@ Resources:
           - Name: FRONTEND_BUCKET
             Value: !Ref FrontendBucket
           - Name: BUILD_MODE
-            Value: staging
+            Value: production
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
@@ -97,7 +97,7 @@ Resources:
                 - npm ci
             build:
               commands:
-                - npm run build -- --mode staging
+                - npm run build -- --mode production
             post_build:
               commands:
                 - aws s3 sync dist/ s3://${FRONTEND_BUCKET} --delete
@@ -121,6 +121,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
+                  - codeconnections:UseConnection
                 Resource: !Ref ConnectionArn
               - Effect: Allow
                 Action:
@@ -139,7 +140,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-staging-frontend-pipeline
+      Name: fartooyoung-production-frontend-pipeline
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
@@ -155,7 +156,7 @@ Resources:
                     - "src/**"
                     - "public/**"
                     - "vite.config.js"
-                    - ".env.staging"
+                    - ".env.production"
                     - "package.json"
                     - "package-lock.json"
                   Excludes:
@@ -163,7 +164,7 @@ Resources:
                     - "src/**/*.spec.*"
                 Branches:
                   Includes:
-                    - staging
+                    - main
       Stages:
         - Name: Source
           Actions:

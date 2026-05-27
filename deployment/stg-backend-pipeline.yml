@@ -184,7 +184,6 @@ Resources:
                     - "backend/samconfig.toml"
                     - "backend/package.json"
                     - "backend/package-lock.json"
-                    - "buildspec-backend.yml"
                   Excludes:
                     - "backend/scripts/**"
                     - "backend/README.md"

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-// Pipeline V2 trigger test - verified
 
 /**
  * CheckoutButton - Stripe Checkout Integration

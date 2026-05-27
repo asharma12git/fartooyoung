@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Far Too Young - Staging Frontend Pipeline (V2 with CodeStar)
+Description: Far Too Young - Production Backend Pipeline (V2 with CodeStar)
 
 Parameters:
   ConnectionArn:
@@ -10,19 +10,13 @@ Parameters:
     Default: asharma12git/fartooyoung
   BranchName:
     Type: String
-    Default: staging
-  FrontendBucket:
-    Type: String
-    Default: fartooyoung-frontend-staging
-  CloudFrontDistributionId:
-    Type: String
-    Default: EYHMCS1M0XJX1
+    Default: main
 
 Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: fartooyoung-staging-frontend-pipeline-artifacts
+      BucketName: fartooyoung-production-backend-pipeline-artifacts
       LifecycleConfiguration:
         Rules:
           - Id: CleanupOldArtifacts
@@ -40,7 +34,7 @@ Resources:
               Service: codebuild.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: FrontendBuildPolicy
+        - PolicyName: BackendBuildPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -48,29 +42,70 @@ Resources:
                 Action:
                   - s3:PutObject
                   - s3:GetObject
-                  - s3:DeleteObject
+                  - s3:GetBucketVersioning
                   - s3:ListBucket
                 Resource:
-                  - !Sub arn:aws:s3:::${FrontendBucket}
-                  - !Sub arn:aws:s3:::${FrontendBucket}/*
+                  - arn:aws:s3:::fartooyoung-backend-production
+                  - arn:aws:s3:::fartooyoung-backend-production/*
                   - !GetAtt ArtifactBucket.Arn
                   - !Sub ${ArtifactBucket.Arn}/*
               - Effect: Allow
                 Action:
-                  - cloudfront:CreateInvalidation
+                  - cloudformation:*
                 Resource:
-                  - !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistributionId}
+                  - arn:aws:cloudformation:us-east-1:538781441544:stack/fartooyoung-production/*
+              - Effect: Allow
+                Action:
+                  - cloudformation:GetTemplateSummary
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - lambda:*
+                Resource:
+                  - arn:aws:lambda:us-east-1:538781441544:function:fartooyoung-production-*
+              - Effect: Allow
+                Action:
+                  - iam:GetRole
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:PassRole
+                  - iam:TagRole
+                Resource:
+                  - arn:aws:iam::538781441544:role/fartooyoung-production-*
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource:
+                  - arn:aws:apigateway:us-east-1::*
+              - Effect: Allow
+                Action:
+                  - dynamodb:DescribeTable
+                  - dynamodb:CreateTable
+                  - dynamodb:UpdateTable
+                Resource:
+                  - arn:aws:dynamodb:us-east-1:538781441544:table/fartooyoung-production-*
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:DescribeStackEvents
+                Resource: '*'
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: fartooyoung-staging-frontend-build
+      Name: fartooyoung-production-backend-build
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -78,13 +113,6 @@ Resources:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/amazonlinux2-x86_64-standard:5.0
-        EnvironmentVariables:
-          - Name: CLOUDFRONT_DISTRIBUTION_ID
-            Value: !Ref CloudFrontDistributionId
-          - Name: FRONTEND_BUCKET
-            Value: !Ref FrontendBucket
-          - Name: BUILD_MODE
-            Value: staging
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
@@ -93,15 +121,14 @@ Resources:
             install:
               runtime-versions:
                 nodejs: 18
+                python: 3.11
               commands:
-                - npm ci
+                - pip3 install aws-sam-cli
             build:
               commands:
-                - npm run build -- --mode staging
-            post_build:
-              commands:
-                - aws s3 sync dist/ s3://${FRONTEND_BUCKET} --delete
-                - aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/*"
+                - cd backend
+                - sam build
+                - sam deploy --config-env production --no-confirm-changeset --no-fail-on-empty-changeset
 
   PipelineRole:
     Type: AWS::IAM::Role
@@ -121,6 +148,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
+                  - codeconnections:UseConnection
                 Resource: !Ref ConnectionArn
               - Effect: Allow
                 Action:
@@ -139,7 +167,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-staging-frontend-pipeline
+      Name: fartooyoung-production-backend-pipeline
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
@@ -152,18 +180,17 @@ Resources:
             Push:
               - FilePaths:
                   Includes:
-                    - "src/**"
-                    - "public/**"
-                    - "vite.config.js"
-                    - ".env.staging"
-                    - "package.json"
-                    - "package-lock.json"
+                    - "backend/lambda/**"
+                    - "backend/template.yaml"
+                    - "backend/samconfig.toml"
+                    - "backend/package.json"
+                    - "backend/package-lock.json"
                   Excludes:
-                    - "src/**/*.test.*"
-                    - "src/**/*.spec.*"
+                    - "backend/scripts/**"
+                    - "backend/README.md"
                 Branches:
                   Includes:
-                    - staging
+                    - main
       Stages:
         - Name: Source
           Actions:
@@ -182,7 +209,7 @@ Resources:
                 - Name: SourceOutput
         - Name: Build
           Actions:
-            - Name: BuildFrontend
+            - Name: BuildBackend
               ActionTypeId:
                 Category: Build
                 Owner: AWS

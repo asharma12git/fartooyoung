@@ -38,7 +38,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',              // Allow all origins
+        'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
         'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
         'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
       },
@@ -79,7 +79,7 @@ exports.handler = async (event) => {
       const minutes = Math.ceil(rateCheck.remainingTime / 60);
       return {
         statusCode: 429,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ 
           success: false, 
           message: `Too many registration attempts. Please try again in ${minutes} minute${minutes > 1 ? 's' : ''}.`
@@ -106,7 +106,7 @@ exports.handler = async (event) => {
     if (existingUser.Item) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ success: false, message: 'User already exists' })
       };
     }
@@ -184,7 +184,7 @@ exports.handler = async (event) => {
     console.log('Registration successful');
     return {
       statusCode: 201,  // 201 Created - new resource was successfully created
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({
         success: true,
         message: 'Registration successful! Please check your email to verify your account.',
@@ -199,7 +199,7 @@ exports.handler = async (event) => {
     console.error('Registration error:', error);
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({ success: false, message: 'Server error' })
     };
   }

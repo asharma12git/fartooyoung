@@ -45,7 +45,7 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: {
-          'Access-Control-Allow-Origin': '*',              // Allow all origins
+          'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
           'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
           'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
         },
@@ -64,7 +64,7 @@ exports.handler = async (event) => {
     if (!amount || !donor_info) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ 
           error: 'Missing required fields: amount, donor_info' 
         })
@@ -187,7 +187,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({
         checkout_url: session.url,  // URL to redirect user to Stripe checkout
         session_id: session.id      // Session ID for tracking
@@ -202,7 +202,7 @@ exports.handler = async (event) => {
     
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({ 
         error: error.message || 'Checkout session creation failed' 
       })

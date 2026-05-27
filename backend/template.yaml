@@ -47,7 +47,13 @@ Globals:
     Cors:
       AllowMethods: "'GET,POST,OPTIONS'"
       AllowHeaders: "'Content-Type,Authorization'"
-      AllowOrigin: "'*'"
+      AllowOrigin: !If
+        - IsProduction
+        - "'https://www.fartooyoung.org'"
+        - !If
+          - IsStaging
+          - "'https://staging.fartooyoung.org'"
+          - "'http://localhost:5173'"
 
 Resources:
   # Authentication Functions

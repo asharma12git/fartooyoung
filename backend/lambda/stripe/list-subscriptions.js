@@ -35,7 +35,7 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: {
-          'Access-Control-Allow-Origin': '*',             // Allow all origins
+          'Access-Control-Allow-Origin': process.env.FRONTEND_URL,             
           'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allowed HTTP methods (GET for listing)
           'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
         },
@@ -52,7 +52,7 @@ exports.handler = async (event) => {
     if (!customer_email) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ error: 'Customer email is required' })
       }
     }
@@ -73,7 +73,7 @@ exports.handler = async (event) => {
     if (customers.data.length === 0) {
       return {
         statusCode: 200,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ subscriptions: [] })
       }
     }
@@ -132,7 +132,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({
         active_subscriptions: formattedActiveSubscriptions,     // Currently active subscriptions
         inactive_subscriptions: formattedInactiveSubscriptions  // Canceled/past subscriptions
@@ -146,7 +146,7 @@ exports.handler = async (event) => {
     console.error('List subscriptions error:', error)
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({ error: error.message })
     }
   }

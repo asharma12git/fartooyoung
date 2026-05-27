@@ -34,7 +34,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': '*',           // Allow all origins
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL,           
                 'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
             },
@@ -55,7 +55,7 @@ exports.handler = async (event) => {
         if (!amount || !paymentMethod) {
             return {
                 statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': '*' },
+                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
                 body: JSON.stringify({ success: false, message: 'Missing required fields' })
             };
         }
@@ -94,7 +94,7 @@ exports.handler = async (event) => {
         // ====================================================================
         return {
             statusCode: 200,
-            headers: { 'Access-Control-Allow-Origin': '*' },
+            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
             body: JSON.stringify({
                 success: true,
                 message: 'Donation recorded successfully',
@@ -109,7 +109,7 @@ exports.handler = async (event) => {
         console.error('Error creating donation:', error);
         return {
             statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': '*' },
+            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
             body: JSON.stringify({ success: false, message: 'Server error processing donation' })
         };
     }

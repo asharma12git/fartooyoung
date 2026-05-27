@@ -35,7 +35,7 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: {
-          'Access-Control-Allow-Origin': '*',              // Allow all origins
+          'Access-Control-Allow-Origin': process.env.FRONTEND_URL,              
           'Access-Control-Allow-Methods': 'POST, OPTIONS', // Allowed HTTP methods
           'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Allowed headers
         },
@@ -52,7 +52,7 @@ exports.handler = async (event) => {
     if (!customer_email) {
       return {
         statusCode: 400,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ error: 'Customer email is required' })
       }
     }
@@ -70,7 +70,7 @@ exports.handler = async (event) => {
     if (customers.data.length === 0) {
       return {
         statusCode: 404,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
         body: JSON.stringify({ error: 'No customer found with this email' })
       }
     }
@@ -92,7 +92,7 @@ exports.handler = async (event) => {
     // ========================================================================
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({
         portal_url: portalSession.url  // URL to redirect customer to billing portal
       })
@@ -105,7 +105,7 @@ exports.handler = async (event) => {
     console.error('Portal session error:', error)
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL },
       body: JSON.stringify({ error: error.message })
     }
   }

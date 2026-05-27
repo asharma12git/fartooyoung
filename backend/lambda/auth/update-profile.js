@@ -34,7 +34,7 @@ exports.handler = async (event) => {
   // ==========================================================================
   // Standard CORS headers for all responses
   const headers = {
-    'Access-Control-Allow-Origin': '*',                    // Allow all origins
+    'Access-Control-Allow-Origin': process.env.FRONTEND_URL,                    
     'Access-Control-Allow-Headers': 'Content-Type,Authorization', // Allowed headers
     'Access-Control-Allow-Methods': 'POST,OPTIONS',       // Allowed HTTP methods
     'Content-Type': 'application/json'                    // Response content type

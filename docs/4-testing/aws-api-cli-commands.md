@@ -321,12 +321,20 @@ curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/donations/cr
   "success": true,
   "message": "Donation recorded successfully",
   "donation": {
-    "donationId": "3e37e94f-7a29-4e65-8a75-6158b0be7496",
-    "amount": 2500,
+    "id": "3e37e94f-7a29-4e65-8a75-6158b0be7496",
+    "email": "donor@example.com",
+    "name": "Test Donor",
+    "amount": 25,
     "type": "one-time",
     "status": "completed",
-    "createdAt": "2025-12-11T20:29:21.148Z",
-    "processedAt": "2025-12-11T20:29:21.148Z"
+    "paymentMethod": "card",
+    "cardBrand": null,
+    "cardLast4": null,
+    "wallet": null,
+    "stripeInvoiceId": null,
+    "stripeSubscriptionId": null,
+    "stripeSessionId": null,
+    "createdAt": "2025-12-11T20:29:21.148Z"
   }
 }
 ```
@@ -351,13 +359,20 @@ curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/donations/his
   "success": true,
   "donations": [
     {
-      "donationId": "3e37e94f-7a29-4e65-8a75-6158b0be7496",
-      "amount": 2500,
+      "id": "checkout_cs_live_a19it8AIiJvo...",
+      "email": "donor@example.com",
+      "name": "Donor Name",
+      "amount": 5.45,
       "type": "one-time",
       "status": "completed",
-      "createdAt": "2025-12-11T20:29:21.148Z",
-      "processedAt": "2025-12-11T20:29:21.148Z",
-      "stripePaymentId": "pi_1234567890"
+      "paymentMethod": "card",
+      "cardBrand": "visa",
+      "cardLast4": "7489",
+      "wallet": "apple_pay",
+      "stripeInvoiceId": null,
+      "stripeSubscriptionId": null,
+      "stripeSessionId": "cs_live_a19it8AIiJvo...",
+      "createdAt": "2026-05-27T18:48:29.495Z"
     }
   ]
 }

@@ -1,20 +1,17 @@
 #!/bin/bash
 
-# Far Too Young - Staging Backend Deployment Script
+# Far Too Young - Staging Backend Manual Deployment
 # Deploys Lambda functions and API Gateway using SAM
 
 set -e
 
 echo "🚀 Starting staging backend deployment..."
 
-# Navigate to backend directory
 cd backend
 
-# Build SAM application
 echo "📦 Building SAM application..."
 sam build
 
-# Deploy to staging
 echo "☁️  Deploying to AWS..."
 sam deploy --config-env staging --no-confirm-changeset
 

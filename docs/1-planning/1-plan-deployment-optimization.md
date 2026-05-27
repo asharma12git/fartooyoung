@@ -264,20 +264,22 @@ Neither buildspec has testing or linting. Add:
 
 ## Execution Order
 
-| Step | Item | Depends On | Time | Risk |
-|------|------|-----------|------|------|
-| 1 | IAM role scoping (#1) | Nothing | 30 min | Low |
-| 2 | CORS lockdown (#2) | Nothing | 10 min | Low |
-| 3 | Create CodeStar Connection | Nothing | 5 min | Low |
-| 4 | Create frontend pipeline (V2) | Step 3 | 1 hour | Medium |
-| 5 | Create backend pipeline (V2) | Step 3 | 1 hour | Medium |
-| 6 | Test both pipelines | Steps 4+5 | 30 min | Low |
-| 7 | Add approval gate to backend pipeline (#3) | Step 5 | 30 min | Low |
-| 8 | Delete old pipeline | Step 6 verified | 10 min | Low |
-| 9 | Add build validation (#6) | Steps 4+5 | 1 hour | Low |
-| 10 | Update documentation | Step 8 | 30 min | Low |
+| Step | Item | Depends On | Time | Status |
+|------|------|-----------|------|--------|
+| 1 | Create CodeStar Connection (shared) | Nothing | 5 min | ⬜ |
+| 2 | Create Staging Frontend Pipeline V2 | Step 1 | 20 min | ⬜ |
+| 3 | Create Staging Backend Pipeline V2 | Step 1 | 20 min | ⬜ |
+| 4 | Test staging pipelines (push to staging branch) | Steps 2+3 | 10 min | ⬜ |
+| 5 | Create Production Frontend Pipeline V2 | Step 4 verified | 20 min | ⬜ |
+| 6 | Create Production Backend Pipeline V2 | Step 4 verified | 20 min | ⬜ |
+| 7 | Test production pipelines (push to main branch) | Steps 5+6 | 10 min | ⬜ |
+| 8 | Delete old V1 production pipeline | Step 7 verified | 10 min | ⬜ |
+| 9 | Add manual approval gate to production backend pipeline | Step 8 | 30 min | ⬜ |
+| 10 | Tighten CodeBuild IAM roles (#1) | Step 8 | 30 min | ⬜ |
+| 11 | Add build validation steps (lint, sam validate) | Steps 5+6 | 1 hour | ⬜ |
+| 12 | Update documentation | Step 8 | 30 min | ⬜ |
 
-**Total:** ~5-6 hours
+**Total:** ~4-5 hours
 
 ---
 

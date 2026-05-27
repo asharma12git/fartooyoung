@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Far Too Young - Staging Frontend Deployment Script
+# Far Too Young - Staging Frontend Manual Deployment
 # Deploys React frontend to S3 + CloudFront
 
 set -e
 
-echo "🚀 Starting staging deployment..."
+echo "🚀 Starting staging frontend deployment..."
 
 # Build frontend with staging config
 echo "📦 Building frontend..."
@@ -20,6 +20,6 @@ echo "🔄 Invalidating CloudFront cache..."
 aws cloudfront create-invalidation --distribution-id EYHMCS1M0XJX1 --paths "/*"
 
 echo ""
-echo "✅ Staging deployment complete!"
+echo "✅ Staging frontend deployment complete!"
 echo "🌐 URL: https://staging.fartooyoung.org"
 echo "⏳ CloudFront cache invalidation in progress (2-3 minutes)"

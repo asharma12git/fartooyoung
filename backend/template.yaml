@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Far Too Young Authentication API - CORS wildcard preflight
+Description: Far Too Young Authentication API - CORS wildcard preflight - pipeline v2 test
 # Updated: 2024-12-19 - Fixed secret key case consistency
 
 Parameters:

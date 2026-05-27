@@ -16,7 +16,7 @@ Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: fartooyoung-staging-backend-pipeline-artifacts
+      BucketName: fartooyoung-stg-backend-artifacts
       LifecycleConfiguration:
         Rules:
           - Id: CleanupOldArtifacts
@@ -127,7 +127,7 @@ Resources:
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: fartooyoung-staging-backend-build
+      Name: fartooyoung-stg-backend-build
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -189,7 +189,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-staging-backend-pipeline
+      Name: fartooyoung-stg-backend
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:

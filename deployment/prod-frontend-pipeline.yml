@@ -22,7 +22,7 @@ Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: fartooyoung-production-frontend-pipeline-artifacts
+      BucketName: fartooyoung-prod-frontend-artifacts
       LifecycleConfiguration:
         Rules:
           - Id: CleanupOldArtifacts
@@ -70,7 +70,7 @@ Resources:
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: fartooyoung-production-frontend-build
+      Name: fartooyoung-prod-frontend-build
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -141,7 +141,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-production-frontend-pipeline
+      Name: fartooyoung-prod-frontend
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:

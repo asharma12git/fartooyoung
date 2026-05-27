@@ -51,16 +51,39 @@ Resources:
                   - !Sub ${ArtifactBucket.Arn}/*
               - Effect: Allow
                 Action:
-                  - cloudformation:*
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:GetTemplate
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:ListStackResources
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:DeleteChangeSet
                 Resource:
                   - arn:aws:cloudformation:us-east-1:538781441544:stack/fartooyoung-production/*
+                  - arn:aws:cloudformation:us-east-1:aws:transform/*
               - Effect: Allow
                 Action:
                   - cloudformation:GetTemplateSummary
                 Resource: '*'
               - Effect: Allow
                 Action:
-                  - lambda:*
+                  - lambda:GetFunction
+                  - lambda:CreateFunction
+                  - lambda:UpdateFunctionCode
+                  - lambda:UpdateFunctionConfiguration
+                  - lambda:DeleteFunction
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
+                  - lambda:GetFunctionConfiguration
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
                 Resource:
                   - arn:aws:lambda:us-east-1:538781441544:function:fartooyoung-production-*
               - Effect: Allow
@@ -78,7 +101,11 @@ Resources:
                   - arn:aws:iam::538781441544:role/fartooyoung-production-*
               - Effect: Allow
                 Action:
-                  - apigateway:*
+                  - apigateway:GET
+                  - apigateway:POST
+                  - apigateway:PUT
+                  - apigateway:DELETE
+                  - apigateway:PATCH
                 Resource:
                   - arn:aws:apigateway:us-east-1::*
               - Effect: Allow
@@ -86,6 +113,8 @@ Resources:
                   - dynamodb:DescribeTable
                   - dynamodb:CreateTable
                   - dynamodb:UpdateTable
+                  - dynamodb:UpdateTimeToLive
+                  - dynamodb:DescribeTimeToLive
                 Resource:
                   - arn:aws:dynamodb:us-east-1:538781441544:table/fartooyoung-production-*
               - Effect: Allow
@@ -93,13 +122,6 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - cloudformation:CreateChangeSet
-                  - cloudformation:ExecuteChangeSet
-                  - cloudformation:DescribeChangeSet
-                  - cloudformation:DescribeStackEvents
                 Resource: '*'
 
   CodeBuildProject:
@@ -127,6 +149,7 @@ Resources:
             build:
               commands:
                 - cd backend
+                - sam validate
                 - sam build
                 - sam deploy --config-env production --no-confirm-changeset --no-fail-on-empty-changeset
 

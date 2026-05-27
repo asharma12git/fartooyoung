@@ -274,10 +274,10 @@ Neither buildspec has testing or linting. Add:
 | 6 | Create Production Backend Pipeline V2 | Step 4 verified | 20 min | ✅ |
 | 7 | Test production pipelines (push to main branch) | Steps 5+6 | 10 min | ✅ |
 | 8 | Delete old V1 production pipeline | Step 7 verified | 10 min | ✅ |
-| 9 | Add manual approval gate to production backend pipeline | Step 8 | 30 min | ⬜ |
-| 10 | Tighten CodeBuild IAM roles (#1) | Step 8 | 30 min | ⬜ |
-| 11 | Add build validation steps (lint, sam validate) | Steps 5+6 | 1 hour | ⬜ |
-| 12 | Update documentation | Step 8 | 30 min | ⬜ |
+| 9 | Add manual approval gate to production backend pipeline | Step 8 | 30 min | ⏸️ Paused |
+| 10 | Tighten CodeBuild IAM roles (#1) | Step 8 | 30 min | ✅ |
+| 11 | Add build validation steps (lint, sam validate) | Steps 5+6 | 1 hour | ✅ |
+| 12 | Update documentation | Step 8 | 30 min | ✅ |
 
 **Total:** ~4-5 hours
 

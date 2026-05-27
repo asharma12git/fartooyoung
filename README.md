@@ -28,15 +28,14 @@ fartooyoung/
 ├── src/                        # React frontend (components, pages)
 ├── backend/
 │   ├── lambda/                 # 17 Lambda functions
+│   ├── scripts/                # One-off migration scripts (manual)
 │   ├── template.yaml           # SAM infrastructure definition
 │   └── samconfig.toml          # Deployment targets per environment
-├── deployment/                 # CI/CD pipeline and deploy scripts
+├── deployment/                 # V2 pipeline templates + manual deploy scripts
 ├── docs/                       # System design documentation
 ├── .env.local                  # Local dev config
 ├── .env.staging                # Staging config
-├── .env.production             # Production config
-├── buildspec-frontend.yml      # CI/CD frontend build steps
-└── buildspec-backend.yml       # CI/CD backend build steps
+└── .env.production             # Production config
 ```
 
 ## Environments
@@ -44,7 +43,7 @@ fartooyoung/
 | Environment | Frontend | Backend | Stripe |
 |-------------|----------|---------|--------|
 | Local | localhost:5173 | SAM local :3001 + DynamoDB Docker :8000 | Test keys |
-| Staging | staging.fartooyoung.org (DNS disabled) | AWS API Gateway (staging) | Test keys |
+| Staging | staging.fartooyoung.org | AWS API Gateway (staging) | Test keys |
 | Production | www.fartooyoung.org | AWS API Gateway (production) | Live keys |
 
 ## Quick Start (Local)
@@ -62,8 +61,9 @@ npm install && npm run dev
 
 ## Deployment
 
-- **Staging**: Manual deploy via SAM + S3 sync (see `docs/3-deployments/`)
-- **Production**: Auto-deploys via CI/CD on push to `main` branch
+- **Staging**: Auto-deploys via V2 pipeline on push to `staging` branch
+- **Production**: Auto-deploys via V2 pipeline on push to `main` branch
+- **Path-based triggers**: Frontend and backend deploy independently based on which files changed
 
 > ⚠️ Pushing to `main` immediately deploys to the live production site. Always test on staging first.
 

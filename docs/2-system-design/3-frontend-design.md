@@ -46,7 +46,7 @@
 │  │─────────────────│  │─────────────────│  │─────────────────│                │
 │  │• User profile   │  │• Live Stripe    │  │• ChildMarriage  │                │
 │  │• Donation hist  │  │• Payment proc   │  │• FounderTeam    │                │
-│  │• Impact metrics │  │• Amount select  │  │• Partners       │                │
+│  │• Subscriptions  │  │• Amount select  │  │• Partners       │                │
 │  │• Account mgmt   │  │• Real payments  │  │• WhatWeDo       │                │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
 └─────────────────────────────────────────────────────────────────────────────────┘
@@ -115,6 +115,8 @@
 | `AuthModal.jsx` (Register)  | `POST /auth/register`     | `RegisterFunction`    | `fartooyoung-production-users`    | ✅ LIVE   |
 | `Header.jsx` (Logout)       | `POST /auth/logout`       | `LogoutFunction`      | None                              | ✅ LIVE   |
 | `DonationModal.jsx`         | `POST /donations/create`  | `CreateDonationFunction` | `fartooyoung-production-donations` | ✅ LIVE   |
+| `CheckoutButton.jsx`        | `POST /stripe/create-checkout-session` | `CreateCheckoutSessionFunction` | `fartooyoung-production-donations` | ✅ LIVE |
+| `SubscriptionManager.jsx`   | `GET /stripe/list-subscriptions` | `ListSubscriptionsFunction` | None | ✅ LIVE |
 | `AuthModal.jsx` (Reset)     | `POST /auth/forgot-password` | `ForgotPasswordFunction` | `fartooyoung-production-users` | ✅ LIVE   |
 | Rate Limiting (All)         | All endpoints             | All functions         | `fartooyoung-production-rate-limits` | ✅ LIVE   |
 
@@ -123,6 +125,29 @@
 ---
 
 ## 🟢 **CURRENT PRODUCTION COMPONENTS** (Live System)
+
+### Complete Component List
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| `App.jsx` | Central state, routing, user context | ✅ LIVE |
+| `Header.jsx` | Navigation, auth buttons, donate CTA | ✅ LIVE |
+| `Footer.jsx` | Site links, contact emails, branding | ✅ LIVE |
+| `AuthModal.jsx` | Login, register, password reset forms | ✅ LIVE |
+| `DonationModal.jsx` | Stripe checkout, amount selection | ✅ LIVE |
+| `CheckoutButton.jsx` | Stripe checkout session trigger | ✅ LIVE |
+| `SubscriptionManager.jsx` | Subscription list, cancel/update | ✅ LIVE |
+| `DonorDashboard.jsx` | Dashboard, donations, shop, settings tabs | ✅ LIVE |
+| `PersonCard.jsx` | Reusable team member card (FounderTeam) | ✅ LIVE |
+| `Card.jsx` | Generic card component | ✅ LIVE |
+| `SectionTitle.jsx` | Consistent section headings | ✅ LIVE |
+| `ChildMarriage.jsx` | Child marriage awareness page | ✅ LIVE |
+| `FounderTeam.jsx` | Founder & team bios | ✅ LIVE |
+| `Partners.jsx` | Partner organizations | ✅ LIVE |
+| `WhatWeDo.jsx` | Programs, carousel, targets | ✅ LIVE |
+| `VerifyEmail.jsx` | Email verification landing page | ✅ LIVE |
+| `PaymentSuccess.jsx` | Post-donation success page | ✅ LIVE |
+| `SubscriptionReturn.jsx` | Post-subscription return page | ✅ LIVE |
 
 ### `App.jsx` ✅ LIVE
 **Purpose**: Central application state and routing management  
@@ -465,5 +490,5 @@ const futureUserState = {
 
 ---
 
-*Last Updated: December 11, 2025*  
+*Last Updated: May 26, 2026*  
 *Production Frontend Status: ✅ LIVE and serving global users*

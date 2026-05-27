@@ -1,5 +1,14 @@
 # Far Too Young - E-commerce Planning
 
+## Overview
+Add merchandise sales capability to generate additional revenue for the organization. Evaluates Shopify integration (quick MVP) vs full AWS-native solution (long-term).
+
+**Status:** 📋 Planned  
+**Dependencies:** None (independent of blog/social systems)  
+**Priority:** Low (future revenue stream)
+
+---
+
 ## Future Merchandise Sales Strategy
 
 ### Discussion Date: November 15, 2025

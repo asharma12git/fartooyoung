@@ -17,7 +17,7 @@ The system design (architecture, components, Lambda functions, database schemas)
 | **Emails (SES)** | Not available locally | Real emails via SES | Real emails via SES |
 | **Secrets Manager** | Not used (empty ARN) | `fartooyoung-staging-secrets-BjIpQD` | `fartooyoung-production-secrets-tEmB4i` |
 | **CloudFront** | N/A | `EYHMCS1M0XJX1` | `E2PHSH4ED2AIN5` |
-| **S3 Bucket** | N/A | `fartooyoung-staging-frontend` | `fartooyoung-frontend-production` |
+| **S3 Bucket** | N/A | `fartooyoung-frontend-staging` | `fartooyoung-frontend-production` |
 | **SAM Stack** | `fartooyoung-local` | `fartooyoung-staging` | `fartooyoung-production` |
 
 ---
@@ -66,7 +66,7 @@ sam build && sam deploy --config-env staging
 
 # Deploy frontend
 npm run build -- --mode staging
-aws s3 sync dist/ s3://fartooyoung-staging-frontend --delete
+aws s3 sync dist/ s3://fartooyoung-frontend-staging --delete
 aws cloudfront create-invalidation --distribution-id EYHMCS1M0XJX1 --paths "/*"
 ```
 - Uses `.env.staging` → points to staging API Gateway

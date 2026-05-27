@@ -22,7 +22,7 @@ This guide documents the step-by-step process to deploy the Far Too Young fronte
 | Resource        | Staging                            | Production (LIVE)                          |
 |-----------------|------------------------------------|--------------------------------------------|
 | Domain          | `staging.fartooyoung.org`          | `www.fartooyoung.org` & `fartooyoung.org`  |
-| S3 Bucket       | `fartooyoung-staging-frontend`     | `fartooyoung-frontend-production`          |
+| S3 Bucket       | `fartooyoung-frontend-staging`     | `fartooyoung-frontend-production`          |
 | CloudFront ID   | `EYHMCS1M0XJX1`                    | `E2PHSH4ED2AIN5`                           |
 | Build Command   | `npm run build -- --mode staging`  | `npm run build -- --mode production`      |
 | SSL Certificate | Staging cert ARN                   | `*.fartooyoung.org` wildcard cert         |
@@ -103,14 +103,14 @@ aws acm describe-certificate \
 
 ```bash
 aws s3api create-bucket \
-  --bucket fartooyoung-staging-frontend \
+  --bucket fartooyoung-frontend-staging \
   --region us-east-1
 ```
 
 Enable static website hosting:
 
 ```bash
-aws s3 website s3://fartooyoung-staging-frontend/ \
+aws s3 website s3://fartooyoung-frontend-staging/ \
   --index-document index.html \
   --error-document index.html
 ```
@@ -119,7 +119,7 @@ Make bucket publicly readable:
 
 ```bash
 aws s3api put-bucket-policy \
-  --bucket fartooyoung-staging-frontend \
+  --bucket fartooyoung-frontend-staging \
   --policy '{
     "Version": "2012-10-17",
     "Statement": [{
@@ -127,7 +127,7 @@ aws s3api put-bucket-policy \
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::fartooyoung-staging-frontend/*"
+      "Resource": "arn:aws:s3:::fartooyoung-frontend-staging/*"
     }]
   }'
 ```
@@ -146,7 +146,7 @@ npm run build --mode staging
 Upload to S3:
 
 ```bash
-aws s3 sync dist/ s3://fartooyoung-staging-frontend/ --delete
+aws s3 sync dist/ s3://fartooyoung-frontend-staging/ --delete
 ```
 
 **Result:** 28.3 MB uploaded (HTML, CSS, JS, images, fonts)
@@ -168,15 +168,15 @@ Create distribution configuration file `cloudfront-config.json`:
   "Origins": {
     "Quantity": 1,
     "Items": [{
-      "Id": "S3-fartooyoung-staging-frontend",
-      "DomainName": "fartooyoung-staging-frontend.s3.us-east-1.amazonaws.com",
+      "Id": "S3-fartooyoung-frontend-staging",
+      "DomainName": "fartooyoung-frontend-staging.s3.us-east-1.amazonaws.com",
       "S3OriginConfig": {
         "OriginAccessIdentity": ""
       }
     }]
   },
   "DefaultCacheBehavior": {
-    "TargetOriginId": "S3-fartooyoung-staging-frontend",
+    "TargetOriginId": "S3-fartooyoung-frontend-staging",
     "ViewerProtocolPolicy": "redirect-to-https",
     "AllowedMethods": {
       "Quantity": 2,
@@ -301,7 +301,7 @@ echo "Building frontend..."
 npm run build --mode staging
 
 echo "Uploading to S3..."
-aws s3 sync dist/ s3://fartooyoung-staging-frontend/ --delete
+aws s3 sync dist/ s3://fartooyoung-frontend-staging/ --delete
 
 echo "Invalidating CloudFront cache..."
 aws cloudfront create-invalidation \
@@ -375,7 +375,7 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 - **Route 53 Hosted Zone ID:** Z10244882P83IUVL8IHLM
 
 ### Staging
-- **S3 Bucket:** fartooyoung-staging-frontend
+- **S3 Bucket:** fartooyoung-frontend-staging
 - **CloudFront Distribution ID:** EYHMCS1M0XJX1
 - **CloudFront Domain:** db9gpqewllpi7.cloudfront.net
 - **Custom Domain:** staging.fartooyoung.org

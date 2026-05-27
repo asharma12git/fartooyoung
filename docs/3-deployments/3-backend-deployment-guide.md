@@ -289,32 +289,33 @@ The production environment uses automated deployment via AWS CodePipeline. Manua
 
 ### Pipeline Overview
 
-**Trigger:** Push to `main` branch on GitHub
-**Pipeline:** `fartooyoung-production-pipeline`
-**Build Project:** `fartooyoung-backend-production`
+**Trigger:** Push to `main` branch (instant webhook via CodeStar)
+**Pipeline:** `fartooyoung-production-backend-pipeline` (V2)
+**Build Project:** `fartooyoung-production-backend-build`
+**Path Filter:** Only triggers on changes to `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml`, `backend/package.json`
 
-### Pipeline Configuration Files
+### Pipeline Configuration
 
-- **`buildspec-backend.yml`** - Build instructions for CodeBuild
-- **`pipeline.yml`** - CloudFormation template that creates the CI/CD infrastructure
-- **`.secrets`** - GitHub token for pipeline authentication
+- **`deployment/prod-backend-pipeline.yml`** - CloudFormation template defining the pipeline
+- **CodeStar Connection** - `fartooyoung-github` (GitHub App webhook, no token needed)
 
 ### Automated Deployment Flow
 
 ```bash
-git push origin main  # Triggers automatic deployment
+git push origin main  # Triggers automatic deployment (if backend/ changed)
 ```
 
 **What happens:**
-1. CodePipeline detects GitHub push
-2. CodeBuild runs `buildspec-backend.yml`:
+1. CodeStar webhook instantly notifies CodePipeline
+2. Pipeline checks path filter — only runs if backend files changed
+3. CodeBuild runs inline buildspec:
    ```bash
    cd backend
-   sam build                         # Package Lambda functions
-   sam deploy --config-env production # Deploy to production
+   sam build                                              # Package Lambda functions
+   sam deploy --config-env production --no-confirm-changeset --no-fail-on-empty-changeset
    ```
-3. All 17 Lambda functions updated automatically
-4. Zero downtime deployment
+4. All 17 Lambda functions updated automatically (~2-3 min total)
+5. Zero downtime deployment
 
 ### Manual Override (Emergency)
 

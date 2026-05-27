@@ -326,32 +326,33 @@ The production environment uses automated deployment via AWS CodePipeline. Manua
 
 ### Pipeline Overview
 
-**Trigger:** Push to `main` branch on GitHub
-**Pipeline:** `fartooyoung-production-pipeline`
-**Build Project:** `fartooyoung-frontend-production`
+**Trigger:** Push to `main` branch (instant webhook via CodeStar)
+**Pipeline:** `fartooyoung-production-frontend-pipeline` (V2)
+**Build Project:** `fartooyoung-production-frontend-build`
+**Path Filter:** Only triggers on changes to `src/**`, `public/**`, `package.json`, `vite.config.js`, `.env.production`
 
-### Pipeline Configuration Files
+### Pipeline Configuration
 
-- **`buildspec-frontend.yml`** - Build instructions for CodeBuild
-- **`pipeline.yml`** - CloudFormation template that creates the CI/CD infrastructure
-- **`.secrets`** - GitHub token for pipeline authentication
+- **`deployment/prod-frontend-pipeline.yml`** - CloudFormation template defining the pipeline
+- **CodeStar Connection** - `fartooyoung-github` (GitHub App webhook, no token needed)
 
 ### Automated Deployment Flow
 
 ```bash
-git push origin main  # Triggers automatic deployment
+git push origin main  # Triggers automatic deployment (if src/ or public/ changed)
 ```
 
 **What happens:**
-1. CodePipeline detects GitHub push
-2. CodeBuild runs `buildspec-frontend.yml`:
+1. CodeStar webhook instantly notifies CodePipeline
+2. Pipeline checks path filter — only runs if frontend files changed
+3. CodeBuild runs inline buildspec:
    ```bash
+   npm ci                                                # Install dependencies
    npm run build -- --mode production                    # Build React app
    aws s3 sync dist/ s3://fartooyoung-frontend-production --delete  # Upload to S3
    aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"  # Clear cache
    ```
-3. Website updated automatically with zero downtime
-4. Global CDN cache refreshed
+4. Website updated automatically with zero downtime (~2 min total)
 
 ### Manual Override (Emergency)
 

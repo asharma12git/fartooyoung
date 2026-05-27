@@ -168,17 +168,17 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 ### **STEP 4: CI/CD Automation Setup**
 **Trigger:** Push code to GitHub `main` branch
 
-**Pipeline Execution:**
+**Pipeline Execution (V2 — Instant, Path-Based):**
 ```
-GitHub Push → CodePipeline → 2 Parallel Builds:
+GitHub Push → CodeStar Webhook → Path Filter → Parallel Pipelines:
 
-┌─ Frontend Build (buildspec-frontend.yml)
-│  ├── npm install
+┌─ Frontend Pipeline (triggers on src/, public/, package.json)
+│  ├── npm ci
 │  ├── npm run build --mode production
 │  ├── aws s3 sync → S3 bucket
 │  └── aws cloudfront invalidate
 │
-└─ Backend Build (buildspec-backend.yml)  
+└─ Backend Pipeline (triggers on backend/lambda/, template.yaml)
    ├── pip install aws-sam-cli
    ├── sam build
    └── sam deploy --config-env production
@@ -251,10 +251,8 @@ Secrets Manager: fartooyoung-production-secrets
 | **`.env.production`** | React app backend connection | Tells React app which API endpoints to use | `VITE_API_URL=https://0o7onj0dr7...` |
 | **`samconfig.toml`** | Backend deployment targets | Tells SAM where to deploy (staging vs production) | `stack_name = "fartooyoung-production"` |
 | **`template.yaml`** | ALL AWS infrastructure | Blueprint that creates Lambda functions + databases | Creates 17 functions + 3 tables |
-| **`buildspec-frontend.yml`** | Frontend deployment steps | Instructions for CodeBuild: how to deploy React app | React build → S3 → CloudFront |
-| **`buildspec-backend.yml`** | Backend deployment steps | Instructions for CodeBuild: how to deploy Lambda functions | SAM build → Lambda deployment |
-| **`pipeline.yml`** | CI/CD infrastructure | Creates the factory (CodePipeline) that runs buildspecs | Creates CodePipeline + CodeBuild projects |
-| **`.secrets`** | GitHub integration | Stores GitHub token for CI/CD pipeline authentication | `GITHUB_TOKEN=github_pat_...` |
+| **`deployment/*-pipeline.yml`** | CI/CD infrastructure | V2 pipeline definitions with path-based triggers | Creates CodePipeline + CodeBuild per environment |
+| **`deployment/*-manual-deploy-*.sh`** | Emergency manual deploy | Fallback scripts if pipeline is broken | `./deployment/prod-manual-deploy-frontend.sh` |
 
 ---
 

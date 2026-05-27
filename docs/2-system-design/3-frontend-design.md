@@ -448,11 +448,11 @@ const futureUserState = {
 3. **Database**: DynamoDB Local (port 8000)
 4. **Hot Reload**: Instant updates during development
 
-### **🔄 CI/CD Automation (Production)**
-1. **Trigger**: Push to GitHub main branch
-2. **CodePipeline**: Automatically builds and deploys frontend
-3. **Buildspec**: Uses `buildspec-frontend.yml` for deployment steps
-4. **Result**: Zero-downtime deployment to production
+### **🔄 CI/CD Automation**
+1. **Trigger**: Push to `staging` or `main` branch (instant webhook via CodeStar)
+2. **CodePipeline V2**: Path-based trigger — only runs when `src/`, `public/`, or `package.json` changes
+3. **Build**: Inline buildspec in pipeline template (npm ci → build → S3 sync → CloudFront invalidation)
+4. **Result**: Zero-downtime deployment in ~2 minutes
 
 ### **🧪 API Integration Testing**
 1. **Production Testing**: Live API endpoints with real data

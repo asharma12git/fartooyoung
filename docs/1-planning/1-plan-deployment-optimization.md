@@ -27,14 +27,29 @@ Scope to specific resource ARNs where possible.
 ### 2. Lock Down CORS ⚠️ Security
 **File:** `backend/template.yaml`
 
-Current: `AllowOrigin: "'*'"` — any website can call the API from a browser.
+**Current state:** `AllowOrigin: "'*'"` for the API Gateway preflight (OPTIONS) response. This was set to fix a mobile Safari issue where users accessing `fartooyoung.org` (no www) were blocked because the preflight returned `https://www.fartooyoung.org` which didn't match.
 
-Change to environment-specific origins using existing SAM conditions:
-- Production: `https://www.fartooyoung.org`
-- Staging: `https://staging.fartooyoung.org`
-- Local: `http://localhost:5173`
+**Note:** The actual Lambda responses already enforce specific origins via `getAllowedOrigin()` in `backend/lambda/utils/cors.js`, so the `*` preflight is not a security risk. The browser still blocks responses that don't match the requesting origin.
 
-Use the existing `IsProduction`/`IsStaging` conditions in `template.yaml` to set `AllowOrigin` dynamically.
+**Proper fix (two steps):**
+
+1. **Add CloudFront redirect: `fartooyoung.org` → `www.fartooyoung.org`**
+   - Add a CloudFront Function to the production distribution that redirects non-www to www
+   - This ensures all users always hit `www.fartooyoung.org`
+   - Then the preflight can safely return only `https://www.fartooyoung.org`
+
+2. **Lock down preflight after redirect is in place:**
+   ```yaml
+   AllowOrigin: !If
+     - IsProduction
+     - "'https://www.fartooyoung.org'"
+     - !If
+       - IsStaging
+       - "'https://staging.fartooyoung.org'"
+       - "'http://localhost:5173'"
+   ```
+
+**Do NOT lock down the preflight until the CloudFront redirect is deployed**, or mobile users on `fartooyoung.org` will break again.
 
 ### 3. Add Manual Approval Gate
 **File:** `deployment/production/pipeline.yml`

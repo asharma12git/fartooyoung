@@ -13,10 +13,11 @@ A full-stack serverless web application for an organization focused on ending ch
 
 ## Features
 
-- User authentication with email verification
+- User authentication with email verification and input validation
 - One-time and recurring donations via Stripe
 - User dashboard (donation history, subscription management, profile settings)
 - Rate limiting and bot protection
+- Password strength enforcement (8+ chars, uppercase, lowercase, number, special)
 - Mobile-responsive dark theme UI
 - 5 public pages: Child Marriage, Founder & Team, Partners, What We Do, Home
 

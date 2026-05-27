@@ -4,8 +4,8 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 34 - Frontend Content Updates & Partner Expansion  
-**Last Updated:** May 26, 2026, 9:00 PM EST  
+**Current Phase:** Phase 35 - Donations Table Cleanup, Auth Hardening & CORS Fix  
+**Last Updated:** May 27, 2026, 3:25 PM EST  
 **Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD Automated | ✅ Staging DNS Restored
 
 ### **What's Working (Production Ready)**
@@ -95,18 +95,67 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 34 content updates deployed to both staging and production
-- CI/CD pipeline triggered and completed successfully
-- Documentation cleanup: removed outdated plans, renamed/split files, fixed bucket names
-- System design docs updated with missing components and correct dates
-- Deployment optimization plan expanded with full CodeStar V2 implementation details
-- Planning docs reorganized: split AI content marketing into 3 focused plans, numbered by priority
-- Discussed CI/CD architecture: current CodePipeline V1 (polling) → future V2 (CodeStar + path filters)
-- Ready for next priority: #1 Deployment optimization (CORS lockdown + IAM scoping)
+- Phase 35 deployed to staging and production
+- Donations table migrated to clean 14-field format (both environments)
+- Login/registration validation hardened (22 checks, industry standard)
+- Mobile CORS fix deployed (non-www origin preflight issue)
+- NoSQL Workbench installed and connected to AWS
+- AWS CLI fixed after brew upgrade (Python/expat linking issue)
+- Staging DNS enabled (staging.fartooyoung.org live)
+- Production backups saved locally (`backup/` folder, gitignored)
+- Testing docs created (`docs/4-testing/manual-testing-checklist.md`)
+- AWS SDK v3 migration plan filed (`docs/1-planning/9-plan-aws-sdk-v3-migration.md`)
+- Ready for next priority: #1 Deployment optimization (CodeStar + Pipeline Split)
 
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **May 27, 2026 - Donations Cleanup, Auth Hardening & CORS Fix**
+
+**Session Duration:** ~2.5 hours (1:20 PM - 3:25 PM EST)
+
+#### **Phase 35: Donations Table Cleanup, Auth Hardening & CORS Fix** ✅
+
+**SYSTEM MAINTENANCE**:
+- Upgraded all Homebrew packages (33 formulae + 2 casks)
+- Fixed AWS CLI broken after brew upgrade (Python 3.14 expat linking issue — rebuilt from source)
+- Installed NoSQL Workbench via brew for DynamoDB GUI access
+- Configured AWS CLI credentials (were wiped during brew upgrade)
+- Enabled staging DNS (created Route 53 A record for staging.fartooyoung.org → CloudFront)
+
+**DONATIONS TABLE MIGRATION**:
+- Analyzed production donations table — identified bloated `paymentMethodDetails` object, duplicate `donationId` field, redundant `processedAt`
+- Designed clean 14-field format: id, email, name, amount, type, status, paymentMethod, cardBrand, cardLast4, wallet, stripeInvoiceId, stripeSubscriptionId, stripeSessionId, createdAt
+- Copied production data to staging for safe testing
+- Wrote migration script (`backend/scripts/migrate-donations.js`)
+- Migrated staging (25 records) — verified in NoSQL Workbench
+- Updated `webhook.js` (5 event handlers), `create-donation.js`, `DonorDashboard.jsx` to use new format
+- Deployed to staging, verified dashboard displays correctly
+- Backed up production data locally (`backup/` folder)
+- Migrated production (25 records, zero errors)
+- Verified new donations write in clean format (tested $5.45 desktop + $6.47 mobile Apple Pay)
+
+**AUTH VALIDATION HARDENING**:
+- Added 22 validation checks to login/registration (industry standard)
+- Registration: password min 8 chars, uppercase + lowercase + number + special char required
+- Registration: email format validation, required fields, XSS sanitization (HTML tag stripping)
+- Login: required fields check, clear error messages instead of generic "Server error"
+- Tested all edge cases via API on staging and production
+- Verified rejected requests never write to database
+
+**CORS FIX (Mobile Safari)**:
+- Diagnosed mobile "Load failed" error — preflight returned `www.fartooyoung.org` but mobile users on `fartooyoung.org` (no www) were blocked
+- Fixed by setting API Gateway preflight `AllowOrigin` to `*` (Lambda responses still enforce specific origins)
+- Added `mode: 'cors'` to CheckoutButton fetch + better error message
+- Documented proper long-term fix in deployment optimization plan (CloudFront redirect non-www → www)
+
+**DOCUMENTATION**:
+- Created `docs/4-testing/manual-testing-checklist.md` (45 test cases with How To + Method columns)
+- Created `docs/1-planning/9-plan-aws-sdk-v3-migration.md` (low priority, backlog)
+- Updated CORS section in deployment optimization plan with current state and proper fix path
+
+---
 
 ### **May 26, 2026 - Frontend Content Updates & Partner Expansion**
 

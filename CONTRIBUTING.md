@@ -19,15 +19,18 @@
 2. Test locally (npm run dev)
 3. Push to staging → pipeline auto-deploys to staging.fartooyoung.org
 4. Validate on staging (test all affected features)
-5. Only after full validation → merge staging into main
-6. Main auto-deploys to production (www.fartooyoung.org)
+5. ASK the owner for permission to merge to main
+6. Only after explicit approval → merge staging into main
+7. Main auto-deploys to production (www.fartooyoung.org)
 ```
 
-### For Large Features
+### For ALL Changes (Large or Small)
 
-- Do NOT merge to main until fully tested end-to-end on staging
+- Do NOT merge to main without asking first
+- Do NOT checkout main without permission
 - Run the regression testing checklist (`docs/4-testing/manual-testing-checklist.md`)
 - If the feature touches payments — test with real Stripe test cards on staging
+- **When in doubt — ASK before merging**
 
 ---
 
@@ -82,8 +85,9 @@ Then just `npm run dev`. You get hot-reload with a real backend.
 3. Commit and push: `git push origin staging`
 4. Wait for staging pipeline to deploy (~2 min)
 5. Test on staging.fartooyoung.org
-6. If it works → `git checkout main && git merge staging && git push origin main`
-7. Verify on www.fartooyoung.org
+6. **ASK the owner for permission to merge to main** — do NOT proceed without approval
+7. Only after explicit approval → `git checkout main && git merge staging && git push origin main`
+8. Verify on www.fartooyoung.org
 
 ---
 
@@ -123,12 +127,15 @@ See `docs/4-testing/manual-testing-checklist.md` — 70 test cases covering all 
 
 | ❌ Don't | ✅ Do Instead |
 |----------|--------------|
-| Push to `main` without testing | Push to `staging`, test, then merge |
+| Merge to `main` without asking | Always ask owner for permission first |
+| Checkout `main` branch without permission | Stay on `staging` until approved |
+| Push to `main` without testing | Push to `staging`, test, ask, then merge |
 | Edit production DynamoDB directly | Copy prod data to staging, test there |
 | Store secrets in code or .env files | Use AWS Secrets Manager |
 | Delete S3 buckets without checking | Verify nothing points to them first |
 | Run migration scripts on prod first | Always run on staging first |
 | Merge during active production issues | Fix the issue first, then merge |
+| Assume a small change is safe | Ask anyway — no exceptions |
 
 ---
 

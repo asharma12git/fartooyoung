@@ -165,7 +165,7 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 | `deployment/*.yml` | Pipeline infrastructure templates |
 | `docs/4-testing/manual-testing-checklist.md` | Full regression test suite |
 | `docs/1-planning/` | Feature roadmap and plans |
-| `docs/development-progress.md` | Session history log |
+| `PROGRESS.md` | Session history log |
 
 ---
 

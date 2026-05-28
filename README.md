@@ -59,6 +59,21 @@ cd backend && sam local start-api --port 3001
 npm install && npm run dev
 ```
 
+## Development Workflow
+
+> 🚨 **NEVER push directly to `main`. Always work on `staging` branch first.**
+
+```
+1. Work on `staging` branch
+2. Test locally (npm run dev)
+3. Push to staging → pipeline auto-deploys to staging.fartooyoung.org
+4. Validate on staging (test all affected features)
+5. Only after full validation → merge staging into main
+6. Main auto-deploys to production (www.fartooyoung.org)
+```
+
+**For large features:** Do NOT merge to main until the feature is fully tested end-to-end on staging. Production has real users and real payments.
+
 ## Deployment
 
 - **Staging**: Auto-deploys via V2 pipeline on push to `staging` branch

@@ -199,3 +199,17 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 | `docs/4-testing/manual-testing-checklist.md` | Full regression test suite (70 test cases) |
 | `docs/1-planning/` | Feature roadmap (numbered by priority) |
 | `PROGRESS.md` | Session-by-session development history |
+
+---
+
+## ⛔ BEFORE ENDING ANY SESSION
+
+> **🚨 DO NOT END A SESSION WITHOUT UPDATING THESE DOCUMENTS WITH WHAT YOU CHANGED:**
+
+1. **`PROGRESS.md`** — Add a session entry with what was done, what was deployed, what's next
+2. **`docs/4-testing/manual-testing-checklist.md`** — Add new test cases if new features were added
+3. **`docs/2-system-design/`** — Update if architecture, database, or environments changed
+4. **`CONTRIBUTING.md`** — Update if workflow, pipelines, or AWS resources changed
+5. **`README.md`** — Update if features, tech stack, or project structure changed
+
+**Leave the project in a state where the next session can pick up immediately without guessing what happened.**

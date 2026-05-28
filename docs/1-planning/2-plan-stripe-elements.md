@@ -16,11 +16,21 @@
 
 ---
 
-## Current Flow
+## Options Considered
 
-```
-User clicks Donate → Modal opens → Fills info → Redirects to checkout.stripe.com → Pays → Redirects back
-```
+| Option | What It Is | Look & Feel | Redirect? | Customization |
+|--------|-----------|-------------|-----------|---------------|
+| A | Stripe Hosted Checkout | Stripe's page (white, Stripe branding) | ❌ Yes — leaves your site | Minimal (logo, colors) |
+| B | **Stripe Payment Element** | **Your design — dark theme, your fonts, your buttons** | **✅ No — stays on your site** | **Full control** |
+| C | Stripe Embedded Checkout | Stripe's form in an iframe on your page | No redirect but still looks like Stripe | Limited (can't change inside iframe) |
+
+### ✅ We are going with Option B — Stripe Payment Element
+
+- Fully native look — users never know Stripe is involved
+- Dark theme, custom fonts, custom buttons
+- Apple Pay / Google Pay buttons appear directly in your modal
+- Card input styled to match your site
+- No redirect, no iframe, no foreign-looking form
 
 ## Target Flow
 

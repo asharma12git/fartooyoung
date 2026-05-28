@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import CheckoutButton from './CheckoutButton'
+import StripePayment from './StripePayment'
 import donationImage from '../assets/images/components/donation-modal/5.jpg'
 import { 
   sanitizeFormData, 
@@ -400,10 +400,11 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                       Payment Information
                     </label>
 
-                    <CheckoutButton
+                    <StripePayment
                       amount={Math.round(parseFloat(getTotalAmount()) * 100) / 100}
                       donorInfo={sanitizeFormData(donorInfo)}
                       donationType={donationType}
+                      onSuccess={handleStripeSuccess}
                       onError={handleStripeError}
                       loading={loading}
                       setLoading={setLoading}

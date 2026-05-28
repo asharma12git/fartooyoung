@@ -204,12 +204,18 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 
 ## ⛔ BEFORE ENDING ANY SESSION
 
-> **🚨 DO NOT END A SESSION WITHOUT UPDATING THESE DOCUMENTS WITH WHAT YOU CHANGED:**
+> **🚨 DO NOT END A SESSION WITHOUT UPDATING ALL RELEVANT DOCUMENTS WITH WHAT YOU CHANGED. NO EXCEPTIONS.**
+
+Update **every document** that is affected by your changes, including but not limited to:
 
 1. **`PROGRESS.md`** — Add a session entry with what was done, what was deployed, what's next
 2. **`docs/4-testing/manual-testing-checklist.md`** — Add new test cases if new features were added
 3. **`docs/2-system-design/`** — Update if architecture, database, or environments changed
-4. **`CONTRIBUTING.md`** — Update if workflow, pipelines, or AWS resources changed
-5. **`README.md`** — Update if features, tech stack, or project structure changed
+4. **`docs/3-deployments/`** — Update if deployment process or pipelines changed
+5. **`docs/1-planning/`** — Update plan status if a plan was started or completed
+6. **`CONTRIBUTING.md`** — Update if workflow, pipelines, or AWS resources changed
+7. **`README.md`** — Update if features, tech stack, or project structure changed
+8. **`deployment/README.md`** — Update if pipeline triggers or names changed
+9. **Any other doc that references what you changed**
 
 **Leave the project in a state where the next session can pick up immediately without guessing what happened.**

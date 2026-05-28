@@ -194,6 +194,63 @@ exports.handler = async (event) => {
     }
 
     // ========================================================================
+    // STEP 4B: HANDLE PAYMENT INTENT SUCCEEDED (Embedded Payment Element)
+    // ========================================================================
+    if (stripeEvent.type === 'payment_intent.succeeded') {
+      const paymentIntent = stripeEvent.data.object
+
+      // Skip if this came from a checkout session (already handled above)
+      if (paymentIntent.metadata?.source === 'checkout_session') {
+        console.log('Skipping payment_intent from checkout session')
+      } else {
+        console.log('Payment intent succeeded:', paymentIntent.id)
+
+        // Retrieve payment method details from charge
+        let paymentMethodDetails = { type: 'unknown' }
+        try {
+          if (paymentIntent.latest_charge) {
+            const chargeId = typeof paymentIntent.latest_charge === 'string'
+              ? paymentIntent.latest_charge
+              : paymentIntent.latest_charge.id
+            const charge = await stripe.charges.retrieve(chargeId)
+            paymentMethodDetails = charge.payment_method_details || { type: 'unknown' }
+          }
+        } catch (err) {
+          console.error('Error retrieving payment method:', err.message)
+        }
+
+        const card = paymentMethodDetails.card
+        const cardBrand = card?.brand || null
+        const cardLast4 = card?.last4 || null
+        const wallet = card?.wallet?.type || null
+
+        const donation = {
+          id: `pi_${paymentIntent.id}`,
+          email: paymentIntent.metadata?.donor_email || paymentIntent.receipt_email || 'unknown',
+          name: paymentIntent.metadata?.donor_name || 'Anonymous',
+          amount: paymentIntent.amount / 100,
+          type: paymentIntent.metadata?.donation_type || 'one-time',
+          status: 'completed',
+          paymentMethod: paymentMethodDetails.type || 'card',
+          cardBrand,
+          cardLast4,
+          wallet,
+          stripeInvoiceId: null,
+          stripeSubscriptionId: null,
+          stripeSessionId: null,
+          createdAt: new Date().toISOString(),
+        }
+
+        await dynamodb.put({
+          TableName: DONATIONS_TABLE,
+          Item: donation
+        }).promise()
+
+        console.log('Payment intent donation saved:', donation.id)
+      }
+    }
+
+    // ========================================================================
     // STEP 5: HANDLE RECURRING SUBSCRIPTION PAYMENTS
     // ========================================================================
     // Handle recurring subscription payments

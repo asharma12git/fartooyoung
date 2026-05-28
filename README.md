@@ -75,12 +75,14 @@ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full technical guide — work
 
 ## Documentation
 
-Detailed system design docs are in `docs/`:
-- `1-planning/` — Prioritized feature plans (deployment, SEO, blog, e-commerce, etc.)
-- `2-system-design/` — Architecture, frontend, backend, database, and environment design
-- `3-deployments/` — Deployment processes and CI/CD
-- `4-testing/` — API testing commands, Stripe test cards, webhook setup
-- `development-progress.md` — Full development history and session log
+| Doc | Purpose |
+|-----|---------|
+| **[CONTRIBUTING.md](CONTRIBUTING.md)** | How to work on this project (start here) |
+| **[PROGRESS.md](PROGRESS.md)** | Session history and development log |
+| `docs/1-planning/` | Feature roadmap (numbered by priority) |
+| `docs/2-system-design/` | Architecture, frontend, backend, database, environments |
+| `docs/3-deployments/` | Deployment processes and CI/CD |
+| `docs/4-testing/` | Regression test suite, Stripe test cards, API commands |
 
 ## License
 

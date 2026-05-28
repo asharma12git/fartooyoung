@@ -119,7 +119,9 @@ curl -X GET {api}/donations -H "Authorization: Bearer {token}"
 
 ### Full Regression (Before Merging to Main)
 
-See `docs/4-testing/manual-testing-checklist.md` — 70 test cases covering all endpoints.
+> **⛔ IF YOU ADDED A NEW FEATURE — UPDATE THE CHECKLIST FIRST** before running tests. Add new test cases to cover the feature, then run the full suite.
+
+See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all endpoints.
 
 ---
 

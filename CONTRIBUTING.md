@@ -2,13 +2,13 @@
 
 ## ⚠️ Critical Rules
 
-1. **NEVER push or merge to `main` without explicit owner permission** — always ask first, no exceptions, regardless of how small the change is
-2. **NEVER push directly to `main`** — main auto-deploys to production with real users and real payments
-3. **NEVER modify production DynamoDB tables directly** — always test on staging first
-4. **NEVER commit secrets** (API keys, passwords, tokens) — use AWS Secrets Manager
-5. **Always test on staging before merging to main**
+1. **⛔ NEVER PUSH OR MERGE TO `main` WITHOUT EXPLICIT OWNER PERMISSION** — ALWAYS ASK FIRST, NO EXCEPTIONS, REGARDLESS OF HOW SMALL THE CHANGE IS
+2. **⛔ NEVER PUSH DIRECTLY TO `main`** — main auto-deploys to production with real users and real payments
+3. **⛔ NEVER MODIFY PRODUCTION DYNAMODB TABLES DIRECTLY** — always test on staging first
+4. **⛔ NEVER COMMIT SECRETS** (API keys, passwords, tokens) — use AWS Secrets Manager
+5. **ALWAYS TEST ON STAGING BEFORE MERGING TO MAIN**
 
-> 🚨 **Even for a one-line change — ASK before merging to main. No assumptions. No shortcuts.**
+> 🚨🚨🚨 **EVEN FOR A ONE-LINE CHANGE — ASK BEFORE MERGING TO MAIN. NO ASSUMPTIONS. NO SHORTCUTS.** 🚨🚨🚨
 
 ---
 
@@ -19,18 +19,18 @@
 2. Test locally (npm run dev)
 3. Push to staging → pipeline auto-deploys to staging.fartooyoung.org
 4. Validate on staging (test all affected features)
-5. ASK the owner for permission to merge to main
+5. ⛔ ASK THE OWNER FOR PERMISSION TO MERGE TO MAIN
 6. Only after explicit approval → merge staging into main
 7. Main auto-deploys to production (www.fartooyoung.org)
 ```
 
 ### For ALL Changes (Large or Small)
 
-- Do NOT merge to main without asking first
-- Do NOT checkout main without permission
+- **⛔ DO NOT MERGE TO MAIN WITHOUT ASKING FIRST**
+- **⛔ DO NOT CHECKOUT `main` WITHOUT PERMISSION**
 - Run the regression testing checklist (`docs/4-testing/manual-testing-checklist.md`)
 - If the feature touches payments — test with real Stripe test cards on staging
-- **When in doubt — ASK before merging**
+- **WHEN IN DOUBT — ASK BEFORE MERGING**
 
 ---
 
@@ -85,7 +85,7 @@ Then just `npm run dev`. You get hot-reload with a real backend.
 3. Commit and push: `git push origin staging`
 4. Wait for staging pipeline to deploy (~2 min)
 5. Test on staging.fartooyoung.org
-6. **ASK the owner for permission to merge to main** — do NOT proceed without approval
+6. **⛔ ASK THE OWNER FOR PERMISSION TO MERGE TO MAIN** — do NOT proceed without approval
 7. Only after explicit approval → `git checkout main && git merge staging && git push origin main`
 8. Verify on www.fartooyoung.org
 

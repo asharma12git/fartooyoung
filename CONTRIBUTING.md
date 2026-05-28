@@ -168,3 +168,21 @@ See `docs/4-testing/manual-testing-checklist.md` — 70 test cases covering all 
 | API | `71z0wz0dg9...amazonaws.com` | `0o7onj0dr7...amazonaws.com` |
 | CloudFront | `EYHMCS1M0XJX1` | `E2PHSH4ED2AIN5` |
 | DynamoDB | `fartooyoung-staging-*` | `fartooyoung-production-*` |
+
+---
+
+## Further Reading
+
+For deeper understanding of the project, read these docs in order:
+
+| Doc | What You'll Learn |
+|-----|-------------------|
+| `docs/2-system-design/1-architecture.md` | Full system architecture, how services connect |
+| `docs/2-system-design/2-environments.md` | All AWS resources per environment (staging vs production) |
+| `docs/2-system-design/3-frontend-design.md` | React components, pages, routing |
+| `docs/2-system-design/4-backend-design.md` | All 17 Lambda functions, what each does |
+| `docs/2-system-design/5-database-design.md` | DynamoDB table schemas |
+| `docs/3-deployments/1-deployment-overview.md` | How deployment works end-to-end |
+| `docs/4-testing/manual-testing-checklist.md` | Full regression test suite (70 test cases) |
+| `docs/1-planning/` | Feature roadmap (numbered by priority) |
+| `PROGRESS.md` | Session-by-session development history |

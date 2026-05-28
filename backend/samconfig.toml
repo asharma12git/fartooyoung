@@ -32,7 +32,7 @@ confirm_changeset = false
 [production.deploy]
 [production.deploy.parameters]
 stack_name = "fartooyoung-production"
-s3_bucket = "fartooyoung-backend-production"
+s3_bucket = "fartooyoung-prod-backend"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [

@@ -13,7 +13,7 @@ Parameters:
     Default: main
   FrontendBucket:
     Type: String
-    Default: fartooyoung-frontend-production
+    Default: fartooyoung-prod-frontend
   CloudFrontDistributionId:
     Type: String
     Default: E2PHSH4ED2AIN5
@@ -141,7 +141,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-prod-frontend
+      Name: fartooyoung-prod-frontend-pipeline
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:

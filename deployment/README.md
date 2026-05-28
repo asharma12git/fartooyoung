@@ -6,10 +6,10 @@ Pipelines trigger automatically on push to the respective branch:
 
 | Pipeline | Branch | Triggers On |
 |----------|--------|-------------|
-| `fartooyoung-staging-frontend-pipeline` | `staging` | `src/**`, `public/**`, `package.json`, `vite.config.js`, `.env.staging` |
-| `fartooyoung-staging-backend-pipeline` | `staging` | `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml`, `backend/package.json` |
-| `fartooyoung-production-frontend-pipeline` | `main` | Same as staging frontend |
-| `fartooyoung-production-backend-pipeline` | `main` | Same as staging backend |
+| `fartooyoung-stg-frontend-pipeline` | `staging` | `src/**`, `public/**`, `package.json`, `vite.config.js`, `.env.staging` |
+| `fartooyoung-stg-backend-pipeline` | `staging` | `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml`, `backend/package.json` |
+| `fartooyoung-prod-frontend-pipeline` | `main` | Same as staging frontend |
+| `fartooyoung-prod-backend-pipeline` | `main` | Same as staging backend |
 
 Changes to `docs/`, `deployment/`, `backend/scripts/`, or `README.md` do **not** trigger any pipeline.
 
@@ -33,12 +33,12 @@ To create/update the pipeline infrastructure itself:
 
 ```bash
 # Staging
-aws cloudformation deploy --template-file deployment/stg-frontend-pipeline.yml --stack-name fartooyoung-staging-frontend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
-aws cloudformation deploy --template-file deployment/stg-backend-pipeline.yml --stack-name fartooyoung-staging-backend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
+aws cloudformation deploy --template-file deployment/stg-frontend-pipeline.yml --stack-name fartooyoung-stg-frontend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
+aws cloudformation deploy --template-file deployment/stg-backend-pipeline.yml --stack-name fartooyoung-stg-backend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
 
 # Production
-aws cloudformation deploy --template-file deployment/prod-frontend-pipeline.yml --stack-name fartooyoung-production-frontend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
-aws cloudformation deploy --template-file deployment/prod-backend-pipeline.yml --stack-name fartooyoung-production-backend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
+aws cloudformation deploy --template-file deployment/prod-frontend-pipeline.yml --stack-name fartooyoung-prod-frontend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
+aws cloudformation deploy --template-file deployment/prod-backend-pipeline.yml --stack-name fartooyoung-prod-backend-pipeline --capabilities CAPABILITY_IAM --region us-east-1
 ```
 
 ## CodeStar Connection

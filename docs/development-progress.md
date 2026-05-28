@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 35 - Donations Table Cleanup, Auth Hardening & CORS Fix  
-**Last Updated:** May 27, 2026, 3:25 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD Automated | ✅ Staging DNS Restored
+**Current Phase:** Phase 36 - CI/CD V2 Pipelines, S3 Bucket Standardization  
+**Last Updated:** May 28, 2026, 4:05 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ Staging DNS Restored
 
 ### **What's Working (Production Ready)**
 
@@ -97,17 +97,15 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 35 deployed to staging and production
-- Donations table migrated to clean 14-field format (both environments)
-- Login/registration validation hardened (22 checks, industry standard)
-- Mobile CORS fix deployed (non-www origin preflight issue)
-- NoSQL Workbench installed and connected to AWS
-- AWS CLI fixed after brew upgrade (Python/expat linking issue)
-- Staging DNS enabled (staging.fartooyoung.org live)
-- Production backups saved locally (`backup/` folder, gitignored)
-- Testing docs created (`docs/4-testing/manual-testing-checklist.md`)
-- AWS SDK v3 migration plan filed (`docs/1-planning/9-plan-aws-sdk-v3-migration.md`)
-- Ready for next priority: #1 Deployment optimization (CodeStar + Pipeline Split)
+- Phase 36: CI/CD V2 pipelines + S3 bucket standardization complete
+- All pipelines migrated to V2 with CodeStar instant webhooks + path-based triggers
+- S3 buckets renamed to `{project}-{env}-{purpose}` convention (both projects)
+- Medal Foundation: fully cleaned (duplicate images removed, docs consolidated to README)
+- Fartooyoung: 4 pipelines (`fartooyoung-stg-frontend-pipeline`, `fartooyoung-stg-backend-pipeline`, `fartooyoung-prod-frontend-pipeline`, `fartooyoung-prod-backend-pipeline`)
+- Old V1 pipeline deleted, old artifact buckets deleted
+- Comprehensive regression testing checklist created (70 test cases, 12 sections)
+- All docs verified and updated with current resource names
+- Ready for next priority: #2 SEO Implementation
 
 ---
 

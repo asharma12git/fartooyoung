@@ -8,7 +8,7 @@
 - **17 Lambda Functions**: Complete auth, donation, and Stripe system
 - **3 DynamoDB Tables**: Users, donations, and rate-limits
 - **CloudFront CDN**: E2PHSH4ED2AIN5 (global distribution)
-- **S3 Frontend**: fartooyoung-frontend-production
+- **S3 Frontend**: fartooyoung-prod-frontend
 - **AWS Secrets Manager**: fartooyoung-production-secrets-tEmB4i
 - **Live Payments**: Real Stripe integration processing donations
 
@@ -130,7 +130,7 @@ aws cloudfront get-distribution-config --id E2PHSH4ED2AIN5
 aws s3 ls
 
 # List contents of PRODUCTION frontend bucket
-aws s3 ls s3://fartooyoung-frontend-production/
+aws s3 ls s3://fartooyoung-prod-frontend/
 
 # List contents of STAGING SAM deployment bucket
 aws s3 ls s3://fartooyoung-stg-backend/

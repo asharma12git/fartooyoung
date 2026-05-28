@@ -33,7 +33,7 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 ║                                    ▼                                           ║
 ║  ┌─────────────────────────────────────────────────────────────────────────┐   ║
 ║  │                          S3 BUCKET                                     │   ║
-║  │                 fartooyoung-frontend-production                        │   ║
+║  │                 fartooyoung-prod-frontend                        │   ║
 ║  │              (Stores built React files: HTML, CSS, JS)                 │   ║
 ║  │─────────────────────────────────────────────────────────────────────────│   ║
 ║  │                                                                         │   ║

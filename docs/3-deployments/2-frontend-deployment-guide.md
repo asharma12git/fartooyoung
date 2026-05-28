@@ -22,7 +22,7 @@ This guide documents the step-by-step process to deploy the Far Too Young fronte
 | Resource        | Staging                            | Production (LIVE)                          |
 |-----------------|------------------------------------|--------------------------------------------|
 | Domain          | `staging.fartooyoung.org`          | `www.fartooyoung.org` & `fartooyoung.org`  |
-| S3 Bucket       | `fartooyoung-stg-frontend`     | `fartooyoung-frontend-production`          |
+| S3 Bucket       | `fartooyoung-stg-frontend`     | `fartooyoung-prod-frontend`          |
 | CloudFront ID   | `EYHMCS1M0XJX1`                    | `E2PHSH4ED2AIN5`                           |
 | Build Command   | `npm run build -- --mode staging`  | `npm run build -- --mode production`      |
 | SSL Certificate | Staging cert ARN                   | `*.fartooyoung.org` wildcard cert         |
@@ -327,8 +327,8 @@ The production environment uses automated deployment via AWS CodePipeline. Manua
 ### Pipeline Overview
 
 **Trigger:** Push to `main` branch (instant webhook via CodeStar)
-**Pipeline:** `fartooyoung-production-frontend-pipeline` (V2)
-**Build Project:** `fartooyoung-production-frontend-build`
+**Pipeline:** `fartooyoung-prod-frontend-pipeline` (V2)
+**Build Project:** `fartooyoung-prod-frontend-build`
 **Path Filter:** Only triggers on changes to `src/**`, `public/**`, `package.json`, `vite.config.js`, `.env.production`
 
 ### Pipeline Configuration
@@ -349,7 +349,7 @@ git push origin main  # Triggers automatic deployment (if src/ or public/ change
    ```bash
    npm ci                                                # Install dependencies
    npm run build -- --mode production                    # Build React app
-   aws s3 sync dist/ s3://fartooyoung-frontend-production --delete  # Upload to S3
+   aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete  # Upload to S3
    aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"  # Clear cache
    ```
 4. Website updated automatically with zero downtime (~2 min total)
@@ -360,7 +360,7 @@ If you need to deploy manually to production:
 
 ```bash
 npm run build -- --mode production
-aws s3 sync dist/ s3://fartooyoung-frontend-production --delete
+aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete
 aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 ```
 
@@ -369,7 +369,7 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 ## Key Resources
 
 ### Production (LIVE)
-- **S3 Bucket:** fartooyoung-frontend-production
+- **S3 Bucket:** fartooyoung-prod-frontend
 - **CloudFront Distribution ID:** E2PHSH4ED2AIN5
 - **Custom Domains:** www.fartooyoung.org, fartooyoung.org
 - **SSL Certificate:** Wildcard `*.fartooyoung.org` + root domain

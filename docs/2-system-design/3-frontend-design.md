@@ -28,7 +28,7 @@
                                         │ Cache Miss → S3 Origin
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                    S3 BUCKET (fartooyoung-frontend-production)                  │
+│                    S3 BUCKET (fartooyoung-prod-frontend)                  │
 │                              Static Website Hosting                             │
 │─────────────────────────────────────────────────────────────────────────────────│
 │                                                                                 │
@@ -438,7 +438,7 @@ const futureUserState = {
 
 ### **🟢 Production Deployment (Current)**
 1. **Build Process**: `npm run build -- --mode production` creates optimized bundle
-2. **S3 Upload**: `aws s3 sync dist/ s3://fartooyoung-frontend-production --delete`
+2. **S3 Upload**: `aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete`
 3. **CDN Invalidation**: `aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"`
 4. **Live Result**: https://www.fartooyoung.org serves globally via CloudFront
 
@@ -467,7 +467,7 @@ const futureUserState = {
 **✅ LIVE FRONTEND**: https://www.fartooyoung.org
 - **React 18 + Vite**: Optimized production build
 - **CloudFront CDN**: Global distribution (E2PHSH4ED2AIN5)
-- **S3 Static Hosting**: fartooyoung-frontend-production bucket
+- **S3 Static Hosting**: fartooyoung-prod-frontend bucket
 - **HTTPS**: SSL certificate via AWS Certificate Manager
 - **Responsive Design**: Mobile-first with Tailwind CSS
 

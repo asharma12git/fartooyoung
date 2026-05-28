@@ -14,7 +14,7 @@ Optimize the CI/CD pipeline and deployment configuration for improved security, 
 **File:** `deployment/production/pipeline.yml`
 
 Current role uses `PowerUserAccess` + `IAMFullAccess` — effectively admin. Replace with scoped permissions:
-- S3 write to `fartooyoung-frontend-production` + artifacts bucket
+- S3 write to `fartooyoung-prod-frontend` + artifacts bucket
 - CloudFront invalidation for `E2PHSH4ED2AIN5`
 - CloudFormation/SAM deploy permissions
 - Secrets Manager read for `fartooyoung-production-secrets-tEmB4i`
@@ -103,7 +103,7 @@ CodePipeline V2: fartooyoung-frontend-pipeline    CodePipeline V2: fartooyoung-b
 BuildFrontend                                     BuildBackend
     │                                                 │
     ├── npm run build --mode production               ├── sam build
-    ├── aws s3 sync → fartooyoung-frontend-production ├── sam deploy --config-env production
+    ├── aws s3 sync → fartooyoung-prod-frontend ├── sam deploy --config-env production
     └── CloudFront invalidation (E2PHSH4ED2AIN5)      └── Updates 17 Lambda functions
 ```
 
@@ -172,7 +172,7 @@ phases:
       - npm run build -- --mode production
   post_build:
     commands:
-      - aws s3 sync dist/ s3://fartooyoung-frontend-production --delete
+      - aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete
       - aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 ```
 
@@ -290,24 +290,24 @@ Neither buildspec has testing or linting. Add:
 | GitHub Repo | `asharma12git/fartooyoung` |
 | AWS Account | `538781441544` |
 | Region | `us-east-1` |
-| Frontend S3 Bucket | `fartooyoung-frontend-production` |
+| Frontend S3 Bucket | `fartooyoung-prod-frontend` |
+| Backend S3 Bucket | `fartooyoung-prod-backend` |
 | CloudFront Distribution | `E2PHSH4ED2AIN5` |
 | Backend Stack | `fartooyoung-production` |
 | Secrets ARN | `fartooyoung-production-secrets-tEmB4i` |
-| Current Pipeline | `fartooyoung-production-pipeline` |
-| Artifacts Bucket | `fartooyoung-pipeline-artifacts-538781441544` |
+| Frontend Pipeline | `fartooyoung-prod-frontend-pipeline` |
+| Backend Pipeline | `fartooyoung-prod-backend-pipeline` |
 
 ---
 
 ## Rollback Plan
 
 If new pipelines have issues:
-1. Old pipeline remains active until Step 8 — just push to main and it still works
-2. Manual deploy always available as emergency fallback:
+1. Manual deploy always available as emergency fallback:
    ```bash
    # Frontend
    npm run build -- --mode production
-   aws s3 sync dist/ s3://fartooyoung-frontend-production --delete
+   aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete
    aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 
    # Backend

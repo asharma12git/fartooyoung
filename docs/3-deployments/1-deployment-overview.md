@@ -127,7 +127,7 @@ sam deploy --config-env production  # Deploy all AWS resources to production
 *Note: CloudFront and S3 bucket must be created manually via AWS Console first*
 
 **Manual Setup Required:**
-- **S3 Bucket:** `fartooyoung-frontend-production` (static website hosting)
+- **S3 Bucket:** `fartooyoung-prod-frontend` (static website hosting)
 - **CloudFront Distribution:** `E2PHSH4ED2AIN5` (global CDN with HTTPS)
 - **Route 53:** DNS records pointing to CloudFront
 - **SSL Certificate:** Via AWS Certificate Manager for HTTPS
@@ -135,7 +135,7 @@ sam deploy --config-env production  # Deploy all AWS resources to production
 ### **STEP 3: Frontend Deployment**
 ```bash
 npm run build -- --mode production  # Build React app (creates dist/ locally)
-aws s3 sync dist/ s3://fartooyoung-frontend-production --delete  # Upload files to S3 bucket
+aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete  # Upload files to S3 bucket
 aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"  # Clear CDN cache
 ```
 
@@ -147,7 +147,7 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 - Production bundle created in `dist/` folder
 
 **🪣 S3 Upload:**
-- Static files uploaded to `fartooyoung-frontend-production` bucket
+- Static files uploaded to `fartooyoung-prod-frontend` bucket
 - `--delete` flag removes old files for clean deployment
 - Files organized for web serving
 
@@ -206,7 +206,7 @@ Stripe Functions:    CreateCheckoutSessionFunction, StripeWebhookFunction
 
 ### **🌐 FRONTEND LAYER**
 ```
-CloudFront (E2PHSH4ED2AIN5) → S3 (fartooyoung-frontend-production)
+CloudFront (E2PHSH4ED2AIN5) → S3 (fartooyoung-prod-frontend)
 Domain: www.fartooyoung.org → Serves React app globally
 ```
 
@@ -265,7 +265,7 @@ Secrets Manager: fartooyoung-production-secrets
 
 ### **AWS Resource IDs**
 - **CloudFront Distribution:** E2PHSH4ED2AIN5
-- **S3 Bucket:** fartooyoung-frontend-production
+- **S3 Bucket:** fartooyoung-prod-frontend
 - **API Gateway:** 0o7onj0dr7
 - **Secrets Manager:** fartooyoung-production-secrets-tEmB4i
 
@@ -287,7 +287,7 @@ sam deploy --config-env production
 
 # Frontend  
 npm run build -- --mode production
-aws s3 sync dist/ s3://fartooyoung-frontend-production --delete
+aws s3 sync dist/ s3://fartooyoung-prod-frontend --delete
 aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 ```
 

@@ -28,7 +28,7 @@ This guide documents the step-by-step process to deploy the Far Too Young backen
 | Resource        | Staging                              | Production (LIVE)                         |
 |-----------------|--------------------------------------|-------------------------------------------|
 | Stack Name      | `fartooyoung-staging`                | `fartooyoung-production`                  |
-| S3 Bucket       | `fartooyoung-stg-backend`        | `fartooyoung-backend-production`          |
+| S3 Bucket       | `fartooyoung-stg-backend`        | `fartooyoung-prod-backend`          |
 | Secrets Name    | `fartooyoung-staging-secrets`        | `fartooyoung-production-secrets`          |
 | Deploy Command  | `sam deploy --config-env staging`    | `sam deploy --config-env production`      |
 | API URL         | `https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com` | `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com` |
@@ -81,7 +81,7 @@ parameter_overrides = [
 [production]
 [production.deploy.parameters]
 stack_name = "fartooyoung-production"
-s3_bucket = "fartooyoung-backend-production"
+s3_bucket = "fartooyoung-prod-backend"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
@@ -290,8 +290,8 @@ The production environment uses automated deployment via AWS CodePipeline. Manua
 ### Pipeline Overview
 
 **Trigger:** Push to `main` branch (instant webhook via CodeStar)
-**Pipeline:** `fartooyoung-production-backend-pipeline` (V2)
-**Build Project:** `fartooyoung-production-backend-build`
+**Pipeline:** `fartooyoung-prod-backend-pipeline` (V2)
+**Build Project:** `fartooyoung-prod-backend-build`
 **Path Filter:** Only triggers on changes to `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml`, `backend/package.json`
 
 ### Pipeline Configuration

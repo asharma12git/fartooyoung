@@ -45,8 +45,8 @@ Resources:
                   - s3:GetBucketVersioning
                   - s3:ListBucket
                 Resource:
-                  - arn:aws:s3:::fartooyoung-backend-staging
-                  - arn:aws:s3:::fartooyoung-backend-staging/*
+                  - arn:aws:s3:::fartooyoung-stg-backend
+                  - arn:aws:s3:::fartooyoung-stg-backend/*
                   - !GetAtt ArtifactBucket.Arn
                   - !Sub ${ArtifactBucket.Arn}/*
               - Effect: Allow
@@ -189,7 +189,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-stg-backend
+      Name: fartooyoung-stg-backend-pipeline
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:

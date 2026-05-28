@@ -18,7 +18,7 @@ confirm_changeset = false
 [staging.deploy]
 [staging.deploy.parameters]
 stack_name = "fartooyoung-staging"
-s3_bucket = "fartooyoung-backend-staging"
+s3_bucket = "fartooyoung-stg-backend"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [

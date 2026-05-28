@@ -133,7 +133,7 @@ aws s3 ls
 aws s3 ls s3://fartooyoung-frontend-production/
 
 # List contents of STAGING SAM deployment bucket
-aws s3 ls s3://fartooyoung-backend-staging/
+aws s3 ls s3://fartooyoung-stg-backend/
 ```
 
 ### Quick Resource Summary

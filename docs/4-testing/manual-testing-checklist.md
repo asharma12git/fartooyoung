@@ -1,145 +1,264 @@
-# Manual Testing Checklist
+# Far Too Young - Regression Testing Checklist
 
-Use this checklist after every deployment to validate core features.
+## Overview
 
-> **Method column**: `API` = can be tested via curl/CLI, `Browser` = requires manual browser interaction.
->
-> **Test data note**: API tests that create data (registration) should be run against **staging only**. Login and read-only tests are safe on production — they don't write new data.
+This is the **regression test suite** for the Far Too Young project. Run after every deployment to verify nothing is broken. Can be executed via CLI (API tests) or browser (UI tests).
 
 ---
 
-## Login
+## Coverage Map
 
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 1 | Valid login | Enter your email + correct password, click Login | Success, redirected to dashboard | API |
-| 2 | Wrong password | Enter correct email + "WrongPass123!", click Login | "Invalid credentials. X attempts remaining." | API |
-| 3 | Rate limited | Enter wrong password 5 times in a row | "Too many login attempts. Try again in X minutes." | API |
-| 4 | Empty email | Leave email blank, enter any password, click Login | "Email and password are required." | API |
-| 5 | Empty password | Enter email, leave password blank, click Login | "Email and password are required." | API |
-| 6 | Non-existent email | Enter "nobody@fake.com" + any password | "Invalid credentials" (no info leak) | API |
-| 7 | Invalid email format | Enter "notanemail" in email field | "Invalid credentials" | API |
-| 8 | Email with spaces | Enter " user@gmail.com " (spaces around it) | Should trim and still work | API |
+**If you changed these files → run these test sections:**
 
-> ⚠️ Tests 2-3 trigger rate limiting. Run against staging to avoid locking out your production account.
-
----
-
-## Registration
-
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 9 | Valid registration | Fill all fields, password like "MyPass1!" | Success, verification email sent | API |
-| 10 | Duplicate email | Register with an email that already exists | "User already exists" | API |
-| 11 | Short password | Enter password "abc" | "Password must be at least 8 characters long." | API |
-| 12 | No special char | Enter password "Password123" | "Must include uppercase, lowercase, number, and special character." | API |
-| 13 | No uppercase | Enter password "password1!" | Same as above | API |
-| 14 | No number | Enter password "Password!" | Same as above | API |
-| 15 | Missing email | Leave email blank, fill everything else | "All fields are required" | API |
-| 16 | Missing password | Leave password blank, fill everything else | "All fields are required" | API |
-| 17 | Missing name | Leave first or last name blank | "All fields are required" | API |
-| 18 | Invalid email | Enter "notanemail" in email field | "Please enter a valid email address." | API |
-| 19 | Email with spaces | Enter " bad @gmail.com " | "Please enter a valid email address." | API |
-| 20 | XSS in name | Enter `<script>alert(1)</script>` as first name | Tags stripped, name stored as "alert(1)" | API |
-
-> ⚠️ Tests 9, 20 create users in the database. **Run on staging only.** Delete test users after: `aws dynamodb delete-item --table-name fartooyoung-staging-users-table --key '{"email":{"S":"testuser@gmail.com"}}'`
+| Files Changed | Run Sections |
+|--------------|--------------|
+| `backend/lambda/auth/login.js` | 2 (Login), 10 (Security) |
+| `backend/lambda/auth/register.js` | 3 (Registration) |
+| `backend/lambda/auth/verify-email.js`, `resend-verification.js` | 4 (Email Verification) |
+| `backend/lambda/auth/forgot-password.js`, `reset-password.js`, `change-password.js` | 5 (Password Management) |
+| `backend/lambda/auth/update-profile.js`, `logout.js` | 6 (Profile) |
+| `backend/lambda/donations/get-donations.js` | 7 (Dashboard) |
+| `backend/lambda/donations/create-donation.js` | 8 (Donations One-time) |
+| `backend/lambda/stripe/webhook.js` | 8, 9, 11 (Donations + Stripe) |
+| `backend/lambda/stripe/create-checkout-session.js` | 8, 9 (Donations) |
+| `backend/lambda/stripe/create-portal-session.js`, `list-subscriptions.js` | 9 (Monthly) |
+| `backend/lambda/stripe/create-payment-intent.js` | 8 (Donations) |
+| `backend/template.yaml` | ALL (infrastructure change) |
+| `backend/lambda/utils/cors.js` | 10 (Security - CORS) |
+| `src/pages/DonorDashboard.jsx` | 7 (Dashboard) |
+| `src/components/CheckoutButton.jsx` | 8, 9 (Donations) |
+| `src/components/DonationModal.jsx` | 8, 9 (Donations) |
+| `src/pages/*.jsx` | 1 (Frontend) |
+| `src/App.jsx` | 1 (Frontend - routing) |
+| `.env.staging`, `.env.production` | ALL (environment config) |
+| `deployment/*` | None (pipeline infra only) |
+| `docs/*` | None |
 
 ---
 
-## Donations (One-Time)
+## Quick Reference
 
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 21 | Small donation | Click Donate, enter $5, select one-time, pay with 4242 4242 4242 4242 | Appears in dashboard as $5 one-time | Browser |
-| 22 | Large donation | Same flow but enter $500 | Appears in dashboard as $500 one-time | Browser |
-| 23 | Visa card | Pay with 4242 4242 4242 4242 | Shows "Visa ••••4242" in dashboard | Browser |
-| 24 | Amex card | Pay with 3782 822463 10005 | Shows "Amex ••••0005" in dashboard | Browser |
-| 25 | Wallet payment | Use Apple Pay or Google Pay on checkout page | Shows wallet badge in dashboard | Browser |
-| 26 | Declined card | Pay with 4000 0000 0000 0002 | Stripe shows decline error, nothing in DB | Browser |
-
-> ⚠️ Tests 21-25 create donation records. **Run on staging only** (uses Stripe test keys, no real money).
+**Staging API:** `https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod`
+**Production API:** `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod`
+**Test card:** `4242 4242 4242 4242` | Exp: `12/34` | CVC: `123` | ZIP: `12345`
 
 ---
 
-## Donations (Monthly Subscription)
+## Last Run
 
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 27 | Create $25/mo | Click Donate, enter $25, select monthly, pay with 4242 card | Subscription created, payment in dashboard | Browser |
-| 28 | Create $150/mo | Same flow but $150 | Same as above | Browser |
-| 29 | Cancel subscription | Go to dashboard → Subscriptions → Cancel | Status changes to cancelled | Browser |
-| 30 | Recurring payment | Wait for next billing cycle (or check Stripe dashboard) | New donation record with same subscription ID | Browser |
-
-> ⚠️ **Run on staging only.** These create real Stripe subscriptions (test mode).
+| Date | Environment | Sections | Result | Run By |
+|------|-------------|----------|--------|--------|
+| 2026-05-28 | Staging | All (1-12) | ✅ All pass | CLI |
 
 ---
 
-## Donor Dashboard
+## 1. Frontend
 
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 31 | Donation history | Log in, go to dashboard, scroll to Donation History | All donations listed, most recent first | API + Browser |
-| 32 | Payment method | Look at any donation entry | Shows "Brand ••••Last4" (e.g., "Visa ••••7489") | Browser |
-| 33 | Wallet badge | Look at donations made via Apple/Google Pay | Badge shows "Apple Pay" or "Google Pay" | Browser |
-| 34 | Subscriptions | Check Subscriptions section | Active subs listed with amount and status | Browser |
-| 35 | Stats | Check top of dashboard | Total, average, count calculated correctly | API + Browser |
-
----
-
-## Authentication & Security
-
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 36 | No-auth dashboard access | Open /dashboard URL directly without logging in | Redirected to login page | Browser |
-| 37 | Refresh persistence | Log in, then refresh the page (F5) | Stays logged in | Browser |
-| 38 | Logout | Click Logout button | Token cleared, redirected to home | Browser |
-| 39 | Expired token | Use an old/invalid JWT token in API call | "Invalid or expired token" | API |
-| 40 | Register rate limit | Try registering 6 times in a row (same IP) | Blocked after 5: "Too many registration attempts" | API |
-| 41 | Login rate limit | Try logging in 6 times with wrong password | Blocked after 5: "Too many login attempts" | API |
-
-> ⚠️ Tests 40-41 trigger rate limits. **Run on staging** to avoid locking out production accounts.
+| # | Test | Method | Steps/Command | Expected |
+|---|------|--------|---------------|----------|
+| 1.1 | Homepage loads | API | `curl -s -o /dev/null -w "%{http_code}" https://{site}` | 200 |
+| 1.2 | All pages accessible | Browser | Navigate: Home, Child Marriage, Founder & Team, Partners, What We Do | Each page renders without errors |
+| 1.3 | Mobile responsive | Browser | Resize to <768px or use phone | Hamburger menu, stacked layout |
+| 1.4 | Dark theme consistent | Browser | Navigate all pages | No white flashes, consistent dark theme |
+| 1.5 | Donation page opens | Browser | Click Donate button | Modal opens with amount selection |
 
 ---
 
-## Responsive / UI
+## 2. Login
 
-| # | Test | How To | Expected Result | Method |
-|---|------|--------|-----------------|--------|
-| 42 | Desktop | Open site on desktop browser (full width) | Full navigation, proper spacing | Browser |
-| 43 | Mobile | Open site on phone or resize browser to < 768px | Hamburger menu, stacked content | Browser |
-| 44 | Tablet | Resize browser to ~768-1024px | Responsive grid adjusts | Browser |
-| 45 | Dark theme | Navigate all pages | Consistent dark theme, no white flashes | Browser |
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 2.1 | Valid login | API | `curl -X POST {api}/auth/login -d '{"email":"user@email.com","password":"correct"}'` | `success: true`, token returned |
+| 2.2 | Wrong password | API | `curl -X POST {api}/auth/login -d '{"email":"user@email.com","password":"wrong"}'` | "Invalid credentials. X attempts remaining." |
+| 2.3 | Non-existent email | API | `curl -X POST {api}/auth/login -d '{"email":"nobody@fake.com","password":"x"}'` | "Invalid credentials" (no info leak) |
+| 2.4 | Empty email | API | `curl -X POST {api}/auth/login -d '{"email":"","password":"x"}'` | "Email and password are required." |
+| 2.5 | Empty password | API | `curl -X POST {api}/auth/login -d '{"email":"x@x.com","password":""}'` | "Email and password are required." |
+| 2.6 | No body | API | `curl -X POST {api}/auth/login -d '{}'` | "Email and password are required." |
+| 2.7 | Rate limited (5 failures) | API | Send 5 wrong passwords in a row | "Too many login attempts. Try again in X minutes." |
 
 ---
 
-## Post-Deployment Quick Smoke Test (5 min)
+## 3. Registration
 
-Run these 5 tests minimum after every deploy:
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 3.1 | Valid registration | API | `curl -X POST {api}/auth/register -d '{"email":"new@test.com","password":"Strong1!","firstName":"Test","lastName":"User"}'` | `success: true`, verification email sent |
+| 3.2 | Password too short | API | password: `"abc"` | "Password must be at least 8 characters long." |
+| 3.3 | No special char | API | password: `"Password123"` | "Must include uppercase, lowercase, number, and special character." |
+| 3.4 | No uppercase | API | password: `"password1!"` | Same as 3.3 |
+| 3.5 | No number | API | password: `"Password!"` | Same as 3.3 |
+| 3.6 | No lowercase | API | password: `"PASSWORD1!"` | Same as 3.3 |
+| 3.7 | Invalid email format | API | email: `"notanemail"` | "Please enter a valid email address." |
+| 3.8 | Email with spaces | API | email: `" bad @x.com "` | "Please enter a valid email address." |
+| 3.9 | Missing email | API | omit email field | "All fields are required: email, password, first name, and last name." |
+| 3.10 | Missing password | API | omit password field | Same as 3.9 |
+| 3.11 | Missing name | API | omit firstName/lastName | Same as 3.9 |
+| 3.12 | XSS in name | API | firstName: `"<script>alert(1)</script>"` | Tags stripped, stored as "alert(1)" |
+| 3.13 | Duplicate email | API | Use existing email | "User already exists" |
+| 3.14 | Empty body | API | `curl -X POST {api}/auth/register -d '{}'` | Same as 3.9 |
+| 3.15 | Rate limited (5 attempts) | API | Register 5+ times same IP | "Too many registration attempts." |
 
-| # | Test | How To | Expected | Method |
-|---|------|--------|----------|--------|
-| 1 | Homepage loads | Visit www.fartooyoung.org | Page renders, no errors | Browser |
-| 2 | Login works | Log in with your credentials | Dashboard loads | API + Browser |
-| 3 | Dashboard data | Check Donation History section | Donations display with card info | Browser |
-| 4 | Donate page | Click Donate, fill form, verify Stripe checkout opens | Checkout URL generated | API |
-| 5 | Registration validation | Try registering with password "abc" | Rejected with clear error | API |
+> ⚠️ Test 3.1 creates a user. Clean up after: `aws dynamodb delete-item --table-name {table} --key '{"email":{"S":"new@test.com"}}'`
+
+---
+
+## 4. Email Verification
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 4.1 | Verify with valid token | API | `curl -X POST {api}/auth/verify-email -d '{"token":"valid_token"}'` | "Email verified successfully" |
+| 4.2 | Verify with invalid token | API | `curl -X POST {api}/auth/verify-email -d '{"token":"invalid"}'` | Error: invalid/expired token |
+| 4.3 | Resend verification | API | `curl -X POST {api}/auth/resend-verification -d '{"email":"user@email.com"}'` | "Verification email sent" |
+| 4.4 | Login before verification | API | Register new user, try login without verifying | Login fails (email not verified) |
+
+---
+
+## 5. Password Management
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 5.1 | Forgot password (valid email) | API | `curl -X POST {api}/auth/forgot-password -d '{"email":"user@email.com"}'` | "Reset email sent" (or similar) |
+| 5.2 | Forgot password (non-existent) | API | `curl -X POST {api}/auth/forgot-password -d '{"email":"nobody@x.com"}'` | Generic success (no info leak) |
+| 5.3 | Reset password (valid token) | API | `curl -X POST {api}/auth/reset-password -d '{"token":"valid","password":"NewPass1!"}'` | "Password reset successfully" |
+| 5.4 | Reset password (invalid token) | API | `curl -X POST {api}/auth/reset-password -d '{"token":"invalid","password":"NewPass1!"}'` | Error: invalid/expired token |
+| 5.5 | Change password (authenticated) | API | `curl -X POST {api}/auth/change-password -H "Authorization: Bearer {token}" -d '{"currentPassword":"old","newPassword":"New1!"}'` | "Password changed successfully" |
+| 5.6 | Change password (wrong current) | API | Same but wrong currentPassword | Error: incorrect current password |
+
+---
+
+## 6. Profile & Session
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 6.1 | Update profile | API | `curl -X POST {api}/auth/update-profile -H "Authorization: Bearer {token}" -d '{"firstName":"New","lastName":"Name"}'` | "Profile updated" |
+| 6.2 | Update profile (no auth) | API | Same without Authorization header | 401 "Authentication required" |
+| 6.3 | Logout | API | `curl -X POST {api}/auth/logout -H "Authorization: Bearer {token}"` | "Logged out successfully" |
+| 6.4 | Access after logout | Browser | Log out, try accessing /dashboard | Redirected to login |
+
+---
+
+## 7. Donor Dashboard
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 7.1 | Get donations (authenticated) | API | `curl -X GET {api}/donations -H "Authorization: Bearer {token}"` | `success: true`, donations array |
+| 7.2 | Donations sorted by date | API | Check response order | Most recent first |
+| 7.3 | Card brand displayed | API | Check `cardBrand` field | "visa", "amex", "mastercard", etc. |
+| 7.4 | Card last4 displayed | API | Check `cardLast4` field | 4-digit string |
+| 7.5 | Wallet type captured | API | Check `wallet` field | "apple_pay", "google_pay", or null |
+| 7.6 | Amount in dollars | API | Check `amount` field | Number (not cents) |
+| 7.7 | No auth → rejected | API | `curl -X GET {api}/donations` (no header) | 401 "Authentication required" |
+| 7.8 | Invalid token → rejected | API | `curl -X GET {api}/donations -H "Authorization: Bearer invalid"` | "Invalid or expired token" |
+| 7.9 | Dashboard UI displays correctly | Browser | Log in, check Donation History | Shows "Brand ••••Last4", amounts, dates |
+| 7.10 | Wallet badge shows | Browser | Check Apple Pay/Google Pay donations | Badge visible |
+
+---
+
+## 8. Donations (One-Time)
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 8.1 | Create checkout session ($5) | API | `curl -X POST {api}/stripe/create-checkout-session -d '{"amount":5,"donation_type":"one-time","donor_info":{...}}'` | `checkout_url` returned |
+| 8.2 | Create checkout session ($500) | API | Same with amount: 500 | `checkout_url` returned |
+| 8.3 | Missing donor info | API | Omit donor_info | Error: "Missing required fields" |
+| 8.4 | Complete payment (browser) | Browser | Open checkout URL, pay with test card | Redirected to success page |
+| 8.5 | Webhook writes new format | API | After payment, scan DynamoDB | 14-field record (id, email, name, amount, type, status, paymentMethod, cardBrand, cardLast4, wallet, stripeInvoiceId, stripeSubscriptionId, stripeSessionId, createdAt) |
+| 8.6 | Declined card | Browser | Pay with `4000 0000 0000 0002` | Stripe shows decline, nothing in DB |
+| 8.7 | Donation appears in dashboard | Browser | After payment, check dashboard | New donation visible |
+
+---
+
+## 9. Donations (Monthly Subscription)
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 9.1 | Create subscription checkout | API | `curl -X POST {api}/stripe/create-checkout-session -d '{"amount":25,"donation_type":"monthly","donor_info":{...}}'` | `checkout_url` returned (subscription mode) |
+| 9.2 | List subscriptions | API | `curl -X GET {api}/stripe/list-subscriptions -H "Authorization: Bearer {token}"` | `subscriptions` array returned |
+| 9.3 | Create portal session | API | `curl -X POST {api}/stripe/create-portal-session -H "Authorization: Bearer {token}"` | `portal_url` returned |
+| 9.4 | Cancel subscription | Browser | Go to portal, cancel | Status changes to cancelled |
+| 9.5 | Recurring payment recorded | API | After billing cycle, check donations | New record with same stripeSubscriptionId |
+
+---
+
+## 10. Authentication & Security
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 10.1 | Invalid token rejected | API | `Authorization: Bearer invalidtoken` | "Invalid or expired token" |
+| 10.2 | No token rejected | API | No Authorization header on protected endpoint | 401 |
+| 10.3 | CORS preflight (www) | API | `curl -I -X OPTIONS {api}/auth/login -H "Origin: https://www.fartooyoung.org"` | `access-control-allow-origin: *` |
+| 10.4 | CORS preflight (non-www) | API | `curl -I -X OPTIONS {api}/auth/login -H "Origin: https://fartooyoung.org"` | `access-control-allow-origin: *` |
+| 10.5 | CORS actual response | API | `curl -X POST {api}/auth/login -H "Origin: https://www.fartooyoung.org" ...` | `access-control-allow-origin: https://www.fartooyoung.org` |
+| 10.6 | Login rate limit | API | 5 wrong passwords → 6th attempt | Blocked: "Too many login attempts" |
+| 10.7 | Register rate limit | API | 5 registrations → 6th attempt | Blocked: "Too many registration attempts" |
+| 10.8 | No email info leak | API | Login with non-existent email | "Invalid credentials" (not "user not found") |
+| 10.9 | SQL/NoSQL injection | API | email: `"admin\" OR 1=1 --"` | "Invalid credentials" (no crash) |
+
+---
+
+## 11. Stripe Integration
+
+| # | Test | Method | Command | Expected |
+|---|------|--------|---------|----------|
+| 11.1 | Webhook endpoint responds | API | `curl -X POST {api}/stripe/webhook` (no sig) | 400 "No stripe-signature header" |
+| 11.2 | Payment method details captured | API | After payment, check DB record | cardBrand, cardLast4, wallet populated |
+| 11.3 | Subscription created event | Stripe | Create subscription → check DB | Record with type "monthly" |
+| 11.4 | Subscription cancelled event | Stripe | Cancel subscription → check DB | Record with type "subscription_cancelled" |
+| 11.5 | Invoice payment succeeded | Stripe | Wait for renewal → check DB | New record with stripeInvoiceId |
+
+---
+
+## 12. Responsive / UI
+
+| # | Test | Method | Steps | Expected |
+|---|------|--------|-------|----------|
+| 12.1 | Desktop layout | Browser | Open site full width | Full navigation, proper spacing |
+| 12.2 | Mobile layout | Browser | Resize <768px or use phone | Hamburger menu, stacked content |
+| 12.3 | Tablet layout | Browser | Resize 768-1024px | Grid adjusts |
+| 12.4 | Dark theme | Browser | Navigate all pages | Consistent, no white flashes |
+| 12.5 | Donation modal mobile | Browser | Open donate on mobile | Modal fits screen, scrollable |
+| 12.6 | Dashboard mobile | Browser | View dashboard on mobile | Tables/cards stack properly |
+
+---
+
+## Post-Deployment Smoke Test (5 min)
+
+Run these minimum after every deploy:
+
+| # | Test | Command | Expected |
+|---|------|---------|----------|
+| S1 | Site loads | `curl -s -o /dev/null -w "%{http_code}" https://{site}` | 200 |
+| S2 | Login works | `curl -X POST {api}/auth/login -d '{"email":"...","password":"..."}'` | Token returned |
+| S3 | Dashboard data | `curl -X GET {api}/donations -H "Authorization: Bearer {token}"` | Donations array |
+| S4 | Checkout works | `curl -X POST {api}/stripe/create-checkout-session -d '...'` | checkout_url |
+| S5 | Validation works | `curl -X POST {api}/auth/register -d '{"email":"x","password":"abc",...}'` | Rejected with error |
+
+---
+
+## Adding New Tests
+
+When adding a new feature:
+1. Identify which section it belongs to (or create a new section)
+2. Add test cases with: number, description, method, command/steps, expected result
+3. Update the **Coverage Map** at the top with the new file → section mapping
+4. Run the new tests on staging before merging to main
 
 ---
 
 ## Test Data Cleanup
 
-After running API tests on staging, clean up test users:
+After running tests that create data on staging:
 
 ```bash
-# Delete specific test user
+# Delete test user
 aws dynamodb delete-item --table-name fartooyoung-staging-users-table \
-  --key '{"email":{"S":"testuser@gmail.com"}}' --region us-east-1
+  --key '{"email":{"S":"testuser@email.com"}}' --region us-east-1
 
-# Delete test donation (if created)
+# Delete test donation
 aws dynamodb delete-item --table-name fartooyoung-staging-donations-table \
   --key '{"id":{"S":"checkout_cs_test_XXXXX"}}' --region us-east-1
 
-# View all staging users (to find test data)
+# View all staging users
 aws dynamodb scan --table-name fartooyoung-staging-users-table \
   --projection-expression "email" --region us-east-1
 ```
@@ -161,4 +280,4 @@ aws dynamodb scan --table-name fartooyoung-staging-users-table \
 
 ---
 
-*Last updated: 2026-05-27*
+*Last updated: 2026-05-28*

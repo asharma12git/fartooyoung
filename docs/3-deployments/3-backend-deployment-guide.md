@@ -28,7 +28,7 @@ This guide documents the step-by-step process to deploy the Far Too Young backen
 | Resource        | Staging                              | Production (LIVE)                         |
 |-----------------|--------------------------------------|-------------------------------------------|
 | Stack Name      | `fartooyoung-staging`                | `fartooyoung-production`                  |
-| S3 Bucket       | `fartooyoung-backend-staging`        | `fartooyoung-backend-production`          |
+| S3 Bucket       | `fartooyoung-stg-backend`        | `fartooyoung-backend-production`          |
 | Secrets Name    | `fartooyoung-staging-secrets`        | `fartooyoung-production-secrets`          |
 | Deploy Command  | `sam deploy --config-env staging`    | `sam deploy --config-env production`      |
 | API URL         | `https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com` | `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com` |
@@ -69,7 +69,7 @@ parameter_overrides = [
 [staging]
 [staging.deploy.parameters]
 stack_name = "fartooyoung-staging"
-s3_bucket = "fartooyoung-backend-staging"
+s3_bucket = "fartooyoung-stg-backend"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
@@ -132,7 +132,7 @@ SAM needs an S3 bucket to upload Lambda code packages:
 
 ```bash
 aws s3api create-bucket \
-  --bucket fartooyoung-backend-staging \
+  --bucket fartooyoung-stg-backend \
   --region us-east-1
 ```
 
@@ -396,7 +396,7 @@ SES_REGION: us-east-1
 ### Deployment fails with "S3 bucket does not exist"
 Create the bucket specified in `samconfig.toml`:
 ```bash
-aws s3api create-bucket --bucket fartooyoung-backend-staging --region us-east-1
+aws s3api create-bucket --bucket fartooyoung-stg-backend --region us-east-1
 ```
 
 ### Lambda function returns 500 error
@@ -473,7 +473,7 @@ aws cloudformation delete-stack --stack-name fartooyoung-staging
 ## Key Resources
 
 - **Stack Name:** fartooyoung-staging
-- **S3 Bucket:** fartooyoung-backend-staging
+- **S3 Bucket:** fartooyoung-stg-backend
 - **Secrets Manager ARN:** arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-staging-secrets-BjIpQD
 - **API Gateway URL:** https://abc123xyz.execute-api.us-east-1.amazonaws.com/Prod/
 - **Region:** us-east-1

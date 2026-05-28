@@ -13,7 +13,7 @@ Parameters:
     Default: staging
   FrontendBucket:
     Type: String
-    Default: fartooyoung-frontend-staging
+    Default: fartooyoung-stg-frontend
   CloudFrontDistributionId:
     Type: String
     Default: EYHMCS1M0XJX1
@@ -140,7 +140,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: fartooyoung-stg-frontend
+      Name: fartooyoung-stg-frontend-pipeline
       PipelineType: V2
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:

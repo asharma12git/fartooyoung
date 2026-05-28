@@ -13,7 +13,7 @@ npm run build -- --mode staging
 
 # Upload to S3
 echo "☁️  Uploading to S3..."
-aws s3 sync dist/ s3://fartooyoung-frontend-staging --delete
+aws s3 sync dist/ s3://fartooyoung-stg-frontend --delete
 
 # Invalidate CloudFront cache
 echo "🔄 Invalidating CloudFront cache..."

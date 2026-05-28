@@ -14,8 +14,8 @@ The system design (architecture, components, Lambda functions, database schemas)
 | **Lambda Functions** | SAM Local (17 functions) | AWS Lambda (`fartooyoung-staging-*`) | AWS Lambda (`fartooyoung-production-*`) |
 | **API Gateway** | SAM Local | `71z0wz0dg9` (REST API) | `0o7onj0dr7` (REST API) |
 | **DynamoDB** | DynamoDB Local (Docker `:8000`) | `fartooyoung-staging-*` (3 tables) | `fartooyoung-production-*` (3 tables) |
-| **S3 (Frontend)** | N/A | `fartooyoung-frontend-staging` | `fartooyoung-frontend-production` |
-| **S3 (SAM Artifacts)** | N/A | `fartooyoung-backend-staging` | `fartooyoung-backend-production` |
+| **S3 (Frontend)** | N/A | `fartooyoung-stg-frontend` | `fartooyoung-frontend-production` |
+| **S3 (SAM Artifacts)** | N/A | `fartooyoung-stg-backend` | `fartooyoung-backend-production` |
 | **CloudFront** | N/A | `EYHMCS1M0XJX1` (`db9gpqewllpi7.cloudfront.net`) | `E2PHSH4ED2AIN5` (`d13239btyxegco.cloudfront.net`) |
 | **Route 53** | N/A | `staging.fartooyoung.org` (A record) | `www.fartooyoung.org` + `fartooyoung.org` (A records) |
 | **ACM (SSL)** | N/A | Shared cert: `*.fartooyoung.org` | Shared cert: `*.fartooyoung.org` |
@@ -23,8 +23,8 @@ The system design (architecture, components, Lambda functions, database schemas)
 | **Secrets Manager** | Not used (empty ARN) | `fartooyoung-staging-secrets-BjIpQD` | `fartooyoung-production-secrets-tEmB4i` |
 | **Stripe Keys** | Test (`sk_test_...`) | Test (`sk_test_...`) | Live (`sk_live_...`) |
 | **Payments** | Fake (test cards) | Fake (test cards) | Real money |
-| **CodePipeline V2** | N/A | `fartooyoung-staging-frontend-pipeline` + `fartooyoung-staging-backend-pipeline` | `fartooyoung-production-frontend-pipeline` + `fartooyoung-production-backend-pipeline` |
-| **CodeBuild** | N/A | `fartooyoung-staging-frontend-build` + `fartooyoung-staging-backend-build` | `fartooyoung-production-frontend-build` + `fartooyoung-production-backend-build` |
+| **CodePipeline V2** | N/A | `fartooyoung-stg-frontend-pipeline` + `fartooyoung-stg-backend-pipeline` | `fartooyoung-production-frontend-pipeline` + `fartooyoung-production-backend-pipeline` |
+| **CodeBuild** | N/A | `fartooyoung-stg-frontend-build` + `fartooyoung-stg-backend-build` | `fartooyoung-production-frontend-build` + `fartooyoung-production-backend-build` |
 | **CodeStar Connection** | N/A | Shared: `fartooyoung-github` | Shared: `fartooyoung-github` |
 | **IAM Roles** | N/A | `fartooyoung-staging-*` (Lambda, CodeBuild, Pipeline) | `fartooyoung-production-*` (Lambda, CodeBuild, Pipeline) |
 | **SAM Stack** | `fartooyoung-local` | `fartooyoung-staging` | `fartooyoung-production` |
@@ -85,7 +85,7 @@ sam build && sam deploy --config-env staging
 
 # Deploy frontend
 npm run build -- --mode staging
-aws s3 sync dist/ s3://fartooyoung-frontend-staging --delete
+aws s3 sync dist/ s3://fartooyoung-stg-frontend --delete
 aws cloudfront create-invalidation --distribution-id EYHMCS1M0XJX1 --paths "/*"
 ```
 - Uses `.env.staging` → points to staging API Gateway

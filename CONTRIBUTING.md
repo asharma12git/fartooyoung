@@ -183,9 +183,9 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 
 ---
 
-## Further Reading
+## ⛔ Further Reading — READ THESE BEFORE YOU BEGIN
 
-For deeper understanding of the project, read these docs in order:
+> **🚨 DO NOT START ANY WORK UNTIL YOU HAVE READ AND UNDERSTOOD THESE DOCUMENTS. They contain critical context about the architecture, environments, and how everything connects.**
 
 | Doc | What You'll Learn |
 |-----|-------------------|

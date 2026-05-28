@@ -42,8 +42,8 @@ The system design (architecture, components, Lambda functions, database schemas)
 
 | Pipeline | Branch | Triggers On |
 |----------|--------|-------------|
-| `fartooyoung-staging-frontend-pipeline` | `staging` | `src/**`, `public/**`, `package.json`, `vite.config.js` |
-| `fartooyoung-staging-backend-pipeline` | `staging` | `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml` |
+| `fartooyoung-stg-frontend-pipeline` | `staging` | `src/**`, `public/**`, `package.json`, `vite.config.js` |
+| `fartooyoung-stg-backend-pipeline` | `staging` | `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml` |
 | `fartooyoung-production-frontend-pipeline` | `main` | Same as staging frontend |
 | `fartooyoung-production-backend-pipeline` | `main` | Same as staging backend |
 

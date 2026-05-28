@@ -2,10 +2,13 @@
 
 ## ⚠️ Critical Rules
 
-1. **NEVER push directly to `main`** — main auto-deploys to production with real users and real payments
-2. **NEVER modify production DynamoDB tables directly** — always test on staging first
-3. **NEVER commit secrets** (API keys, passwords, tokens) — use AWS Secrets Manager
-4. **Always test on staging before merging to main**
+1. **NEVER push or merge to `main` without explicit owner permission** — always ask first, no exceptions, regardless of how small the change is
+2. **NEVER push directly to `main`** — main auto-deploys to production with real users and real payments
+3. **NEVER modify production DynamoDB tables directly** — always test on staging first
+4. **NEVER commit secrets** (API keys, passwords, tokens) — use AWS Secrets Manager
+5. **Always test on staging before merging to main**
+
+> 🚨 **Even for a one-line change — ASK before merging to main. No assumptions. No shortcuts.**
 
 ---
 

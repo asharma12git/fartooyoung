@@ -63,16 +63,7 @@ npm install && npm run dev
 
 > 🚨 **NEVER push directly to `main`. Always work on `staging` branch first.**
 
-```
-1. Work on `staging` branch
-2. Test locally (npm run dev)
-3. Push to staging → pipeline auto-deploys to staging.fartooyoung.org
-4. Validate on staging (test all affected features)
-5. Only after full validation → merge staging into main
-6. Main auto-deploys to production (www.fartooyoung.org)
-```
-
-**For large features:** Do NOT merge to main until the feature is fully tested end-to-end on staging. Production has real users and real payments.
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full technical guide — workflow, testing, deployment, and safety rules.
 
 ## Deployment
 

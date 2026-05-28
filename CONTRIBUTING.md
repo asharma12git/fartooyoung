@@ -1,0 +1,170 @@
+# Contributing - Technical Guide
+
+## ⚠️ Critical Rules
+
+1. **NEVER push directly to `main`** — main auto-deploys to production with real users and real payments
+2. **NEVER modify production DynamoDB tables directly** — always test on staging first
+3. **NEVER commit secrets** (API keys, passwords, tokens) — use AWS Secrets Manager
+4. **Always test on staging before merging to main**
+
+---
+
+## Development Workflow
+
+```
+1. Work on `staging` branch
+2. Test locally (npm run dev)
+3. Push to staging → pipeline auto-deploys to staging.fartooyoung.org
+4. Validate on staging (test all affected features)
+5. Only after full validation → merge staging into main
+6. Main auto-deploys to production (www.fartooyoung.org)
+```
+
+### For Large Features
+
+- Do NOT merge to main until fully tested end-to-end on staging
+- Run the regression testing checklist (`docs/4-testing/manual-testing-checklist.md`)
+- If the feature touches payments — test with real Stripe test cards on staging
+
+---
+
+## Local Development
+
+```bash
+# Frontend only (points to staging backend)
+npm run dev
+
+# Full stack (local backend + local DB)
+# Terminal 1: Database
+docker run -p 8000:8000 amazon/dynamodb-local
+
+# Terminal 2: Backend
+cd backend && sam local start-api --port 3001
+
+# Terminal 3: Frontend
+npm run dev
+```
+
+### Hybrid Mode (Recommended)
+
+Run frontend locally but point to staging backend — edit `.env.local`:
+```
+VITE_API_BASE_URL=https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod
+```
+Then just `npm run dev`. You get hot-reload with a real backend.
+
+---
+
+## Git Branch Strategy
+
+| Branch | Deploys To | Trigger |
+|--------|-----------|---------|
+| `staging` | staging.fartooyoung.org | Auto (instant webhook) |
+| `main` | www.fartooyoung.org (PRODUCTION) | Auto (instant webhook) |
+
+### What Triggers Pipelines
+
+| Change | Frontend Pipeline | Backend Pipeline |
+|--------|------------------|-----------------|
+| `src/**`, `public/**`, `package.json`, `vite.config.js` | ✅ Triggers | ❌ No |
+| `backend/lambda/**`, `backend/template.yaml`, `backend/samconfig.toml` | ❌ No | ✅ Triggers |
+| `docs/**`, `deployment/**`, `README.md`, `backend/scripts/**` | ❌ No | ❌ No |
+
+---
+
+## How to Add a New Feature
+
+1. Make sure you're on `staging` branch: `git checkout staging`
+2. Write code and test locally
+3. Commit and push: `git push origin staging`
+4. Wait for staging pipeline to deploy (~2 min)
+5. Test on staging.fartooyoung.org
+6. If it works → `git checkout main && git merge staging && git push origin main`
+7. Verify on www.fartooyoung.org
+
+---
+
+## How to Add a New API Endpoint
+
+1. Create Lambda function in `backend/lambda/{category}/`
+2. Add function + API event to `backend/template.yaml`
+3. Deploy to staging: `cd backend && sam build && sam deploy --config-env staging`
+4. Test the endpoint via curl
+5. Add test cases to `docs/4-testing/manual-testing-checklist.md`
+6. Push to staging, verify pipeline deploys it
+
+---
+
+## Testing
+
+### After Every Deploy (Smoke Test — 2 min)
+
+```bash
+# Site loads
+curl -s -o /dev/null -w "%{http_code}" https://staging.fartooyoung.org
+
+# Login works
+curl -X POST {api}/auth/login -d '{"email":"...","password":"..."}'
+
+# Dashboard returns data
+curl -X GET {api}/donations -H "Authorization: Bearer {token}"
+```
+
+### Full Regression (Before Merging to Main)
+
+See `docs/4-testing/manual-testing-checklist.md` — 70 test cases covering all endpoints.
+
+---
+
+## What NOT to Do
+
+| ❌ Don't | ✅ Do Instead |
+|----------|--------------|
+| Push to `main` without testing | Push to `staging`, test, then merge |
+| Edit production DynamoDB directly | Copy prod data to staging, test there |
+| Store secrets in code or .env files | Use AWS Secrets Manager |
+| Delete S3 buckets without checking | Verify nothing points to them first |
+| Run migration scripts on prod first | Always run on staging first |
+| Merge during active production issues | Fix the issue first, then merge |
+
+---
+
+## Emergency: Manual Deploy (If Pipeline Breaks)
+
+```bash
+# Frontend
+./deployment/stg-manual-deploy-frontend.sh   # staging
+./deployment/prod-manual-deploy-frontend.sh  # production
+
+# Backend
+./deployment/stg-manual-deploy-backend.sh    # staging
+./deployment/prod-manual-deploy-backend.sh   # production
+```
+
+---
+
+## Key Files Reference
+
+| File | Purpose |
+|------|---------|
+| `backend/template.yaml` | ALL AWS infrastructure (Lambda + DB + API) |
+| `backend/samconfig.toml` | Deploy targets per environment |
+| `.env.local` / `.env.staging` / `.env.production` | Frontend API URLs per environment |
+| `deployment/*.yml` | Pipeline infrastructure templates |
+| `docs/4-testing/manual-testing-checklist.md` | Full regression test suite |
+| `docs/1-planning/` | Feature roadmap and plans |
+| `docs/development-progress.md` | Session history log |
+
+---
+
+## AWS Resources Quick Reference
+
+| Resource | Staging | Production |
+|----------|---------|------------|
+| Frontend | `fartooyoung-stg-frontend` | `fartooyoung-prod-frontend` |
+| Backend | `fartooyoung-stg-backend` | `fartooyoung-prod-backend` |
+| Pipeline (FE) | `fartooyoung-stg-frontend-pipeline` | `fartooyoung-prod-frontend-pipeline` |
+| Pipeline (BE) | `fartooyoung-stg-backend-pipeline` | `fartooyoung-prod-backend-pipeline` |
+| API | `71z0wz0dg9...amazonaws.com` | `0o7onj0dr7...amazonaws.com` |
+| CloudFront | `EYHMCS1M0XJX1` | `E2PHSH4ED2AIN5` |
+| DynamoDB | `fartooyoung-staging-*` | `fartooyoung-production-*` |

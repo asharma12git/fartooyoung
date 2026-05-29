@@ -408,9 +408,9 @@ Backlinks (other websites linking to fartooyoung.org) are the #1 factor for Goog
 
 Confirmed all social profiles link back to `https://www.fartooyoung.org`:
 
-- ✅ Instagram bio
-- ✅ Facebook page
-- ✅ YouTube channel
+- ✅ Instagram: https://www.instagram.com/fartooyoung_organization/
+- ✅ Facebook: https://www.facebook.com/fartooyoung.org
+- ✅ YouTube: https://www.youtube.com/@FarTooYoungInc
 
 These are "nofollow" links (don't pass SEO juice directly) but they establish entity consistency for AI models and drive referral traffic.
 

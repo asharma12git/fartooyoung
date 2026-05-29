@@ -98,7 +98,7 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 37: Stripe Payment Element — locally validated, ready for staging deploy
+- Phase 37: Stripe Payment Element — staging validated, awaiting owner approval to merge to main
 - Embedded payment form working (card, bank, Link — no redirect)
 - Dark themed, responsive (desktop + mobile success overlay)
 - 13 test payments confirmed in staging DynamoDB

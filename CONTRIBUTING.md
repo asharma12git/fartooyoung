@@ -228,7 +228,7 @@ Update **every document** that is affected by your changes, including but not li
 11. **`docs/1-planning/`** — Update plan status if a plan was started or completed
 12. **`CONTRIBUTING.md`** — Update if workflow, pipelines, or AWS resources changed
 13. **`README.md`** — Update if features, tech stack, or project structure changed
-14. **`deployment/README.md`** — Update if pipeline triggers or names changed
+14. **`deployment/*.yml`** — Update if pipeline triggers or names changed
 15. **Any other doc that references what you changed**
 
 **Leave the project in a state where the next session can pick up immediately without guessing what happened.**

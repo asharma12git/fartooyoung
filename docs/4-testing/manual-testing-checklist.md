@@ -35,6 +35,10 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `.env.staging`, `.env.production` | ALL (environment config) |
 | `deployment/*` | None (pipeline infra only) |
 | `docs/*` | None |
+| `index.html` | 13 (SEO) |
+| `public/sitemap.xml`, `public/robots.txt`, `public/manifest.json` | 13 (SEO) |
+| `src/components/SEO.jsx` | 13 (SEO) |
+| `scripts/prerender.mjs` | 13 (SEO) |
 
 ---
 
@@ -266,6 +270,24 @@ aws dynamodb delete-item --table-name fartooyoung-staging-donations-table \
 aws dynamodb scan --table-name fartooyoung-staging-users-table \
   --projection-expression "email" --region us-east-1
 ```
+
+---
+
+## 13. SEO & Analytics
+
+| # | Test | Method | How To | Expected |
+|---|------|--------|--------|----------|
+| 13.1 | Pre-rendered HTML has content | CLI | `curl -s https://www.fartooyoung.org/ \| grep "<title>"` | Returns unique page title, not just "Far Too Young" |
+| 13.2 | Meta description present | CLI | `curl -s https://www.fartooyoung.org/ \| grep 'name="description"'` | Contains page-specific description |
+| 13.3 | OG tags present | CLI | `curl -s https://www.fartooyoung.org/ \| grep 'property="og:'` | og:title, og:description, og:image exist |
+| 13.4 | Canonical URL present | CLI | `curl -s https://www.fartooyoung.org/ \| grep 'rel="canonical"'` | Points to correct URL |
+| 13.5 | Sitemap accessible | CLI | `curl -s -o /dev/null -w "%{http_code}" https://www.fartooyoung.org/sitemap.xml` | 200 |
+| 13.6 | Robots.txt accessible | CLI | `curl -s https://www.fartooyoung.org/robots.txt` | Shows Allow/Disallow rules + Sitemap URL |
+| 13.7 | Manifest accessible | CLI | `curl -s -o /dev/null -w "%{http_code}" https://www.fartooyoung.org/manifest.json` | 200 |
+| 13.8 | JSON-LD structured data | CLI | `curl -s https://www.fartooyoung.org/ \| grep "NonprofitOrganization"` | Present in HTML |
+| 13.9 | GA4 script loaded | Browser | Open site → DevTools → Network → filter "gtag" | Request to googletagmanager.com |
+| 13.10 | Clarity script loaded | Browser | Open site → DevTools → Network → filter "clarity" | Request to clarity.ms |
+| 13.11 | Each page has unique title | CLI | Curl each route, compare `<title>` tags | All 4 pages have different titles |
 
 ---
 

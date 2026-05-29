@@ -281,6 +281,18 @@ See Plan 6 (AI Blog System) for automated content generation.
 
 ### 3.3 GEO: AI Search Optimization ⬜ TODO
 
+> **Wikidata entry created:** Username `FTYoung` on wikidata.org. Item pending statements.
+>
+> **Organization Details (for reference):**
+> - Legal Name: Far Too Young, Inc.
+> - Business Type: Domestic Nonprofit Corporation
+> - GA Secretary of State Control #: 21285996
+> - Date of Formation: November 4, 2021
+> - State: Georgia
+> - NAICS: Human Rights Organizations
+> - Status: Active/Compliance
+> - 501(c)(3): Yes
+
 **What is GEO?**
 
 Generative Engine Optimization is how you get cited by AI search engines — ChatGPT, Perplexity, Google AI Overviews, and Claude. When someone asks "what organizations fight child marriage?", we want Far Too Young in the answer.

@@ -312,7 +312,7 @@ AI models don't "rank" pages like Google. They pull from:
 
 **Step-by-step GEO implementation:**
 
-#### Step 1: Wikidata Entry (Do This Week — Free, 30 min)
+#### Step 1: Wikidata Entry ✅ DONE
 
 Wikidata is the structured database behind Wikipedia. AI models read it directly. No "notability" requirement — any registered organization can have an entry.
 

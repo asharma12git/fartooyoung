@@ -1,6 +1,6 @@
 # Plan 3: SEO & Web Visibility
 
-## Status: 📋 Ready to Execute
+## Status: ✅ Phase 1 + Phase 2 COMPLETE | Phase 3 TODO
 ## Priority: HIGH — site is currently invisible to Google
 ## Estimated Cost: $0/month (all free tools)
 ## Estimated Effort: Phase 1 = 2-3 hours, Phase 2 = 3-4 hours, Phase 3 = future
@@ -55,11 +55,11 @@ We'll build GEO into our structured data and content strategy.
 
 ---
 
-## Phase 1: Get Indexed & Tracked (This Session — 2-3 hours)
+## Phase 1: Get Indexed & Tracked ✅ COMPLETE
 
 Everything here is **zero cost** and makes the site visible to Google immediately.
 
-### 1.1 Pre-rendering (Static HTML for Google)
+### 1.1 Pre-rendering (Static HTML for Google) ✅ DONE
 
 **Tool:** `vite-react-ssg` or `react-snap-vite`
 
@@ -74,7 +74,7 @@ Generates real HTML at build time for each public route. Google sees actual cont
 
 **What changes:** Build step outputs HTML files with content baked in. CloudFront serves these. Users still get the SPA experience after hydration.
 
-### 1.2 Meta Tags + Open Graph (Per-Page)
+### 1.2 Meta Tags + Open Graph (Per-Page) ✅ DONE
 
 **Tool:** `react-helmet-async`
 
@@ -94,7 +94,7 @@ Each page gets:
 </Helmet>
 ```
 
-### 1.3 Sitemap + Robots.txt
+### 1.3 Sitemap + Robots.txt ✅ DONE
 
 **`public/sitemap.xml`** — tells Google every page that exists:
 ```xml
@@ -113,14 +113,14 @@ Allow: /
 Sitemap: https://www.fartooyoung.org/sitemap.xml
 ```
 
-### 1.4 Google Search Console
+### 1.4 Google Search Console ⬜ TODO (manual — verify domain + submit sitemap)
 
 - Verify domain ownership (DNS TXT record in Route 53)
 - Submit sitemap
 - Monitor indexing status, search queries, click-through rates
 - **Free.** This is how you see what Google thinks of your site.
 
-### 1.5 Analytics: GA4 + Microsoft Clarity
+### 1.5 Analytics: GA4 + Microsoft Clarity ✅ DONE
 
 **Google Analytics 4** — one script tag:
 - Visitor count, traffic sources, page views, time on site
@@ -139,9 +139,9 @@ Both are `<script>` tags in `index.html`. No backend changes.
 
 ---
 
-## Phase 2: Rank Higher (Next Session — 3-4 hours)
+## Phase 2: Rank Higher ✅ COMPLETE
 
-### 2.1 Structured Data (JSON-LD)
+### 2.1 Structured Data (JSON-LD) ✅ DONE
 
 Tells Google AND AI engines exactly what this site is:
 
@@ -165,7 +165,7 @@ This enables:
 - AI citation in ChatGPT/Perplexity answers
 - Knowledge panel eligibility
 
-### 2.2 Core Web Vitals Optimization
+### 2.2 Core Web Vitals Optimization ✅ DONE
 
 Google's page speed ranking factors:
 - **LCP** (Largest Contentful Paint) — preload hero images, font-display: swap
@@ -178,7 +178,7 @@ Quick wins:
 - Lazy load below-fold images
 - Preconnect to Stripe/Google domains
 
-### 2.3 Canonical URLs
+### 2.3 Canonical URLs ✅ DONE
 
 Add to every page:
 ```html
@@ -187,7 +187,7 @@ Add to every page:
 
 Prevents Google from treating `www` and non-`www`, or trailing slashes, as duplicate pages.
 
-### 2.4 PWA Manifest
+### 2.4 PWA Manifest ✅ DONE
 
 Makes the site installable on phones:
 ```json
@@ -205,9 +205,9 @@ Google rewards mobile-friendly installable sites in mobile search rankings.
 
 ---
 
-## Phase 3: Competitive Edge (Future Sessions)
+## Phase 3: Competitive Edge ⬜ TODO (Future Sessions)
 
-### 3.1 Google Ad Grants — $10,000/month FREE Advertising
+### 3.1 Google Ad Grants — $10,000/month FREE Advertising ⬜ TODO
 
 **This is the single biggest opportunity for Far Too Young.**
 
@@ -247,7 +247,7 @@ Google gives eligible 501(c)(3) nonprofits **$10,000/month in free Google Ads** 
 
 ---
 
-### 3.2 Content / Blog System
+### 3.2 Content / Blog System ⬜ TODO
 
 Fresh content signals authority to Google. A blog with posts about child marriage statistics, success stories, and advocacy updates would:
 - Target long-tail keywords ("how to prevent child marriage in India")
@@ -259,7 +259,7 @@ See Plan 6 (AI Blog System) for automated content generation.
 
 ---
 
-### 3.3 GEO: AI Search Optimization
+### 3.3 GEO: AI Search Optimization ⬜ TODO
 
 **What is GEO?**
 
@@ -334,7 +334,7 @@ AI models cross-reference these sources. Consistency = trust = citations.
 
 ---
 
-### 3.4 Backlinks & Authority Building
+### 3.4 Backlinks & Authority Building ⬜ TODO
 
 Backlinks (other websites linking to fartooyoung.org) are the #1 factor for Google rankings AND for AI citation authority. More high-quality links = higher trust = better visibility everywhere.
 
@@ -390,7 +390,7 @@ These are "nofollow" links (don't pass SEO juice directly) but they establish en
 
 ---
 
-### 3.5 IndexNow Protocol
+### 3.5 IndexNow Protocol ⬜ TODO
 
 Instant indexing by Bing/Yandex when content changes (Google hasn't adopted it yet but Bing has). One API call after each deploy notifies search engines of new content immediately instead of waiting for crawlers.
 
@@ -430,21 +430,21 @@ POST https://api.indexnow.org/indexnow
 
 ## Implementation Priority
 
-| # | Item | Effort | Impact | When |
-|---|------|--------|--------|------|
-| 1 | Pre-rendering | 1 hr | 🔥 Critical | Phase 1 |
-| 2 | Meta tags + OG | 30 min | 🔥 Critical | Phase 1 |
-| 3 | Sitemap + robots.txt | 10 min | 🔥 Critical | Phase 1 |
-| 4 | Google Search Console | 15 min | High | Phase 1 |
-| 5 | GA4 + Clarity | 15 min | High | Phase 1 |
-| 6 | Structured data (JSON-LD) | 30 min | High | Phase 2 |
-| 7 | Core Web Vitals | 1 hr | Medium | Phase 2 |
-| 8 | Canonical URLs | 10 min | Medium | Phase 2 |
-| 9 | PWA manifest | 30 min | Medium | Phase 2 |
-| 10 | Google Ad Grants | 2 hrs | 🔥🔥🔥 Massive | Phase 3 |
-| 11 | Blog/content | 8-10 hrs | High | Phase 3 |
-| 12 | GEO (Wikipedia, Wikidata) | 2-3 hrs | High (long-term) | Phase 3 |
-| 13 | IndexNow | 15 min | Low | Phase 3 |
+| # | Item | Effort | Impact | Status |
+|---|------|--------|--------|--------|
+| 1 | Pre-rendering | 1 hr | 🔥 Critical | ✅ Done |
+| 2 | Meta tags + OG | 30 min | 🔥 Critical | ✅ Done |
+| 3 | Sitemap + robots.txt | 10 min | 🔥 Critical | ✅ Done |
+| 4 | Google Search Console | 15 min | High | ⬜ Manual |
+| 5 | GA4 + Clarity | 15 min | High | ✅ Done |
+| 6 | Structured data (JSON-LD) | 30 min | High | ✅ Done |
+| 7 | Core Web Vitals | 1 hr | Medium | ✅ Done |
+| 8 | Canonical URLs | 10 min | Medium | ✅ Done |
+| 9 | PWA manifest | 30 min | Medium | ✅ Done |
+| 10 | Google Ad Grants | 2 hrs | 🔥🔥🔥 Massive | ⬜ TODO |
+| 11 | Blog/content | 8-10 hrs | High | ⬜ TODO |
+| 12 | GEO (Wikipedia, Wikidata) | 2-3 hrs | High (long-term) | ⬜ TODO |
+| 13 | IndexNow | 15 min | Low | ⬜ TODO |
 
 ---
 

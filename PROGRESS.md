@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 37 - Stripe Payment Element (Embedded Form)  
-**Last Updated:** May 28, 2026, 10:19 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ Staging DNS Restored
+**Current Phase:** Phase 38 - SEO & Web Visibility  
+**Last Updated:** May 29, 2026, 4:15 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete
 
 ### **What's Working (Production Ready)**
 
@@ -85,32 +85,36 @@
 |----------|------|--------|--------|
 | 1 | Deployment Optimization (security + pipeline split) | 5-6 hrs | ✅ Done |
 | 2 | Stripe Elements - Embedded Payment Form | 4-6 hrs | ✅ Done |
-| 3 | SEO Implementation (meta tags, sitemap, structured data) | 3-4 hrs | 📋 Ready |
+| 3 | SEO Implementation (meta tags, sitemap, structured data) | 3-4 hrs | ✅ Phase 1+2 Done |
 | 4 | Donor Retention & Tracking (A/B testing, analytics) | 8-10 hrs | 📋 Ready |
-| 5 | Mobile App (PWA) | 2-3 hrs | 📋 Ready |
+| 5 | Mobile App (PWA) | 2-3 hrs | ✅ Manifest Done |
 | 6 | AI Blog System (Bedrock + newsletter) | 8-10 hrs | 📋 Ready |
 | 7 | Social Media Automation (Twitter/Facebook) | 3-4 hrs | 📋 Depends on #6 |
 | 8 | Dashboard Restructure (admin + blog UI) | 8-10 hrs | 📋 Depends on #6 |
 | 9 | E-commerce (merchandise shop) | 20+ hrs | 📋 Future |
 | 10 | AWS SDK v3 Migration | 2-3 hrs | 📋 Backlog |
 | 11 | Frontend Lint Cleanup | 1-2 hrs | 📋 Backlog |
+| 11 | Frontend Lint Cleanup | 1-2 hrs | 📋 Backlog |
 
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 37: Stripe Payment Element — DEPLOYED TO PRODUCTION ✅
-- Embedded payment form live on www.fartooyoung.org (card, bank, Apple Pay, Google Pay)
-- Apple Pay domain verified in both test and live Stripe
-- Full regression (33 tests) passed on staging before merge
-- Production smoke test passed (site, login, payment intent)
-- CONTRIBUTING.md established as the project's technical guide
-- All sessions auto-saved in Kiro — resume with `kiro-cli chat --resume`
-- Next priorities: image sizing in donation modal, monthly subscription via Payment Element
-- Embedded payment form working (card, bank, Link — no redirect)
-- Dark themed, responsive (desktop + mobile success overlay)
-- 13 test payments confirmed in staging DynamoDB
-- Apple Pay / Google Pay need HTTPS (staging deploy) to test
-- Monthly subscriptions still use Stripe portal (kept as-is)
+- Phase 38: SEO & Web Visibility — Phase 1+2 DEPLOYED TO PRODUCTION ✅
+- Pre-rendering (SSG) live — Google sees real HTML content on all 4 public pages
+- Meta tags, Open Graph, Twitter Cards on every page via `react-helmet-async`
+- Sitemap.xml + robots.txt deployed and submitted to Google Search Console
+- GA4 tracking live (G-XJN5PR545G) + Microsoft Clarity (wytghx7ix4)
+- JSON-LD structured data (NonprofitOrganization + DonateAction)
+- PWA manifest + icons deployed (site installable on phones)
+- Core Web Vitals: preconnect for fonts, Stripe
+- Wikidata entity created (Q139980067) — AI models can now reference FTY
+- Google Ad Grants applied ($10K/month free ads) — awaiting verification (2-14 days)
+- Social profiles confirmed linking back to fartooyoung.org
+- 2×2 crossfade image grid replaced old carousel on What We Do page
+- Footer updated: Atlanta, Georgia, United States
+- Testing checklist Section 13 (SEO) added
+- File renames: testing checklist → 1-testing-checklist.md, api commands → 2-api-test-commands.md
+- Next priorities: Google Ad Grants activation (once approved), blog system (Plan 6), OG image banner
 - CONTRIBUTING.md created with full technical guide + safety rules
 - PROGRESS.md moved to project root
 - S3 bucket rename complete (both projects)

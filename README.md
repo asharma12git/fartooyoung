@@ -19,6 +19,9 @@ A full-stack serverless web application for an organization focused on ending ch
 - Rate limiting and bot protection
 - Password strength enforcement (8+ chars, uppercase, lowercase, number, special)
 - Mobile-responsive dark theme UI
+- SEO optimized (pre-rendered HTML, meta tags, sitemap, structured data)
+- Google Analytics 4 + Microsoft Clarity (heatmaps, session recordings)
+- PWA support (installable on phones)
 - 5 public pages: Child Marriage, Founder & Team, Partners, What We Do, Home
 
 ## Project Structure

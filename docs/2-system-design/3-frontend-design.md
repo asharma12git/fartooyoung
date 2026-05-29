@@ -150,6 +150,7 @@
 | `VerifyEmail.jsx` | Email verification landing page | ✅ LIVE |
 | `PaymentSuccess.jsx` | Post-donation success page | ✅ LIVE |
 | `SubscriptionReturn.jsx` | Post-subscription return page | ✅ LIVE |
+| `SEO.jsx` | Per-page meta tags, OG, canonical URLs (react-helmet-async) | ✅ LIVE |
 
 ### `App.jsx` ✅ LIVE
 **Purpose**: Central application state and routing management  

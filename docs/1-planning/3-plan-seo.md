@@ -219,7 +219,33 @@ Google gives eligible 501(c)(3) nonprofits **$10,000/month in free Google Ads** 
 - Must maintain 5% click-through rate
 - Must track meaningful conversions
 
+**How to apply:**
+1. Register with [Google for Nonprofits](https://www.google.com/nonprofits/) (verify 501(c)(3) status)
+2. Once approved, activate the Google Ad Grants product
+3. Create a Google Ads account linked to the grant
+4. Build campaigns targeting keywords like "end child marriage", "donate to prevent child marriage", "child marriage charity"
+5. Set up conversion tracking (donation button clicks, form submissions) — required to maintain the grant
+
+**Rules to keep the grant active:**
+- Maintain 5% click-through rate (CTR) across all campaigns
+- Log into the account at least once per month
+- Must have at least 2 ads per ad group
+- Must have at least 2 ad groups per campaign
+- Must have sitelink extensions
+- Must track at least 1 meaningful conversion per month
+- No single-word keywords (except brand name)
+- No overly generic keywords (e.g., "free", "donate")
+
+**What to advertise:**
+- "End child marriage" → Home page
+- "Child marriage statistics" → What We Do page
+- "Donate to prevent child marriage" → Donation flow
+- "Child marriage nonprofit" → Founder & Team page
+- "How to stop child marriage" → Blog posts (once blog exists)
+
 **This alone could drive more donations than all other SEO work combined.**
+
+---
 
 ### 3.2 Content / Blog System
 
@@ -231,18 +257,174 @@ Fresh content signals authority to Google. A blog with posts about child marriag
 
 See Plan 6 (AI Blog System) for automated content generation.
 
+---
+
 ### 3.3 GEO: AI Search Optimization
 
-To get cited by ChatGPT, Perplexity, and Google AI Overviews:
-- Wikipedia page for Far Too Young (biggest single factor)
-- Wikidata entity entry
-- Consistent entity mentions across the web
-- Structured, factual, quotable content on the site
-- Schema markup (done in Phase 2)
+**What is GEO?**
 
-### 3.4 IndexNow Protocol
+Generative Engine Optimization is how you get cited by AI search engines — ChatGPT, Perplexity, Google AI Overviews, and Claude. When someone asks "what organizations fight child marriage?", we want Far Too Young in the answer.
+
+AI referral traffic grew **527% between Jan-May 2025**. By 2026, ~10% of search-like activity happens through ChatGPT alone. This is the future of discovery.
+
+**How AI decides what to cite:**
+
+AI models don't "rank" pages like Google. They pull from:
+1. **Wikipedia / Wikidata** — the #1 source AI models reference for entity information
+2. **Structured data on your site** (JSON-LD) — machine-readable identity (done in Phase 2)
+3. **Authoritative mentions** — other trusted sites mentioning you
+4. **Clear, factual, quotable content** — AI prefers content it can directly quote
+5. **Consistency** — same name, same description, same mission across all platforms
+
+**Step-by-step GEO implementation:**
+
+#### Step 1: Wikidata Entry (Do This Week — Free, 30 min)
+
+Wikidata is the structured database behind Wikipedia. AI models read it directly. No "notability" requirement — any registered organization can have an entry.
+
+1. Go to [wikidata.org](https://www.wikidata.org)
+2. Create an account
+3. Click "Create a new Item"
+4. Fill in:
+   - Label: "Far Too Young"
+   - Description: "Nonprofit organization working to end child marriage globally"
+   - Instance of: nonprofit organization (Q163740)
+   - Country: United States (Q30)
+   - Official website: https://www.fartooyoung.org
+   - Founded by: [founder name]
+   - Inception: [year founded]
+
+This immediately makes Far Too Young a recognized "entity" that AI models can reference.
+
+#### Step 2: Wikipedia Page (3-6 Months — Requires Press Coverage)
+
+Wikipedia requires "notability" — meaning independent, reliable sources have written about you.
+
+**What counts as a reliable source:**
+- News articles (local or national) mentioning Far Too Young
+- Academic papers or reports citing the organization
+- Interviews published on established media sites
+- Coverage by other nonprofits or UN agencies
+
+**What does NOT count:**
+- Your own website
+- Social media posts
+- Press releases you wrote yourself
+- Paid advertorials
+
+**How to get there:**
+1. Pitch your story to local news outlets ("Local founder launches global nonprofit to end child marriage")
+2. Get quoted in articles about child marriage (use HARO/Connectively — see backlinks section below)
+3. Partner with universities doing child marriage research
+4. Speak at conferences and get listed on their sites
+5. Once you have 3-5 independent sources → hire a Wikipedia editor ($500-1500) or request coverage from WikiProject Nonprofits
+
+**Do NOT write your own Wikipedia page** — it violates Wikipedia's conflict of interest policy and will get deleted.
+
+#### Step 3: Consistent Entity Presence
+
+Ensure Far Too Young appears identically across all platforms:
+- Same name, same description, same logo everywhere
+- Google Business Profile (even without a physical office — use "service area")
+- Crunchbase profile (free for nonprofits)
+- LinkedIn company page
+- All nonprofit directories (see backlinks section below)
+
+AI models cross-reference these sources. Consistency = trust = citations.
+
+---
+
+### 3.4 Backlinks & Authority Building
+
+Backlinks (other websites linking to fartooyoung.org) are the #1 factor for Google rankings AND for AI citation authority. More high-quality links = higher trust = better visibility everywhere.
+
+#### Tier 1: Nonprofit Directories (Do This Week — Free)
+
+| Directory | Authority | How to Register | Time |
+|-----------|-----------|-----------------|------|
+| [GuideStar/Candid](https://www.guidestar.org) | Very High | Create profile, verify 501(c)(3), add financials | 45 min |
+| [GlobalGiving](https://www.globalgiving.org) | Very High | Apply as a nonprofit partner | 30 min |
+| [GreatNonprofits](https://greatnonprofits.org) | High | Claim your page, add description | 15 min |
+| [Charity Navigator](https://www.charitynavigator.org) | Very High | Submit organization for rating | 30 min |
+| [Idealist](https://www.idealist.org) | High | Create organization profile | 20 min |
+| [Network for Good](https://www.networkforgood.org) | High | Register as nonprofit | 20 min |
+
+**Why this matters:** These directories have domain authority scores of 70-90 (out of 100). One link from GuideStar is worth more than 100 links from random blogs. AI models also reference these directories when answering questions about nonprofits.
+
+#### Tier 2: Partner & Relationship Links (Ongoing)
+
+| Method | What to Do | Expected Result |
+|--------|-----------|-----------------|
+| Partner organizations | Email partners: "Can you add us to your Partners page with a link?" | 1-5 links |
+| University partnerships | Reach out to universities studying child marriage — offer data/collaboration | 1-3 .edu links (extremely valuable) |
+| Sponsor/donor pages | If you sponsor events or collaborate, ask for a link on their site | 1-3 links |
+| Local business associations | Chamber of commerce, nonprofit coalitions | 1-2 links |
+
+#### Tier 3: Earned Media & PR (1-3 Months)
+
+| Method | How | Effort |
+|--------|-----|--------|
+| HARO / Connectively | Sign up at [connectively.us](https://www.connectively.us). Journalists post queries like "Looking for nonprofits fighting child marriage." You respond with a quote. They publish with a link to your site. | 10 min/day scanning queries |
+| Local news pitch | Email local news: "Local founder launches global nonprofit to end child marriage" — human interest angle | 1 hour to write pitch |
+| Podcast appearances | Search for podcasts about nonprofits, social justice, human rights. Pitch the founder as a guest. | 30 min per pitch |
+| Guest articles | Write a 500-word article for another nonprofit's blog about child marriage. Include a link back. | 2-3 hrs per article |
+| Press releases | Use free services like [PRLog](https://www.prlog.org) to distribute press releases about milestones | 1 hr per release |
+
+#### Tier 4: Social Profiles (Do Today — 5 min)
+
+Ensure every social profile links back to `https://www.fartooyoung.org`:
+- Instagram bio
+- LinkedIn company page
+- Facebook page
+- Twitter/X bio
+- YouTube channel (if exists)
+- TikTok (if exists)
+
+These are "nofollow" links (don't pass SEO juice directly) but they establish entity consistency for AI models and drive referral traffic.
+
+#### What NOT to Do
+- ❌ Buy backlinks (Google penalizes this)
+- ❌ Submit to spammy directories (low-quality links hurt you)
+- ❌ Comment spam on blogs
+- ❌ Link exchange schemes
+
+---
+
+### 3.5 IndexNow Protocol
 
 Instant indexing by Bing/Yandex when content changes (Google hasn't adopted it yet but Bing has). One API call after each deploy notifies search engines of new content immediately instead of waiting for crawlers.
+
+**Implementation:** Add a post-deploy step in the frontend pipeline that pings:
+```
+POST https://api.indexnow.org/indexnow
+{
+  "host": "www.fartooyoung.org",
+  "key": "<your-key>",
+  "urlList": [
+    "https://www.fartooyoung.org/",
+    "https://www.fartooyoung.org/founder-team",
+    "https://www.fartooyoung.org/partners",
+    "https://www.fartooyoung.org/what-we-do"
+  ]
+}
+```
+
+---
+
+### Phase 3 Execution Order
+
+| # | Task | Type | Effort | Impact |
+|---|------|------|--------|--------|
+| 1 | Social profiles link to site | Manual | 5 min | Medium |
+| 2 | Wikidata entry | Manual | 30 min | High (AI visibility) |
+| 3 | Nonprofit directory registrations | Manual | 2-3 hrs total | Very High |
+| 4 | Google Ad Grants application | Manual | 2 hrs | 🔥🔥🔥 Massive |
+| 5 | HARO/Connectively sign-up | Manual | 10 min + daily | High (over time) |
+| 6 | Partner link requests | Manual/Email | 1 hr | Medium |
+| 7 | Local news pitch | Manual | 1 hr | High |
+| 8 | Blog system | Code | 8-10 hrs | High |
+| 9 | IndexNow | Code | 15 min | Low |
+| 10 | Wikipedia page | Manual | Depends on press | Very High (long-term) |
 
 ---
 

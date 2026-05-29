@@ -227,7 +227,9 @@ Google rewards mobile-friendly installable sites in mobile search rankings.
 
 ## Phase 3: Competitive Edge ⬜ TODO (Future Sessions)
 
-### 3.1 Google Ad Grants — $10,000/month FREE Advertising ⬜ TODO
+### 3.1 Google Ad Grants — $10,000/month FREE Advertising ⏳ APPLIED (awaiting verification 2-14 business days)
+
+> **Applied:** May 29, 2026. Verification via Goodstack. Contact email: `avinashsharma.np@gmail.com`. Approval notification will go to `admin@fartooyoung.org`. Once verified, activate Google Ad Grants product and create campaigns.
 
 **This is the single biggest opportunity for Far Too Young.**
 

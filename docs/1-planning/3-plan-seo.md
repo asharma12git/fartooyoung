@@ -61,6 +61,8 @@ Everything here is **zero cost** and makes the site visible to Google immediatel
 
 ### 1.1 Pre-rendering (Static HTML for Google) ✅ DONE
 
+> **Implementation:** Puppeteer script (`scripts/prerender.mjs`) runs after `vite build`. Generates static HTML for 4 routes: `/`, `/founder-team`, `/partners`, `/what-we-do`. Build command: `vite build && node scripts/prerender.mjs`. Pipeline buildspec installs `chromium-browser` for CI. Each HTML file is 38-57KB of real content that Google can index immediately.
+
 **Tool:** `vite-react-ssg` or `react-snap-vite`
 
 Generates real HTML at build time for each public route. Google sees actual content instead of an empty div.
@@ -75,6 +77,8 @@ Generates real HTML at build time for each public route. Google sees actual cont
 **What changes:** Build step outputs HTML files with content baked in. CloudFront serves these. Users still get the SPA experience after hydration.
 
 ### 1.2 Meta Tags + Open Graph (Per-Page) ✅ DONE
+
+> **Implementation:** `react-helmet-async` (v2.0.5) with shared `src/components/SEO.jsx` component. Each page imports `<SEO title="..." description="..." path="..." />`. Outputs: `<title>`, `<meta description>`, `<link canonical>`, OG tags (og:title, og:description, og:image, og:url), Twitter Card tags. OG image points to `/og-image.jpg` (TODO: create actual image).
 
 **Tool:** `react-helmet-async`
 
@@ -95,6 +99,8 @@ Each page gets:
 ```
 
 ### 1.3 Sitemap + Robots.txt ✅ DONE
+
+> **Implementation:** `public/sitemap.xml` lists 4 public URLs with priority weights. `public/robots.txt` allows all crawlers, blocks `/dashboard`, `/verify-email`, `/payment-success`, `/subscription-return`. Both served at root: `fartooyoung.org/sitemap.xml` and `fartooyoung.org/robots.txt`.
 
 **`public/sitemap.xml`** — tells Google every page that exists:
 ```xml
@@ -122,6 +128,10 @@ Sitemap: https://www.fartooyoung.org/sitemap.xml
 
 ### 1.5 Analytics: GA4 + Microsoft Clarity ✅ DONE
 
+> **Implementation:** Both script tags in `index.html`.
+> - **GA4 Account:** Far Too Young Inc. Google Workspace admin account. Measurement ID: `G-XJN5PR545G`. Stream ID: `6380801517`. Dashboard: [analytics.google.com](https://analytics.google.com). Benefits: visitor count, traffic sources, page views, geographic data, device types, conversion tracking. Free forever.
+> - **Microsoft Clarity Account:** Far Too Young nonprofit Microsoft account. Project ID: `wytghx7ix4`. Dashboard: [clarity.microsoft.com](https://clarity.microsoft.com). Benefits: heatmaps, scroll maps, session recordings, dead click detection, rage click detection. Free forever, unlimited recordings, 30-day retention.
+
 **Google Analytics 4** — one script tag:
 - Visitor count, traffic sources, page views, time on site
 - Geographic data, device types
@@ -142,6 +152,8 @@ Both are `<script>` tags in `index.html`. No backend changes.
 ## Phase 2: Rank Higher ✅ COMPLETE
 
 ### 2.1 Structured Data (JSON-LD) ✅ DONE
+
+> **Implementation:** `<script type="application/ld+json">` block in `index.html` body. Schema: `NonprofitOrganization` with `DonateAction`. Includes org name, URL, description, Atlanta GA address. Benefits: enables rich results in Google (nonprofit badge, donate button), AI citation eligibility, Knowledge Panel eligibility.
 
 Tells Google AND AI engines exactly what this site is:
 
@@ -167,6 +179,8 @@ This enables:
 
 ### 2.2 Core Web Vitals Optimization ✅ DONE
 
+> **Implementation:** Added `<link rel="preconnect">` for `fonts.googleapis.com`, `fonts.gstatic.com`, and `js.stripe.com` in `index.html`. Benefits: eliminates DNS/TLS latency for external resources, improves LCP (Largest Contentful Paint), directly affects Google ranking score.
+
 Google's page speed ranking factors:
 - **LCP** (Largest Contentful Paint) — preload hero images, font-display: swap
 - **CLS** (Cumulative Layout Shift) — set explicit image dimensions
@@ -180,6 +194,8 @@ Quick wins:
 
 ### 2.3 Canonical URLs ✅ DONE
 
+> **Implementation:** `<link rel="canonical" href="...">` injected per page via the `SEO.jsx` component. Each page declares its canonical URL (e.g., `https://www.fartooyoung.org/founder-team`). Benefits: prevents duplicate content penalties from www vs non-www, trailing slashes, or query parameters.
+
 Add to every page:
 ```html
 <link rel="canonical" href="https://www.fartooyoung.org/founder-team" />
@@ -188,6 +204,8 @@ Add to every page:
 Prevents Google from treating `www` and non-`www`, or trailing slashes, as duplicate pages.
 
 ### 2.4 PWA Manifest ✅ DONE
+
+> **Implementation:** `public/manifest.json` with app name, icons (192px + 512px), dark theme color (`#0a0a0a`), standalone display mode. Linked via `<link rel="manifest">` and `<meta name="theme-color">` in `index.html`. Benefits: site installable on phones (home screen icon), app-like experience, Google rewards PWAs in mobile search rankings. Note: icon files (`icon-192.png`, `icon-512.png`) need to be created and added to `public/`.
 
 Makes the site installable on phones:
 ```json

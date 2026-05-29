@@ -102,6 +102,30 @@ Then just `npm run dev`. You get hot-reload with a real backend.
 
 ---
 
+## How to Add a New Page (with SEO)
+
+1. Create the page component in `src/pages/`
+2. Add the route in `src/App.jsx`
+3. Add `<SEO title="..." description="..." path="/your-page" />` to the page component
+4. Add the URL to `public/sitemap.xml`
+5. Add the route to `scripts/prerender.mjs` (in the `routes` array)
+6. Test locally: `npm run build` — verify the new page appears in pre-render output
+7. Deploy to staging, verify at `staging.fartooyoung.org/your-page`
+8. Google picks up the new page automatically from the sitemap (no manual action needed)
+
+**SEO files to remember:**
+- `src/components/SEO.jsx` — shared meta tag component
+- `public/sitemap.xml` — list of all public pages for Google
+- `public/robots.txt` — crawl rules
+- `scripts/prerender.mjs` — generates static HTML at build time
+
+**Analytics dashboards:**
+- Google Analytics: [analytics.google.com](https://analytics.google.com) (GA4 ID: `G-XJN5PR545G`)
+- Microsoft Clarity: [clarity.microsoft.com](https://clarity.microsoft.com) (Project ID: `wytghx7ix4`)
+- Google Search Console: [search.google.com/search-console](https://search.google.com/search-console)
+
+---
+
 ## Testing
 
 ### After Every Deploy (Smoke Test — 2 min)

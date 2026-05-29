@@ -1,7 +1,7 @@
 # Plan 2: Stripe Elements - Embedded Payment Form
 
 ## Priority: High
-## Status: Ready
+## Status: In Progress (local validated, staging deploy pending)
 ## Estimated Effort: 4-6 hours
 
 ---

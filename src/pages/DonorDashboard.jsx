@@ -1062,7 +1062,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
                 {/* Left Column - Donation History */}
                 <div className="bg-white/5 border border-white/10 rounded-lg p-6 flex flex-col h-[600px]">
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
                     <div className="flex items-center space-x-2">
                       <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-pink-600 rounded-full"></div>
                       <h3 className="text-lg sm:text-xl font-semibold text-white">Donation History</h3>

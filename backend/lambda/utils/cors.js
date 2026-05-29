@@ -2,6 +2,8 @@
 const getAllowedOrigin = (event) => {
   const allowedOrigins = [
     process.env.FRONTEND_URL,
+    'http://localhost:5173',
+    'http://localhost:4173',
     // Production also allows root domain
     ...(process.env.FRONTEND_URL === 'https://www.fartooyoung.org' 
       ? ['https://fartooyoung.org'] 

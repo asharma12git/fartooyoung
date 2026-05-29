@@ -4,7 +4,9 @@ import { Elements } from '@stripe/react-stripe-js'
 import PropTypes from 'prop-types'
 import PaymentForm from './PaymentForm'
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+console.log('Stripe key loaded:', stripeKey ? 'yes' : 'MISSING')
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null
 
 const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, loading, setLoading }) => {
   const [clientSecret, setClientSecret] = useState(null)
@@ -45,7 +47,8 @@ const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, lo
     }
 
     createIntent()
-  }, [amount, donorInfo, donationType, onError])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amount])
 
   if (loadingIntent) {
     return (
@@ -65,32 +68,12 @@ const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, lo
     theme: 'night',
     variables: {
       colorPrimary: '#f97316',
-      colorBackground: 'rgba(255, 255, 255, 0.05)',
+      colorBackground: '#0a0a0a',
       colorText: '#ffffff',
       colorDanger: '#ef4444',
       fontFamily: 'system-ui, sans-serif',
       borderRadius: '6px',
-    },
-    rules: {
-      '.Input': {
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-      },
-      '.Input:focus': {
-        border: '1px solid #f97316',
-        boxShadow: '0 0 0 2px rgba(249, 115, 22, 0.3)',
-      },
-      '.Tab': {
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-      },
-      '.Tab--selected': {
-        border: '1px solid #f97316',
-        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-      },
-      '.Label': {
-        color: 'rgba(255, 255, 255, 0.7)',
-      },
+      spacingUnit: '4px',
     },
   }
 

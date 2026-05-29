@@ -7,9 +7,7 @@ const PaymentForm = ({ amount, donorInfo, donationType, onSuccess, onError, load
   const elements = useElements()
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
+  const handleSubmit = async () => {
     if (!stripe || !elements) return
 
     setIsProcessing(true)
@@ -17,6 +15,7 @@ const PaymentForm = ({ amount, donorInfo, donationType, onSuccess, onError, load
     onError('')
 
     try {
+      console.log('Confirming payment...')
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -32,15 +31,24 @@ const PaymentForm = ({ amount, donorInfo, donationType, onSuccess, onError, load
       })
 
       if (error) {
+        console.log('Payment error:', error.message)
         onError(error.message)
         setIsProcessing(false)
         setLoading(false)
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        console.log('Payment succeeded!', paymentIntent.id)
+        setIsProcessing(false)
+        setLoading(false)
         onSuccess(paymentIntent)
       } else if (paymentIntent && paymentIntent.status === 'requires_action') {
         onError('Additional authentication required. Please complete the verification.')
         setIsProcessing(false)
         setLoading(false)
+      } else {
+        // Payment may still be processing
+        setIsProcessing(false)
+        setLoading(false)
+        onSuccess(paymentIntent)
       }
     } catch (err) {
       onError(err.message || 'Payment failed. Please try again.')
@@ -50,8 +58,8 @@ const PaymentForm = ({ amount, donorInfo, donationType, onSuccess, onError, load
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-white/5 border border-white/20 rounded-lg p-4">
+    <div className="space-y-4">
+      <div className="rounded-lg p-4">
         <PaymentElement
           options={{
             layout: 'tabs',
@@ -66,7 +74,8 @@ const PaymentForm = ({ amount, donorInfo, donationType, onSuccess, onError, load
       </div>
 
       <button
-        type="submit"
+        type="button"
+        onClick={handleSubmit}
         disabled={!stripe || isProcessing || loading}
         className={`w-full text-white px-4 sm:px-6 py-3 rounded-md font-bold transition-colors flex items-center justify-center border border-orange-400/50 text-sm sm:text-base ${
           (isProcessing || loading)
@@ -93,7 +102,7 @@ const PaymentForm = ({ amount, donorInfo, donationType, onSuccess, onError, load
         </svg>
         Secured by Stripe • 256-bit encryption
       </div>
-    </form>
+    </div>
   )
 }
 

@@ -65,7 +65,7 @@ exports.handler = async (event) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100),                   // Convert dollars to cents (Stripe requirement)
       currency: 'usd',                                    // US Dollars
-      automatic_payment_methods: { enabled: true },       // Enable all payment methods (card, Apple Pay, Google Pay, etc.)
+      payment_method_types: ['card', 'us_bank_account'],  // Card (Apple Pay, Google Pay) + Bank (ACH)
       metadata: {
         // Custom data attached to the payment intent
         donor_name: `${donor_info.firstName} ${donor_info.lastName}`,

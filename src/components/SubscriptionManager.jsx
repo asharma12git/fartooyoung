@@ -70,7 +70,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick }) => {
 
   return (
     <div className="bg-white/5 border border-white/10 rounded-lg p-4 sm:p-6 flex flex-col h-[600px]">
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3 sm:mb-4">
         <div className="flex items-center space-x-2">
           <div className="w-1 h-6 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></div>
           <h3 className="text-lg sm:text-xl font-bold text-white">Subscriptions</h3>

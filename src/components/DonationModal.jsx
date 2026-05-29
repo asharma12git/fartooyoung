@@ -85,11 +85,6 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
     try {
       setError('') // Clear any errors
       setSuccess(true)
-      
-      // Auto-close after 3 seconds
-      setTimeout(() => {
-        onClose()
-      }, 3000)
     } catch (err) {
       console.error('Post-payment error:', err)
       setError('Payment succeeded but there was an issue. Please contact support if needed.')
@@ -155,6 +150,46 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-5xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-orange-500/50 relative">
+        {success && (
+          <>
+            {/* Desktop: covers the modal box */}
+            <div className="hidden sm:flex absolute inset-0 bg-black/95 rounded-lg items-center justify-center z-50">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
+                <p className="text-white/80">Your donation has been processed successfully.</p>
+                <button
+                  onClick={onClose}
+                  className="mt-6 px-6 py-2 bg-orange-500/80 hover:bg-orange-600/90 text-white font-bold rounded-md border border-orange-400/50 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+            {/* Mobile: covers full screen */}
+            <div className="flex sm:hidden fixed inset-0 bg-black/95 items-center justify-center z-[60]">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
+                <p className="text-white/80">Your donation has been processed successfully.</p>
+                <button
+                  onClick={onClose}
+                  className="mt-6 px-6 py-2 bg-orange-500/80 hover:bg-orange-600/90 text-white font-bold rounded-md border border-orange-400/50 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </>
+        )}
         <button
           onClick={onClose}
           className="absolute top-0 right-0 w-8 sm:w-10 h-8 sm:h-10 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white flex items-center justify-center transition-all duration-300 border border-orange-400/50 rounded-tr-lg z-10"
@@ -186,7 +221,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
 
           {/* Right Column - Donation Form */}
           <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 lg:border-l border-white/20">
-            <form onSubmit={handleSubmit} className="min-h-[400px] lg:min-h-[650px] flex flex-col justify-center">
+            <form onSubmit={handleSubmit} className={`min-h-[400px] lg:min-h-[650px] flex flex-col justify-center ${success ? 'sm:block hidden' : ''}`}>
               {currentStep === 1 ? (
                 <div className="flex flex-col justify-evenly flex-1 space-y-4 sm:space-y-0">
                   <div className="text-center mb-4 -mt-8">
@@ -473,20 +508,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                   )}
 
                   {/* Success Message Overlay */}
-                  {success && (
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center rounded-lg z-50">
-                      <div className="text-center">
-                        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </div>
-                        <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
-                        <p className="text-white/80">Your donation has been processed successfully.</p>
-                        <p className="text-white/60 text-sm mt-2">Closing...</p>
-                      </div>
-                    </div>
-                  )}
+                  {/* Success handled at top level */}
                 </div>
               )}
             </form>

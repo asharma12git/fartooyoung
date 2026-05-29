@@ -404,15 +404,13 @@ Backlinks (other websites linking to fartooyoung.org) are the #1 factor for Goog
 | Guest articles | Write a 500-word article for another nonprofit's blog about child marriage. Include a link back. | 2-3 hrs per article |
 | Press releases | Use free services like [PRLog](https://www.prlog.org) to distribute press releases about milestones | 1 hr per release |
 
-#### Tier 4: Social Profiles (Do Today — 5 min)
+#### Tier 4: Social Profiles ✅ DONE
 
-Ensure every social profile links back to `https://www.fartooyoung.org`:
-- Instagram bio
-- LinkedIn company page
-- Facebook page
-- Twitter/X bio
-- YouTube channel (if exists)
-- TikTok (if exists)
+Confirmed all social profiles link back to `https://www.fartooyoung.org`:
+
+- ✅ Instagram bio
+- ✅ Facebook page
+- ✅ YouTube channel
 
 These are "nofollow" links (don't pass SEO juice directly) but they establish entity consistency for AI models and drive referral traffic.
 

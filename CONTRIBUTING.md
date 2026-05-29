@@ -28,7 +28,7 @@
 
 - **⛔ DO NOT MERGE TO MAIN WITHOUT ASKING FIRST**
 - **⛔ DO NOT CHECKOUT `main` WITHOUT PERMISSION**
-- Run the regression testing checklist (`docs/4-testing/manual-testing-checklist.md`)
+- Run the regression testing checklist (`docs/4-testing/1-testing-checklist.md`)
 - If the feature touches payments — test with real Stripe test cards on staging
 - **WHEN IN DOUBT — ASK BEFORE MERGING**
 
@@ -97,7 +97,7 @@ Then just `npm run dev`. You get hot-reload with a real backend.
 2. Add function + API event to `backend/template.yaml`
 3. Deploy to staging: `cd backend && sam build && sam deploy --config-env staging`
 4. Test the endpoint via curl
-5. Add test cases to `docs/4-testing/manual-testing-checklist.md`
+5. Add test cases to `docs/4-testing/1-testing-checklist.md`
 6. Push to staging, verify pipeline deploys it
 
 ---
@@ -121,7 +121,7 @@ curl -X GET {api}/donations -H "Authorization: Bearer {token}"
 
 > **⛔ IF YOU ADDED A NEW FEATURE — UPDATE THE CHECKLIST FIRST** before running tests. Add new test cases to cover the feature, then run the full suite.
 
-See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all endpoints.
+See `docs/4-testing/1-testing-checklist.md` — 70+ test cases covering all endpoints.
 
 ---
 
@@ -163,7 +163,7 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 | `backend/samconfig.toml` | Deploy targets per environment |
 | `.env.local` / `.env.staging` / `.env.production` | Frontend API URLs per environment |
 | `deployment/*.yml` | Pipeline infrastructure templates |
-| `docs/4-testing/manual-testing-checklist.md` | Full regression test suite |
+| `docs/4-testing/1-testing-checklist.md` | Full regression test suite |
 | `docs/1-planning/` | Feature roadmap and plans |
 | `PROGRESS.md` | Session history log |
 
@@ -196,7 +196,7 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 | `docs/2-system-design/4-backend-design.md` | All 17 Lambda functions, what each does |
 | `docs/2-system-design/5-database-design.md` | DynamoDB table schemas |
 | `docs/3-deployments/1-deployment-overview.md` | How deployment works end-to-end |
-| `docs/4-testing/manual-testing-checklist.md` | Full regression test suite (70 test cases) |
+| `docs/4-testing/1-testing-checklist.md` | Full regression test suite (70 test cases) |
 | `docs/1-planning/` | Feature roadmap (numbered by priority) |
 | `PROGRESS.md` | Session-by-session development history |
 
@@ -216,7 +216,7 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 Update **every document** that is affected by your changes, including but not limited to:
 
 1. **`PROGRESS.md`** — Add a session entry with what was done, what was deployed, what's next
-2. **`docs/4-testing/manual-testing-checklist.md`** — Add new test cases if new features were added
+2. **`docs/4-testing/1-testing-checklist.md`** — Add new test cases if new features were added
 3. **`docs/2-system-design/1-architecture.md`** — Update if architecture changed
 4. **`docs/2-system-design/2-environments.md`** — Update if environments or AWS resources changed
 5. **`docs/2-system-design/3-frontend-design.md`** — Update if frontend components changed

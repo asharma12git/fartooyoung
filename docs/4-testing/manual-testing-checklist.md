@@ -26,7 +26,9 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `backend/template.yaml` | ALL (infrastructure change) |
 | `backend/lambda/utils/cors.js` | 10 (Security - CORS) |
 | `src/pages/DonorDashboard.jsx` | 7 (Dashboard) |
-| `src/components/CheckoutButton.jsx` | 8, 9 (Donations) |
+| `src/components/CheckoutButton.jsx` | 8, 9 (Donations) — legacy, still exists for fallback |
+| `src/components/StripePayment.jsx` | 8, 9 (Donations) |
+| `src/components/PaymentForm.jsx` | 8, 9 (Donations) |
 | `src/components/DonationModal.jsx` | 8, 9 (Donations) |
 | `src/pages/*.jsx` | 1 (Frontend) |
 | `src/App.jsx` | 1 (Frontend - routing) |

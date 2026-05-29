@@ -114,8 +114,9 @@
 | `AuthModal.jsx` (Login)     | `POST /auth/login`        | `LoginFunction`       | `fartooyoung-production-users`    | ✅ LIVE   |
 | `AuthModal.jsx` (Register)  | `POST /auth/register`     | `RegisterFunction`    | `fartooyoung-production-users`    | ✅ LIVE   |
 | `Header.jsx` (Logout)       | `POST /auth/logout`       | `LogoutFunction`      | None                              | ✅ LIVE   |
-| `DonationModal.jsx`         | `POST /donations/create`  | `CreateDonationFunction` | `fartooyoung-production-donations` | ✅ LIVE   |
-| `CheckoutButton.jsx`        | `POST /stripe/create-checkout-session` | `CreateCheckoutSessionFunction` | `fartooyoung-production-donations` | ✅ LIVE |
+| `DonationModal.jsx`         | `POST /stripe/create-payment-intent`  | `CreatePaymentIntentFunction` | `fartooyoung-production-donations` | ✅ LIVE   |
+| `StripePayment.jsx`         | `POST /stripe/create-payment-intent` | `CreatePaymentIntentFunction` | `fartooyoung-production-donations` | ✅ LIVE |
+| `PaymentForm.jsx`           | Stripe Payment Element (embedded)    | N/A (client-side)             | N/A                               | ✅ LIVE |
 | `SubscriptionManager.jsx`   | `GET /stripe/list-subscriptions` | `ListSubscriptionsFunction` | None | ✅ LIVE |
 | `AuthModal.jsx` (Reset)     | `POST /auth/forgot-password` | `ForgotPasswordFunction` | `fartooyoung-production-users` | ✅ LIVE   |
 | Rate Limiting (All)         | All endpoints             | All functions         | `fartooyoung-production-rate-limits` | ✅ LIVE   |
@@ -134,8 +135,9 @@
 | `Header.jsx` | Navigation, auth buttons, donate CTA | ✅ LIVE |
 | `Footer.jsx` | Site links, contact emails, branding | ✅ LIVE |
 | `AuthModal.jsx` | Login, register, password reset forms | ✅ LIVE |
-| `DonationModal.jsx` | Stripe checkout, amount selection | ✅ LIVE |
-| `CheckoutButton.jsx` | Stripe checkout session trigger | ✅ LIVE |
+| `DonationModal.jsx` | Embedded payment form, amount selection | ✅ LIVE |
+| `StripePayment.jsx` | Stripe Elements wrapper (dark theme) | ✅ LIVE |
+| `PaymentForm.jsx` | Payment Element (card, bank, Apple Pay, Google Pay) | ✅ LIVE |
 | `SubscriptionManager.jsx` | Subscription list, cancel/update | ✅ LIVE |
 | `DonorDashboard.jsx` | Dashboard, donations, shop, settings tabs | ✅ LIVE |
 | `PersonCard.jsx` | Reusable team member card (FounderTeam) | ✅ LIVE |
@@ -240,7 +242,7 @@ const handleRegister = async (email, password, name) => {
 
 | Payment Features            | Production Integration    | Database Storage         | Status    |
 |-----------------------------|---------------------------|--------------------------|-----------|
-| Stripe Checkout             | Live Stripe API           | `fartooyoung-production-donations` | ✅ LIVE |
+| Stripe Payment Element      | Live Stripe API (embedded) | `fartooyoung-production-donations` | ✅ LIVE |
 | Amount Selection            | $25, $50, $100, Custom    | `amount` field           | ✅ LIVE   |
 | Recurring Donations         | Stripe subscriptions      | `type` field             | ✅ LIVE   |
 | Anonymous Donations         | Optional user association | `userId` optional        | ✅ LIVE   |
@@ -258,9 +260,9 @@ const handleDonation = async (amount, type) => {
     body: JSON.stringify({ amount, type })
   });
   
-  const { sessionUrl } = await response.json();
-  // Redirects to live Stripe Checkout
-  window.location.href = sessionUrl;
+  const { client_secret } = await response.json();
+  // Payment Element renders inline — no redirect
+  // Stripe confirms payment on the page
 };
 ```
 

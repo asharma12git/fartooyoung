@@ -158,13 +158,15 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 
 | # | Test | Method | Command | Expected |
 |---|------|--------|---------|----------|
-| 8.1 | Create checkout session ($5) | API | `curl -X POST {api}/stripe/create-checkout-session -d '{"amount":5,"donation_type":"one-time","donor_info":{...}}'` | `checkout_url` returned |
-| 8.2 | Create checkout session ($500) | API | Same with amount: 500 | `checkout_url` returned |
+| 8.1 | Create payment intent ($5) | API | `curl -X POST {api}/stripe/create-payment-intent -d '{"amount":5,"donor_info":{...},"donation_type":"one-time"}'` | `client_secret` returned |
+| 8.2 | Create payment intent ($500) | API | Same with amount: 500 | `client_secret` returned |
 | 8.3 | Missing donor info | API | Omit donor_info | Error: "Missing required fields" |
-| 8.4 | Complete payment (browser) | Browser | Open checkout URL, pay with test card | Redirected to success page |
-| 8.5 | Webhook writes new format | API | After payment, scan DynamoDB | 14-field record (id, email, name, amount, type, status, paymentMethod, cardBrand, cardLast4, wallet, stripeInvoiceId, stripeSubscriptionId, stripeSessionId, createdAt) |
-| 8.6 | Declined card | Browser | Pay with `4000 0000 0000 0002` | Stripe shows decline, nothing in DB |
-| 8.7 | Donation appears in dashboard | Browser | After payment, check dashboard | New donation visible |
+| 8.4 | Complete card payment | Browser | Enter test card 4242..., click Donate | Success overlay shows, payment in DB |
+| 8.5 | Apple Pay button shows | Browser | Open on iPhone Safari (HTTPS only) | Apple Pay option visible |
+| 8.6 | Google Pay button shows | Browser | Open on Chrome desktop (HTTPS only) | Google Pay option visible |
+| 8.7 | Bank account option | Browser | Click US Bank Account tab | Bank form appears |
+| 8.8 | Declined card | Browser | Use 4000 0000 0000 0002 | Error message shown, no DB record |
+| 8.9 | Webhook writes new format | API | After payment, check DynamoDB | Record with `pi_` prefix, 14 fields |
 
 ---
 

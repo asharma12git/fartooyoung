@@ -84,7 +84,7 @@
 | Priority | Plan | Effort | Status |
 |----------|------|--------|--------|
 | 1 | Deployment Optimization (security + pipeline split) | 5-6 hrs | ✅ Done |
-| 2 | Stripe Elements - Embedded Payment Form | 4-6 hrs | 📋 Ready |
+| 2 | Stripe Elements - Embedded Payment Form | 4-6 hrs | ✅ Done |
 | 3 | SEO Implementation (meta tags, sitemap, structured data) | 3-4 hrs | 📋 Ready |
 | 4 | Donor Retention & Tracking (A/B testing, analytics) | 8-10 hrs | 📋 Ready |
 | 5 | Mobile App (PWA) | 2-3 hrs | 📋 Ready |
@@ -98,7 +98,14 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 37: Stripe Payment Element — staging validated, awaiting owner approval to merge to main
+- Phase 37: Stripe Payment Element — DEPLOYED TO PRODUCTION ✅
+- Embedded payment form live on www.fartooyoung.org (card, bank, Apple Pay, Google Pay)
+- Apple Pay domain verified in both test and live Stripe
+- Full regression (33 tests) passed on staging before merge
+- Production smoke test passed (site, login, payment intent)
+- CONTRIBUTING.md established as the project's technical guide
+- All sessions auto-saved in Kiro — resume with `kiro-cli chat --resume`
+- Next priorities: image sizing in donation modal, monthly subscription via Payment Element
 - Embedded payment form working (card, bank, Link — no redirect)
 - Dark themed, responsive (desktop + mobile success overlay)
 - 13 test payments confirmed in staging DynamoDB

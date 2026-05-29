@@ -119,7 +119,9 @@ Allow: /
 Sitemap: https://www.fartooyoung.org/sitemap.xml
 ```
 
-### 1.4 Google Search Console ⬜ TODO (manual — verify domain + submit sitemap)
+### 1.4 Google Search Console ✅ DONE (submitted sitemap, awaiting first crawl)
+
+> **Implementation:** Submitted `sitemap.xml` via Google Search Console using Far Too Young Google Workspace admin account. Property: `www.fartooyoung.org`. Benefits: Google indexes pages faster, shows search queries/clicks/impressions, alerts on indexing errors. Dashboard: [search.google.com/search-console](https://search.google.com/search-console).
 
 - Verify domain ownership (DNS TXT record in Route 53)
 - Submit sitemap
@@ -453,7 +455,7 @@ POST https://api.indexnow.org/indexnow
 | 1 | Pre-rendering | 1 hr | 🔥 Critical | ✅ Done |
 | 2 | Meta tags + OG | 30 min | 🔥 Critical | ✅ Done |
 | 3 | Sitemap + robots.txt | 10 min | 🔥 Critical | ✅ Done |
-| 4 | Google Search Console | 15 min | High | ⬜ Manual |
+| 4 | Google Search Console | 15 min | High | ✅ Done |
 | 5 | GA4 + Clarity | 15 min | High | ✅ Done |
 | 6 | Structured data (JSON-LD) | 30 min | High | ✅ Done |
 | 7 | Core Web Vitals | 1 hr | Medium | ✅ Done |

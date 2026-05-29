@@ -282,8 +282,8 @@ See Plan 6 (AI Blog System) for automated content generation.
 ### 3.3 GEO: AI Search Optimization ⬜ IN PROGRESS
 
 > **Wikidata entry created:** Username `FTYoung` on wikidata.org. ✅ Item live with statements (instance of, country, website, HQ, inception, legal form, tax ID).
-> - **Wikidata item URL:** https://www.wikidata.org/wiki/Special:MyContributions (log in as FTYoung to find item)
-> - **How to find it:** Go to wikidata.org → search "Far Too Young" → or visit Special:MyContributions
+> - **Wikidata item URL:** https://www.wikidata.org/wiki/Q139980067
+> - **Contributions:** https://www.wikidata.org/wiki/Special:Contributions/FTYoung
 >
 > **Organization Details (for reference):**
 > - Legal Name: Far Too Young, Inc.

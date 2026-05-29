@@ -204,18 +204,31 @@ See `docs/4-testing/manual-testing-checklist.md` — 70+ test cases covering all
 
 ## ⛔ BEFORE ENDING ANY SESSION
 
-> **🚨 DO NOT END A SESSION WITHOUT UPDATING ALL RELEVANT DOCUMENTS WITH WHAT YOU CHANGED. NO EXCEPTIONS.**
+> **🚨 DO NOT END A SESSION WITHOUT WALKING THROUGH EVERY DOCUMENT ONE BY ONE, IN FULL DETAIL, AND UPDATING ALL THAT ARE AFFECTED BY YOUR CHANGES. NO EXCEPTIONS.**
+
+**Process:**
+1. Iterate through EVERY document listed below
+2. Read each one and check if your changes affect it
+3. If yes — update it with current information
+4. If no — confirm it's still accurate and move on
+5. Do NOT skip any document. Do NOT assume it's fine without checking.
 
 Update **every document** that is affected by your changes, including but not limited to:
 
 1. **`PROGRESS.md`** — Add a session entry with what was done, what was deployed, what's next
 2. **`docs/4-testing/manual-testing-checklist.md`** — Add new test cases if new features were added
-3. **`docs/2-system-design/`** — Update if architecture, database, or environments changed
-4. **`docs/3-deployments/`** — Update if deployment process or pipelines changed
-5. **`docs/1-planning/`** — Update plan status if a plan was started or completed
-6. **`CONTRIBUTING.md`** — Update if workflow, pipelines, or AWS resources changed
-7. **`README.md`** — Update if features, tech stack, or project structure changed
-8. **`deployment/README.md`** — Update if pipeline triggers or names changed
-9. **Any other doc that references what you changed**
+3. **`docs/2-system-design/1-architecture.md`** — Update if architecture changed
+4. **`docs/2-system-design/2-environments.md`** — Update if environments or AWS resources changed
+5. **`docs/2-system-design/3-frontend-design.md`** — Update if frontend components changed
+6. **`docs/2-system-design/4-backend-design.md`** — Update if Lambda functions or API endpoints changed
+7. **`docs/2-system-design/5-database-design.md`** — Update if database schema changed
+8. **`docs/3-deployments/1-deployment-overview.md`** — Update if deployment process changed
+9. **`docs/3-deployments/2-frontend-deployment-guide.md`** — Update if frontend deployment changed
+10. **`docs/3-deployments/3-backend-deployment-guide.md`** — Update if backend deployment changed
+11. **`docs/1-planning/`** — Update plan status if a plan was started or completed
+12. **`CONTRIBUTING.md`** — Update if workflow, pipelines, or AWS resources changed
+13. **`README.md`** — Update if features, tech stack, or project structure changed
+14. **`deployment/README.md`** — Update if pipeline triggers or names changed
+15. **Any other doc that references what you changed**
 
 **Leave the project in a state where the next session can pick up immediately without guessing what happened.**

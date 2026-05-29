@@ -89,7 +89,6 @@ import bdTraining2 from '../assets/images/pages/what-we-do/carousel/bangladesh-v
 import bdTraining3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/5-training-and-education/WP_20141221_087.jpg'
 
 const WhatWeDo = ({ onDonateClick }) => {
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [zoomedImage, setZoomedImage] = useState(null)
 
   // Counter animation component
@@ -228,24 +227,103 @@ const WhatWeDo = ({ onDonateClick }) => {
     return arr
   }, [])
 
-  const totalSlides = Math.ceil(shuffledImages.length / 2)
+  // Crossfade logic — auto every 3s or triggered by See More
+  const [visibleImages, setVisibleImages] = useState(shuffledImages.slice(0, 4))
+  const [prevImages, setPrevImages] = useState(shuffledImages.slice(0, 4))
+  const [fadingCells, setFadingCells] = useState([false, false, false, false])
+  const nextIndexRef = useRef(4)
+  const isAnimatingRef = useRef(false)
+  const autoTimerRef = useRef(null)
+  const visibleImagesRef = useRef(visibleImages)
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % totalSlides)
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
-  }
-
-  // Auto-play carousel every 5 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide()
-    }, 5000)
+    visibleImagesRef.current = visibleImages
+  }, [visibleImages])
 
-    return () => clearInterval(interval)
-  }, [totalSlides])
+  const runFadeSequence = () => {
+    if (isAnimatingRef.current) return
+    isAnimatingRef.current = true
+
+    const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5)
+
+    order.forEach((cellIndex, step) => {
+      setTimeout(() => {
+        setPrevImages(() => [...visibleImagesRef.current])
+        setFadingCells(prev => { const u = [...prev]; u[cellIndex] = true; return u })
+        setTimeout(() => {
+          setVisibleImages(prev => {
+            const u = [...prev]
+            u[cellIndex] = shuffledImages[nextIndexRef.current % shuffledImages.length]
+            nextIndexRef.current++
+            return u
+          })
+          setFadingCells(prev => { const u = [...prev]; u[cellIndex] = false; return u })
+          if (step === 3) isAnimatingRef.current = false
+        }, 1500)
+      }, step * 1500)
+    })
+  }
+
+  useEffect(() => {
+    const initial = setTimeout(() => runFadeSequence(), 3000)
+    autoTimerRef.current = setInterval(() => {
+      runFadeSequence()
+    }, 7500) // 6s sequence + 1.5s pause between cycles
+    return () => {
+      clearInterval(autoTimerRef.current)
+      clearTimeout(initial)
+    }
+  }, [shuffledImages])
+
+  const resumeTimerRef = useRef(null)
+  const clickDeckRef = useRef([])
+  const clickStarted = useRef(false)
+
+  const handleSeeMore = () => {
+    // Stop auto fade
+    clearInterval(autoTimerRef.current)
+    clearTimeout(resumeTimerRef.current)
+    isAnimatingRef.current = false
+    setFadingCells([false, false, false, false])
+
+    // On first click, create a shuffled deck of all images
+    if (!clickStarted.current || clickDeckRef.current.length === 0) {
+      clickStarted.current = true
+      const deck = [...imageArray]
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]]
+      }
+      clickDeckRef.current = deck
+    }
+
+    // Take next 4 from the shuffled deck
+    const newImages = clickDeckRef.current.splice(0, 4)
+    // If less than 4 remaining, pad from a fresh shuffle
+    if (newImages.length < 4) {
+      const deck = [...imageArray]
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]]
+      }
+      clickDeckRef.current = deck
+      while (newImages.length < 4) {
+        newImages.push(clickDeckRef.current.shift())
+      }
+    }
+
+    setPrevImages(newImages)
+    setVisibleImages(newImages)
+
+    // Resume auto fade after 5s of no clicks
+    resumeTimerRef.current = setTimeout(() => {
+      clickStarted.current = false
+      autoTimerRef.current = setInterval(() => {
+        runFadeSequence()
+      }, 7500)
+    }, 5000)
+  }
+
   return (
     <div className="min-h-screen">
       <style>{`
@@ -594,72 +672,37 @@ const WhatWeDo = ({ onDonateClick }) => {
               <p className="text-base sm:text-lg text-gray-600">Documenting our impact across communities.</p>
             </div>
 
-            {/* Carousel Container */}
-            <div className="relative p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-gray-300 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                {shuffledImages.slice(currentSlide * 2, currentSlide * 2 + 2).map((image, index) => (
-                  <div key={index} className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
+            {/* 2x2 Grid */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {visibleImages.map((image, index) => (
+                <div
+                  key={index}
+                  className="rounded-lg shadow-xl border-2 border-gray-300 p-2 bg-gradient-to-br from-teal-200/20 via-pink-200/20 to-purple-300/20"
+                >
+                  <div className="relative bg-white rounded-lg overflow-hidden shadow-inner aspect-[4/3]">
+                    <img
+                      src={prevImages[index]?.src}
+                      alt={prevImages[index]?.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
                     <img
                       src={image.src}
                       alt={image.name}
-                      className="w-full h-full object-cover"
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ${fadingCells[index] ? 'opacity-0' : 'opacity-100'}`}
                     />
                   </div>
-                ))}
-
-                {/* Fill empty slots if odd number of images */}
-                {shuffledImages.slice(currentSlide * 2, currentSlide * 2 + 2).length === 1 && (
-                  <div className="relative bg-white rounded-[1rem] overflow-hidden shadow-inner aspect-[4/3]">
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500 text-lg">Add more images</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Carousel Controls */}
-              {totalSlides > 1 && (
-                <div className="flex justify-center mt-6 space-x-4">
-                  <button
-                    onClick={prevSlide}
-                    className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                  >
-                    <span className="text-gray-600">‹</span>
-                  </button>
-                  
-                  {/* Mobile: Show slide counter, Desktop: Show dots */}
-                  <div className="flex items-center">
-                    {/* Slide counter for mobile */}
-                    <div className="sm:hidden bg-white px-3 py-1 rounded-full shadow-lg border border-gray-300">
-                      <span className="text-sm text-gray-600">{currentSlide + 1} / {totalSlides}</span>
-                    </div>
-                    
-                    {/* Dots for desktop - limit to 10 dots max */}
-                    <div className="hidden sm:flex space-x-2">
-                      {totalSlides <= 10 ? (
-                        Array.from({ length: totalSlides }, (_, i) => (
-                          <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full cursor-pointer ${i === currentSlide ? 'bg-orange-500' : 'bg-gray-300'}`}
-                            onClick={() => setCurrentSlide(i)}
-                          ></div>
-                        ))
-                      ) : (
-                        <div className="bg-white px-3 py-1 rounded-full shadow-lg border border-gray-300">
-                          <span className="text-sm text-gray-600">{currentSlide + 1} / {totalSlides}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={nextSlide}
-                    className="w-10 h-10 bg-white rounded-full shadow-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                  >
-                    <span className="text-gray-600">›</span>
-                  </button>
                 </div>
-              )}
+              ))}
+            </div>
+
+            {/* See More Button */}
+            <div className="text-center mt-6">
+              <button
+                onClick={handleSeeMore}
+                className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-md"
+              >
+                See More
+              </button>
             </div>
           </div>
         </div>
@@ -883,8 +926,8 @@ const WhatWeDo = ({ onDonateClick }) => {
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={() => setZoomedImage(null)}>
           <div className="relative max-w-4xl max-h-screen p-4">
             <img
-              src={zoomedImage}
-              alt="Zoomed Tara Campaign Comic"
+              src={typeof zoomedImage === 'string' ? zoomedImage : zoomedImage.src}
+              alt={typeof zoomedImage === 'string' ? 'Zoomed image' : zoomedImage.name}
               className="w-full h-full object-contain rounded-lg"
             />
             <button

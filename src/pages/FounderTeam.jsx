@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO'
 import heroImage from '../assets/images/pages/founder-team/Avinash-Sharma.jpg'
 import signatureImage from '../assets/images/pages/founder-team/avinash-sharma/Signature.png'
 import mattFriedmanImage from '../assets/images/pages/founder-team/our-team/Matt-Friedman.jpg'
@@ -15,6 +16,11 @@ const FounderTeam = ({ onDonateClick }) => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Founder & Team | Far Too Young"
+        description="Meet the founder and team behind Far Too Young — dedicated advocates working to end child marriage through research, education, and global partnerships."
+        path="/founder-team"
+      />
       {/* Hero Section with Background Image */}
       <div className="relative h-screen overflow-hidden">
         {/* Background Image with Filters */}

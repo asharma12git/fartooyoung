@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import PropTypes from 'prop-types'
+import SEO from '../components/SEO'
 import heroImage from '../assets/images/pages/what-we-do/Child-Bride-Mom.jpeg'
 import joinMovementImage from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
 import storyImage1a from '../assets/images/pages/what-we-do/storytelling-for-advocacy/Father_Marshall_D._Moran-kBB_cIR_3-transformed.webp'
@@ -326,6 +327,11 @@ const WhatWeDo = ({ onDonateClick }) => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="What We Do | Far Too Young"
+        description="Learn how Far Too Young fights child marriage through education, justice, community engagement, storytelling, and multi-pronged advocacy across South Asia."
+        path="/what-we-do"
+      />
       <style>{`
         @keyframes fadeInUp {
           0% {

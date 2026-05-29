@@ -1,0 +1,21 @@
+{
+  "name": "Far Too Young",
+  "short_name": "FTY",
+  "description": "Nonprofit working to end child marriage globally",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

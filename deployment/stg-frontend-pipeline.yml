@@ -94,6 +94,7 @@ Resources:
               runtime-versions:
                 nodejs: 18
               commands:
+                - apt-get update && apt-get install -y chromium-browser || true
                 - npm ci
             build:
               commands:

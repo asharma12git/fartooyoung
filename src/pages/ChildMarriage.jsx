@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import SEO from '../components/SEO'
 import heroImage from '../assets/images/pages/child-marriage/FTY-MV-82.jpg'
 import childBrideImage from '../assets/images/pages/child-marriage/a-child-bride/Child-Bride.jpg'
 import useCountUp from '../hooks/useCountUp'
@@ -328,6 +329,11 @@ const ChildMarriage = ({ onDonateClick }) => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="End Child Marriage Globally | Far Too Young"
+        description="Far Too Young is a nonprofit working to end child marriage worldwide through education, advocacy, and community empowerment. Join the movement to protect children's rights."
+        path="/"
+      />
       {/* Hero Section with Background Image */}
       <div className="relative h-screen overflow-hidden">
         {/* Background Image with Filters */}

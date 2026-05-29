@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import SEO from '../components/SEO'
 import heroImage from '../assets/images/pages/partners/Sad-Girl.jpg'
 import mediaAlertLogo from '../assets/images/pages/partners/Media-Alert-33.png'
 import viscomLogo from '../assets/images/pages/partners/Viscom.png'
@@ -96,6 +97,11 @@ const Partners = ({ onDonateClick }) => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Our Partners | Far Too Young"
+        description="Far Too Young partners with organizations across Nepal, India, and Bangladesh to combat child marriage through community engagement, education, and advocacy."
+        path="/partners"
+      />
       <style jsx>{`
         @keyframes floatMove {
           0% { transform: translate(0, 0) scale(0.8); opacity: 0; }

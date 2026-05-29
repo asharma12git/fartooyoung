@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /verify-email
+Disallow: /payment-success
+Disallow: /subscription-return
+
+Sitemap: https://www.fartooyoung.org/sitemap.xml

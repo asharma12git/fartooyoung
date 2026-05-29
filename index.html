@@ -4,10 +4,55 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/src/assets/images/shared/Far-Too-Young-c2-cropped.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="manifest" href="/manifest.json" />
     <title>Far Too Young</title>
+
+    <!-- Core Web Vitals: preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://js.stripe.com" />
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XJN5PR545G"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XJN5PR545G');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window,document,"clarity","script","wytghx7ix4");
+    </script>
   </head>
   <body>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NonprofitOrganization",
+      "name": "Far Too Young",
+      "url": "https://www.fartooyoung.org",
+      "logo": "https://www.fartooyoung.org/assets/Far-Too-Young-c2-cropped.png",
+      "description": "Nonprofit organization working to end child marriage globally through education, advocacy, and community empowerment.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Atlanta",
+        "addressRegion": "Georgia",
+        "addressCountry": "US"
+      },
+      "potentialAction": {
+        "@type": "DonateAction",
+        "target": "https://www.fartooyoung.org/"
+      }
+    }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

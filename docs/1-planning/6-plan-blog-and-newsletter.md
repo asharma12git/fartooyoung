@@ -3,7 +3,7 @@
 ## Overview
 Complete content pipeline: automated research collection from reputable sources, AI-generated blog posts grounded in real data, newsletter distribution, and social media posting (Plan 7). One pipeline feeds all channels.
 
-**Status:** ⏳ In Progress (Steps 1-2 complete)
+**Status:** ⏳ In Progress (Steps 1-3 complete)
 **Priority:** HIGH — directly drives SEO traffic + Google Ad Grants landing pages
 **Cost:** ~$3-5/month
 **Effort:** 10-12 hours total
@@ -35,7 +35,7 @@ Complete content pipeline: automated research collection from reputable sources,
 - [x] Step 2: Blog Backend + Role System
 
 ### Phase 2: Content Pipeline
-- [ ] Step 3: Research Pipeline (RSS feeds → DynamoDB)
+- [x] Step 3: Research Pipeline (RSS feeds → DynamoDB)
 - [ ] Step 4: AI Content Generation (Claude writes posts using research)
 - [ ] Step 5: Newsletter System
 
@@ -62,13 +62,13 @@ Complete content pipeline: automated research collection from reputable sources,
 
 **Implementation:** Complete. BlogPostsTable in DynamoDB with slug GSI. 6 Lambda endpoints (CRUD + publish). Role field added to Users table and JWT. Admin role set for `avinashsharma.np@gmail.com`. API path: `/blog/posts/slug/{slug}` for public, `/blog/posts/{id}` for admin operations.
 
-## Step 3: Research Pipeline ⬜
+## Step 3: Research Pipeline ✅
 
 **Benefit:** A Lambda that automatically fetches the latest articles from reputable sources (UNICEF, WHO, Girls Not Brides, etc.) via RSS feeds. Provides real, current data for the blog sidebar AND feeds the AI generator with factual content to cite. Zero AI cost — just data fetching.
 
 **Problem:** Without automated research, blog posts would rely on AI's training data (potentially outdated) or require manual research for every post. The blog sidebar would have no "Latest Research" section linking to authoritative sources.
 
-**Implementation:**
+**Implementation:** Complete. `research-fetcher.js` Lambda triggered weekly by EventBridge. Fetches RSS feeds from 7-tier source list, filters by child marriage keywords, deduplicates by URL, stores in ResearchArticlesTable. `get-research-articles.js` serves GET /research/articles endpoint. 43 verified articles seeded from Tier 1-7 sources. Blog sidebar and Top Research section read from live API (dynamic). Deployed to staging.
 
 ### Research Lambda: `research-fetcher.js`
 - Triggered weekly by EventBridge (same day as blog generator, but runs first)

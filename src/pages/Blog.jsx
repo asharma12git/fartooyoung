@@ -44,7 +44,7 @@ const Blog = () => {
       />
 
       {/* Hero Section */}
-      <div className="relative h-screen overflow-hidden">
+      <div className="relative h-[60vh] sm:h-[70vh] lg:h-screen overflow-hidden">
         <div
           className="absolute inset-0 bg-no-repeat"
           style={{
@@ -64,25 +64,47 @@ const Blog = () => {
       </div>
 
       {/* Main Content */}
-      <div className="bg-gray-50 py-12 sm:py-16">
+      <div className="bg-gray-50 py-6 sm:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Category Tabs + Month Nav */}
           <div className="flex items-end border-b border-gray-200 mb-8">
-            <div className="flex-1 flex justify-between overflow-x-auto scrollbar-hide pr-6">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => { setActiveFilter(cat); setCurrentMonthIndex(0) }}
-                  className={`pb-3 text-base font-medium whitespace-nowrap transition-colors border-b-2 ${
-                    activeFilter === cat
-                      ? 'border-orange-500 text-orange-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className="flex-1 flex flex-col sm:flex-row sm:flex-wrap sm:justify-between gap-y-2 pr-4 lg:pr-6">
+              {/* Mobile: 2 rows centered. Desktop: single row */}
+              <div className="flex justify-between sm:contents w-full">
+                {categories.slice(0, 4).map((cat, i) => (
+                  <div key={cat} className="flex items-center">
+                    <button
+                      onClick={() => { setActiveFilter(cat); setCurrentMonthIndex(0) }}
+                      className={`pb-3 text-sm sm:text-base font-medium whitespace-nowrap transition-colors border-b-2 ${
+                        activeFilter === cat
+                          ? 'border-orange-500 text-orange-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                    {i < 3 && <span className="mx-3 sm:mx-4 h-4 w-px bg-gray-300 mb-3"></span>}
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between sm:contents w-full">
+                {categories.slice(4).map((cat, i) => (
+                  <div key={cat} className="flex items-center">
+                    <button
+                      onClick={() => { setActiveFilter(cat); setCurrentMonthIndex(0) }}
+                      className={`pb-3 text-sm sm:text-base font-medium whitespace-nowrap transition-colors border-b-2 ${
+                        activeFilter === cat
+                          ? 'border-orange-500 text-orange-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                    {i < 2 && <span className="mx-3 sm:mx-4 h-4 w-px bg-gray-300 mb-3"></span>}
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="hidden lg:flex items-center justify-center gap-2 pb-3 pl-8 border-l border-gray-300 w-72">
               <button

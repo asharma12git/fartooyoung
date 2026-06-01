@@ -79,7 +79,8 @@ const BlogPost = ({ onDonateClick }) => {
         ></div>
         <div className="relative z-10 flex flex-col justify-end h-full pb-10 sm:pb-14">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="flex items-center gap-3 text-sm text-gray-300 mb-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight mb-3">{post.title}</h1>
+            <div className="flex items-center gap-3 text-sm text-gray-300">
               <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
               <span>·</span>
               <span>{post.reading_time} min read</span>
@@ -90,7 +91,6 @@ const BlogPost = ({ onDonateClick }) => {
                 </>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">{post.title}</h1>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ const BlogPost = ({ onDonateClick }) => {
 
           {/* Donate CTA */}
           <div className="mt-8 relative p-6 sm:p-8 rounded-xl text-center overflow-hidden">
-            <div className="absolute inset-0 bg-gray-900/90"></div>
+            <div className="absolute inset-0 bg-black"></div>
             <div className="relative z-10">
               <h3 className="text-xl font-medium text-white mb-2">Help End Child Marriage</h3>
               <p className="text-gray-300 mb-4 text-sm">Your donation directly supports girls&apos; education and community programs.</p>

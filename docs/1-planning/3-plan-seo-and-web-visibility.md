@@ -61,6 +61,7 @@ $0/month (all free tools)
 - Sitemap URL: https://www.fartooyoung.org/sitemap.xml
 - Robots.txt URL: https://www.fartooyoung.org/robots.txt
 - Submitted to Google Search Console (see Step 4)
+- Manage sitemaps: [search.google.com/search-console/sitemaps](https://search.google.com/search-console/sitemaps)
 
 ## Step 4: Google Search Console ✅
 

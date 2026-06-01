@@ -41,6 +41,7 @@ Complete content pipeline: automated research collection from reputable sources,
 
 ### Phase 3: Management
 - [ ] Step 6: Admin Panel
+- [ ] Step 7: Comments System
 
 ---
 
@@ -218,6 +219,33 @@ Instructions:
 
 ### Effort
 2 hours
+
+## Step 7: Comments System ⬜
+
+**Benefit:** A comments section allows readers to engage with blog posts, ask questions, and share perspectives — building community around the cause. Comment counts displayed on the blog listing (like NYT Athletic) signal engagement and encourage clicks.
+
+**Problem:** Without comments, the blog is one-directional. No community engagement, no social proof, no way for supporters to interact with content.
+
+**Implementation:**
+
+### DynamoDB Table: `fartooyoung-{env}-comments`
+- PK: `comment_id` (UUID)
+- GSI: `post_id` (to fetch all comments for a post)
+- Fields: `post_id`, `user_email`, `user_name`, `content`, `created_at`, `status` (approved/pending/hidden)
+
+### Lambda Functions
+- `get-comments.js` — GET /blog/posts/:id/comments (public, approved only)
+- `create-comment.js` — POST /blog/posts/:id/comments (logged-in users)
+- `delete-comment.js` — DELETE /comments/:id (admin only)
+
+### Frontend
+- Comment count icon (💬) on blog listing cards
+- Comment section at bottom of BlogPost.jsx
+- Login required to comment
+- Admin can moderate (hide/delete) from admin panel
+
+### Effort
+3-4 hours
 
 ---
 

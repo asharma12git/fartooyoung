@@ -20,11 +20,11 @@ Complete blog system: public pages, AI content generation via AWS Bedrock, newsl
 | **Total** | | **$1.30/month** |
 
 ## Checklist
-- [ ] Step 1: Blog Frontend
-- [ ] Step 2: Blog Backend
+- [ ] Step 1: Blog Frontend (public pages)
+- [ ] Step 2: Blog Backend + Role System
 - [ ] Step 3: AI Content Generation
 - [ ] Step 4: Newsletter System
-- [ ] Step 5: Admin Review
+- [ ] Step 5: Admin Panel
 
 ---
 
@@ -79,26 +79,51 @@ Complete blog system: public pages, AI content generation via AWS Bedrock, newsl
 ### Effort
 2-3 hours
 
-## Step 2: Blog Backend ⬜
+## Step 2: Blog Backend + Role System ⬜
 
-**Benefit:** A serverless blog backend stores posts in DynamoDB with draft/published workflow, enabling content management without a traditional CMS or database server.
+**Benefit:** A serverless blog backend stores posts in DynamoDB with draft/published workflow, enabling content management without a traditional CMS or database server. A role system (`admin`/`donor`) controls who can publish/edit posts vs who can only read them.
 
-**Problem:** Without a backend, blog content would need to be hardcoded in React components — no way to add posts without code deploys.
+**Problem:** Without a backend, blog content would need to be hardcoded in React components — no way to add posts without code deploys. Without roles, any logged-in user could potentially access admin features.
 
 **Implementation:**
 
-DynamoDB table: `fartooyoung-{env}-blog-posts`
-- PK: `post_id` (UUID)
-- Fields: `title`, `slug`, `excerpt`, `content`, `author`, `status` (draft/published), `published_at`, `keywords`, `word_count`, `faq` (array), `created_at`
+### Role System (add to existing Users table)
+- Add `role` field to Users table: `"admin"` or `"donor"` (default: `"donor"`)
+- Manually set your account (`avinashsharma.np@gmail.com`) to `role: "admin"` in DynamoDB
+- Login Lambda includes `role` in the JWT token
+- New middleware: `checkAdmin(token)` — returns 403 if not admin
+- Frontend stores role in user state, conditionally shows admin features
 
-Lambda functions:
+### Blog DynamoDB Table: `fartooyoung-{env}-blog-posts`
+- PK: `post_id` (UUID)
+- Fields: `title`, `slug`, `excerpt`, `content`, `author`, `status` (draft/published), `published_at`, `keywords`, `word_count`, `category`, `faq` (array), `featured_image`, `reading_time`, `created_at`
+
+### Lambda Functions
 - `get-blog-posts.js` — GET /blog/posts (public, returns published only)
 - `get-blog-post.js` — GET /blog/posts/:slug (public, single post)
+- `create-blog-post.js` — POST /blog/posts (admin only, creates draft)
+- `update-blog-post.js` — PUT /blog/posts/:id (admin only, edit draft)
 - `publish-blog-post.js` — POST /blog/posts/:id/publish (admin only)
+- `delete-blog-post.js` — DELETE /blog/posts/:id (admin only)
 
-Add to `template.yaml`.
+### API Routes
+| Method | Path | Auth | Purpose |
+|--------|------|------|---------|
+| GET | `/blog/posts` | Public | List published posts |
+| GET | `/blog/posts/:slug` | Public | Get single post |
+| POST | `/blog/posts` | Admin | Create draft |
+| PUT | `/blog/posts/:id` | Admin | Edit post |
+| POST | `/blog/posts/:id/publish` | Admin | Publish draft |
+| DELETE | `/blog/posts/:id` | Admin | Delete post |
 
-Effort: 2 hours
+### Add to `template.yaml`
+- New DynamoDB table resource
+- New Lambda functions (6)
+- New API Gateway routes
+- `BLOG_TABLE` environment variable added to Globals
+
+### Effort
+2-3 hours
 
 ## Step 3: AI Content Generation ⬜
 
@@ -156,18 +181,46 @@ Frontend: Subscribe form in Footer + Blog page sidebar.
 
 Effort: 1-2 hours
 
-## Step 5: Admin Review ⬜
+## Step 5: Admin Panel ⬜
 
-**Benefit:** A human review step ensures AI-generated content meets quality standards, contains accurate information, and aligns with the organization's voice before going public.
+**Benefit:** A dedicated admin page (`/admin`) gives the site owner a clean interface to manage blog posts — view drafts, edit content, publish, and delete — without touching the database directly. Separate from the donor dashboard to keep concerns clean.
 
-**Problem:** Publishing AI content without review risks factual errors, tone mismatches, or content that doesn't meet Google's E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines.
+**Problem:** Without an admin UI, managing blog posts requires logging into the AWS DynamoDB console — not user-friendly and error-prone. Also no way to delegate content management to team members in the future.
 
 **Implementation:**
-- Simple admin page or DynamoDB console
-- View drafts, edit content, click "Publish"
-- Could be `/admin/blog` page (only visible to admin role)
 
-Effort: 1 hour
+### Route: `/admin` (admin role only)
+- Protected route: redirects to `/dashboard` if `user.role !== 'admin'`
+- Header shows "Admin Panel" link only for admin users
+
+### Admin Blog Management UI
+- List all posts (drafts + published) with status badges
+- "New Post" button → form with title, content (markdown or rich text), excerpt, category, keywords
+- "Edit" button → same form pre-filled
+- "Publish" / "Unpublish" toggle
+- "Delete" with confirmation
+- Preview before publishing
+
+### Admin Panel Tabs (future-proof for Plan 8)
+- **Blog** — manage posts (this step)
+- **Donations** — view all donations (Plan 8, future)
+- **Users** — manage users (Plan 8, future)
+- **Settings** — site config (Plan 8, future)
+
+### User Experience Flow
+```
+Admin logs in → sees "Admin Panel" link in header
+  → /admin shows blog management
+  → Clicks "New Post" or reviews AI-generated drafts
+  → Edits if needed → clicks "Publish"
+  → Post appears on /blog immediately
+
+Regular user logs in → no "Admin Panel" link visible
+  → /admin route returns redirect to /dashboard
+```
+
+### Effort
+2 hours
 
 ---
 

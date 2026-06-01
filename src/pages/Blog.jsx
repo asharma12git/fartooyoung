@@ -25,7 +25,7 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO
-        title="Blog | Far Too Young"
+        title="Stories | Far Too Young"
         description="Articles about child marriage prevention, gender-based violence, girls' education, and advocacy. Stay informed about our work to protect children's rights."
         path="/blog"
       />
@@ -33,7 +33,7 @@ const Blog = () => {
       {/* Hero */}
       <div className="bg-gray-900 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-white mb-4">Our Blog</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-white mb-4">Stories</h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">Stories, statistics, and insights from our work to end child marriage and gender-based violence globally.</p>
         </div>
       </div>

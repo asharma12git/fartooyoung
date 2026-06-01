@@ -56,7 +56,7 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO
-        title={`${post.title} | Far Too Young Blog`}
+        title={`${post.title} | Far Too Young Stories`}
         description={post.excerpt}
         path={`/blog/${post.slug}`}
       />

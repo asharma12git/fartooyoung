@@ -3,16 +3,21 @@
 ## Overview
 Complete blog system: public pages, AI content generation via AWS Bedrock, newsletter distribution via SES. Drives organic traffic, provides landing pages for Google Ad Grants, and gives AI search engines citable content.
 
-**Status:** 📋 Ready to Execute  
-**Priority:** HIGH — directly drives SEO traffic + Google Ad Grants landing pages  
-**Cost:** ~$1.30/month  
-**Effort:** 6-8 hours  
-**Dependencies:** None
-
 ## Prerequisites
 - AWS Bedrock access (Claude 3.5 Sonnet)
 - SES configured for sending
 - Pre-render script (`scripts/prerender.mjs`) for blog route SEO
+
+## Cost
+
+| Service | Usage | Monthly Cost |
+|---------|-------|--------------|
+| AWS Bedrock (Claude 3.5 Sonnet) | 4 posts/month | $1.20 |
+| SES (Newsletter) | 1,000 emails/month | $0.10 |
+| Lambda | ~12 invocations | $0.00 |
+| DynamoDB | ~10K operations | $0.00 |
+| EventBridge | 4 events/month | $0.00 |
+| **Total** | | **$1.30/month** |
 
 ## Checklist
 - [ ] Step 1: Blog Frontend
@@ -20,6 +25,122 @@ Complete blog system: public pages, AI content generation via AWS Bedrock, newsl
 - [ ] Step 3: AI Content Generation
 - [ ] Step 4: Newsletter System
 - [ ] Step 5: Admin Review
+
+---
+
+## Step 1: Blog Frontend ⬜
+
+**Benefit:** A public-facing blog gives us unlimited pages to rank for long-tail keywords, provides landing pages for Google Ad Grants campaigns, and gives AI search engines citable content about child marriage.
+
+**Problem:** With only 4 static pages, we have extremely limited keyword coverage and no fresh content for search engines to re-crawl.
+
+**Implementation:**
+
+New files:
+- `src/pages/Blog.jsx` — grid of published posts (title, excerpt, date, image)
+- `src/pages/BlogPost.jsx` — full post view with author bio, FAQ section
+- Routes: `/blog` and `/blog/:slug` in `App.jsx`
+- SEO component on each page (dynamic title/description per post)
+- Add `/blog` to sitemap.xml and prerender script
+
+Design:
+- Same dark theme as rest of site
+- Card grid layout for listing
+- Author section: "By Avinash Sharma, Founder" with photo
+- Internal links to What We Do, Donate, Partners within posts
+- FAQ section at bottom (for Google featured snippets + GEO)
+
+Effort: 2 hours
+
+## Step 2: Blog Backend ⬜
+
+**Benefit:** A serverless blog backend stores posts in DynamoDB with draft/published workflow, enabling content management without a traditional CMS or database server.
+
+**Problem:** Without a backend, blog content would need to be hardcoded in React components — no way to add posts without code deploys.
+
+**Implementation:**
+
+DynamoDB table: `fartooyoung-{env}-blog-posts`
+- PK: `post_id` (UUID)
+- Fields: `title`, `slug`, `excerpt`, `content`, `author`, `status` (draft/published), `published_at`, `keywords`, `word_count`, `faq` (array), `created_at`
+
+Lambda functions:
+- `get-blog-posts.js` — GET /blog/posts (public, returns published only)
+- `get-blog-post.js` — GET /blog/posts/:slug (public, single post)
+- `publish-blog-post.js` — POST /blog/posts/:id/publish (admin only)
+
+Add to `template.yaml`.
+
+Effort: 2 hours
+
+## Step 3: AI Content Generation ⬜
+
+**Benefit:** AWS Bedrock is a managed AI service that provides access to foundation models (like Claude). Using it to generate blog drafts produces SEO-optimized, factual content at scale without hiring writers — while maintaining human oversight via the draft→review→publish workflow.
+
+**Problem:** Writing 4 quality blog posts per month manually is time-consuming. Without consistent content, organic traffic growth stalls and Google Ad Grants has insufficient landing pages.
+
+**Implementation:**
+
+Lambda: `blog-generator.js`
+- Runtime: Node.js 18, timeout: 5 min, memory: 1024 MB
+- Calls AWS Bedrock (Claude 3.5 Sonnet)
+- Generates 1500-2000 word post targeting a keyword from cluster list
+- Saves as "draft" in DynamoDB
+- EventBridge rule: Trigger every Monday 10am UTC
+
+Prompt engineering (critical for Google E-E-A-T compliance):
+- Write as "Avinash Sharma, Founder of Far Too Young"
+- Include first-person experience references
+- Cite real statistics with sources
+- Include 2-3 internal links to site pages
+- Generate FAQ section (3-5 questions)
+- Target specific keyword from content cluster
+- Structure with clear H2/H3 headings
+
+Content clusters:
+
+| Pillar | Keywords |
+|--------|----------|
+| Child Marriage | statistics by country, causes, effects on girls, laws by state, how to prevent |
+| Gender-Based Violence | types, prevention, support resources, global statistics |
+| Girls Education | developing countries, scholarships, impact on child marriage |
+| Advocacy | how to help, volunteer, donate, policy changes |
+
+Effort: 2 hours
+
+## Step 4: Newsletter System ⬜
+
+**Benefit:** A newsletter is an email distribution system that sends updates to subscribers when new content is published. It drives repeat traffic, builds community, and keeps donors engaged between donations.
+
+**Problem:** Without a newsletter, published blog posts rely entirely on search traffic for discovery. Existing supporters have no way to stay informed unless they manually revisit the site.
+
+**Implementation:**
+
+DynamoDB table: `fartooyoung-{env}-newsletter`
+- PK: `email`
+- Fields: `name`, `status` (pending/active/unsubscribed), `subscribed_at`
+
+Lambda functions:
+- `newsletter-subscribe.js` — POST /newsletter/subscribe (double opt-in)
+- `newsletter-unsubscribe.js` — POST /newsletter/unsubscribe
+- `newsletter-sender.js` — triggered when post published, sends via SES
+
+Frontend: Subscribe form in Footer + Blog page sidebar.
+
+Effort: 1-2 hours
+
+## Step 5: Admin Review ⬜
+
+**Benefit:** A human review step ensures AI-generated content meets quality standards, contains accurate information, and aligns with the organization's voice before going public.
+
+**Problem:** Publishing AI content without review risks factual errors, tone mismatches, or content that doesn't meet Google's E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines.
+
+**Implementation:**
+- Simple admin page or DynamoDB console
+- View drafts, edit content, click "Publish"
+- Could be `/admin/blog` page (only visible to admin role)
+
+Effort: 1 hour
 
 ---
 
@@ -44,83 +165,6 @@ Complete blog system: public pages, AI content generation via AWS Bedrock, newsl
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Step 1: Blog Frontend (2 hours)
-
-**New files:**
-- `src/pages/Blog.jsx` — grid of published posts (title, excerpt, date, image)
-- `src/pages/BlogPost.jsx` — full post view with author bio, FAQ section
-- Routes: `/blog` and `/blog/:slug` in `App.jsx`
-- SEO component on each page (dynamic title/description per post)
-- Add `/blog` to sitemap.xml and prerender script
-
-**Design:**
-- Same dark theme as rest of site
-- Card grid layout for listing
-- Author section: "By Avinash Sharma, Founder" with photo
-- Internal links to What We Do, Donate, Partners within posts
-- FAQ section at bottom (for Google featured snippets + GEO)
-
-## Step 2: Blog Backend (2 hours)
-
-**DynamoDB table:** `fartooyoung-{env}-blog-posts`
-- PK: `post_id` (UUID)
-- Fields: `title`, `slug`, `excerpt`, `content`, `author`, `status` (draft/published), `published_at`, `keywords`, `word_count`, `faq` (array), `created_at`
-
-**Lambda functions:**
-- `get-blog-posts.js` — GET /blog/posts (public, returns published only)
-- `get-blog-post.js` — GET /blog/posts/:slug (public, single post)
-- `publish-blog-post.js` — POST /blog/posts/:id/publish (admin only)
-
-Add to `template.yaml`.
-
-## Step 3: AI Content Generation (2 hours)
-
-**Lambda:** `blog-generator.js`
-- Runtime: Node.js 18, timeout: 5 min, memory: 1024 MB
-- Calls AWS Bedrock (Claude 3.5 Sonnet)
-- Generates 1500-2000 word post targeting a keyword from cluster list
-- Saves as "draft" in DynamoDB
-- **EventBridge rule:** Trigger every Monday 10am UTC
-
-**Prompt engineering (critical for Google E-E-A-T compliance):**
-- Write as "Avinash Sharma, Founder of Far Too Young"
-- Include first-person experience references
-- Cite real statistics with sources
-- Include 2-3 internal links to site pages
-- Generate FAQ section (3-5 questions)
-- Target specific keyword from content cluster
-- Structure with clear H2/H3 headings
-
-**Content clusters:**
-
-| Pillar | Keywords |
-|--------|----------|
-| Child Marriage | statistics by country, causes, effects on girls, laws by state, how to prevent |
-| Gender-Based Violence | types, prevention, support resources, global statistics |
-| Girls Education | developing countries, scholarships, impact on child marriage |
-| Advocacy | how to help, volunteer, donate, policy changes |
-
-## Step 4: Newsletter System (1-2 hours)
-
-**DynamoDB table:** `fartooyoung-{env}-newsletter`
-- PK: `email`
-- Fields: `name`, `status` (pending/active/unsubscribed), `subscribed_at`
-
-**Lambda functions:**
-- `newsletter-subscribe.js` — POST /newsletter/subscribe (double opt-in)
-- `newsletter-unsubscribe.js` — POST /newsletter/unsubscribe
-- `newsletter-sender.js` — triggered when post published, sends via SES
-
-**Frontend:** Subscribe form in Footer + Blog page sidebar.
-
-## Step 5: Admin Review (1 hour)
-
-Simple admin page or DynamoDB console:
-- View drafts, edit content, click "Publish"
-- Could be `/admin/blog` page (only visible to admin role)
-
----
-
 ## Google Compliance (E-E-A-T)
 
 | Requirement | How We Handle It |
@@ -140,17 +184,6 @@ Each post structured for ChatGPT/Perplexity citation:
 - FAQ section with structured data (JSON-LD)
 - Quotable one-liners
 - Consistent entity references ("Far Too Young, a US-based nonprofit...")
-
-## Cost Breakdown
-
-| Service | Usage | Monthly Cost |
-|---------|-------|--------------|
-| AWS Bedrock (Claude 3.5 Sonnet) | 4 posts/month | $1.20 |
-| SES (Newsletter) | 1,000 emails/month | $0.10 |
-| Lambda | ~12 invocations | $0.00 |
-| DynamoDB | ~10K operations | $0.00 |
-| EventBridge | 4 events/month | $0.00 |
-| **Total** | | **$1.30/month** |
 
 ## SEO Keywords to Target
 

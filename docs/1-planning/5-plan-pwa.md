@@ -3,15 +3,13 @@
 ## Overview
 Make the site installable on phones with offline support and push notifications. PWA chosen over React Native ($0 cost, 2-3 hours, uses existing infrastructure). Manifest and icons already deployed via Plan 3 SEO.
 
-**Status:** ✅ Partially Complete (manifest + icons deployed)  
-**Cost:** $0 additional  
-**Effort:** 2-3 hours remaining  
-**Dependencies:** None (enhances existing React app)
-
 ## Prerequisites
 - React app deployed on S3 + CloudFront (HTTPS required)
 - PWA manifest already in `public/manifest.json` (done in Plan 3)
 - Icons (192px + 512px) in `public/` (done in Plan 3)
+
+## Cost
+$0/month (no additional services required)
 
 ## Checklist
 - [x] Step 1: Web App Manifest + Icons
@@ -22,7 +20,11 @@ Make the site installable on phones with offline support and push notifications.
 
 ## Step 1: Web App Manifest + Icons ✅
 
-Already deployed in Plan 3 SEO. `public/manifest.json` with app name, icons, dark theme color (`#0a0a0a`), standalone display mode. Linked via `<link rel="manifest">` and `<meta name="theme-color">` in `index.html`.
+**Benefit:** A web app manifest is a JSON file that tells the browser how to display your site when "installed" on a phone — app name, icon, theme color, and display mode (standalone = no browser chrome). Makes the site feel like a native app.
+
+**Problem:** Without a manifest, users can't add the site to their home screen as an app-like experience.
+
+**Implementation:** Already deployed in Plan 3 SEO. `public/manifest.json` linked via `<link rel="manifest">` and `<meta name="theme-color">` in `index.html`.
 
 ```json
 {
@@ -35,24 +37,30 @@ Already deployed in Plan 3 SEO. `public/manifest.json` with app name, icons, dar
 }
 ```
 
-## Step 2: Service Worker (Offline Support)
+## Step 2: Service Worker (Offline Support) ⬜
 
-Implement service worker for:
+**Benefit:** A service worker is a background script that intercepts network requests, enabling offline access by serving cached content when there's no internet. It also enables instant loading of previously visited pages.
+
+**Problem:** Without a service worker, the site is completely unusable offline — users see a browser error page if they lose connectivity.
+
+**Implementation:**
 - Cache static assets (CSS, JS, images) for instant loading
 - Offline fallback page (view donation history without internet)
 - Background sync capabilities
 - Service worker runs in secure isolated context
+- Strategy: Cache-first for static assets, network-first for API calls
 
-**Strategy:** Cache-first for static assets, network-first for API calls.
+## Step 3: Push Notifications ⬜
 
-## Step 3: Push Notifications
+**Benefit:** Web push notifications are messages sent to a user's device even when the browser is closed, using the Push API. They re-engage users without requiring a native app.
 
-Web-based push notifications for:
+**Problem:** Without push notifications, we have no way to proactively reach users outside of email — donation confirmations and campaign updates require the user to check their inbox.
+
+**Implementation:**
 - Donation confirmations
 - Impact updates
 - Campaign announcements
-
-Uses existing API infrastructure — no additional AWS services needed.
+- Uses existing API infrastructure — no additional AWS services needed
 
 ---
 
@@ -64,9 +72,9 @@ Uses existing API infrastructure — no additional AWS services needed.
 | React Native | $5-20/month | 4-6 weeks | $124/year |
 | AppSync + RN | $10-40/month | 6-8 weeks | $124/year |
 
-**PWA benefits:** Zero additional AWS costs, same backend APIs, no app store fees, cross-platform, instant updates, same security model (JWT + HTTPS).
+PWA benefits: Zero additional AWS costs, same backend APIs, no app store fees, cross-platform, instant updates, same security model (JWT + HTTPS).
 
-**PWA limitations:** Limited native device features, iOS Safari has some restrictions, no app store discoverability.
+PWA limitations: Limited native device features, iOS Safari has some restrictions, no app store discoverability.
 
 ## Migration Path (Future)
 

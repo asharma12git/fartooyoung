@@ -3,14 +3,12 @@
 ## Overview
 Migrate 17 Lambda functions from AWS SDK v2 (maintenance mode) to v3 (modular). Smaller bundle sizes, faster cold starts, better TypeScript support. Not urgent — current setup works fine.
 
-**Status:** 📋 Backlog  
-**Priority:** Low  
-**Effort:** 2-3 sessions  
-**Dependencies:** None
-
 ## Prerequisites
 - All 17 Lambda functions working on staging
 - Services used: DynamoDB, SES, Secrets Manager
+
+## Cost
+$0 (no new services — same Lambda functions, different SDK)
 
 ## Checklist
 - [ ] Step 1: Install v3 packages
@@ -20,14 +18,25 @@ Migrate 17 Lambda functions from AWS SDK v2 (maintenance mode) to v3 (modular). 
 
 ---
 
-## Step 1: Install v3 packages
+## Step 1: Install v3 packages ⬜
 
+**Benefit:** AWS SDK v3 uses modular imports — you only install the clients you need (DynamoDB, SES, Secrets Manager) instead of the entire AWS SDK. This reduces bundle size by 50-80% and improves Lambda cold start times.
+
+**Problem:** AWS SDK v2 bundles the entire SDK (~70MB) even if you only use 3 services. It's also in maintenance mode — no new features, only critical fixes.
+
+**Implementation:**
 ```bash
 npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb @aws-sdk/client-ses @aws-sdk/client-secrets-manager
 npm uninstall aws-sdk
 ```
 
-## Step 2: Update Lambda functions
+## Step 2: Update Lambda functions ⬜
+
+**Benefit:** v3 uses a command pattern (explicit `send()` calls) that's more predictable, tree-shakeable, and TypeScript-friendly than v2's `.promise()` chaining.
+
+**Problem:** v2 syntax (`new AWS.DynamoDB.DocumentClient()`, `.promise()`) will eventually stop working when AWS ends v2 support entirely.
+
+**Implementation:**
 
 Replace v2 patterns:
 ```javascript
@@ -48,13 +57,21 @@ await client.send(new PutCommand({ TableName, Item }));
 
 Update all 17 Lambda functions + migration script (`backend/scripts/migrate-donations.js`).
 
-## Step 3: Test all endpoints on staging
+## Step 3: Test all endpoints on staging ⬜
 
-Test all 17 functions thoroughly on staging before prod deploy. SES and Secrets Manager calls also need verification.
+**Benefit:** Thorough staging testing catches any behavioral differences between v2 and v3 before affecting real users.
 
-## Step 4: Deploy to production
+**Problem:** While API behavior is identical, subtle differences in error handling or response formats could break functionality if not caught.
 
-Deploy after all staging tests pass.
+**Implementation:** Test all 17 functions thoroughly on staging before prod deploy. SES and Secrets Manager calls also need verification.
+
+## Step 4: Deploy to production ⬜
+
+**Benefit:** Production deployment completes the migration, giving us smaller bundles and faster cold starts for all Lambda functions.
+
+**Problem:** Staying on v2 in production means we don't benefit from the performance improvements and remain on a deprecated SDK.
+
+**Implementation:** Deploy after all staging tests pass.
 
 ---
 

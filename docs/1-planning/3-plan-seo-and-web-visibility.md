@@ -203,10 +203,26 @@ Organization Details:
 - Legal Name: Far Too Young, Inc.
 - Business Type: Domestic Nonprofit Corporation
 - GA Secretary of State Control #: 21285996
+- GA SOS Lookup: [ecorp.sos.ga.gov/BusinessSearch](https://ecorp.sos.ga.gov/BusinessSearch)
 - Date of Formation: November 4, 2021
-- State: Georgia
-- NAICS: Human Rights Organizations
+- State of Formation: Georgia
+- NAICS Code: Other Services (except Public Administration)
+- NAICS Sub Code: Human Rights Organizations
+- Status: Active/Compliance
+- Last Annual Registration Year: 2027
+- EIN (Tax ID): 87-3583633
 - 501(c)(3): Yes
+- Principal Office: 5072 Micaela Way, Duluth, GA, 30096, USA
+- County: Gwinnett
+
+Officers:
+| Name | Title |
+|------|-------|
+| Avinash Sharma | CEO |
+| Avinash Sharma | CFO |
+| Ravi Baral | Secretary |
+
+Registered Agent: Avinash Sharma, 5072 Micaela Way, Duluth, GA, 30096, USA
 
 Remaining GEO tasks:
 - Wikipedia page (requires 3-5 independent press sources — do NOT write your own)

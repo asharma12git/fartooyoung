@@ -30,27 +30,54 @@ Complete blog system: public pages, AI content generation via AWS Bedrock, newsl
 
 ## Step 1: Blog Frontend ⬜
 
-**Benefit:** A public-facing blog gives us unlimited pages to rank for long-tail keywords, provides landing pages for Google Ad Grants campaigns, and gives AI search engines citable content about child marriage.
+**Benefit:** A public-facing blog gives us unlimited pages to rank for long-tail keywords, provides landing pages for Google Ad Grants campaigns, and gives AI search engines citable content about child marriage. Each post is a new entry point for organic traffic — compounding over time.
 
-**Problem:** With only 4 static pages, we have extremely limited keyword coverage and no fresh content for search engines to re-crawl.
+**Problem:** With only 4 static pages, we have extremely limited keyword coverage and no fresh content for search engines to re-crawl. No way to target long-tail searches like "child marriage statistics India 2025" or "how to help child brides."
 
 **Implementation:**
 
-New files:
-- `src/pages/Blog.jsx` — grid of published posts (title, excerpt, date, image)
-- `src/pages/BlogPost.jsx` — full post view with author bio, FAQ section
+### Blog Listing Page (`/blog`)
+- Card grid layout (2 columns desktop, 1 mobile)
+- Each card shows: featured image, title, excerpt (2 lines), date, reading time
+- Category/topic filter tabs (e.g., "Statistics", "Stories", "Advocacy", "Education")
+- Donate CTA between post rows (every 4-6 posts)
+- Newsletter signup banner at bottom
+
+### Individual Post Page (`/blog/:slug`)
+
+| Feature | Purpose |
+|---------|---------|
+| Reading time estimate | Sets expectations, reduces bounce rate |
+| Table of contents | Navigation for long posts, improves time-on-page |
+| Scroll progress bar | Visual indicator of reading progress, keeps readers engaged |
+| Author bio with photo | E-E-A-T signal for Google — "By Avinash Sharma, Founder" |
+| Inline donate CTA | Appears after emotional peak — "Your $25 keeps a girl in school for 1 month" |
+| Sticky donate button | Always visible as reader scrolls |
+| Related posts (3) | Keeps people on site, reduces bounce |
+| Social share buttons | Facebook, Twitter/X, LinkedIn, copy link |
+| FAQ section at bottom | AI engines (ChatGPT/Perplexity) cite FAQ content heavily (still valuable for GEO even though Google removed FAQ rich results May 2026) |
+| Newsletter signup | Captures email at end of post when engagement is highest |
+| Internal links (2-3) | Links to What We Do, Donate, Partners — spreads SEO authority |
+| Real fieldwork photos | Nepal/Bangladesh images from existing carousel assets |
+
+### Design
+- Dark theme matching rest of site
+- Mobile-first responsive
+- Story-first approach (lead with human story, not statistics)
+- Impact numbers visible near CTAs
+
+### New Files
+- `src/pages/Blog.jsx` — listing page
+- `src/pages/BlogPost.jsx` — individual post page
+- `src/components/BlogCard.jsx` — reusable post card
+- `src/components/TableOfContents.jsx` — auto-generated from headings
+- `src/components/ReadingProgress.jsx` — scroll progress bar
 - Routes: `/blog` and `/blog/:slug` in `App.jsx`
 - SEO component on each page (dynamic title/description per post)
-- Add `/blog` to sitemap.xml and prerender script
+- Add `/blog` to `public/sitemap.xml` and `scripts/prerender.mjs`
 
-Design:
-- Same dark theme as rest of site
-- Card grid layout for listing
-- Author section: "By Avinash Sharma, Founder" with photo
-- Internal links to What We Do, Donate, Partners within posts
-- FAQ section at bottom (for Google featured snippets + GEO)
-
-Effort: 2 hours
+### Effort
+2-3 hours
 
 ## Step 2: Blog Backend ⬜
 

@@ -99,7 +99,7 @@ Resources:
             build:
               commands:
                 - npm run lint || echo "Lint warnings found, continuing..."
-                - npm run build -- --mode staging
+                - npm run build:staging
             post_build:
               commands:
                 - aws s3 sync dist/ s3://${FRONTEND_BUCKET} --delete

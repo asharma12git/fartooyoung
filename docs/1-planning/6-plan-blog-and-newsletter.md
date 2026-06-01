@@ -42,6 +42,7 @@ Complete content pipeline: automated research collection from reputable sources,
 ### Phase 3: Management
 - [ ] Step 6: Admin Panel
 - [ ] Step 7: Comments System
+- [ ] Step 8: Favorites / Bookmarks (future)
 
 ---
 
@@ -246,6 +247,21 @@ Instructions:
 
 ### Effort
 3-4 hours
+
+## Step 8: Favorites / Bookmarks ⬜ (Future — not a priority)
+
+**Benefit:** Logged-in users can save blog posts and research articles they find valuable, creating a personal reading list accessible from their dashboard.
+
+**Problem:** Without bookmarks, users have no way to save content for later — they must remember URLs or re-find articles manually.
+
+**Implementation:**
+- DynamoDB table: `fartooyoung-{env}-favorites` (PK: `user_email`, SK: `item_id`)
+- Endpoints: `POST /favorites` (save), `DELETE /favorites/:id` (remove), `GET /favorites` (list)
+- Heart/bookmark icon on blog post cards + research articles (logged-in only)
+- New "Saved" tab in donor dashboard showing bookmarked items
+
+### Effort
+2 hours
 
 ---
 

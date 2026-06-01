@@ -224,22 +224,22 @@ const Blog = () => {
           {/* Top Research */}
           <div className="border-t border-gray-300 mt-8 pt-8">
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-6">Top Research</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-5">
               {[
-                { num: 1, title: 'Accelerating Efforts to End Child Marriage', source: 'Columbia SIPA', url: 'https://igp.sipa.columbia.edu/news/child-marriage-human-rights-crisis-and-costs-world-175-billion-year-new-research-provides' },
-                { num: 2, title: 'Marriage of Adolescent Girls Reduced by 80% in Nigeria', source: 'Nature', url: 'https://www.nature.com/articles/d41586-026-00720-8' },
-                { num: 3, title: 'International Funding to End Child Marriage: A Decade Review', source: 'Girls Not Brides', url: 'https://www.girlsnotbrides.org/en/learning-resources/resource-centre/international-funding-end-child-marriage-2015-2024-report/' },
-                { num: 4, title: 'Protecting Progress: Impact of Funding Cuts on Ending Child Marriage', source: 'UNFPA / UNICEF', url: 'https://www.unicef.org/documents/protecting-progress-global-impact-funding-cuts-ending-child-marriage-0' },
-                { num: 5, title: 'Bangladesh: 39% Surge in Child Marriage Due to Climate Change', source: 'IRC', url: 'https://www.rescue.org/press-release/bangladesh-irc-study-reveals-staggering-39-surge-child-marriage-due-climate-change' },
-                { num: 6, title: 'Meta-analysis of Evidence on Child Marriage in South Asia', source: 'UNICEF ROSA', url: 'https://www.unicef.org/rosa/reports/meta-synthesis-and-meta-analysis-evidence-child-marriage-south-asia' },
-                { num: 7, title: 'Prevalence of Intimate Partner Violence Among Child Marriage Victims', source: 'The Lancet', url: 'https://www.thelancet.com/journals/eclinm/article/PIIS2589-5370(25)00016-1/fulltext' },
-                { num: 8, title: 'The Investment Case for Prevention in South-East Asia', source: 'UNFPA', url: 'https://asiapacific.unfpa.org/en/publications/technical-brief-investment-case-prevention-adolescent-pregnancy-and-child-marriage' },
+                { num: 1, title: 'Accelerating Efforts to End Child Marriage', source: 'COLUMBIA SIPA', date: 'Mar 2026', url: 'https://igp.sipa.columbia.edu/news/child-marriage-human-rights-crisis-and-costs-world-175-billion-year-new-research-provides' },
+                { num: 2, title: 'Marriage of Adolescent Girls Reduced by 80% in Nigeria', source: 'NATURE', date: '2026', url: 'https://www.nature.com/articles/d41586-026-00720-8' },
+                { num: 3, title: 'International Funding to End Child Marriage: A Decade Review', source: 'GIRLS NOT BRIDES', date: 'Mar 2026', url: 'https://www.girlsnotbrides.org/en/learning-resources/resource-centre/international-funding-end-child-marriage-2015-2024-report/' },
+                { num: 4, title: 'Protecting Progress: Impact of Funding Cuts on Ending Child Marriage', source: 'UNFPA / UNICEF', date: 'Nov 2025', url: 'https://www.unicef.org/documents/protecting-progress-global-impact-funding-cuts-ending-child-marriage-0' },
+                { num: 5, title: 'Bangladesh: 39% Surge in Child Marriage Due to Climate Change', source: 'IRC', date: 'Dec 2023', url: 'https://www.rescue.org/press-release/bangladesh-irc-study-reveals-staggering-39-surge-child-marriage-due-climate-change' },
+                { num: 6, title: 'Meta-analysis of Evidence on Child Marriage in South Asia', source: 'UNICEF ROSA', date: 'Dec 2024', url: 'https://www.unicef.org/rosa/reports/meta-synthesis-and-meta-analysis-evidence-child-marriage-south-asia' },
+                { num: 7, title: 'Prevalence of Intimate Partner Violence Among Child Marriage Victims', source: 'THE LANCET', date: 'Mar 2025', url: 'https://www.thelancet.com/journals/eclinm/article/PIIS2589-5370(25)00016-1/fulltext' },
+                { num: 8, title: 'The Investment Case for Prevention in South-East Asia', source: 'UNFPA', date: 'Mar 2025', url: 'https://asiapacific.unfpa.org/en/publications/technical-brief-investment-case-prevention-adolescent-pregnancy-and-child-marriage' },
               ].map(item => (
-                <a key={item.num} href={item.url} target="_blank" rel="noopener noreferrer" className="flex gap-3 group py-2 border-b border-gray-100">
-                  <span className="text-2xl font-bold text-gray-200 w-8 flex-shrink-0">{item.num}</span>
+                <a key={item.num} href={item.url} target="_blank" rel="noopener noreferrer" className="flex gap-4 group">
+                  <span className="text-2xl font-bold text-gray-200 leading-none">{item.num}</span>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 group-hover:text-orange-600 transition-colors leading-snug">{item.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{item.source}</p>
+                    <p className="text-xs font-bold text-orange-600 uppercase tracking-wide mb-1">{item.source} <span className="text-gray-400 font-normal">· {item.date}</span></p>
+                    <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors leading-snug">{item.title}</p>
                   </div>
                 </a>
               ))}

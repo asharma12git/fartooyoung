@@ -47,13 +47,28 @@ Make the site visible to Google (pre-rendering), rank higher (structured data, C
 
 ## Step 4: Google Search Console ✅
 
-**Implementation:** Submitted `sitemap.xml` via Google Search Console. Property: `www.fartooyoung.org`. Verified via DNS TXT record in Route 53. Dashboard: [search.google.com/search-console](https://search.google.com/search-console).
+**Implementation:** Submitted `sitemap.xml` via Google Search Console. Sitemap status: Success.
+- Dashboard: [search.google.com/search-console](https://search.google.com/search-console)
+- Account: Far Too Young Google Workspace admin account
+- Property: `www.fartooyoung.org`
+- Sitemap URL: `https://www.fartooyoung.org/sitemap.xml`
+- Verified via DNS TXT record in Route 53
 
 ## Step 5: Analytics (GA4 + Microsoft Clarity) ✅
 
-**GA4:** Measurement ID `G-XJN5PR545G`, Stream ID `6380801517`. Visitor count, traffic sources, page views, geographic data, device types, conversion tracking. Free forever.
+**Google Analytics 4:**
+- Dashboard: [analytics.google.com](https://analytics.google.com)
+- Account: Far Too Young Inc. (Google Workspace admin account)
+- Measurement ID: `G-XJN5PR545G`
+- Stream ID: `6380801517`
+- Stream URL: `https://fartooyoung.org`
+- Benefits: Visitor count, traffic sources, page views, geographic data, device types, conversion tracking. Free forever.
 
-**Microsoft Clarity:** Project ID `wytghx7ix4`. Heatmaps, scroll maps, session recordings, dead click detection, rage click detection. Free forever, unlimited recordings, 30-day retention.
+**Microsoft Clarity:**
+- Dashboard: [clarity.microsoft.com](https://clarity.microsoft.com)
+- Account: Far Too Young nonprofit Microsoft account
+- Project ID: `wytghx7ix4`
+- Benefits: Heatmaps, scroll maps, session recordings, dead click detection, rage click detection. Free forever, unlimited recordings, 30-day retention.
 
 Both are `<script>` tags in `index.html`.
 
@@ -90,8 +105,12 @@ Both are `<script>` tags in `index.html`.
 
 ## Step 10: Google Ad Grants ($10K/month free ads)
 
-**Status:** ⏳ Applied May 29, 2026 — awaiting verification (2-14 business days via Goodstack)  
-**Contact:** `avinashsharma.np@gmail.com` / approval to `admin@fartooyoung.org`
+**Status:** ⏳ Applied May 29, 2026 — awaiting verification (2-14 business days via Goodstack)
+- Application portal: [nonprofits.google.com](https://nonprofits.google.com/)
+- Verification partner: [Goodstack](https://goodstack.org) (hello@goodstack.org)
+- Contact email used: `avinashsharma.np@gmail.com`
+- Approval notification to: `admin@fartooyoung.org`
+- Google Ads dashboard (once approved): [ads.google.com](https://ads.google.com)
 
 Google gives eligible 501(c)(3) nonprofits **$10,000/month in free Google Ads** ($120,000/year).
 

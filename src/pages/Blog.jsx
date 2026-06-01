@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SEO from '../components/SEO'
+import heroImage from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0770.webp'
 
 const Blog = () => {
   const [posts, setPosts] = useState([])
@@ -23,23 +24,37 @@ const Blog = () => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SEO
         title="Stories | Far Too Young"
         description="Articles about child marriage prevention, gender-based violence, girls' education, and advocacy. Stay informed about our work to protect children's rights."
         path="/blog"
       />
 
-      {/* Hero */}
-      <div className="bg-gray-900 py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-white mb-4">Stories</h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">Stories, statistics, and insights from our work to end child marriage and gender-based violence globally.</p>
+      {/* Hero Section */}
+      <div className="relative h-screen overflow-hidden">
+        <div
+          className="absolute inset-0 bg-no-repeat"
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.55) contrast(1.0)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            minHeight: '100%',
+            minWidth: '100%'
+          }}
+        ></div>
+        <div className="relative z-10 flex flex-col justify-end items-start h-full pb-16 sm:pb-24 lg:pb-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-white">Stories</h1>
+            <p className="text-base sm:text-lg text-gray-200 mt-3 max-w-xl">Stories, statistics, and insights from our work to end child marriage and gender-based violence globally.</p>
+          </div>
         </div>
       </div>
 
       {/* Posts Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div className="bg-gray-50 py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
@@ -78,6 +93,7 @@ const Blog = () => {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   )

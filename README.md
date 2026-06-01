@@ -85,7 +85,7 @@ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full technical guide — work
 | `docs/1-planning/` | Feature roadmap (numbered by priority) |
 | `docs/2-system-design/` | Architecture, frontend, backend, database, environments |
 | `docs/3-deployments/` | Deployment processes and CI/CD |
-| `docs/4-testing/` | Regression test suite, Stripe test cards, API commands |
+| `docs/5-testing/` | Regression test suite, Stripe test cards, API commands |
 
 ## License
 

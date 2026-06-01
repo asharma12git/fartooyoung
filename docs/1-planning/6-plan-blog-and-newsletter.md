@@ -13,7 +13,7 @@ Complete content pipeline: automated research collection from reputable sources,
 - AWS Bedrock access (Claude 3.5 Sonnet) — enable in us-east-1
 - SES configured for sending
 - Pre-render script (`scripts/prerender.mjs`) for blog route SEO
-- Research sources defined (see `docs/5-resources/1-research-sources.md`)
+- Research sources defined (see `docs/4-resources/1-research-sources.md`)
 
 ## Cost
 
@@ -70,7 +70,7 @@ Complete content pipeline: automated research collection from reputable sources,
 
 ### Research Lambda: `research-fetcher.js`
 - Triggered weekly by EventBridge (same day as blog generator, but runs first)
-- Fetches RSS feeds from tiered sources (see `docs/5-resources/1-research-sources.md`)
+- Fetches RSS feeds from tiered sources (see `docs/4-resources/1-research-sources.md`)
 - Filters articles by keywords: "child marriage", "gender-based violence", "girls education", "forced marriage"
 - For each new article: fetches full text from the article URL
 - Deduplication: checks if URL already exists in DynamoDB → skips if yes

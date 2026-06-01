@@ -9,6 +9,8 @@ import DonorDashboard from './pages/DonorDashboard'
 import PaymentSuccess from './pages/PaymentSuccess'
 import SubscriptionReturn from './pages/SubscriptionReturn'
 import VerifyEmail from './pages/VerifyEmail'
+import Blog from './pages/Blog'
+import BlogPost from './pages/BlogPost'
 import AuthModal from './components/AuthModal'
 import DonationModal from './components/DonationModal'
 import { useState, useEffect } from 'react'
@@ -106,6 +108,8 @@ function AppContent() {
           <Route path="/founder-team" element={<FounderTeam onDonateClick={handleDonateClick} />} />
           <Route path="/partners" element={<Partners onDonateClick={handleDonateClick} />} />
           <Route path="/what-we-do" element={<WhatWeDo onDonateClick={handleDonateClick} />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/subscription-return" element={<SubscriptionReturn />} />
           <Route path="/verify-email" element={<VerifyEmail onAuthClick={handleAuthClick} />} />

@@ -196,7 +196,8 @@ exports.handler = async (event) => {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      name: user.name // Keep for backward compatibility
+      name: user.name, // Keep for backward compatibility
+      role: user.role || 'donor'
     };
     const token = jwt.sign(tokenPayload, secrets.JWT_SECRET, { expiresIn: '24h' });
     
@@ -212,7 +213,8 @@ exports.handler = async (event) => {
           email: user.email, 
           firstName: user.firstName,
           lastName: user.lastName,
-          name: user.name // Keep for backward compatibility
+          name: user.name, // Keep for backward compatibility
+          role: user.role || 'donor'
         },
         token  // JWT token for authenticated requests
       })

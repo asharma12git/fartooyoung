@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const distDir = resolve(__dirname, '../dist')
 
-const routes = ['/', '/founder-team', '/partners', '/what-we-do']
+const routes = ['/', '/founder-team', '/partners', '/what-we-do', '/blog']
 
 // Simple static file server for the built dist
 function startServer() {

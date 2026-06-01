@@ -34,6 +34,7 @@ Globals:
         SECRETS_MANAGER_ARN: !Ref SecretsManagerArn
         USERS_TABLE: !Sub "${AWS::StackName}-users-table"
         DONATIONS_TABLE: !Sub "${AWS::StackName}-donations-table"
+        BLOG_TABLE: !Sub "${AWS::StackName}-blog-posts"
         SES_FROM_EMAIL: admin@fartooyoung.org
         SES_REGION: !Ref AWS::Region
         FRONTEND_URL: !If 
@@ -429,6 +430,142 @@ Resources:
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: true
+
+  BlogPostsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-blog-posts"
+      AttributeDefinitions:
+        - AttributeName: post_id
+          AttributeType: S
+        - AttributeName: slug
+          AttributeType: S
+      KeySchema:
+        - AttributeName: post_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: slug-index
+          KeySchema:
+            - AttributeName: slug
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+
+  # Blog API Functions
+  GetBlogPostsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/get-blog-posts.handler
+      Timeout: 10
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref BlogPostsTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /blog/posts
+            Method: get
+
+  GetBlogPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/get-blog-post.handler
+      Timeout: 10
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref BlogPostsTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /blog/posts/slug/{slug}
+            Method: get
+
+  CreateBlogPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/create-blog-post.handler
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BlogPostsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /blog/posts
+            Method: post
+
+  UpdateBlogPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/update-blog-post.handler
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BlogPostsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /blog/posts/{id}
+            Method: put
+
+  PublishBlogPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/publish-blog-post.handler
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BlogPostsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /blog/posts/{id}/publish
+            Method: post
+
+  DeleteBlogPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/delete-blog-post.handler
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BlogPostsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /blog/posts/{id}
+            Method: delete
 
 Outputs:
   ApiGatewayApi:

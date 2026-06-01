@@ -109,7 +109,7 @@ function AppContent() {
           <Route path="/partners" element={<Partners onDonateClick={handleDonateClick} />} />
           <Route path="/what-we-do" element={<WhatWeDo onDonateClick={handleDonateClick} />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/blog/:slug" element={<BlogPost onDonateClick={handleDonateClick} />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/subscription-return" element={<SubscriptionReturn />} />
           <Route path="/verify-email" element={<VerifyEmail onAuthClick={handleAuthClick} />} />

@@ -223,8 +223,8 @@ const Blog = () => {
 
           {/* Top Research */}
           <div className="border-t border-gray-300 mt-8 pt-8">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-6">Top Research</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-5">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-8">Top Research</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
               {[
                 { num: 1, title: 'Accelerating Efforts to End Child Marriage', source: 'COLUMBIA SIPA', date: 'Mar 2026', url: 'https://igp.sipa.columbia.edu/news/child-marriage-human-rights-crisis-and-costs-world-175-billion-year-new-research-provides' },
                 { num: 2, title: 'Marriage of Adolescent Girls Reduced by 80% in Nigeria', source: 'NATURE', date: '2026', url: 'https://www.nature.com/articles/d41586-026-00720-8' },

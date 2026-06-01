@@ -57,12 +57,23 @@ This applies to:
 | London School of Hygiene & Tropical Medicine | https://www.lshtm.ac.uk |
 | University of California San Diego (UCSD) | https://www.ucsd.edu |
 
-### Tier 5 — Government Data
+### Tier 5 — Major Foundations & Philanthropies
+| Organization | Website |
+|---|---|
+| Bill & Melinda Gates Foundation | https://www.gatesfoundation.org |
+| Ford Foundation | https://www.fordfoundation.org |
+| Malala Fund | https://malala.org |
+| Global Fund for Women | https://www.globalfundforwomen.org |
+| MacArthur Foundation | https://www.macfound.org |
+| NoVo Foundation | https://novofoundation.org |
+| Nike Foundation / Girl Effect | https://www.girleffect.org |
+
+### Tier 6 — Government Data
 | Organization | Website |
 |---|---|
 | Central Bureau of Statistics Nepal | https://cbs.gov.np |
 
-### Tier 6 — Reputable News & Advocacy
+### Tier 7 — Reputable News & Advocacy
 | Organization | Website |
 |---|---|
 | Al Jazeera | https://www.aljazeera.com |

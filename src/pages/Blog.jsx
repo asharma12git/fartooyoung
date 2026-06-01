@@ -17,6 +17,7 @@ const Blog = () => {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('All')
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0)
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -62,50 +63,81 @@ const Blog = () => {
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex overflow-x-auto gap-1 py-3 scrollbar-hide">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  activeFilter === cat
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="bg-gray-50 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+          {/* Category Tabs + Month Nav */}
+          <div className="flex items-end border-b border-gray-200 mb-8">
+            <div className="flex-1 flex justify-between overflow-x-auto scrollbar-hide pr-6">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => { setActiveFilter(cat); setCurrentMonthIndex(0) }}
+                  className={`pb-3 text-base font-medium whitespace-nowrap transition-colors border-b-2 ${
+                    activeFilter === cat
+                      ? 'border-orange-500 text-orange-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <div className="hidden lg:flex items-center justify-center gap-2 pb-3 pl-8 border-l border-gray-300 w-72">
+              <button
+                onClick={() => setCurrentMonthIndex(prev => Math.min(prev + 1, Math.max((posts.length > 0 ? 10 : 0) - 1, 0)))}
+                className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+              >
+                <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <span className="text-sm font-medium text-orange-600 min-w-[100px] text-center">{(() => { const filteredPosts = activeFilter === 'All' ? posts : posts.filter(p => p.category === activeFilter); const months = {}; filteredPosts.forEach(p => { const d = new Date(p.published_at); const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; if(!months[k]) months[k]=[]; months[k].push(p); }); const sorted = Object.keys(months).sort().reverse(); const cur = sorted[currentMonthIndex]; return cur ? new Date(cur+'-01').toLocaleDateString('en-US',{month:'short',year:'numeric'}) : ''; })()}</span>
+              <button
+                onClick={() => setCurrentMonthIndex(prev => Math.max(prev - 1, 0))}
+                className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+              >
+                <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </button>
+              {currentMonthIndex > 0 && (
+                <button onClick={() => setCurrentMonthIndex(0)} className="text-xs text-orange-600 font-medium ml-1 hover:text-orange-700">Latest</button>
+              )}
+            </div>
+          </div>
+
           {(() => {
             const filteredPosts = activeFilter === 'All' ? posts : posts.filter(p => p.category === activeFilter)
-            return loading ? (
-            <div className="text-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
-            </div>
-          ) : filteredPosts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-500 text-lg">No posts in this category yet.</p>
-            </div>
-          ) : (
+            
+            // Group posts by month
+            const months = {}
+            filteredPosts.forEach(post => {
+              const date = new Date(post.published_at)
+              const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+              if (!months[key]) months[key] = []
+              months[key].push(post)
+            })
+            const sortedMonths = Object.keys(months).sort().reverse()
+            const currentMonth = sortedMonths[currentMonthIndex] || sortedMonths[0]
+            const monthPosts = months[currentMonth] || []
+            const monthLabel = currentMonth ? new Date(currentMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : ''
+
+            return (
             <>
               {/* Grid + Sidebar */}
               <div className="flex flex-col lg:flex-row gap-0">
 
                 {/* Posts Grid */}
                 <div className="flex-1 pr-0 lg:pr-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2">
-                    {filteredPosts.map((post, index) => (
+                  {loading ? (
+                    <div className="text-center py-20">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
+                    </div>
+                  ) : monthPosts.length === 0 ? (
+                    <div className="text-center py-20">
+                      <p className="text-gray-500 text-lg">No posts in this category yet.</p>
+                    </div>
+                  ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 [&>*:nth-last-child(-n+2)]:border-b-0">
+                    {monthPosts.map((post, index) => (
                       <Link
                         key={post.post_id}
                         to={`/blog/${post.slug}`}
@@ -133,6 +165,7 @@ const Blog = () => {
                       </Link>
                     ))}
                   </div>
+                  )}
                 </div>
 
                 {/* Sidebar */}
@@ -187,6 +220,31 @@ const Blog = () => {
             </>
           )
           })()}
+
+          {/* Top Research */}
+          <div className="border-t border-gray-300 mt-8 pt-8">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-6">Top Research</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+              {[
+                { num: 1, title: 'Accelerating Efforts to End Child Marriage', source: 'Columbia SIPA', url: 'https://igp.sipa.columbia.edu/news/child-marriage-human-rights-crisis-and-costs-world-175-billion-year-new-research-provides' },
+                { num: 2, title: 'Marriage of Adolescent Girls Reduced by 80% in Nigeria', source: 'Nature', url: 'https://www.nature.com/articles/d41586-026-00720-8' },
+                { num: 3, title: 'International Funding to End Child Marriage: A Decade Review', source: 'Girls Not Brides', url: 'https://www.girlsnotbrides.org/en/learning-resources/resource-centre/international-funding-end-child-marriage-2015-2024-report/' },
+                { num: 4, title: 'Protecting Progress: Impact of Funding Cuts on Ending Child Marriage', source: 'UNFPA / UNICEF', url: 'https://www.unicef.org/documents/protecting-progress-global-impact-funding-cuts-ending-child-marriage-0' },
+                { num: 5, title: 'Bangladesh: 39% Surge in Child Marriage Due to Climate Change', source: 'IRC', url: 'https://www.rescue.org/press-release/bangladesh-irc-study-reveals-staggering-39-surge-child-marriage-due-climate-change' },
+                { num: 6, title: 'Meta-analysis of Evidence on Child Marriage in South Asia', source: 'UNICEF ROSA', url: 'https://www.unicef.org/rosa/reports/meta-synthesis-and-meta-analysis-evidence-child-marriage-south-asia' },
+                { num: 7, title: 'Prevalence of Intimate Partner Violence Among Child Marriage Victims', source: 'The Lancet', url: 'https://www.thelancet.com/journals/eclinm/article/PIIS2589-5370(25)00016-1/fulltext' },
+                { num: 8, title: 'The Investment Case for Prevention in South-East Asia', source: 'UNFPA', url: 'https://asiapacific.unfpa.org/en/publications/technical-brief-investment-case-prevention-adolescent-pregnancy-and-child-marriage' },
+              ].map(item => (
+                <a key={item.num} href={item.url} target="_blank" rel="noopener noreferrer" className="flex gap-3 group py-2 border-b border-gray-100">
+                  <span className="text-2xl font-bold text-gray-200 w-8 flex-shrink-0">{item.num}</span>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 group-hover:text-orange-600 transition-colors leading-snug">{item.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{item.source}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

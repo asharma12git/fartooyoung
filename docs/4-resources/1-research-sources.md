@@ -15,7 +15,9 @@ This applies to:
 | Organization | Website |
 |---|---|
 | UNICEF | https://www.unicef.org |
+| UNICEF Innocenti (Research) | https://www.unicef-irc.org |
 | UNFPA | https://www.unfpa.org |
+| UN Women | https://www.unwomen.org |
 | WHO | https://www.who.int |
 | World Bank | https://www.worldbank.org |
 
@@ -38,6 +40,11 @@ This applies to:
 | International Rescue Committee (IRC) | https://www.rescue.org |
 | Population Council | https://www.popcouncil.org |
 | World Vision International | https://www.worldvision.org |
+| ICRW (International Center for Research on Women) | https://www.icrw.org |
+| Equality Now | https://www.equalitynow.org |
+| BRAC | https://www.brac.net |
+| Pathfinder International | https://www.pathfinder.org |
+| CRANK (Child Marriage Research to Action Network) | https://www.girlsnotbrides.org/learning-resources/child-marriage-research-action-network/ |
 
 ### Tier 4 — Academic Institutions & Think Tanks
 | Organization | Website |
@@ -45,6 +52,10 @@ This applies to:
 | Columbia SIPA Institute of Global Politics | https://www.sipa.columbia.edu |
 | Center for Global Development (CGD) | https://www.cgdev.org |
 | Emory University | https://www.emory.edu |
+| J-PAL (MIT) | https://www.povertyactionlab.org |
+| Accelerate Hub (Oxford / Cape Town) | https://www.acceleratehub.org |
+| London School of Hygiene & Tropical Medicine | https://www.lshtm.ac.uk |
+| University of California San Diego (UCSD) | https://www.ucsd.edu |
 
 ### Tier 5 — Government Data
 | Organization | Website |

@@ -1,12 +1,27 @@
 # Social Media Automation
 
 ## Overview
-Automated posting to Twitter and Facebook when new blog content is published. Distributes blog posts to increase reach and drive traffic back to the website.
+Automated posting to Instagram, Facebook, and Twitter/X when a blog post is published. Reads from the same blog post data in DynamoDB (Plan 6) — one piece of content feeds blog + newsletter + social media. No separate content creation needed.
+
+**How it connects to Plan 6:**
+```
+Blog post published (Plan 6)
+       ↓ (triggers Social Media Lambda)
+Reads: title, excerpt, keywords, featured_image from blog-posts table
+       ↓
+Creates platform-specific posts:
+  • Instagram: Short caption + image + hashtags
+  • Facebook: Longer excerpt + link + image
+  • Twitter/X: Title + link + hashtags
+       ↓
+Posts via platform APIs
+```
 
 ## Prerequisites
-- Blog system deployed (Plan 6)
-- Twitter API v2 access (developer.twitter.com)
+- Blog system deployed (Plan 6 Steps 1-4)
+- Instagram Business account connected to Facebook Page
 - Facebook Graph API access (developers.facebook.com)
+- Twitter API v2 access (developer.twitter.com)
 
 ## Cost
 

@@ -1,155 +1,147 @@
-# Blog System (AI-Generated + Newsletter)
+# Plan 6: Blog System (Research + AI + Newsletter)
 
 ## Overview
-Complete blog system: public pages, AI content generation via AWS Bedrock, newsletter distribution via SES. Drives organic traffic, provides landing pages for Google Ad Grants, and gives AI search engines citable content.
+Complete content pipeline: automated research collection from reputable sources, AI-generated blog posts grounded in real data, newsletter distribution, and social media posting (Plan 7). One pipeline feeds all channels.
+
+**Status:** ⏳ In Progress (Steps 1-2 complete)
+**Priority:** HIGH — directly drives SEO traffic + Google Ad Grants landing pages
+**Cost:** ~$3-5/month
+**Effort:** 10-12 hours total
+**Dependencies:** None
 
 ## Prerequisites
-- AWS Bedrock access (Claude 3.5 Sonnet)
+- AWS Bedrock access (Claude 3.5 Sonnet) — enable in us-east-1
 - SES configured for sending
 - Pre-render script (`scripts/prerender.mjs`) for blog route SEO
+- Research sources defined (see `docs/5-resources/1-research-sources.md`)
 
 ## Cost
 
-| Service | Usage | Monthly Cost |
-|---------|-------|--------------|
-| AWS Bedrock (Claude 3.5 Sonnet) | 4 posts/month | $1.20 |
+| Service | What it does | Monthly Cost |
+|---------|-------------|--------------|
+| Lambda (Research) | Fetches articles from RSS feeds weekly | $0.00 (free tier) |
+| Lambda (Blog Generator) | Calls Bedrock to write posts | $0.00 (free tier) |
+| Bedrock Claude (input) | Reads ~5-10 full articles per post × 4 posts | $2-4 |
+| Bedrock Claude (output) | Writes 4 × 1500-word posts | $1.20 |
 | SES (Newsletter) | 1,000 emails/month | $0.10 |
-| Lambda | ~12 invocations | $0.00 |
-| DynamoDB | ~10K operations | $0.00 |
-| EventBridge | 4 events/month | $0.00 |
-| **Total** | | **$1.30/month** |
+| DynamoDB | Articles + posts + subscribers | $0.00 (free tier) |
+| EventBridge | Weekly triggers | $0.00 (free tier) |
+| **Total** | | **~$3-5/month** |
 
 ## Checklist
-- [ ] Step 1: Blog Frontend (public pages)
-- [ ] Step 2: Blog Backend + Role System
-- [ ] Step 3: AI Content Generation
-- [ ] Step 4: Newsletter System
-- [ ] Step 5: Admin Panel
+
+### Phase 1: Foundation (Done)
+- [x] Step 1: Blog Frontend (public pages)
+- [x] Step 2: Blog Backend + Role System
+
+### Phase 2: Content Pipeline
+- [ ] Step 3: Research Pipeline (RSS feeds → DynamoDB)
+- [ ] Step 4: AI Content Generation (Claude writes posts using research)
+- [ ] Step 5: Newsletter System
+
+### Phase 3: Management
+- [ ] Step 6: Admin Panel
 
 ---
 
-## Step 1: Blog Frontend ⬜
+## Step 1: Blog Frontend ✅
 
-**Benefit:** A public-facing blog gives us unlimited pages to rank for long-tail keywords, provides landing pages for Google Ad Grants campaigns, and gives AI search engines citable content about child marriage. Each post is a new entry point for organic traffic — compounding over time.
+**Benefit:** A public-facing blog ("Stories") gives us unlimited pages to rank for long-tail keywords, provides landing pages for Google Ad Grants campaigns, and gives AI search engines citable content.
 
-**Problem:** With only 4 static pages, we have extremely limited keyword coverage and no fresh content for search engines to re-crawl. No way to target long-tail searches like "child marriage statistics India 2025" or "how to help child brides."
+**Problem:** With only 4 static pages, we have extremely limited keyword coverage and no fresh content for search engines to re-crawl.
+
+**Implementation:** Complete. See `src/pages/Blog.jsx` and `src/pages/BlogPost.jsx`. Page titled "Stories" at `/blog` URL. Full-screen hero image, card grid, progress bar, author bio, donate CTA, FAQ section.
+
+## Step 2: Blog Backend + Role System ✅
+
+**Benefit:** Serverless blog backend with draft/published workflow. Role system controls admin access.
+
+**Problem:** Without backend, no way to manage posts without code deploys.
+
+**Implementation:** Complete. BlogPostsTable in DynamoDB with slug GSI. 6 Lambda endpoints (CRUD + publish). Role field added to Users table and JWT. Admin role set for `avinashsharma.np@gmail.com`. API path: `/blog/posts/slug/{slug}` for public, `/blog/posts/{id}` for admin operations.
+
+## Step 3: Research Pipeline ⬜
+
+**Benefit:** A Lambda that automatically fetches the latest articles from reputable sources (UNICEF, WHO, Girls Not Brides, etc.) via RSS feeds. Provides real, current data for the blog sidebar AND feeds the AI generator with factual content to cite. Zero AI cost — just data fetching.
+
+**Problem:** Without automated research, blog posts would rely on AI's training data (potentially outdated) or require manual research for every post. The blog sidebar would have no "Latest Research" section linking to authoritative sources.
 
 **Implementation:**
 
-### Blog Listing Page (`/blog`)
-- Card grid layout (2 columns desktop, 1 mobile)
-- Each card shows: featured image, title, excerpt (2 lines), date, reading time
-- Category/topic filter tabs (e.g., "Statistics", "Stories", "Advocacy", "Education")
-- Donate CTA between post rows (every 4-6 posts)
-- Newsletter signup banner at bottom
+### Research Lambda: `research-fetcher.js`
+- Triggered weekly by EventBridge (same day as blog generator, but runs first)
+- Fetches RSS feeds from tiered sources (see `docs/5-resources/1-research-sources.md`)
+- Filters articles by keywords: "child marriage", "gender-based violence", "girls education", "forced marriage"
+- For each new article: fetches full text from the article URL
+- Deduplication: checks if URL already exists in DynamoDB → skips if yes
+- Saves to DynamoDB: title, source, tier, full_text, url, date, keywords
 
-### Individual Post Page (`/blog/:slug`)
+### DynamoDB Table: `fartooyoung-{env}-research-articles`
+- PK: `article_id` (UUID)
+- GSI: `url` (for deduplication)
+- Fields: `title`, `source`, `tier`, `url`, `full_text`, `excerpt`, `date`, `keywords`, `fetched_at`
 
-| Feature | Purpose |
-|---------|---------|
-| Reading time estimate | Sets expectations, reduces bounce rate |
-| Table of contents | Navigation for long posts, improves time-on-page |
-| Scroll progress bar | Visual indicator of reading progress, keeps readers engaged |
-| Author bio with photo | E-E-A-T signal for Google — "By Avinash Sharma, Founder" |
-| Inline donate CTA | Appears after emotional peak — "Your $25 keeps a girl in school for 1 month" |
-| Sticky donate button | Always visible as reader scrolls |
-| Related posts (3) | Keeps people on site, reduces bounce |
-| Social share buttons | Facebook, Twitter/X, LinkedIn, copy link |
-| FAQ section at bottom | AI engines (ChatGPT/Perplexity) cite FAQ content heavily (still valuable for GEO even though Google removed FAQ rich results May 2026) |
-| Newsletter signup | Captures email at end of post when engagement is highest |
-| Internal links (2-3) | Links to What We Do, Donate, Partners — spreads SEO authority |
-| Real fieldwork photos | Nepal/Bangladesh images from existing carousel assets |
+### RSS Sources to Fetch
+| Tier | Source | RSS Feed |
+|------|--------|----------|
+| 1 | UNICEF | unicef.org/rss |
+| 1 | UNFPA | unfpa.org/rss |
+| 1 | WHO | who.int/feeds |
+| 1 | World Bank | worldbank.org/rss |
+| 3 | Girls Not Brides | girlsnotbrides.org/rss |
+| 3 | Human Rights Watch | hrw.org/rss |
+| 3 | Save the Children | savethechildren.org/rss |
 
-### Design
-- Dark theme matching rest of site
-- Mobile-first responsive
-- Story-first approach (lead with human story, not statistics)
-- Impact numbers visible near CTAs
+### Blog Sidebar Display
+- Blog listing page shows "Latest Research" panel
+- Displays articles ordered by date (newest first)
+- Each item: title (hyperlinked to source), organization name, date
+- Grouped by tier or shown as flat list
 
-### New Files
-- `src/pages/Blog.jsx` — listing page
-- `src/pages/BlogPost.jsx` — individual post page
-- `src/components/BlogCard.jsx` — reusable post card
-- `src/components/TableOfContents.jsx` — auto-generated from headings
-- `src/components/ReadingProgress.jsx` — scroll progress bar
-- Routes: `/blog` and `/blog/:slug` in `App.jsx`
-- SEO component on each page (dynamic title/description per post)
-- Add `/blog` to `public/sitemap.xml` and `scripts/prerender.mjs`
+### Key Behaviors
+- **No new articles this week?** → Nothing changes, existing articles remain
+- **Duplicate URL?** → Skipped automatically
+- **Old articles?** → Stay in database, move down the list. Still available for AI context.
+- **Article relevant for months?** → Stays visible until newer articles push it down
 
 ### Effort
 2-3 hours
 
-## Step 2: Blog Backend + Role System ⬜
+## Step 4: AI Content Generation ⬜
 
-**Benefit:** A serverless blog backend stores posts in DynamoDB with draft/published workflow, enabling content management without a traditional CMS or database server. A role system (`admin`/`donor`) controls who can publish/edit posts vs who can only read them.
-
-**Problem:** Without a backend, blog content would need to be hardcoded in React components — no way to add posts without code deploys. Without roles, any logged-in user could potentially access admin features.
-
-**Implementation:**
-
-### Role System (add to existing Users table)
-- Add `role` field to Users table: `"admin"` or `"donor"` (default: `"donor"`)
-- Manually set your account (`avinashsharma.np@gmail.com`) to `role: "admin"` in DynamoDB
-- Login Lambda includes `role` in the JWT token
-- New middleware: `checkAdmin(token)` — returns 403 if not admin
-- Frontend stores role in user state, conditionally shows admin features
-
-### Blog DynamoDB Table: `fartooyoung-{env}-blog-posts`
-- PK: `post_id` (UUID)
-- Fields: `title`, `slug`, `excerpt`, `content`, `author`, `status` (draft/published), `published_at`, `keywords`, `word_count`, `category`, `faq` (array), `featured_image`, `reading_time`, `created_at`
-
-### Lambda Functions
-- `get-blog-posts.js` — GET /blog/posts (public, returns published only)
-- `get-blog-post.js` — GET /blog/posts/:slug (public, single post)
-- `create-blog-post.js` — POST /blog/posts (admin only, creates draft)
-- `update-blog-post.js` — PUT /blog/posts/:id (admin only, edit draft)
-- `publish-blog-post.js` — POST /blog/posts/:id/publish (admin only)
-- `delete-blog-post.js` — DELETE /blog/posts/:id (admin only)
-
-### API Routes
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/blog/posts` | Public | List published posts |
-| GET | `/blog/posts/:slug` | Public | Get single post |
-| POST | `/blog/posts` | Admin | Create draft |
-| PUT | `/blog/posts/:id` | Admin | Edit post |
-| POST | `/blog/posts/:id/publish` | Admin | Publish draft |
-| DELETE | `/blog/posts/:id` | Admin | Delete post |
-
-### Add to `template.yaml`
-- New DynamoDB table resource
-- New Lambda functions (6)
-- New API Gateway routes
-- `BLOG_TABLE` environment variable added to Globals
-
-### Effort
-2-3 hours
-
-## Step 3: AI Content Generation ⬜
-
-**Benefit:** AWS Bedrock is a managed AI service that provides access to foundation models (like Claude). Using it to generate blog drafts produces SEO-optimized, factual content at scale without hiring writers — while maintaining human oversight via the draft→review→publish workflow.
+**Benefit:** AWS Bedrock (Claude) reads the full text of this week's research articles and writes a 1500-word blog post grounded in real, current data with working hyperlinks to sources. Produces factual, SEO-optimized content without hiring writers.
 
 **Problem:** Writing 4 quality blog posts per month manually is time-consuming. Without consistent content, organic traffic growth stalls and Google Ad Grants has insufficient landing pages.
 
 **Implementation:**
 
-Lambda: `blog-generator.js`
+### Blog Generator Lambda: `blog-generator.js`
 - Runtime: Node.js 18, timeout: 5 min, memory: 1024 MB
-- Calls AWS Bedrock (Claude 3.5 Sonnet)
-- Generates 1500-2000 word post targeting a keyword from cluster list
-- Saves as "draft" in DynamoDB
-- EventBridge rule: Trigger every Monday 10am UTC
+- Triggered by EventBridge every Monday (AFTER research-fetcher completes)
+- Pulls latest research articles from DynamoDB (last 2-4 weeks)
+- Picks a keyword from content cluster list
+- Sends to Claude: full article texts + writing instructions
+- Saves output as "draft" in blog-posts table
 
-Prompt engineering (critical for Google E-E-A-T compliance):
+### Prompt Structure
+```
+Context: Here are recent articles about [keyword topic]:
+[Article 1 - full text + URL]
+[Article 2 - full text + URL]
+[Article 3 - full text + URL]
+
+Instructions:
+- Write a 1500-word blog post about [keyword]
 - Write as "Avinash Sharma, Founder of Far Too Young"
-- Include first-person experience references
-- Cite real statistics with sources
-- Include 2-3 internal links to site pages
-- Generate FAQ section (3-5 questions)
-- Target specific keyword from content cluster
+- Include first-person references to fieldwork in Nepal/Bangladesh
+- Cite specific statistics from the articles above with hyperlinks
+- Include 2-3 internal links to fartooyoung.org pages
+- Generate 3-5 FAQ questions at the end
 - Structure with clear H2/H3 headings
+- Tone: authoritative but accessible
+```
 
-Content clusters:
+### Content Clusters
 
 | Pillar | Keywords |
 |--------|----------|
@@ -158,110 +150,141 @@ Content clusters:
 | Girls Education | developing countries, scholarships, impact on child marriage |
 | Advocacy | how to help, volunteer, donate, policy changes |
 
-Effort: 2 hours
+### Google E-E-A-T Compliance
 
-## Step 4: Newsletter System ⬜
+| Requirement | How We Handle It |
+|-------------|-----------------|
+| Human oversight | Draft → review → publish workflow |
+| Author attribution | "By Avinash Sharma, Founder" on every post |
+| Experience signals | First-person references to fieldwork |
+| Expertise | Real statistics from Tier 1-3 sources with citations |
+| Trustworthiness | Nonprofit org, verifiable sources, working hyperlinks |
+| Not mass-produced | 4 posts/month max, each reviewed |
 
-**Benefit:** A newsletter is an email distribution system that sends updates to subscribers when new content is published. It drives repeat traffic, builds community, and keeps donors engaged between donations.
+### Effort
+2-3 hours
+
+## Step 5: Newsletter System ⬜
+
+**Benefit:** An email distribution system that notifies subscribers when new content is published. Drives repeat traffic, builds community, and keeps donors engaged between donations.
 
 **Problem:** Without a newsletter, published blog posts rely entirely on search traffic for discovery. Existing supporters have no way to stay informed unless they manually revisit the site.
 
 **Implementation:**
 
-DynamoDB table: `fartooyoung-{env}-newsletter`
+### DynamoDB Table: `fartooyoung-{env}-newsletter`
 - PK: `email`
 - Fields: `name`, `status` (pending/active/unsubscribed), `subscribed_at`
 
-Lambda functions:
+### Lambda Functions
 - `newsletter-subscribe.js` — POST /newsletter/subscribe (double opt-in)
 - `newsletter-unsubscribe.js` — POST /newsletter/unsubscribe
 - `newsletter-sender.js` — triggered when post published, sends via SES
 
-Frontend: Subscribe form in Footer + Blog page sidebar.
+### Email Template
+- Professional HTML email (dark theme matching site)
+- Logo, post title, excerpt, featured image, "Read Full Article" CTA
+- Social links in footer, unsubscribe link (required by law)
 
-Effort: 1-2 hours
+### Frontend
+- Subscribe form in Footer + Blog page sidebar
+- Double opt-in: confirmation email → click to activate
 
-## Step 5: Admin Panel ⬜
+### Effort
+2 hours
 
-**Benefit:** A dedicated admin page (`/admin`) gives the site owner a clean interface to manage blog posts — view drafts, edit content, publish, and delete — without touching the database directly. Separate from the donor dashboard to keep concerns clean.
+## Step 6: Admin Panel ⬜
 
-**Problem:** Without an admin UI, managing blog posts requires logging into the AWS DynamoDB console — not user-friendly and error-prone. Also no way to delegate content management to team members in the future.
+**Benefit:** A dedicated admin page (`/admin`) for managing blog posts — view drafts, edit, publish, delete — without touching DynamoDB directly.
+
+**Problem:** Without admin UI, managing posts requires AWS console access. Can't delegate to team members.
 
 **Implementation:**
 
 ### Route: `/admin` (admin role only)
-- Protected route: redirects to `/dashboard` if `user.role !== 'admin'`
-- Header shows "Admin Panel" link only for admin users
+- Protected route: redirects to `/dashboard` if not admin
+- "Admin Panel" link in header (only visible to admins)
 
-### Admin Blog Management UI
+### Features
 - List all posts (drafts + published) with status badges
-- "New Post" button → form with title, content (markdown or rich text), excerpt, category, keywords
-- "Edit" button → same form pre-filled
-- "Publish" / "Unpublish" toggle
-- "Delete" with confirmation
+- "New Post" button → form (title, content, excerpt, category, keywords)
+- "Edit" / "Publish" / "Unpublish" / "Delete"
 - Preview before publishing
 
-### Admin Panel Tabs (future-proof for Plan 8)
-- **Blog** — manage posts (this step)
-- **Donations** — view all donations (Plan 8, future)
-- **Users** — manage users (Plan 8, future)
-- **Settings** — site config (Plan 8, future)
-
-### User Experience Flow
-```
-Admin logs in → sees "Admin Panel" link in header
-  → /admin shows blog management
-  → Clicks "New Post" or reviews AI-generated drafts
-  → Edits if needed → clicks "Publish"
-  → Post appears on /blog immediately
-
-Regular user logs in → no "Admin Panel" link visible
-  → /admin route returns redirect to /dashboard
-```
+### Future Tabs (Plan 8)
+- Donations management
+- User management
+- Site settings
 
 ### Effort
 2 hours
 
 ---
 
-## Architecture
+## Full Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  WEEKLY: EventBridge triggers blog-generator Lambda          │
-│  → Bedrock (Claude) generates SEO-optimized draft            │
-│  → Saves to DynamoDB with status: "draft"                    │
+│  WEEKLY (Monday):                                            │
+│                                                              │
+│  1. Research Lambda fetches RSS feeds                         │
+│     → Filters for child marriage / GBV keywords              │
+│     → Fetches full article text                              │
+│     → Deduplicates (skip if URL exists)                      │
+│     → Saves new articles to DynamoDB                         │
+│     → Blog sidebar updates automatically                     │
+│                                                              │
+│  2. Blog Generator Lambda (after research completes)         │
+│     → Reads latest research articles from DynamoDB           │
+│     → Sends full text + instructions to Claude               │
+│     → Claude writes 1500-word post with real citations       │
+│     → Saves as DRAFT in blog-posts table                     │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  HUMAN REVIEW: Owner reviews draft → flips to "published"    │
+│  HUMAN REVIEW (5 min):                                       │
+│  Admin opens /admin → reviews draft → clicks "Publish"       │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  AUTO: Post appears on /blog → Newsletter sends              │
-│  → CloudFront invalidated → Pre-rendered HTML updated        │
+│  AUTO (triggered by publish):                                │
+│  → Post appears on /blog                                     │
+│  → Newsletter sends to subscribers                           │
+│  → Social Media posts to Instagram/Facebook (Plan 7)         │
+│  → Google indexes new page (SEO traffic)                     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Google Compliance (E-E-A-T)
+## Data Flow
 
-| Requirement | How We Handle It |
-|-------------|-----------------|
-| Human oversight | Draft → review → publish workflow |
-| Author attribution | "By Avinash Sharma, Founder" on every post |
-| Experience signals | First-person references to fieldwork in Nepal/Bangladesh |
-| Expertise | Real statistics with cited sources |
-| Trustworthiness | Nonprofit org, consistent with site mission |
-| Not mass-produced | 4 posts/month max, each reviewed |
+```
+Reputable Sources (UNICEF, WHO, etc.)
+       ↓ (RSS feeds)
+Research Lambda ($0)
+       ↓
+DynamoDB (research-articles table)
+       ↓ (full article text as context)
+AI Generator (Claude via Bedrock, $3-5/mo)
+       ↓
+DynamoDB (blog-posts table, status: "draft")
+       ↓ (admin publishes)
+Published Blog Post
+       ↓
+  ├── /blog page (SEO traffic)
+  ├── Newsletter (email subscribers)
+  ├── Social Media — Plan 7 (Instagram, Facebook)
+  ├── Blog sidebar (research links for credibility)
+  └── Google Ad Grants (landing page)
+```
 
 ## GEO Optimization (AI Search Engines)
 
 Each post structured for ChatGPT/Perplexity citation:
 - Clear factual statements in first paragraph
-- Statistics with sources
-- FAQ section with structured data (JSON-LD)
+- Real statistics with cited sources (hyperlinked)
+- FAQ section at bottom
 - Quotable one-liners
 - Consistent entity references ("Far Too Young, a US-based nonprofit...")
 
@@ -284,30 +307,12 @@ Each post structured for ChatGPT/Perplexity citation:
 | Metric | Target (3 months) |
 |--------|-------------------|
 | Blog posts published | 12 |
+| Research articles indexed | 50+ |
 | Organic blog traffic | 300+ visits/month |
 | Email subscribers | 100+ |
 | Email open rate | 20-30% |
 | Google Ad Grants landing pages | 8+ |
-| AI citations (ChatGPT/Perplexity) | Monitoring |
-| AWS costs | <$1.50/month |
-
-## Files Created/Modified
-
-| File | Purpose |
-|------|---------|
-| `src/pages/Blog.jsx` | Blog listing page |
-| `src/pages/BlogPost.jsx` | Individual post page |
-| `src/App.jsx` | Add /blog routes |
-| `backend/lambda/blog/get-blog-posts.js` | List published posts |
-| `backend/lambda/blog/get-blog-post.js` | Get single post |
-| `backend/lambda/blog/blog-generator.js` | AI content generation |
-| `backend/lambda/blog/publish-blog-post.js` | Publish draft |
-| `backend/lambda/newsletter/subscribe.js` | Newsletter signup |
-| `backend/lambda/newsletter/unsubscribe.js` | Newsletter opt-out |
-| `backend/lambda/newsletter/sender.js` | Send newsletter |
-| `backend/template.yaml` | New resources |
-| `public/sitemap.xml` | Add /blog |
-| `scripts/prerender.mjs` | Add /blog route |
+| AWS costs | <$5/month |
 
 ---
 

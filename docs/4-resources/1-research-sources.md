@@ -58,15 +58,19 @@ This applies to:
 | University of California San Diego (UCSD) | https://www.ucsd.edu |
 
 ### Tier 5 — Major Foundations & Philanthropies
-| Organization | Website |
-|---|---|
-| Bill & Melinda Gates Foundation | https://www.gatesfoundation.org |
-| Ford Foundation | https://www.fordfoundation.org |
-| Malala Fund | https://malala.org |
-| Global Fund for Women | https://www.globalfundforwomen.org |
-| MacArthur Foundation | https://www.macfound.org |
-| NoVo Foundation | https://novofoundation.org |
-| Nike Foundation / Girl Effect | https://www.girleffect.org |
+| Organization | Website | Focus Area |
+|---|---|---|
+| Bill & Melinda Gates Foundation | https://www.gatesfoundation.org | Child marriage, girls' education, health |
+| Ford Foundation | https://www.fordfoundation.org | Gender equity, women's rights |
+| Malala Fund | https://malala.org | Girls' education |
+| Global Fund for Women | https://www.globalfundforwomen.org | Women's rights, GBV |
+| MacArthur Foundation | https://www.macfound.org | Girls' education, reproductive rights |
+| NoVo Foundation | https://novofoundation.org | Ending violence against girls |
+| Nike Foundation / Girl Effect | https://www.girleffect.org | Adolescent girls programs |
+| Obama Foundation | https://www.obama.org | Girls' education, leadership |
+| Clooney Foundation for Justice | https://cfj.org | Child marriage prosecution, legal accountability |
+| Thorn (Ashton Kutcher) | https://www.thorn.org | Child trafficking, exploitation |
+| Clinton Foundation | https://www.clintonfoundation.org | Girls & women, global health |
 
 ### Tier 6 — Government Data
 | Organization | Website |

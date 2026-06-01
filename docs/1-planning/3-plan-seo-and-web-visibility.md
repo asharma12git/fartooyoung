@@ -57,7 +57,10 @@ $0/month (all free tools)
 
 **Problem:** Without a sitemap, Google may miss pages or crawl them slowly. Without robots.txt, private pages (dashboard, payment) could appear in search results.
 
-**Implementation:** `public/sitemap.xml` lists 4 public URLs with priority weights. `public/robots.txt` allows all crawlers, blocks `/dashboard`, `/verify-email`, `/payment-success`, `/subscription-return`.
+**Implementation:** `public/sitemap.xml` lists public URLs with priority weights. `public/robots.txt` allows all crawlers, blocks `/dashboard`, `/verify-email`, `/payment-success`, `/subscription-return`.
+- Sitemap URL: https://www.fartooyoung.org/sitemap.xml
+- Robots.txt URL: https://www.fartooyoung.org/robots.txt
+- Submitted to Google Search Console (see Step 4)
 
 ## Step 4: Google Search Console ✅
 

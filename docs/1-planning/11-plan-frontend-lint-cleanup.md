@@ -1,21 +1,26 @@
-# Plan 11: Frontend Lint Cleanup
+# Frontend Lint Cleanup
 
-## Priority: Low
-## Status: Backlog
-## Estimated Effort: 1-2 hours
+## Overview
+Fix 186 lint errors across the frontend codebase. Currently non-blocking (pipeline warns but deploys anyway). Clean lint = easier to catch real bugs in future PRs.
+
+**Status:** 📋 Backlog  
+**Priority:** Low  
+**Effort:** 1-2 hours  
+**Dependencies:** None
+
+## Prerequisites
+- `npm run lint` configured in package.json
+- ESLint + React plugin installed
+
+## Checklist
+- [ ] Step 1: Fix lint errors file by file
+- [ ] Step 2: Make pipeline lint blocking
 
 ---
 
-## Why
+## Step 1: Fix lint errors file by file
 
-- 186 lint errors exist across the frontend codebase
-- Currently non-blocking (pipeline warns but deploys anyway)
-- Clean lint = easier to catch real bugs in future PRs
-- Professional code quality standard
-
----
-
-## Common Issues (by count)
+**Common issues (by count):**
 
 | Error | Count | Fix |
 |-------|-------|-----|
@@ -26,14 +31,16 @@
 | `no-undef` (process) | 1 | Add `/* global process */` to vite.config.js |
 | `react-hooks/exhaustive-deps` | 2 | Add missing deps or suppress with comment |
 
----
-
-## Approach
-
+**Approach:**
 1. Fix file by file, starting with smallest files
 2. Run `npm run lint` after each file to verify
 3. Test the app still works after changes
-4. Once clean, change pipeline lint to blocking (`npm run lint` without `|| echo`)
+
+## Step 2: Make pipeline lint blocking
+
+Once clean, change pipeline lint to blocking:
+- Remove `|| echo` from lint command in buildspec
+- Future PRs with lint errors will fail the build
 
 ---
 

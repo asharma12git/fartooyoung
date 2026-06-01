@@ -1,92 +1,81 @@
-# Far Too Young - E-commerce Planning
+# E-commerce Shop
 
 ## Overview
-Add merchandise sales capability to generate additional revenue for the organization. Evaluates Shopify integration (quick MVP) vs full AWS-native solution (long-term).
+Add merchandise sales capability to generate additional revenue. Evaluates Shopify integration (quick MVP) vs full AWS-native solution (long-term). Start with print-on-demand to test demand.
 
 **Status:** 📋 Planned  
-**Dependencies:** None (independent of blog/social systems)  
-**Priority:** Low (future revenue stream)
+**Priority:** Low (future revenue stream)  
+**Dependencies:** None (independent of blog/social systems)
+
+## Prerequisites
+- Website fully functional with donation system
+- Market demand validated (could use PWA analytics)
+
+## Checklist
+- [ ] Step 1: Print-on-Demand MVP
+- [ ] Step 2: Shopify Integration
+- [ ] Step 3: AWS-Native Migration (Future)
 
 ---
 
-## Future Merchandise Sales Strategy
+## Step 1: Print-on-Demand MVP
 
-### Discussion Date: November 15, 2025
+Test market demand with zero inventory risk:
+- **Printful/Printify:** No inventory, automatic fulfillment
+- **Teespring/Spring:** Built-in storefront options
+- **Gooten:** Good for custom designs
 
-## E-commerce Platform Options
+**Product mix:** T-shirts, hoodies with mission messaging, tote bags, water bottles, stickers, pins, educational materials.
 
-### 1. Shopify Integration (Recommended for MVP)
+**Revenue model:** Higher margins than typical retail (supporters expect premium). Bundle with donation options ("Round up for impact"). Limited edition items for campaigns.
+
+## Step 2: Shopify Integration
+
+**Why Shopify for MVP:**
 - Nonprofit-friendly pricing
 - Easy React integration via Shopify Buy SDK
 - Handles payments, inventory, shipping automatically
 - Professional checkout experience
 - Built-in analytics and reporting
 
-### 2. Full AWS E-commerce Solution (Long-term Goal)
-Following Amazon's architecture model:
-
-#### Core AWS Services:
-- **S3 + CloudFront**: Product images, static assets
-- **API Gateway + Lambda**: All business logic (cart, checkout, orders)
-- **DynamoDB**: Products, inventory, orders, customers
-- **Cognito**: User authentication and profiles
-- **SES**: Order confirmations, shipping notifications
-
-#### Payment Processing:
-- **Lambda functions** to handle Stripe/PayPal webhooks
-- **Secrets Manager** for API keys
-- **Step Functions** for complex order workflows
-
-#### Advanced Features:
-- **Elasticsearch**: Product search and filtering
-- **SNS/SQS**: Order processing queues
-- **CloudWatch**: Analytics and monitoring
-- **Personalize**: Product recommendations
-
-### 3. Print-on-Demand Services
-- **Printful/Printify**: No inventory risk, automatic fulfillment
-- **Teespring/Spring**: Built-in storefront options
-- **Gooten**: Good for custom designs
-
-## Product Strategy
-
-### Recommended Product Mix:
-- T-shirts, hoodies with mission messaging
-- Tote bags, water bottles (practical items)
-- Stickers, pins (low-cost, high-margin)
-- Educational materials/books
-
-### Revenue Model:
-- Higher margins than typical retail (supporters expect to pay premium)
-- Bundle with donation options ("Round up for impact")
-- Limited edition items for campaigns
-
-## Technical Integration Plan
-
-### Phase 1: MVP (6-12 months)
-- Start with print-on-demand to test demand
-- Shopify integration with existing React app
+**Implementation:**
 - Separate `/shop` section maintaining consistent branding
 - Integrate with current donation system
+- Shopify Buy SDK in React frontend
 
-### Phase 2: AWS Migration (1-2 years)
-- Custom AWS e-commerce solution
-- Full control over customer data and relationships
-- Advanced analytics and personalization
-- Integration with existing AWS infrastructure
+## Step 3: AWS-Native Migration (Future)
 
-## Benefits of Full AWS Solution:
-- Single vendor relationship
-- Integrated security and monitoring
-- Scales automatically
-- Cost-effective for nonprofits
-- Complete control over data and customer relationships
+Full AWS e-commerce solution following Amazon's architecture model:
 
-## Next Steps:
-1. Focus on current website completion
-2. Test market demand with simple merchandise
-3. Evaluate Shopify vs AWS based on growth
-4. Plan migration strategy if needed
+**Core Services:**
+- S3 + CloudFront: Product images, static assets
+- API Gateway + Lambda: Cart, checkout, orders
+- DynamoDB: Products, inventory, orders, customers
+- Cognito: User authentication
+- SES: Order confirmations, shipping notifications
+
+**Payment:** Lambda functions for Stripe/PayPal webhooks, Secrets Manager for API keys, Step Functions for order workflows.
+
+**Advanced:** Elasticsearch (search/filtering), SNS/SQS (order queues), Personalize (recommendations).
+
+**Benefits:** Single vendor, integrated security, auto-scaling, cost-effective, complete data control.
 
 ---
-*This document will be updated as e-commerce plans develop*
+
+## Platform Comparison
+
+| Option | Monthly Cost | App Store Fees | Dev Time |
+|--------|-------------|----------------|----------|
+| Print-on-Demand | $0 | $0 | 1-2 hours |
+| Shopify | ~$30 | $0 | 1-2 weeks |
+| AWS-Native | $10-40 | $0 | 6-8 weeks |
+
+## Timeline
+
+- **Phase 1 (now):** Focus on current website completion
+- **Phase 2 (6-12 months):** Test demand with print-on-demand + Shopify
+- **Phase 3 (1-2 years):** Evaluate AWS migration based on growth
+
+---
+
+*Last updated: November 15, 2025*

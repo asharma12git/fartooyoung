@@ -1,13 +1,22 @@
-# Donation Optimization Plan
+# Donor Retention & Tracking
 
 ## Overview
 Privacy-compliant visitor tracking, A/B testing of donation prompts, and automated donor retention emails to increase conversion rates and lifetime donor value.
 
-**Status:** 📋 Partially Superseded  
-**Note:** Basic visitor tracking (page views, clicks, scroll, sessions) is now handled by GA4 + Microsoft Clarity (deployed in Plan 3). This plan only remains relevant for *custom* donor-specific tracking (A/B testing donation prompts, personalized retention emails based on visit count) which GA4/Clarity cannot do.  
-**Dependencies:** None (works with existing site)  
-**Estimated Cost:** $0.00-0.40/month  
-**Estimated Effort:** 8-10 hours
+**Status:** 📋 Partially Superseded — basic visitor tracking (page views, clicks, scroll, sessions) now handled by GA4 + Microsoft Clarity (Plan 3). This plan only remains relevant for *custom* donor-specific tracking (A/B testing donation prompts, personalized retention emails based on visit count) which GA4/Clarity cannot do.  
+**Cost:** $0.00-0.40/month (all within free tier)  
+**Effort:** 8-10 hours  
+**Dependencies:** None (works with existing site)
+
+## Prerequisites
+- GA4 + Clarity deployed (Plan 3) for basic analytics
+- SES configured for transactional emails
+- Stripe webhook handling donations
+
+## Checklist
+- [ ] Step 1: Cookie Consent + Visitor Tracking
+- [ ] Step 2: A/B Testing Donation Prompts
+- [ ] Step 3: Donor Retention Emails
 
 ---
 
@@ -32,12 +41,7 @@ Privacy-compliant visitor tracking, A/B testing of donation prompts, and automat
 ┌─────────────────────────────────────────────────────────────┐
 │         DONATION OPTIMIZER (Lambda)                           │
 │  - Analyzes engagement (visits, time on site)               │
-│  - A/B tests different messages:                            │
-│    A: "Help 1 girl escape child marriage"                   │
-│    B: "Join 500 donors fighting child marriage"             │
-│  - A/B tests donation amounts:                              │
-│    A: $5, $10, $25                                          │
-│    B: $10, $25, $50                                         │
+│  - A/B tests different messages and amounts                 │
 │  - Shows prompt at optimal time (3+ visits, 5+ min)         │
 │  - Tracks conversion by variant                            │
 └────────────────────┬────────────────────────────────────────┘
@@ -47,43 +51,17 @@ Privacy-compliant visitor tracking, A/B testing of donation prompts, and automat
 │         DONOR RETENTION (EventBridge + Lambda)               │
 │  - Immediate: Thank you email                               │
 │  - Monthly: Impact report to recurring donors               │
-│  - Yearly: Anniversary email ("1 year of support!")        │
+│  - Yearly: Anniversary email                                │
 │  - 90 days inactive: Re-engagement campaign                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
+## Step 1: Cookie Consent + Visitor Tracking (4 hours)
 
-## New AWS Resources
-
-**DynamoDB Tables:**
-- `user-behavior` — Anonymous visitor tracking (TTL for auto-cleanup)
-- `ab-test-results` — Variant assignments and conversion data
-
-**Lambda Functions:**
-- `user-tracking` — Process tracking events, calculate engagement scores
-- `donation-optimizer` — Return optimal prompt based on user behavior
-- `donor-retention` — Send retention emails on schedule
-
-**API Gateway Endpoints:**
-- `POST /track` — Receive tracking events from frontend
-- `GET /donation-prompt` — Return personalized prompt for visitor
-
-**EventBridge Rules:**
-- `monthly-impact-report` — 1st of month, send to recurring donors
-- `donor-anniversary-check` — Daily, check for milestones
-- `re-engagement-check` — Weekly, find lapsed donors (90+ days)
-
-**Frontend Components:**
-- Cookie consent banner (GDPR/CCPA compliant)
-- Tracking script (only fires with consent)
-- Smart donation prompt (modal/banner)
-
----
-
-## Implementation Steps
-
-### Phase 1: Visitor Tracking (4 hours)
+**New AWS Resources:**
+- DynamoDB table: `user-behavior` (TTL for auto-cleanup after 90 days)
+- Lambda: `user-tracking` — process events, calculate engagement scores
+- API Gateway: `POST /track` — receive tracking events from frontend
 
 **Cookie Consent Banner:**
 - Show on first visit, store preference in localStorage
@@ -92,7 +70,6 @@ Privacy-compliant visitor tracking, A/B testing of donation prompts, and automat
 
 **Tracking Script (frontend):**
 ```javascript
-// Only track if consent given
 if (localStorage.getItem('tracking-consent') === 'true') {
   // Generate anonymous ID (UUID, no PII)
   // Track: page views, time spent, scroll depth, visit count
@@ -100,46 +77,39 @@ if (localStorage.getItem('tracking-consent') === 'true') {
 }
 ```
 
-**Backend:**
-- `user-behavior` DynamoDB table with TTL (auto-delete after 90 days)
-- `user-tracking` Lambda processes events, calculates engagement score
+## Step 2: A/B Testing Donation Prompts (3 hours)
 
-### Phase 2: A/B Testing (3 hours)
+**New AWS Resources:**
+- DynamoDB table: `ab-test-results` — variant assignments and conversion data
+- Lambda: `donation-optimizer` — return optimal prompt based on user behavior
+- API Gateway: `GET /donation-prompt` — return personalized prompt
 
 **Variant Assignment:**
 - Assign visitor to variant on first visit (stored in localStorage)
 - 50/50 split between variants
 
-**Donation Prompt Logic:**
-- Show only to engaged visitors (3+ visits OR 5+ min on site)
-- Don't show if already donated (check localStorage or auth state)
-- Track impressions and conversions per variant
+**A/B Test Examples:**
+- Messages: A: "Help 1 girl escape child marriage" vs B: "Join 500 donors fighting child marriage"
+- Amounts: A: $5, $10, $25 vs B: $10, $25, $50
 
-**Metrics to Track:**
-- Prompt impression rate
-- Click-through rate per variant
-- Donation completion rate per variant
-- Average donation amount per variant
+**Show prompt only to engaged visitors** (3+ visits OR 5+ min on site). Don't show if already donated.
 
-### Phase 3: Donor Retention (3 hours)
+**Metrics:** Prompt impression rate, CTR per variant, donation completion rate, average amount per variant.
 
-**Thank You Email (immediate):**
-- Triggered by Stripe webhook (already exists)
-- Add personalized impact message: "Your $25 helps keep 1 girl in school for a month"
+## Step 3: Donor Retention Emails (3 hours)
 
-**Monthly Impact Report:**
-- EventBridge triggers 1st of month
-- Query recurring donors from donations table
-- Send personalized email with cumulative impact
+**New AWS Resources:**
+- Lambda: `donor-retention` — send retention emails on schedule
+- EventBridge rules:
+  - `monthly-impact-report` — 1st of month, send to recurring donors
+  - `donor-anniversary-check` — daily, check for milestones
+  - `re-engagement-check` — weekly, find lapsed donors (90+ days)
 
-**Anniversary Email:**
-- Daily EventBridge check
-- Query users by `createdAt` date
-- Send milestone emails (1 month, 6 months, 1 year)
-
-**Re-engagement:**
-- Weekly check for donors inactive 90+ days
-- Send "We miss you" email with impact update
+**Email Types:**
+- **Thank you (immediate):** Triggered by Stripe webhook. "Your $25 helps keep 1 girl in school for a month"
+- **Monthly impact report:** Personalized email with cumulative impact to recurring donors
+- **Anniversary:** Milestone emails (1 month, 6 months, 1 year)
+- **Re-engagement:** "We miss you" email with impact update for 90+ day inactive donors
 
 ---
 
@@ -151,21 +121,16 @@ if (localStorage.getItem('tracking-consent') === 'true') {
 | DynamoDB | $0.00 (free tier) |
 | API Gateway | $0.00 (free tier) |
 | EventBridge | $0.00 (free tier) |
-| SES (retention emails) | $0.00 (free tier — <1000 emails) |
-
-**Total:** $0.00/month (all within free tier)
-
----
+| SES | $0.00 (free tier — <1000 emails) |
+| **Total** | **$0.00/month** |
 
 ## Privacy Compliance
 
 - **GDPR:** Cookie consent required before tracking, right to deletion
 - **CCPA:** Opt-out mechanism, no sale of data
-- **No PII collected:** Anonymous UUIDs only, no names/emails in tracking
+- **No PII collected:** Anonymous UUIDs only
 - **Auto-deletion:** TTL on tracking data (90 days)
 - **Transparency:** Privacy policy page explaining what's tracked
-
----
 
 ## Success Metrics
 
@@ -178,4 +143,4 @@ if (localStorage.getItem('tracking-consent') === 'true') {
 
 ---
 
-*Created: May 26, 2026 — Split from content marketing system plan*
+*Created: May 26, 2026*

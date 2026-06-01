@@ -1,114 +1,66 @@
-# Stripe Webhook Setup Guide
+# Stripe Webhook Setup
 
 ## Overview
-Step-by-step guide to create and configure Stripe webhooks for the Far Too Young donation system.
+Step-by-step guide to create and configure Stripe webhooks for the Far Too Young donation system. Covers both test and production environments.
 
-## Prerequisites
-- Stripe account with test mode access
-- AWS backend deployed with webhook endpoint
+**Status:** ✅ Complete  
+**Prerequisites:** Stripe account with test mode access, AWS backend deployed with webhook endpoint
+
+## Checklist
+- [x] Step 1: Access Stripe Dashboard
+- [x] Step 2: Configure Webhook Destination
+- [x] Step 3: Select Events
+- [x] Step 4: Get Webhook Secret
+- [x] Step 5: Update AWS Configuration
+- [x] Step 6: Get Stripe API Keys
+- [x] Step 7: Final Deployment
 
 ---
 
 ## Step 1: Access Stripe Dashboard
 
-### **Ensure Test Mode**
-1. **Go to:** https://dashboard.stripe.com
-2. **Check top-left corner** - should show "Test mode" 
-3. **If in Live mode:** Click the toggle to switch to "Test mode"
-
-### **Navigate to Webhooks**
-1. **Go to:** https://dashboard.stripe.com/test/webhooks
-2. **Click:** "Add destination" (top right)
-
----
+1. Go to: https://dashboard.stripe.com
+2. Check top-left corner — should show "Test mode"
+3. Navigate to: https://dashboard.stripe.com/test/webhooks
+4. Click "Add destination" (top right)
 
 ## Step 2: Configure Webhook Destination
 
-### **Select Destination Type**
-- **Choose:** "Webhook endpoint" (not EventBridge)
-
-### **Fill Configuration Fields**
-
-**Destination name:**
-```
-Far Too Young - Staging
-```
-
-**Endpoint URL:**
-```
-https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/stripe/webhook
-```
-
-**Description:**
-```
-Staging environment webhook for testing donations - checkout.session.completed events
-```
-
----
+- **Destination type:** Webhook endpoint
+- **Destination name:** `Far Too Young - Staging`
+- **Endpoint URL:** `https://f20mzr7xcg.execute-api.us-east-1.amazonaws.com/Prod/stripe/webhook`
+- **Description:** `Staging environment webhook for testing donations - checkout.session.completed events`
 
 ## Step 3: Select Events
 
-### **Account Type**
-- **Select:** "Your account"
-
-### **Event Selection**
-- **Find and check:** `checkout.session.completed`
-- **Search tip:** Use Ctrl+F (Cmd+F on Mac) to find "checkout.session.completed"
-- **Only select this one event** for now
-
-### **Complete Setup**
-- **Click:** "Add events" or "Continue"
-- **Click:** "Create destination" or "Save"
-
----
+- Account type: "Your account"
+- Event: `checkout.session.completed` (only this one)
+- Click "Add events" → "Create destination"
 
 ## Step 4: Get Webhook Secret
 
-### **After Creation**
-1. **Click** on your newly created webhook destination
-2. **Find:** "Signing secret" section
-3. **Copy** the secret (starts with `whsec_...`)
-4. **Save** this secret - you'll need it for AWS configuration
-
-### **Example Secret Format**
-```
-whsec_dB1Knj88LqQq5P6D7UTVrNj9bbMzizCL
-```
-
----
+1. Click on newly created webhook destination
+2. Find "Signing secret" section
+3. Copy the secret (starts with `whsec_...`)
+4. Example: `whsec_dB1Knj88LqQq5P6D7UTVrNj9bbMzizCL`
 
 ## Step 5: Update AWS Configuration
 
-### **Update samconfig.toml**
-Replace the placeholder in `/backend/samconfig.toml`:
-
-**Before:**
-```toml
-"StripeWebhookSecret=YOUR_STAGING_WEBHOOK_SECRET"
-```
-
-**After:**
+Update `/backend/samconfig.toml`:
 ```toml
 "StripeWebhookSecret=whsec_dB1Knj88LqQq5P6D7UTVrNj9bbMzizCL"
 ```
 
-### **Redeploy Backend**
+Redeploy:
 ```bash
 cd backend
 sam build && sam deploy --config-env staging
 ```
 
----
-
 ## Step 6: Get Stripe API Keys
 
-### **Access API Keys**
-1. **Go to:** https://dashboard.stripe.com/test/apikeys
-2. **Copy both keys:**
-   - **Secret key** (starts with `sk_test_...`)
-   - **Publishable key** (starts with `pk_test_...`)
-
-### **Update Configuration Files**
+1. Go to: https://dashboard.stripe.com/test/apikeys
+2. Copy both keys
 
 **Backend (samconfig.toml):**
 ```toml
@@ -120,114 +72,32 @@ sam build && sam deploy --config-env staging
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_actual_publishable_key_here
 ```
 
----
-
 ## Step 7: Final Deployment
 
-### **Deploy Backend with Real Keys**
 ```bash
 cd backend
 sam build && sam deploy --config-env staging
-```
-
-### **Test Frontend with Real Keys**
-```bash
 cd ..
-npm run build
-npm run preview
+npm run build && npm run preview
 ```
 
----
-
-## Testing the Webhook
-
-### **Test Donation Flow**
-1. **Go to:** http://localhost:4173
-2. **Click** any donate button
-3. **Fill form** with test data
-4. **Use test card:** `4242 4242 4242 4242`
-5. **Complete payment** on Stripe
-6. **Check dashboard** - donation should appear automatically
-
-### **Expected Results**
-- ✅ Payment succeeds on Stripe
-- ✅ Webhook receives event (check Stripe webhook logs)
-- ✅ Donation appears in user dashboard
-- ✅ No errors in browser console
+**Test:** Use card `4242 4242 4242 4242` → donation should appear in dashboard.
 
 ---
 
 ## Troubleshooting
 
-### **Common Issues**
-
-**"Invalid API Key" Error:**
-- Check that Stripe secret key is updated in samconfig.toml
-- Ensure you're using test keys (sk_test_...) in test mode
-- Redeploy backend after updating keys
-
-**"Webhook signature verification failed":**
-- Check webhook secret is correct in samconfig.toml
-- Ensure webhook was created in test mode
-- Verify endpoint URL is exactly correct
-
-**Webhook not receiving events:**
-- Check webhook is in test mode
-- Verify endpoint URL matches deployed API Gateway
-- Check Stripe webhook logs for delivery attempts
-
-**Donation not appearing in dashboard:**
-- Check webhook logs in Stripe dashboard
-- Verify checkout.session.completed event is selected
-- Check AWS CloudWatch logs for Lambda errors
-
-### **Verification Steps**
-
-**Check Webhook Status:**
-1. Go to Stripe webhook dashboard
-2. Click on your webhook
-3. Check "Recent deliveries" for successful calls
-
-**Check AWS Logs:**
-1. Go to AWS CloudWatch
-2. Find StripeWebhookFunction logs
-3. Look for successful webhook processing
-
----
-
-## Security Notes
-
-### **Webhook Security**
-- Webhook secret provides cryptographic verification
-- Only Stripe can generate valid signatures
-- Invalid requests are automatically rejected
-- Never share webhook secrets publicly
-
-### **API Key Security**
-- Use test keys for development/staging
-- Use live keys only for production
-- Never commit keys to version control
-- Rotate keys if compromised
-
----
+- **"Invalid API Key":** Check sk_test key in samconfig.toml, redeploy
+- **"Webhook signature verification failed":** Check whsec_ secret, ensure test mode
+- **Webhook not receiving:** Verify endpoint URL, check Stripe webhook logs
+- **Donation not appearing:** Check CloudWatch logs for Lambda errors
 
 ## Future Enhancements
 
-### **Additional Events**
-When ready, you can add more events:
-- `checkout.session.expired` - Handle abandoned checkouts
-- `invoice.payment_succeeded` - Monthly subscription payments
-- `customer.subscription.created` - New subscriptions
-- `payment_intent.payment_failed` - Handle failed payments
+Additional events to add: `checkout.session.expired`, `invoice.payment_succeeded`, `customer.subscription.created`, `payment_intent.payment_failed`
 
-### **Production Setup**
-For production deployment:
-1. Create separate webhook in live mode
-2. Use live Stripe keys (sk_live_..., pk_live_...)
-3. Update production samconfig.toml
-4. Deploy to production environment
+For production: create separate webhook in live mode with live keys (sk_live_, pk_live_).
 
 ---
 
 *Last Updated: November 25, 2025*
-*Status: Test Mode Configuration*

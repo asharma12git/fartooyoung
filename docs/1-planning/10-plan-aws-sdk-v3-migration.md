@@ -1,4 +1,4 @@
-# Plan 9: AWS SDK v2 → v3 Migration
+# Plan 10: AWS SDK v2 → v3 Migration
 
 ## Priority: Low
 ## Status: Backlog

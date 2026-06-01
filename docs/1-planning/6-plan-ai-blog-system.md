@@ -1,60 +1,161 @@
-# AI Blog System Plan
+# Plan 6: Blog System (AI-Generated + Newsletter)
 
-## Overview
-Automated blog content generation using AWS Bedrock (Claude 3.5 Sonnet) with email newsletter distribution to drive organic traffic and donor engagement.
-
-**Status:** 📋 Planned  
-**Dependencies:** Blog UI from `plan-dashboard-restructure-plan.md` Phase 3  
-**Estimated Cost:** $1.30/month  
-**Estimated Effort:** 8-10 hours
+## Status: 📋 Ready to Execute
+## Priority: HIGH — directly drives SEO traffic + Google Ad Grants landing pages
+## Estimated Cost: ~$1.30/month
+## Estimated Effort: 6-8 hours
+## Dependencies: None
 
 ---
 
-## System Architecture
+## Overview
+
+Complete blog system: public pages, AI content generation, newsletter distribution. Drives organic traffic, provides landing pages for Google Ad Grants, and gives AI search engines citable content.
+
+---
+
+## What We're Building
+
+1. **Frontend:** `/blog` listing page + `/blog/:slug` individual post page
+2. **Backend:** DynamoDB table for posts + API endpoints
+3. **AI Generation:** AWS Bedrock (Claude) generates weekly drafts
+4. **Newsletter:** SES emails subscribers when posts publish
+5. **SEO:** Each post pre-rendered, has meta tags, FAQ schema, internal links
+
+---
+
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    WEEKLY TRIGGER                            │
-│              (EventBridge - Every Monday 10am UTC)           │
+│  WEEKLY: EventBridge triggers blog-generator Lambda          │
+│  → Bedrock (Claude) generates SEO-optimized draft            │
+│  → Saves to DynamoDB with status: "draft"                    │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              BLOG GENERATION (Lambda)                        │
-│  1. AWS Bedrock generates 2,000+ word SEO post              │
-│  2. Targets child marriage keywords                         │
-│  3. Saves to DynamoDB (blog-posts table)                    │
-│  4. Invalidates CloudFront cache                            │
+│  HUMAN REVIEW: Owner reviews draft (admin page or DynamoDB)  │
+│  → Edits if needed                                           │
+│  → Flips status to "published"                               │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│         EMAIL NEWSLETTER (Lambda)                            │
-│  1. Reads new blog post from DynamoDB                       │
-│  2. Queries newsletter subscribers                          │
-│  3. Sends personalized email via SES                        │
-│  4. Tracks open rates and click-throughs                    │
+│  AUTO: Post appears on /blog                                 │
+│  → Newsletter Lambda sends to subscribers                    │
+│  → CloudFront cache invalidated                              │
+│  → Pre-rendered HTML updated on next deploy                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## New AWS Resources
+## Implementation Steps
 
-**DynamoDB Tables:**
-- `blog-posts` — Blog post metadata and content
-- `newsletter-subscribers` — Email list with preferences
+### Step 1: Blog Frontend (2 hours)
 
-**Lambda Functions:**
-- `blog-generator` — AI content creation (Claude 3.5 Sonnet)
-- `newsletter-sender` — Email distribution via SES
+**New files:**
+- `src/pages/Blog.jsx` — grid of published posts (title, excerpt, date, image)
+- `src/pages/BlogPost.jsx` — full post view with author bio, FAQ section
+- Route: `/blog` and `/blog/:slug` in `App.jsx`
+- SEO component on each page (dynamic title/description per post)
+- Add `/blog` to sitemap.xml and prerender script
 
-**API Gateway Endpoints:**
-- `POST /newsletter/subscribe` — Email signups
-- `POST /newsletter/unsubscribe` — Opt-outs
+**Design:**
+- Same dark theme as rest of site
+- Card grid layout for listing
+- Author section: "By Avinash Sharma, Founder" with photo
+- Internal links to What We Do, Donate, Partners within posts
+- FAQ section at bottom of each post (for Google featured snippets + GEO)
 
-**EventBridge Rules:**
-- `weekly-blog-generation` — Every Monday 10am UTC
+### Step 2: Blog Backend (2 hours)
+
+**DynamoDB table:** `fartooyoung-{env}-blog-posts`
+- PK: `post_id` (UUID)
+- Fields: `title`, `slug`, `excerpt`, `content`, `author`, `status` (draft/published), `published_at`, `keywords`, `word_count`, `faq` (array), `created_at`
+
+**Lambda functions:**
+- `get-blog-posts.js` — GET /blog/posts (public, returns published only)
+- `get-blog-post.js` — GET /blog/posts/:slug (public, single post)
+- `publish-blog-post.js` — POST /blog/posts/:id/publish (admin only)
+
+**Add to `template.yaml`** — new functions + DynamoDB table
+
+### Step 3: AI Content Generation (2 hours)
+
+**Lambda:** `blog-generator.js`
+- Runtime: Node.js 18, timeout: 5 min, memory: 1024 MB
+- Calls AWS Bedrock (Claude 3.5 Sonnet)
+- Generates 1500-2000 word post targeting a keyword from the cluster list
+- Saves as "draft" in DynamoDB
+
+**Prompt engineering (critical for Google compliance):**
+- Write as "Avinash Sharma, Founder of Far Too Young"
+- Include first-person experience references
+- Cite real statistics with sources
+- Include 2-3 internal links to site pages
+- Generate FAQ section (3-5 questions)
+- Target specific keyword from content cluster
+- Structure with clear H2/H3 headings
+
+**Content clusters (organized by pillar):**
+
+| Pillar | Cluster Keywords |
+|--------|-----------------|
+| Child Marriage | statistics by country, causes, effects on girls, laws by state, how to prevent |
+| Gender-Based Violence | types, prevention, support resources, global statistics |
+| Girls Education | developing countries, scholarships, impact on child marriage |
+| Advocacy | how to help, volunteer, donate, policy changes |
+
+**EventBridge rule:** Trigger every Monday 10am UTC
+
+### Step 4: Newsletter System (1-2 hours)
+
+**DynamoDB table:** `fartooyoung-{env}-newsletter`
+- PK: `email`
+- Fields: `name`, `status` (pending/active/unsubscribed), `subscribed_at`
+
+**Lambda functions:**
+- `newsletter-subscribe.js` — POST /newsletter/subscribe (double opt-in)
+- `newsletter-unsubscribe.js` — POST /newsletter/unsubscribe
+- `newsletter-sender.js` — triggered when post published, sends via SES
+
+**Frontend:** Subscribe form in Footer + Blog page sidebar
+
+### Step 5: Admin Review (1 hour)
+
+Simple admin page or use DynamoDB console:
+- View drafts
+- Edit content
+- Click "Publish"
+- Could be a simple `/admin/blog` page (only visible to admin role)
+
+---
+
+## Google Compliance (E-E-A-T)
+
+To avoid "scaled content abuse" penalties:
+
+| Requirement | How We Handle It |
+|-------------|-----------------|
+| Human oversight | Draft → review → publish workflow |
+| Author attribution | "By Avinash Sharma, Founder" on every post |
+| Experience signals | First-person references to fieldwork in Nepal/Bangladesh |
+| Expertise | Real statistics with cited sources |
+| Trustworthiness | Nonprofit org, consistent with site mission |
+| Not mass-produced | 4 posts/month max, each reviewed |
+
+---
+
+## GEO Optimization (AI Search Engines)
+
+Each post structured for ChatGPT/Perplexity citation:
+- Clear factual statements in first paragraph
+- Statistics with sources
+- FAQ section with structured data (JSON-LD)
+- Quotable one-liners
+- Consistent entity references ("Far Too Young, a US-based nonprofit...")
 
 ---
 
@@ -62,49 +163,12 @@ Automated blog content generation using AWS Bedrock (Claude 3.5 Sonnet) with ema
 
 | Service | Usage | Monthly Cost |
 |---------|-------|--------------|
-| AWS Bedrock (Claude 3.5 Sonnet) | 4 posts/month (2K+ words) | $1.20 |
+| AWS Bedrock (Claude 3.5 Sonnet) | 4 posts/month | $1.20 |
 | SES (Newsletter) | 1,000 emails/month | $0.10 |
-| Lambda | ~8 invocations | $0.00 (free tier) |
-| DynamoDB | ~5K operations | $0.00 (free tier) |
+| Lambda | ~12 invocations | $0.00 (free tier) |
+| DynamoDB | ~10K operations | $0.00 (free tier) |
 | EventBridge | 4 events/month | $0.00 (free tier) |
-
-**Total:** $1.30/month
-
----
-
-## Implementation Steps
-
-### Step 1: AWS Bedrock Setup (1 hour)
-- Enable Bedrock model access (Claude 3.5 Sonnet) in us-east-1
-- Create IAM role with Bedrock, DynamoDB, CloudWatch permissions
-- Create `blog-posts` DynamoDB table (PK: `post_id`)
-
-### Step 2: Blog Generator Lambda (3 hours)
-- Python 3.11 runtime, 5 min timeout, 1024 MB memory
-- Prompt engineering for SEO-optimized content:
-  - 2,000+ words
-  - Target keywords: "child marriage statistics", "prevent child marriage", "girls education"
-  - Include data, stories, calls to action
-- Save to DynamoDB with metadata (title, excerpt, date, status, word_count)
-- Invalidate CloudFront cache for `/blog` route
-- Test manually, verify quality
-
-### Step 3: Newsletter System (3 hours)
-- Create `newsletter-subscribers` table (PK: `email`)
-- Newsletter signup form component (add to Footer + blog pages)
-- Double opt-in: send confirmation email, activate on click
-- `newsletter-sender` Lambda:
-  - Query active subscribers
-  - Personalize with subscriber name
-  - HTML + plain text email template
-  - Track opens/clicks via SES
-  - Handle bounces (auto-remove)
-
-### Step 4: Connect + Schedule (1 hour)
-- EventBridge rule: trigger `blog-generator` weekly
-- Chain: blog-generator success → trigger newsletter-sender
-- CloudWatch dashboard for monitoring
-- Alarms for generation failures
+| **Total** | | **$1.30/month** |
 
 ---
 
@@ -118,28 +182,44 @@ Automated blog content generation using AWS Bedrock (Claude 3.5 Sonnet) with ema
 | child bride | 8,100 | Medium |
 | girls education developing countries | 880 | Low |
 | end child marriage | 720 | Low |
+| child marriage in India | 3,600 | Medium |
+| child marriage in Nepal | 1,200 | Low |
+| effects of child marriage | 2,400 | Low |
 
 ---
 
 ## Success Metrics
 
-| Metric | Target |
-|--------|--------|
-| Blog posts/month | 4 |
-| Word count per post | 2,000+ |
-| Email subscribers (3 months) | 100+ |
+| Metric | Target (3 months) |
+|--------|-------------------|
+| Blog posts published | 12 |
+| Organic blog traffic | 300+ visits/month |
+| Email subscribers | 100+ |
 | Email open rate | 20-30% |
-| Blog organic traffic (3 months) | 300+ visits/month |
+| Google Ad Grants landing pages | 8+ |
+| AI citations (ChatGPT/Perplexity) | Monitoring |
 | AWS costs | <$1.50/month |
 
 ---
 
-## Related Plans
-- `plan-dashboard-restructure-plan.md` Phase 3 — Blog UI (public pages, admin editor)
-- `plan-social-media-automation.md` — Auto-post blog content to Twitter/Facebook
-- `plan-seo.md` — Technical SEO foundations (meta tags, structured data)
+## Files Created/Modified
+
+| File | Purpose |
+|------|---------|
+| `src/pages/Blog.jsx` | Blog listing page |
+| `src/pages/BlogPost.jsx` | Individual post page |
+| `src/App.jsx` | Add /blog routes |
+| `backend/lambda/blog/get-blog-posts.js` | List published posts |
+| `backend/lambda/blog/get-blog-post.js` | Get single post |
+| `backend/lambda/blog/blog-generator.js` | AI content generation |
+| `backend/lambda/blog/publish-blog-post.js` | Publish draft |
+| `backend/lambda/newsletter/subscribe.js` | Newsletter signup |
+| `backend/lambda/newsletter/unsubscribe.js` | Newsletter opt-out |
+| `backend/lambda/newsletter/sender.js` | Send newsletter |
+| `backend/template.yaml` | New resources |
+| `public/sitemap.xml` | Add /blog |
+| `scripts/prerender.mjs` | Add /blog route |
 
 ---
 
-*Created: January 29, 2025*  
-*Updated: May 26, 2026 — Focused to blog generation + newsletter only*
+*Last updated: June 1, 2026*

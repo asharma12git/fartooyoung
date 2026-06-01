@@ -3,7 +3,8 @@
 ## Overview
 Privacy-compliant visitor tracking, A/B testing of donation prompts, and automated donor retention emails to increase conversion rates and lifetime donor value.
 
-**Status:** 📋 Planned  
+**Status:** 📋 Partially Superseded  
+**Note:** Basic visitor tracking (page views, clicks, scroll, sessions) is now handled by GA4 + Microsoft Clarity (deployed in Plan 3). This plan only remains relevant for *custom* donor-specific tracking (A/B testing donation prompts, personalized retention emails based on visit count) which GA4/Clarity cannot do.  
 **Dependencies:** None (works with existing site)  
 **Estimated Cost:** $0.00-0.40/month  
 **Estimated Effort:** 8-10 hours

@@ -1,4 +1,4 @@
-# Plan 10: Frontend Lint Cleanup
+# Plan 11: Frontend Lint Cleanup
 
 ## Priority: Low
 ## Status: Backlog

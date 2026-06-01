@@ -4,7 +4,7 @@
 Automated posting to social media platforms (Twitter, Facebook) when new blog content is published. Distributes blog posts to increase reach and drive traffic back to the website.
 
 **Status:** 📋 Planned  
-**Dependencies:** `plan-ai-blog-system.md` (blog posts must exist first)  
+**Dependencies:** Plan 6 — Blog System (blog posts must exist first)  
 **Estimated Cost:** $0.40/month (Secrets Manager only)  
 **Estimated Effort:** 3-4 hours
 

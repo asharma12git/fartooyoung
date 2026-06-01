@@ -452,6 +452,62 @@ Resources:
             ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
 
+  ResearchArticlesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-research-articles"
+      AttributeDefinitions:
+        - AttributeName: article_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: article_id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  # Research Fetcher
+  ResearchFetcherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/research-fetcher.handler
+      Timeout: 60
+      MemorySize: 256
+      Environment:
+        Variables:
+          RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResearchArticlesTable
+      Events:
+        WeeklyTrigger:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 10 ? * MON *)
+            Description: Fetch research articles every Monday 10am UTC
+        Api:
+          Type: Api
+          Properties:
+            Path: /research/fetch
+            Method: post
+
+  # Get Research Articles (public)
+  GetResearchArticlesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/get-research-articles.handler
+      Timeout: 10
+      Environment:
+        Variables:
+          RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ResearchArticlesTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /research/articles
+            Method: get
+
   # Blog API Functions
   GetBlogPostsFunction:
     Type: AWS::Serverless::Function

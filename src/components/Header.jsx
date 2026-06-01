@@ -22,12 +22,13 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
     { path: '/', label: 'Child Marriage' },
     { path: '/founder-team', label: 'Founder & Team' },
     { path: '/partners', label: 'Partners' },
-    { path: '/what-we-do', label: 'What We Do' }
+    { path: '/what-we-do', label: 'What We Do' },
+    { path: '/blog', label: 'Stories' }
   ]
 
   return (
     <header className="absolute top-0 left-0 right-0 z-50 bg-transparent">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-32 sm:h-36 lg:h-40 py-4 sm:py-6 pt-6 sm:pt-8">
           <div className="flex items-center justify-start">
             <Link to="/" className="flex items-center">
@@ -37,12 +38,12 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
           
           <nav className="flex-1 flex justify-center items-center">
             {/* Desktop Navigation - Hidden on mobile and tablet, show only on larger screens */}
-            <div className="hidden xl:flex space-x-8">
+            <div className="hidden xl:flex space-x-6">
               {navItems.map(item => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 py-2 text-lg xl:text-xl font-medium transition-all duration-300 ${
+                  className={`px-3 py-2 text-base xl:text-lg font-medium transition-all duration-300 ${
                     location.pathname === item.path
                       ? 'text-white/90 border-b-2 border-orange-500'
                       : 'text-white/90 border-b-2 border-transparent hover:text-orange-200'

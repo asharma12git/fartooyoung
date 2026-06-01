@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SEO from '../components/SEO'
-import heroImage from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0770.webp'
+import heroImage from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0958.webp'
+import placeholderImg from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/2-interactions-with-community-members/DSC05334.JPG'
 
 const Blog = () => {
   const [posts, setPosts] = useState([])
@@ -71,6 +72,13 @@ const Blog = () => {
                 to={`/blog/${post.slug}`}
                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-200"
               >
+                <div className="aspect-[16/9] overflow-hidden">
+                  <img
+                    src={post.featured_image || placeholderImg}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
                     <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>

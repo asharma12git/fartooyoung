@@ -5,8 +5,8 @@ A full-stack serverless web application for an organization focused on ending ch
 ## Tech Stack
 
 - **Frontend**: React 18, Vite, Tailwind CSS, React Router
-- **Backend**: 17 AWS Lambda functions (Node.js 18) via API Gateway
-- **Database**: DynamoDB (3 tables: Users, Donations, Rate Limits)
+- **Backend**: 23 AWS Lambda functions (Node.js 18) via API Gateway
+- **Database**: DynamoDB (4 tables: Users, Donations, Rate Limits, Blog Posts)
 - **Payments**: Stripe (live checkout, subscriptions, webhooks)
 - **Email**: AWS SES (verification, password reset, notifications)
 - **Infrastructure**: CloudFront CDN, S3, Route 53, Secrets Manager, SAM
@@ -22,7 +22,8 @@ A full-stack serverless web application for an organization focused on ending ch
 - SEO optimized (pre-rendered HTML, meta tags, sitemap, structured data)
 - Google Analytics 4 + Microsoft Clarity (heatmaps, session recordings)
 - PWA support (installable on phones)
-- 5 public pages: Child Marriage, Founder & Team, Partners, What We Do, Home
+- Blog system with role-based admin (Stories page)
+- 6 public pages: Child Marriage, Founder & Team, Partners, What We Do, Stories (Blog), Home
 
 ## Project Structure
 
@@ -30,7 +31,7 @@ A full-stack serverless web application for an organization focused on ending ch
 fartooyoung/
 ├── src/                        # React frontend (components, pages)
 ├── backend/
-│   ├── lambda/                 # 17 Lambda functions
+│   ├── lambda/                 # 23 Lambda functions
 │   ├── scripts/                # One-off migration scripts (manual)
 │   ├── template.yaml           # SAM infrastructure definition
 │   └── samconfig.toml          # Deployment targets per environment
@@ -82,9 +83,11 @@ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full technical guide — work
 |-----|---------|
 | **[CONTRIBUTING.md](CONTRIBUTING.md)** | How to work on this project (start here) |
 | **[PROGRESS.md](PROGRESS.md)** | Session history and development log |
+| **[ORGANIZATION.md](ORGANIZATION.md)** | Legal info, accounts, dashboards, AWS resources |
 | `docs/1-planning/` | Feature roadmap (numbered by priority) |
 | `docs/2-system-design/` | Architecture, frontend, backend, database, environments |
 | `docs/3-deployments/` | Deployment processes and CI/CD |
+| `docs/4-resources/` | Research sources and reference materials |
 | `docs/5-testing/` | Regression test suite, Stripe test cards, API commands |
 
 ## License

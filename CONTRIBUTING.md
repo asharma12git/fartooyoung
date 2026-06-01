@@ -214,6 +214,7 @@ See `docs/5-testing/1-testing-checklist.md` — 70+ test cases covering all endp
 | Doc | What You'll Learn |
 |-----|-------------------|
 | `README.md` | Project overview, tech stack, features, how to run locally |
+| `ORGANIZATION.md` | Legal info, officers, accounts, dashboards, AWS resources |
 | `docs/2-system-design/1-architecture.md` | Full system architecture, how services connect |
 | `docs/2-system-design/2-environments.md` | All AWS resources per environment (staging vs production) |
 | `docs/2-system-design/3-frontend-design.md` | React components, pages, routing |

@@ -61,11 +61,6 @@ This applies to:
 
 ## Full Research Archive
 
-All research articles, PDFs, and the full reference list:
-**Google Drive > 1 - Far Too Young, INC > 001 - Non Profit > 008 - Resources**
-
-File: `00 - Child-Marriage-Research-Articles.md` — complete list with titles, sources, links, and download status (ordered by date YYYY-MM-DD).
-
 ---
 
 ## Research Articles (Complete List)

@@ -3,7 +3,7 @@
 ## Overview
 **PRODUCTION STATUS: ✅ LIVE** - Current database schema for Far Too Young platform at https://www.fartooyoung.org
 
-**Current Implementation**: 3 DynamoDB tables supporting authentication and donation processing with live Stripe payments
+**Current Implementation**: 6 DynamoDB tables supporting authentication, donation processing, content management, and research aggregation with live Stripe payments
 **Future Expansion**: Designed to scale to full e-commerce and book platform functionality
 
 ---
@@ -56,6 +56,40 @@
 │ requestCount                        │
 │ windowStart                         │
 │ ttl (auto-expires)                  │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│  fartooyoung-production-research-   │
+│  articles                           │
+│─────────────────────────────────────│
+│ id (PK)                             │
+│ title                               │
+│ url                                 │
+│ source                              │
+│ publishedDate                       │
+│ status (pending/approved/rejected)  │
+│ starred (boolean)                   │
+│ createdAt                           │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│  fartooyoung-production-blog-posts  │
+│─────────────────────────────────────│
+│ id (PK)                             │
+│ title                               │
+│ content                             │
+│ author                              │
+│ status (draft/published)            │
+│ imageUrl                            │
+│ createdAt                           │
+│ updatedAt                           │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│  fartooyoung-production-tiers       │
+│─────────────────────────────────────│
+│ tier_id (PK, Number)                │
+│ description                         │
 └─────────────────────────────────────┘
 ```
 
@@ -163,16 +197,57 @@
 
 ---
 
+### `fartooyoung-production-research-articles`
+**Purpose**: Aggregated research articles from RSS feeds and manual admin additions  
+**Status**: ✅ LIVE - Research page content + admin management
+
+| Field | Type | Purpose | Production Status |
+|-------|------|---------|------------------|
+| `id` | String (PK) | Primary key (UUID) | ✅ Active |
+| `title` | String | Article title | ✅ Active |
+| `url` | String | Source article URL | ✅ Active |
+| `source` | String | Feed source name (e.g., "UNICEF", "WHO") | ✅ Active |
+| `publishedDate` | ISO String | Article publication date | ✅ Active |
+| `status` | String | pending, approved, rejected | ✅ Active |
+| `starred` | Boolean | Admin-starred for priority | ✅ Active |
+| `createdAt` | ISO String | Record creation timestamp | ✅ Active |
+
+### `fartooyoung-production-blog-posts`
+**Purpose**: Blog/Stories page content managed via admin panel  
+**Status**: ✅ LIVE - Blog publishing system
+
+| Field | Type | Purpose | Production Status |
+|-------|------|---------|------------------|
+| `id` | String (PK) | Primary key (UUID) | ✅ Active |
+| `title` | String | Blog post title | ✅ Active |
+| `content` | String | Post body (HTML/markdown) | ✅ Active |
+| `author` | String | Author name | ✅ Active |
+| `status` | String | draft, published | ✅ Active |
+| `imageUrl` | String (Optional) | Featured image URL (S3) | ✅ Active |
+| `createdAt` | ISO String | Post creation date | ✅ Active |
+| `updatedAt` | ISO String | Last edit date | ✅ Active |
+
+### `fartooyoung-production-tiers`
+**Purpose**: Donation tier definitions for research article categorization  
+**Status**: ✅ LIVE - 7 tier entries
+
+| Field | Type | Purpose | Production Status |
+|-------|------|---------|------------------|
+| `tier_id` | Number (PK) | Tier level identifier | ✅ Active |
+| `description` | String | Tier description text | ✅ Active |
+
+---
+
 ## 🔗 **PRODUCTION AWS INTEGRATION**
 
 ### **Live Database Resources**
 - **Region**: us-east-1
-- **Tables**: 3 DynamoDB tables with on-demand billing
+- **Tables**: 6 DynamoDB tables with on-demand billing
 - **Security**: IAM roles with least-privilege access
 - **Backup**: Point-in-time recovery enabled
 
 ### **Connected Services**
-- **17 Lambda Functions**: Authentication, donations, email verification
+- **20 Lambda Functions**: Authentication, donations, email verification, admin, research
 - **API Gateway**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 - **Stripe Integration**: Live payment processing
 - **SES Email**: Verification and notification system
@@ -346,8 +421,8 @@
 ## 🚀 **PRODUCTION STATUS SUMMARY**
 
 **✅ LIVE SYSTEM**: https://www.fartooyoung.org
-- **3 DynamoDB Tables**: Users, Donations, Rate Limits
-- **17 Lambda Functions**: Complete authentication and payment system
+- **6 DynamoDB Tables**: Users, Donations, Rate Limits, Research Articles, Blog Posts, Tiers
+- **20 Lambda Functions**: Complete authentication, payment, content management, and admin system
 - **Live Payments**: Stripe integration processing real donations
 - **Security**: Multi-layer protection with rate limiting and encryption
 - **Monitoring**: CloudWatch logs and metrics for all database operations
@@ -365,5 +440,5 @@
 
 ---
 
-*Last Updated: May 26, 2026*  
+*Last Updated: June 6, 2026*  
 *Production Database Status: ✅ LIVE and operational*

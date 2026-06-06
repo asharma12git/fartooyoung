@@ -25,12 +25,17 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `backend/lambda/stripe/create-payment-intent.js` | 8 (Donations) |
 | `backend/template.yaml` | ALL (infrastructure change) |
 | `backend/lambda/utils/cors.js` | 10 (Security - CORS) |
+| `backend/lambda/admin/admin-research.js` | 14 (Admin Panel) |
+| `backend/lambda/admin/upload-image.js` | 14 (Admin Panel) |
+| `backend/lambda/content/get-research-articles.js` | 14 (Admin Panel), 1 (Frontend) |
+| `backend/lambda/content/research-fetcher.js` | 14 (Admin Panel) |
 | `src/pages/DonorDashboard.jsx` | 7 (Dashboard) |
 | `src/components/CheckoutButton.jsx` | 8, 9 (Donations) — legacy, still exists for fallback |
 | `src/components/StripePayment.jsx` | 8, 9 (Donations) |
 | `src/components/PaymentForm.jsx` | 8, 9 (Donations) |
 | `src/components/DonationModal.jsx` | 8, 9 (Donations) |
 | `src/pages/*.jsx` | 1 (Frontend) |
+| `src/pages/Admin.jsx` | 14 (Admin Panel) |
 | `src/App.jsx` | 1 (Frontend - routing) |
 | `.env.staging`, `.env.production` | ALL (environment config) |
 | `deployment/*` | None (pipeline infra only) |
@@ -243,6 +248,32 @@ Run these minimum after every deploy:
 
 ---
 
+## 14. Admin Panel
+
+| # | Test | Method | Command/Steps | Expected |
+|---|------|--------|---------------|----------|
+| 14.1 | Get all research articles (admin) | API | `curl -X GET {api}/admin/research -H "Authorization: Bearer {admin_token}"` | Array of all articles (all statuses) |
+| 14.2 | Get research articles (non-admin) | API | `curl -X GET {api}/admin/research -H "Authorization: Bearer {user_token}"` | 403 Forbidden |
+| 14.3 | Get research articles (no auth) | API | `curl -X GET {api}/admin/research` | 401 Unauthorized |
+| 14.4 | Get tiers | API | `curl -X GET {api}/admin/tiers -H "Authorization: Bearer {admin_token}"` | Array of 7 tier objects |
+| 14.5 | Add article (valid URL) | API | `curl -X POST {api}/admin/research -H "Authorization: Bearer {admin_token}" -d '{"url":"https://example.com/article"}'` | Article created with extracted title |
+| 14.6 | Add article (duplicate URL) | API | POST same URL twice | Error: duplicate article |
+| 14.7 | Add article (invalid URL) | API | `curl -X POST {api}/admin/research -d '{"url":"not-a-url"}'` | Validation error |
+| 14.8 | Update article status | API | `curl -X PUT {api}/admin/research/{id} -H "Authorization: Bearer {admin_token}" -d '{"status":"approved"}'` | Article updated |
+| 14.9 | Star article | API | `curl -X PUT {api}/admin/research/{id} -H "Authorization: Bearer {admin_token}" -d '{"starred":true}'` | Article starred |
+| 14.10 | Delete article | API | `curl -X DELETE {api}/admin/research/{id} -H "Authorization: Bearer {admin_token}"` | Article deleted |
+| 14.11 | Public research (approved only) | API | `curl -X GET {api}/research/articles` | Only approved/no-status articles returned |
+| 14.12 | Public research with status filter | API | `curl -X GET {api}/research/articles?status=approved` | Only approved articles |
+| 14.13 | Public research with limit | API | `curl -X GET {api}/research/articles?limit=5` | Max 5 articles returned |
+| 14.14 | Upload image (presigned URL) | API | `curl -X POST {api}/admin/upload-image -H "Authorization: Bearer {admin_token}" -d '{"filename":"test.jpg","contentType":"image/jpeg"}'` | Presigned S3 URL returned |
+| 14.15 | Admin page access (admin user) | Browser | Log in as admin, navigate to /admin | Admin panel renders with Research Articles and Blog Posts tabs |
+| 14.16 | Admin page access (non-admin) | Browser | Log in as regular user, navigate to /admin | Redirected away |
+| 14.17 | Admin Panel button in dashboard | Browser | Log in as admin, check dashboard | Green "Admin Panel" button visible |
+| 14.18 | CORS preflight for PUT | API | `curl -I -X OPTIONS {api}/admin/research/123 -H "Origin: https://www.fartooyoung.org" -H "Access-Control-Request-Method: PUT"` | Allow-Methods includes PUT |
+| 14.19 | CORS preflight for DELETE | API | `curl -I -X OPTIONS {api}/admin/research/123 -H "Origin: https://www.fartooyoung.org" -H "Access-Control-Request-Method: DELETE"` | Allow-Methods includes DELETE |
+
+---
+
 ## Adding New Tests
 
 When adding a new feature:
@@ -306,4 +337,4 @@ aws dynamodb scan --table-name fartooyoung-staging-users-table \
 
 ---
 
-*Last updated: 2026-05-28*
+*Last updated: 2026-06-06*

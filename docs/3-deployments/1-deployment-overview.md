@@ -76,7 +76,7 @@ fartooyoung/
 ├── ⚡ BACKEND FILES
 │   ├── backend/template.yaml    # 🏗️ ALL AWS Infrastructure (Lambda+DB+API)
 │   ├── backend/samconfig.toml   # 🎯 Deployment targets (staging/production)
-│   └── backend/lambda/          # 💻 Function code (17 functions)
+│   └── backend/lambda/          # 💻 Function code (20 functions)
 │
 └── 🔄 CI/CD FILES
     └── deployment/
@@ -107,9 +107,12 @@ sam deploy --config-env production  # Deploy all AWS resources to production
 - `fartooyoung-production-users-table` - User accounts & authentication
 - `fartooyoung-production-donations-table` - Donation records & history
 - `fartooyoung-production-rate-limits` - Anti-spam protection (auto-expires)
+- `fartooyoung-production-research-articles` - Aggregated research articles (RSS + manual)
+- `fartooyoung-production-blog-posts` - Blog/Stories content
+- `fartooyoung-production-tiers` - Donation tier definitions
 
 **⚡ Backend Functions (Lambda):**
-- 17 Lambda functions (LoginFunction, RegisterFunction, CreateCheckoutSessionFunction, etc.)
+- 20 Lambda functions (LoginFunction, RegisterFunction, CreateCheckoutSessionFunction, AdminResearchFunction, etc.)
 - Complete authentication system (login, register, password reset)
 - Donation processing with Stripe integration
 - Email verification system
@@ -198,10 +201,12 @@ RateLimitsTable:     # IP tracking, auto-expires via TTL
 
 ### **⚡ API LAYER** 
 ```yaml
-# 17 Lambda Functions in template.yaml:
+# 20 Lambda Functions in template.yaml:
 Auth Functions:      LoginFunction, RegisterFunction, LogoutFunction
 Donation Functions:  CreateDonationFunction, GetDonationsFunction  
 Stripe Functions:    CreateCheckoutSessionFunction, StripeWebhookFunction
+Content Functions:   GetResearchArticlesFunction, ResearchFetcherFunction
+Admin Functions:     AdminResearchFunction, UploadImageFunction
 ```
 
 ### **🌐 FRONTEND LAYER**
@@ -250,7 +255,7 @@ Secrets Manager: fartooyoung-production-secrets
 |------|----------|---------|---------|
 | **`.env.production`** | React app backend connection | Tells React app which API endpoints to use | `VITE_API_URL=https://0o7onj0dr7...` |
 | **`samconfig.toml`** | Backend deployment targets | Tells SAM where to deploy (staging vs production) | `stack_name = "fartooyoung-production"` |
-| **`template.yaml`** | ALL AWS infrastructure | Blueprint that creates Lambda functions + databases | Creates 17 functions + 3 tables |
+| **`template.yaml`** | ALL AWS infrastructure | Blueprint that creates Lambda functions + databases | Creates 20 functions + 6 tables |
 | **`deployment/*-pipeline.yml`** | CI/CD infrastructure | V2 pipeline definitions with path-based triggers | Creates CodePipeline + CodeBuild per environment |
 | **`deployment/*-manual-deploy-*.sh`** | Emergency manual deploy | Fallback scripts if pipeline is broken | `./deployment/prod-manual-deploy-frontend.sh` |
 
@@ -273,6 +278,9 @@ Secrets Manager: fartooyoung-production-secrets
 - **Users:** fartooyoung-production-users-table
 - **Donations:** fartooyoung-production-donations-table
 - **Rate Limits:** fartooyoung-production-rate-limits
+- **Research Articles:** fartooyoung-production-research-articles
+- **Blog Posts:** fartooyoung-production-blog-posts
+- **Tiers:** fartooyoung-production-tiers
 
 ---
 
@@ -304,7 +312,7 @@ git push origin main
 
 **Live System:**
 - **🌐 Website:** https://www.fartooyoung.org (Global CDN)
-- **⚡ API:** Serverless backend with 17 Lambda functions
+- **⚡ API:** Serverless backend with 20 Lambda functions
 - **🗄️ Database:** 3 DynamoDB tables with auto-scaling
 - **💳 Payments:** Live Stripe processing operational
 - **📧 Emails:** SES verification and notification system

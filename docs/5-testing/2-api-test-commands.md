@@ -87,10 +87,16 @@ aws dynamodb describe-table --table-name fartooyoung-production-rate-limits --re
 # Describe STAGING tables
 aws dynamodb describe-table --table-name fartooyoung-staging-users-table --region us-east-1
 aws dynamodb describe-table --table-name fartooyoung-staging-donations-table --region us-east-1
+aws dynamodb describe-table --table-name fartooyoung-staging-research-articles --region us-east-1
+aws dynamodb describe-table --table-name fartooyoung-staging-tiers --region us-east-1
 
 # Scan PRODUCTION table contents (be careful with large tables)
 aws dynamodb scan --table-name fartooyoung-production-users-table --region us-east-1 --max-items 5
 aws dynamodb scan --table-name fartooyoung-production-donations-table --region us-east-1 --max-items 10
+
+# Scan research articles (staging)
+aws dynamodb scan --table-name fartooyoung-staging-research-articles --region us-east-1 --max-items 10
+aws dynamodb scan --table-name fartooyoung-staging-tiers --region us-east-1
 ```
 
 ### View AWS Secrets Manager
@@ -193,6 +199,17 @@ Status: 🧪 TESTING - Safe for development and testing
 - `GET /user/profile` - Get user profile (requires auth)
 - `PUT /user/profile` - Update user profile (requires auth)
 - `DELETE /user/account` - Delete user account (requires auth)
+
+### Content & Research Endpoints ✅ PRODUCTION
+- `GET /research/articles` - Get public research articles (supports `?status=`, `?limit=`)
+
+### Admin Endpoints ✅ PRODUCTION (Admin role required)
+- `GET /admin/research` - List all research articles (all statuses)
+- `GET /admin/tiers` - Get tier definitions
+- `POST /admin/research` - Add article (URL validation + title extraction + dedup)
+- `PUT /admin/research/{id}` - Update article status/starred
+- `DELETE /admin/research/{id}` - Delete article
+- `POST /admin/upload-image` - Get presigned S3 URL for blog image upload
 
 ---
 
@@ -688,11 +705,111 @@ done
 
 ---
 
+## Admin & Research Endpoints (Admin Auth Required)
+
+### Get All Research Articles (Admin)
+
+**🔵 STAGING:**
+```bash
+curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/research \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE"
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "articles": [
+    {
+      "id": "uuid-string",
+      "title": "Article Title",
+      "url": "https://source.org/article",
+      "source": "UNICEF",
+      "publishedDate": "2026-06-01T00:00:00.000Z",
+      "status": "approved",
+      "starred": true,
+      "createdAt": "2026-06-01T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+### Get Tiers
+
+**🔵 STAGING:**
+```bash
+curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/tiers \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE"
+```
+
+### Add Research Article
+
+**🔵 STAGING:**
+```bash
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/research \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE" \
+  -d '{"url":"https://www.unicef.org/some-article"}'
+```
+
+### Update Article Status/Starred
+
+**🔵 STAGING:**
+```bash
+curl -X PUT https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/research/ARTICLE_ID \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE" \
+  -d '{"status":"approved","starred":true}'
+```
+
+### Delete Article
+
+**🔵 STAGING:**
+```bash
+curl -X DELETE https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/research/ARTICLE_ID \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE"
+```
+
+### Get Public Research Articles (No Auth)
+
+**🔵 STAGING:**
+```bash
+# All approved articles
+curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/research/articles
+
+# With status filter
+curl -X GET "https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/research/articles?status=approved"
+
+# With limit
+curl -X GET "https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/research/articles?limit=10"
+```
+
+### Upload Image (Presigned URL)
+
+**🔵 STAGING:**
+```bash
+curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/upload-image \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE" \
+  -d '{"filename":"blog-image.jpg","contentType":"image/jpeg"}'
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "uploadUrl": "https://s3.amazonaws.com/bucket/presigned-url...",
+  "imageUrl": "https://s3.amazonaws.com/bucket/blog-image.jpg"
+}
+```
+
+---
+
 ## 🚀 **PRODUCTION STATUS SUMMARY**
 
 **✅ LIVE API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
-- **17 Lambda Functions**: All endpoints operational
-- **3 DynamoDB Tables**: Users, donations, rate-limits
+- **20 Lambda Functions**: All endpoints operational
+- **6 DynamoDB Tables**: Users, donations, rate-limits, research-articles, blog-posts, tiers
 - **Live Stripe Integration**: Processing real payments
 - **Email Verification**: SES integration active
 - **Rate Limiting**: DynamoDB-based protection
@@ -705,5 +822,5 @@ done
 
 ---
 
-*Last Updated: December 11, 2025*  
+*Last Updated: June 6, 2026*  
 *Production API Status: ✅ LIVE and processing real transactions*

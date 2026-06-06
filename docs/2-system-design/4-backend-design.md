@@ -1,9 +1,9 @@
 # Far Too Young - Backend Design
 
 ## Overview
-Complete production backend architecture for Far Too Young platform using 17 AWS Lambda functions, integrated with Stripe payments, email verification, and donation management.
+Complete production backend architecture for Far Too Young platform using 20 AWS Lambda functions, integrated with Stripe payments, email verification, donation management, and admin panel.
 
-**Status:** ✅ Production LIVE | ✅ 17 Functions Deployed | ✅ Real Payments Active
+**Status:** ✅ Production LIVE | ✅ 20 Functions Deployed | ✅ Real Payments Active
 
 ---
 
@@ -20,7 +20,7 @@ Complete production backend architecture for Far Too Young platform using 17 AWS
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                              API GATEWAY                                        │
 │                 0o7onj0dr7.execute-api.us-east-1.amazonaws.com                 │
-│                              17 Endpoints                                       │
+│                              23 Endpoints                                       │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                         │
                                         │ Route to Lambda Functions
@@ -44,6 +44,16 @@ Complete production backend architecture for Far Too Young platform using 17 AWS
 │  │• Update Profile │  │                 │  │                 │                │
 │  │• Change Password│  │                 │  │                 │                │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
+│                                                                                 │
+│  ┌─────────────────┐  ┌─────────────────┐                                    │
+│  │ Content &       │  │ Admin Panel     │                                    │
+│  │ Research        │  │  (2 Functions)  │                                    │
+│  │  (2 Functions)  │  │─────────────────│                                    │
+│  │─────────────────│  │• Admin Research │                                    │
+│  │• Get Research   │  │  (CRUD + tiers) │                                    │
+│  │• Research       │  │• Upload Image   │                                    │
+│  │  Fetcher (cron) │  │  (presigned S3) │                                    │
+│  └─────────────────┘  └─────────────────┘                                    │
 │                                                                                 │
 │  ┌─────────────────────────────────────────────────────────────┐              │
 │  │                    External Integrations                    │              │
@@ -70,6 +80,18 @@ Complete production backend architecture for Far Too Young platform using 17 AWS
 │  │• Email Verified │  │• Stripe ID      │  │• IP Tracking    │                │
 │  │• Verify Token   │  │• Type           │  │                 │                │
 │  │• Created Date   │  │• Status         │  │                 │                │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
+│                                                                                 │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
+│  │ Research        │  │ Blog Posts      │  │ Tiers Table     │                │
+│  │ Articles Table  │  │ Table           │  │─────────────────│                │
+│  │─────────────────│  │─────────────────│  │• tier_id (PK)   │                │
+│  │• id (PK)        │  │• id (PK)        │  │• description    │                │
+│  │• title          │  │• title          │  │                 │                │
+│  │• source         │  │• content        │  │                 │                │
+│  │• url            │  │• status         │  │                 │                │
+│  │• status         │  │• createdAt      │  │                 │                │
+│  │• starred        │  │                 │  │                 │                │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘                │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -109,6 +131,20 @@ Complete production backend architecture for Far Too Young platform using 17 AWS
 | `list-subscriptions.js` | GET /stripe/list-subscriptions | None | User subscription management |
 | `webhook.js` | POST /stripe/webhook | donations | Payment event processing |
 
+### Content & Research Functions (2 Functions)
+
+| Function | Endpoint | Database Tables | Purpose |
+|----------|----------|-----------------|---------|
+| `get-research-articles.js` | GET /research/articles | research-articles | Public research articles (supports `?status=` and `?limit=` params) |
+| `research-fetcher.js` | Scheduled (cron) | research-articles | RSS feed aggregation (UNICEF, WHO, UN News, HRW, Population Council) |
+
+### Admin Functions (2 Functions)
+
+| Function | Endpoint | Database Tables | Purpose |
+|----------|----------|-----------------|---------|
+| `admin-research.js` | GET/POST /admin/research, GET /admin/tiers, PUT/DELETE /admin/research/{id} | research-articles, tiers | Admin CRUD for research articles + tiers lookup |
+| `upload-image.js` | POST /admin/upload-image | None (S3) | Generate presigned S3 URLs for blog image uploads |
+
 ### External Integrations
 
 | Service | Purpose | Used By |
@@ -117,6 +153,7 @@ Complete production backend architecture for Far Too Young platform using 17 AWS
 | **Stripe API** | Payment processing | All stripe functions |
 | **Secrets Manager** | API key storage | All functions requiring secrets |
 | **Rate Limiting** | Bot protection | login, register |
+| **S3** | Image uploads (presigned URLs) | upload-image |
 
 ---
 
@@ -248,6 +285,21 @@ Complete production backend architecture for Far Too Young platform using 17 AWS
 | GET | `/stripe/list-subscriptions` | list-subscriptions.js | Subscription list |
 | POST | `/stripe/webhook` | webhook.js | Payment events |
 
+### Content & Research Endpoints
+| Method | Endpoint | Function | Purpose |
+|--------|----------|----------|---------|
+| GET | `/research/articles` | get-research-articles.js | Public research articles (supports `?status=`, `?limit=`) |
+
+### Admin Endpoints (Admin role required)
+| Method | Endpoint | Function | Purpose |
+|--------|----------|----------|---------|
+| GET | `/admin/research` | admin-research.js | List all research articles (all statuses) |
+| GET | `/admin/tiers` | admin-research.js | Get tier definitions |
+| POST | `/admin/research` | admin-research.js | Add article (URL validation + title extraction + dedup) |
+| PUT | `/admin/research/{id}` | admin-research.js | Update article status/starred |
+| DELETE | `/admin/research/{id}` | admin-research.js | Delete article |
+| POST | `/admin/upload-image` | upload-image.js | Get presigned S3 URL for blog image upload |
+
 ### Production Base URL
 **API Gateway**: `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod`
 
@@ -284,7 +336,7 @@ POST https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod/stripe/create-c
 - **Secrets Management**: AWS Secrets Manager for API keys
 
 ### Database Architecture
-- **3 DynamoDB Tables**: users, donations, rate-limits
+- **6 DynamoDB Tables**: users, donations, rate-limits, research-articles, blog-posts, tiers
 - **Primary Keys**: Optimized for query patterns
 - **TTL**: Auto-expiring rate limit records
 - **Indexes**: Efficient data access patterns
@@ -326,8 +378,12 @@ React (CloudFront) → API Gateway → Lambda Functions → DynamoDB
 ### Planned Features
 - **Books Management**: Author profile and book showcase
 - **E-commerce Shop**: Product catalog and order processing
-- **Blog System**: Content management and publishing
 - **Analytics**: Donation tracking and user insights
+
+### ✅ Recently Completed
+- **Blog System**: Content management and publishing (admin panel)
+- **Research Article Admin**: CRUD, status management, starring, RSS aggregation
+- **Admin Panel**: Role-based admin interface with research + blog management
 
 ### Scalability Considerations
 - **Auto-scaling**: Lambda functions scale automatically
@@ -337,6 +393,6 @@ React (CloudFront) → API Gateway → Lambda Functions → DynamoDB
 
 ---
 
-**Last Updated:** May 26, 2026  
-**Production Status:** ✅ 17 Functions LIVE  
+**Last Updated:** June 6, 2026  
+**Production Status:** ✅ 20 Functions LIVE  
 **Payment Status:** ✅ Real Stripe Processing Active

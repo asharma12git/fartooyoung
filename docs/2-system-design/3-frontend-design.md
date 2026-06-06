@@ -3,8 +3,8 @@
 ## Overview
 **PRODUCTION STATUS: ✅ LIVE** - Frontend architecture for Far Too Young platform at https://www.fartooyoung.org
 
-**Current Implementation**: React app with authentication, donations, and responsive design deployed via CloudFront CDN  
-**Backend Integration**: Connected to 17 Lambda functions via API Gateway at https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
+**Current Implementation**: React app with authentication, donations, admin panel, and responsive design deployed via CloudFront CDN  
+**Backend Integration**: Connected to 20 Lambda functions via API Gateway at https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 
 ---
 
@@ -120,6 +120,9 @@
 | `SubscriptionManager.jsx`   | `GET /stripe/list-subscriptions` | `ListSubscriptionsFunction` | None | ✅ LIVE |
 | `AuthModal.jsx` (Reset)     | `POST /auth/forgot-password` | `ForgotPasswordFunction` | `fartooyoung-production-users` | ✅ LIVE   |
 | Rate Limiting (All)         | All endpoints             | All functions         | `fartooyoung-production-rate-limits` | ✅ LIVE   |
+| `Admin.jsx` (Research)      | `GET/POST/PUT/DELETE /admin/research` | `AdminResearchFunction` | `research-articles`, `tiers` | ✅ LIVE |
+| `Admin.jsx` (Blog)          | `POST /admin/upload-image` | `UploadImageFunction` | S3 (presigned URLs)          | ✅ LIVE |
+| `Blog.jsx`                  | `GET /research/articles`  | `GetResearchArticlesFunction` | `research-articles`  | ✅ LIVE |
 
 **Production API Base URL**: `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com`
 
@@ -147,6 +150,8 @@
 | `FounderTeam.jsx` | Founder & team bios | ✅ LIVE |
 | `Partners.jsx` | Partner organizations | ✅ LIVE |
 | `WhatWeDo.jsx` | Programs, carousel, targets | ✅ LIVE |
+| `Blog.jsx` | Stories page (public blog posts) | ✅ LIVE |
+| `Admin.jsx` | Admin panel (research articles + blog management, admin role only) | ✅ LIVE |
 | `VerifyEmail.jsx` | Email verification landing page | ✅ LIVE |
 | `PaymentSuccess.jsx` | Post-donation success page | ✅ LIVE |
 | `SubscriptionReturn.jsx` | Post-subscription return page | ✅ LIVE |
@@ -475,7 +480,7 @@ const futureUserState = {
 - **Responsive Design**: Mobile-first with Tailwind CSS
 
 **🔗 LIVE INTEGRATIONS**:
-- **API Gateway**: 17 Lambda functions via https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
+- **API Gateway**: 20 Lambda functions via https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 - **Stripe Payments**: Live donation processing
 - **Email Verification**: SES integration for user accounts
 - **Rate Limiting**: DynamoDB-based API protection
@@ -489,9 +494,8 @@ const futureUserState = {
 **🔮 EXPANSION ROADMAP**:
 - **Phase 2**: E-commerce components (products, cart, checkout)
 - **Phase 3**: Book platform components (catalog, author profiles)
-- **Phase 4**: Advanced dashboard with analytics
 
 ---
 
-*Last Updated: May 26, 2026*  
+*Last Updated: June 6, 2026*  
 *Production Frontend Status: ✅ LIVE and serving global users*

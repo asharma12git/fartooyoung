@@ -46,6 +46,7 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 ║  │  │• Partners       │  │• Dashboard      │  │• User Profile   │        │   ║
 ║  │  │• What We Do     │  │• Payment Forms  │  │• Email Verify   │        │   ║
 ║  │  │• User Dashboard │  │• Success Pages  │  │• Rate Limiting  │        │   ║
+║  │  │• Blog (Stories) │  │• Admin Panel    │  │• Admin Panel    │        │   ║
 ║  │  └─────────────────┘  └─────────────────┘  └─────────────────┘        │   ║
 ║  └─────────────────────────────────────────────────────────────────────────┘   ║
 ║                                                                                ║
@@ -63,7 +64,7 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 ║  │                          API GATEWAY                                   │   ║
 ║  │                 0o7onj0dr7.execute-api.us-east-1                       │   ║
 ║  │           (Receives API calls, routes to correct Lambda)               │   ║
-║  │              17 Endpoints (14 POST, 3 GET)                             │   ║
+║  │              23 Endpoints (14 POST, 4 GET, 3 PUT, 2 DELETE)            │   ║
 ║  │        See 4-backend-design.md for full endpoint details                │   ║
 ║  └─────────────────────────────────┬───────────────────────────────────────┘   ║
 ║                                    │ Route to Functions                         ║
@@ -216,14 +217,14 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 - **React Router** - Client-side routing
 
 ### Backend Technologies
-- **AWS Lambda** - Serverless compute (17 functions)
+- **AWS Lambda** - Serverless compute (20 functions)
 - **API Gateway** - HTTP API management
 - **Node.js 18** - JavaScript runtime
 - **SAM CLI** - Infrastructure as code
 
 ### Database & Storage
-- **DynamoDB** - NoSQL database (3 tables)
-- **S3** - Static website hosting
+- **DynamoDB** - NoSQL database (6 tables)
+- **S3** - Static website hosting + image uploads
 - **CloudFront** - Global CDN distribution
 
 ### Security & Authentication
@@ -264,6 +265,9 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 - **Email System** - AWS SES for transactional emails and notifications
 - **Mobile Responsive** - Optimized for all device sizes
 - **SSL Security** - HTTPS encryption across all endpoints
+- **Blog Platform** - Content management with admin publishing
+- **Admin Panel** - Role-based admin for research articles and blog posts
+- **Research Aggregation** - Automated RSS feed ingestion from 5 sources (UNICEF, WHO, UN News, HRW, Population Council)
 
 ### 🔮 Future Enhancements (Planned)
 
@@ -277,12 +281,6 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 - Inventory management system
 - Order processing and fulfillment
 - Customer wishlist functionality
-
-#### **Blog Platform** (Medium)
-- Content management system
-- Public blog with categories
-- Admin dashboard for publishing
-- SEO optimization features
 
 ### 📊 System Metrics
 - **Uptime**: 99.9% availability
@@ -331,6 +329,6 @@ High-level visual representation of the LIVE Far Too Young platform at https://w
 
 ---
 
-**Last Updated:** May 26, 2026  
+**Last Updated:** June 6, 2026  
 **Production Status:** ✅ LIVE at https://www.fartooyoung.org  
 **System Status:** Fully operational with automated CI/CD

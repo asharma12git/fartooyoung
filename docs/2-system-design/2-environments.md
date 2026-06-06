@@ -11,9 +11,9 @@ The system design (architecture, components, Lambda functions, database schemas)
 |---|---|---|---|
 | **Frontend URL** | `localhost:5173` | `staging.fartooyoung.org` | `www.fartooyoung.org` |
 | **Backend API URL** | `localhost:3001` | `https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/Prod` | `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com/Prod` |
-| **Lambda Functions** | SAM Local (17 functions) | AWS Lambda (`fartooyoung-staging-*`) | AWS Lambda (`fartooyoung-production-*`) |
+| **Lambda Functions** | SAM Local (20 functions) | AWS Lambda (`fartooyoung-staging-*`) | AWS Lambda (`fartooyoung-production-*`) |
 | **API Gateway** | SAM Local | `71z0wz0dg9` (REST API) | `0o7onj0dr7` (REST API) |
-| **DynamoDB** | DynamoDB Local (Docker `:8000`) | `fartooyoung-staging-*` (3 tables) | `fartooyoung-production-*` (3 tables) |
+| **DynamoDB** | DynamoDB Local (Docker `:8000`) | `fartooyoung-staging-*` (6 tables) | `fartooyoung-production-*` (6 tables) |
 | **S3 (Frontend)** | N/A | `fartooyoung-stg-frontend` | `fartooyoung-prod-frontend` |
 | **S3 (SAM Artifacts)** | N/A | `fartooyoung-stg-backend` | `fartooyoung-prod-backend` |
 | **CloudFront** | N/A | `EYHMCS1M0XJX1` (`db9gpqewllpi7.cloudfront.net`) | `E2PHSH4ED2AIN5` (`d13239btyxegco.cloudfront.net`) |
@@ -147,7 +147,7 @@ All paths relative to project root (`fartooyoung/`):
 - Lambda function code (`backend/lambda/`)
 - Infrastructure template (`backend/template.yaml`)
 - Database table schemas (same fields, same keys)
-- API endpoint structure (same 17 endpoints)
+- API endpoint structure (same 23 endpoints)
 
 **Different per environment (configuration only):**
 - API URLs and resource names
@@ -164,4 +164,4 @@ All paths relative to project root (`fartooyoung/`):
 - `4-backend-design.md` — Lambda functions and API endpoints
 - `5-database-design.md` — DynamoDB table schemas
 
-*Last Updated: May 27, 2026*
+*Last Updated: June 6, 2026*

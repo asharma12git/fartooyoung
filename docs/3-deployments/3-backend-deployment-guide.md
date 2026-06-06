@@ -6,9 +6,9 @@ This guide documents the step-by-step process to deploy the Far Too Young backen
 
 ## AWS Services Used
 
-- **Lambda**: Serverless compute for 17 API functions
-- **API Gateway**: REST API with CORS configuration
-- **DynamoDB**: NoSQL database for users, donations, and rate limits
+- **Lambda**: Serverless compute for 20 API functions
+- **API Gateway**: REST API with CORS configuration (GET, POST, PUT, DELETE, OPTIONS)
+- **DynamoDB**: NoSQL database for users, donations, rate limits, research articles, blog posts, and tiers
 - **Secrets Manager**: Secure storage for JWT secrets and Stripe API keys
 - **SES (Simple Email Service)**: Email sending for verification and password reset
 - **CloudFormation**: Infrastructure as code (used by SAM under the hood)
@@ -94,9 +94,9 @@ parameter_overrides = [
 ### 2. template.yaml
 
 Defines all AWS resources using CloudFormation syntax:
-- 18 Lambda functions
-- API Gateway with CORS
-- 3 DynamoDB tables
+- 20 Lambda functions
+- API Gateway with CORS (GET, POST, PUT, DELETE, OPTIONS)
+- 6 DynamoDB tables
 - IAM policies for each function
 
 ---

@@ -51,27 +51,39 @@ Check and update:
 
 ### 5. Planning Docs (`docs/1-planning/`)
 
-For each plan that was worked on:
+**Walk through EVERY plan file.** For each plan that was worked on:
 
 - **Status line** — update (e.g. "Steps 1-3 Done" → "Steps 1-6 Done")
 - **Checklist** — mark completed steps with [x]
 - **Implementation notes** — update with what was actually built (not just planned)
 - **Architecture diagrams** — update if data flow changed
 - **Last updated date** — set to today
+- **Even plans NOT directly worked on** — check if references to other plans are still accurate
 
 ### 6. System Design Docs (`docs/2-system-design/`)
 
-Only update if relevant changes were made:
+**Walk through EVERY file in this folder.** Update if ANY of the following changed:
 
-- `1-architecture.md` — new services, data flows, or integrations
-- `3-frontend-design.md` — new pages, components, or routes
-- `4-backend-design.md` — new Lambda functions, API endpoints, or middleware
-- `5-database-design.md` — new tables, fields, or indexes
+- `1-architecture.md` — new services, Lambda functions, data flows, DynamoDB tables, EventBridge rules, S3 buckets, or integrations
+- `2-environments.md` — new environment variables, table names, endpoints, or service configurations
+- `3-frontend-design.md` — new pages, components, routes, or UI patterns
+- `4-backend-design.md` — new Lambda functions, API endpoints, middleware, or auth patterns
+- `5-database-design.md` — new tables, fields, indexes, or access patterns
 
-### 7. Testing Docs (`docs/5-testing/`)
+**Do NOT skip these.** Open each file, compare against what was built this session, and update if stale.
 
-- `1-testing-checklist.md` — add test cases for new features
-- `2-api-test-commands.md` — add curl commands for new endpoints
+### 7. Deployment Docs (`docs/3-deployments/`)
+
+**Walk through EVERY file in this folder.** Update if:
+
+- `1-deployment-overview.md` — new services deployed, new pipeline steps, or new environments
+- `2-frontend-deployment-guide.md` — new build steps, new routes to prerender, or pipeline changes
+- `3-backend-deployment-guide.md` — new Lambda functions, new SAM template resources, or deploy commands changed
+
+### 8. Testing Docs (`docs/5-testing/`)
+
+- `1-testing-checklist.md` — add test cases for new features built this session
+- `2-api-test-commands.md` — add curl commands for new endpoints added this session
 
 ---
 
@@ -113,7 +125,14 @@ Before ending, confirm:
 
 - [ ] All code changes build without errors
 - [ ] Backend deployed to staging if Lambda changes were made
-- [ ] All documents above reviewed and updated where needed
+- [ ] `PROGRESS.md` updated (phase, counts, session left off at)
+- [ ] `README.md` updated (counts, features, structure)
+- [ ] `CONTRIBUTING.md` checked for stale references
+- [ ] `ORGANIZATION.md` updated if AWS resources changed
+- [ ] `docs/1-planning/` — walked through, statuses updated
+- [ ] `docs/2-system-design/` — walked through, every file checked against changes
+- [ ] `docs/3-deployments/` — walked through if deploy process changed
+- [ ] `docs/5-testing/` — new test cases and API commands added
 - [ ] PROGRESS.md "Session Left Off At" is detailed enough for a cold start
 - [ ] No uncommitted changes left in working directory
 - [ ] Branch is `staging` (not main)

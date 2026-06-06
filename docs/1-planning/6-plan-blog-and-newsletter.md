@@ -3,7 +3,7 @@
 ## Overview
 Complete content pipeline: automated research collection from reputable sources, AI-generated blog posts grounded in real data, newsletter distribution, and social media posting (Plan 7). One pipeline feeds all channels.
 
-**Status:** ⏳ In Progress (Steps 1-3 complete)
+**Status:** ⏳ In Progress (Steps 1-3 + Admin Panel complete)
 **Priority:** HIGH — directly drives SEO traffic + Google Ad Grants landing pages
 **Cost:** ~$3-5/month
 **Effort:** 10-12 hours total
@@ -40,7 +40,7 @@ Complete content pipeline: automated research collection from reputable sources,
 - [ ] Step 5: Newsletter System
 
 ### Phase 3: Management
-- [ ] Step 6: Admin Panel
+- [x] Step 6: Admin Panel
 - [ ] Step 7: Comments System
 - [ ] Step 8: Favorites / Bookmarks (future)
 
@@ -81,18 +81,25 @@ Complete content pipeline: automated research collection from reputable sources,
 ### DynamoDB Table: `fartooyoung-{env}-research-articles`
 - PK: `article_id` (UUID)
 - GSI: `url` (for deduplication)
-- Fields: `title`, `source`, `tier`, `url`, `full_text`, `excerpt`, `date`, `keywords`, `fetched_at`
+- Fields: `title`, `source`, `tier`, `url`, `full_text`, `excerpt`, `date`, `keywords`, `fetched_at`, `status` (pending/approved/rejected), `starred` (boolean)
 
-### RSS Sources to Fetch
+### Article Lifecycle
+- RSS fetches article → saved as `status: "pending"`
+- Admin approves → `status: "approved"` → appears on public sidebar
+- Admin rejects → `status: "rejected"` → hidden
+- Admin stars → `starred: true` → AI prioritizes for next blog draft
+- Admin can also manually add articles (select source + paste URL → Lambda validates URL, extracts title automatically)
+
+### RSS Sources (Active)
 | Tier | Source | RSS Feed |
 |------|--------|----------|
-| 1 | UNICEF | unicef.org/rss |
-| 1 | UNFPA | unfpa.org/rss |
-| 1 | WHO | who.int/feeds |
-| 1 | World Bank | worldbank.org/rss |
-| 3 | Girls Not Brides | girlsnotbrides.org/rss |
-| 3 | Human Rights Watch | hrw.org/rss |
-| 3 | Save the Children | savethechildren.org/rss |
+| 1 | UNICEF | unicef.org/press-releases/rss.xml |
+| 1 | WHO | who.int/rss-feeds/news-english.xml |
+| 1 | UN News | news.un.org/feed/subscribe/en/news/topic/women/feed/rss.xml |
+| 3 | Human Rights Watch | hrw.org/rss/news |
+| 3 | Population Council | popcouncil.org/feed/ |
+
+*Note: Girls Not Brides, Plan International, Save the Children removed (feeds dead/broken as of June 2026).*
 
 ### Blog Sidebar Display
 - Blog listing page shows "Latest Research" panel
@@ -120,7 +127,7 @@ Complete content pipeline: automated research collection from reputable sources,
 ### Blog Generator Lambda: `blog-generator.js`
 - Runtime: Node.js 18, timeout: 5 min, memory: 1024 MB
 - Triggered by EventBridge every Monday (AFTER research-fetcher completes)
-- Pulls latest research articles from DynamoDB (last 2-4 weeks)
+- Pulls **starred** articles first, then remaining **approved** articles from DynamoDB
 - Picks a keyword from content cluster list
 - Sends to Claude: full article texts + writing instructions
 - Saves output as "draft" in blog-posts table
@@ -195,7 +202,7 @@ Instructions:
 ### Effort
 2 hours
 
-## Step 6: Admin Panel ⬜
+## Step 6: Admin Panel ✅
 
 **Benefit:** A dedicated admin page (`/admin`) for managing blog posts — view drafts, edit, publish, delete — without touching DynamoDB directly.
 
@@ -207,11 +214,31 @@ Instructions:
 - Protected route: redirects to `/dashboard` if not admin
 - "Admin Panel" link in header (only visible to admins)
 
-### Features
+### Features — Blog Posts
 - List all posts (drafts + published) with status badges
 - "New Post" button → form (title, content, excerpt, category, keywords)
+- Rich text editor — edit wording, tone, structure before publishing
+- Image upload to S3 (hero image + inline images) — posts can be with or without images
 - "Edit" / "Publish" / "Unpublish" / "Delete"
 - Preview before publishing
+
+### Features — Research Articles
+- List all articles with status badges (pending / approved / rejected)
+- Approve / Reject buttons for pending articles
+- Star / Unstar toggle (starred = AI priority) as dedicated column
+- Sortable table headers (click to sort asc/desc, smart default: approved → starred → newest)
+- "Add Article" form with URL validation:
+  1. Admin selects Source (dropdown, auto-derives tier) and pastes URL
+  2. Lambda fetches the URL, validates it's reachable and domain matches source
+  3. Lambda extracts `<title>` tag from the page automatically
+  4. Article saved with real title, source, tier, and current date
+- Filter by status (segmented tabs: All, Pending, Approved, Starred, Rejected)
+
+### Image Upload
+- Admin selects image from computer
+- Lambda uploads to S3 (`blog/images/` prefix)
+- CloudFront CDN serves images globally
+- URL inserted into post content or set as hero image
 
 ### Future Tabs (Plan 8)
 - Donations management
@@ -273,22 +300,34 @@ Instructions:
 │                                                              │
 │  1. Research Lambda fetches RSS feeds                         │
 │     → Filters for child marriage / GBV keywords              │
-│     → Fetches full article text                              │
 │     → Deduplicates (skip if URL exists)                      │
-│     → Saves new articles to DynamoDB                         │
-│     → Blog sidebar updates automatically                     │
+│     → Saves new articles as "pending" in DynamoDB            │
 │                                                              │
-│  2. Blog Generator Lambda (after research completes)         │
-│     → Reads latest research articles from DynamoDB           │
-│     → Sends full text + instructions to Claude               │
-│     → Claude writes 1500-word post with real citations       │
-│     → Saves as DRAFT in blog-posts table                     │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  HUMAN REVIEW (5 min):                                       │
-│  Admin opens /admin → reviews draft → clicks "Publish"       │
+│  ADMIN CURATES RESEARCH (in /admin):                         │
+│  → Approve / Reject pending articles                         │
+│  → Star favourites (AI writes about these first)             │
+│  → Manually add articles (paste URL)                         │
+│  → Approved articles appear on blog sidebar                  │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  AI GENERATES BLOG (triggered by admin or scheduled):        │
+│  → Reads starred articles first, then approved               │
+│  → Claude writes 1500-word post with real citations          │
+│  → Saves as DRAFT in blog-posts table                        │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  ADMIN REVIEWS BLOG DRAFT (in /admin):                       │
+│  → Edit text, title, images                                  │
+│  → Upload/swap images (stored in S3, served via CloudFront)  │
+│  → Preview → Publish                                         │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -304,22 +343,24 @@ Instructions:
 ## Data Flow
 
 ```
-Reputable Sources (UNICEF, WHO, etc.)
-       ↓ (RSS feeds)
+Reputable Sources (UNICEF, WHO, UN News, HRW, PopCouncil)
+       ↓ (RSS feeds, weekly)
 Research Lambda ($0)
        ↓
-DynamoDB (research-articles table)
-       ↓ (full article text as context)
+DynamoDB (research-articles table, status: "pending")
+       ↓ (admin approves/stars)
+Approved Articles → Blog sidebar (public)
+Starred Articles → AI prioritizes these
+       ↓
 AI Generator (Claude via Bedrock, $3-5/mo)
        ↓
 DynamoDB (blog-posts table, status: "draft")
-       ↓ (admin publishes)
+       ↓ (admin edits text/images → publishes)
 Published Blog Post
        ↓
   ├── /blog page (SEO traffic)
   ├── Newsletter (email subscribers)
   ├── Social Media — Plan 7 (Instagram, Facebook)
-  ├── Blog sidebar (research links for credibility)
   └── Google Ad Grants (landing page)
 ```
 
@@ -360,4 +401,4 @@ Each post structured for ChatGPT/Perplexity citation:
 
 ---
 
-*Last updated: June 1, 2026*
+*Last updated: June 6, 2026*

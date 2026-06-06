@@ -4,16 +4,16 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 39 - Blog System (Plan 6)  
-**Last Updated:** June 1, 2026, 4:55 PM EST  
+**Current Phase:** Phase 40 - Admin Panel (Plan 6)  
+**Last Updated:** June 6, 2026, 6:33 PM EST  
 **Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete
 
 ### **What's Working (Production Ready)**
 
 ✅ **Live Production System**
 - **Website**: https://www.fartooyoung.org (LIVE and operational)
-- **API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com (25 Lambda functions)
-- **Database**: 5 DynamoDB tables (users, donations, rate-limits, blog-posts, research-articles)
+- **API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com (27 Lambda functions)
+- **Database**: 6 DynamoDB tables (users, donations, rate-limits, blog-posts, research-articles, tiers)
 - **CDN**: CloudFront distribution E2PHSH4ED2AIN5 (global distribution)
 - **SSL**: Valid certificates for www.fartooyoung.org and fartooyoung.org
 - **Real Payments**: Live Stripe integration processing actual donations
@@ -54,7 +54,7 @@
 - Real-time subscription status updates
 
 ✅ **Infrastructure (AWS Serverless)**
-- **Backend**: 25 Lambda functions + API Gateway (production + staging)
+- **Backend**: 27 Lambda functions + API Gateway (production + staging)
 - **Database**: DynamoDB with auto-scaling and TTL
 - **Email**: AWS SES (verified domain, operational)
 - **Frontend**: React + Vite deployed to S3 + CloudFront
@@ -88,7 +88,7 @@
 | 3 | SEO Implementation (meta tags, sitemap, structured data) | 3-4 hrs | ✅ Phase 1+2 Done |
 | 4 | Donor Retention & Tracking (A/B testing, analytics) | 8-10 hrs | 📋 Ready |
 | 5 | Mobile App (PWA) | 2-3 hrs | ✅ Manifest Done |
-| 6 | AI Blog System (Bedrock + newsletter) | 8-10 hrs | ⏳ Steps 1-3 Done |
+| 6 | AI Blog System (Bedrock + newsletter) | 8-10 hrs | ⏳ Steps 1-3 + Admin Panel Done |
 | 7 | Social Media Automation (Twitter/Facebook) | 3-4 hrs | 📋 Depends on #6 |
 | 8 | Dashboard Restructure (admin + blog UI) | 8-10 hrs | 📋 Depends on #6 |
 | 9 | E-commerce (merchandise shop) | 20+ hrs | 📋 Future |
@@ -99,27 +99,30 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 39: Blog System (Plan 6) — Steps 1-3 COMPLETE on staging
-- Blog frontend: `/blog` page ("Stories That Matter") with NYT-style layout, filter tabs, month navigation, sidebar, Top Research section
-- Blog backend: 6 Lambda endpoints deployed to staging, BlogPostsTable with slug GSI
-- RSS Research Pipeline: research-fetcher Lambda, ResearchArticlesTable DynamoDB, EventBridge weekly trigger, 43 verified articles seeded, GET /research/articles endpoint
-- Blog sidebar + Top Research now read from live API (dynamic, not hardcoded)
-- Role system: `admin`/`donor` field in Users table, included in JWT, admin endpoints verify role
-- "Stories" link added to header navigation, nav spacing adjusted
-- Research sources documented (`docs/4-resources/1-research-sources.md`) — 7 tiers, 40+ organizations
-- Plan 6 updated with full architecture: RSS research pipeline → AI generation → newsletter → social media
-- Plan 7 updated to show shared data flow with Plan 6
-- Plan 12 created (Image Migration to S3/CDN — future optimization)
-- ORGANIZATION.md created at project root (legal, accounts, AWS resources)
-- All 12 plans restructured with consistent format (Overview, Prerequisites, Cost, Checklist, Steps with Benefit/Problem/Implementation)
-- TEMPLATE.md added to planning folder
-- Docs folder reordered: 4-resources, 5-testing
-- Organization logos downloaded (15 high-quality)
-- Build fix: added `build:staging` and `build:production` scripts
-- Staging frontend pipeline CloudFormation updated (chromium install for pre-render)
-- Medal Foundation staging DNS record removed
+- Phase 40: Admin Panel (Plan 6 Step 6) — COMPLETE on staging
+- **RSS Fetcher Fixed**: Removed dead feeds (Girls Not Brides, Plan International, old HRW), added UN News, fixed HRW URL. 4 new articles fetched. 47 total in DB.
+- **Admin Panel Built** (`src/pages/Admin.jsx`):
+  - Protected `/admin` route (redirects non-admins)
+  - Research tab: sortable table (★, Article, Source, Date, Status, Actions), filter tabs (All/Pending/Approved/Starred/Rejected), smart default sort (approved → starred → newest)
+  - Blog Posts tab: list all posts with status badges, edit/publish/unpublish/delete
+  - Post Editor: title, category, author (default "Far Too Young, Inc."), hero image upload to S3, excerpt, HTML content
+  - Add Article form: source dropdown → URL validation + auto title extraction → duplicate check → saves to DB
+  - Tiers table in DynamoDB, fetched dynamically for "Add New Source" flow
+  - Info guide boxes explaining workflow for new admins
+  - UI matches donor dashboard dark theme (glassmorphism, orange accents, SVG action icons)
+- **Backend Deployed** to staging:
+  - `admin-research.js` Lambda (GET all, GET tiers, POST add with URL validation + title extraction + dedup, PUT status/starred, DELETE)
+  - `upload-image.js` Lambda (presigned S3 URL for blog images)
+  - `get-research-articles.js` updated (status filter, limit param)
+  - CORS fixed for PUT/DELETE methods
+  - Tiers DynamoDB table created + seeded (7 tiers)
+- **Research Articles Status**: 10 approved, 37 pending (set via CLI to test filtering)
+- **Donor Dashboard**: "Admin Panel" button (green) next to "Sign Out" (orange), navigates to `/admin`
+- **Plan 6 docs updated**: Article lifecycle (pending→approved→starred), architecture diagram, admin panel features
+- **SESSION-WRAP.md** created at project root (end-of-session checklist prompt)
+- Frontend NOT pushed to staging yet (local only) — backend IS deployed
 - ⏳ Google Ad Grants — awaiting Goodstack verification
-- Next: Step 4 (AI Content Generation with Bedrock), write first real blog post, add admin panel
+- Next: Git push to staging, test full admin flow on staging site, then Step 4 (AI Content Generation)
 
 ---
 
@@ -829,10 +832,10 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 
 ---
 
-**Last Updated:** June 1, 2026, 4:55 PM EST  
-**Current Branch:** staging (blog system development)  
+**Last Updated:** June 6, 2026, 6:33 PM EST  
+**Current Branch:** staging (admin panel development)  
 **Production Status:** ✅ LIVE at https://www.fartooyoung.org  
 **Payment Status:** ✅ Live Stripe processing operational  
 **Documentation Status:** ✅ All docs updated and synchronized  
 **Next Milestone:** Step 4 — AI Content Generation (Bedrock)  
-**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - BLOG STEPS 1-3 ON STAGING
+**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - ADMIN PANEL + BLOG STEPS 1-3 ON STAGING

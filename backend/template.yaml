@@ -46,7 +46,7 @@ Globals:
             - "http://localhost:5173"
   Api:
     Cors:
-      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
       AllowHeaders: "'Content-Type,Authorization'"
       AllowOrigin: "'*'"
 
@@ -622,6 +622,87 @@ Resources:
           Properties:
             Path: /blog/posts/{id}
             Method: delete
+
+  # Admin Research Management
+  AdminResearchFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/admin-research.handler
+      Timeout: 15
+      Environment:
+        Variables:
+          RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
+          TIERS_TABLE: !Sub "${AWS::StackName}-tiers"
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResearchArticlesTable
+        - DynamoDBReadPolicy:
+            TableName: !Sub "${AWS::StackName}-tiers"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        GetAll:
+          Type: Api
+          Properties:
+            Path: /admin/research
+            Method: get
+        GetTiers:
+          Type: Api
+          Properties:
+            Path: /admin/tiers
+            Method: get
+        Create:
+          Type: Api
+          Properties:
+            Path: /admin/research
+            Method: post
+        Update:
+          Type: Api
+          Properties:
+            Path: /admin/research/{id}
+            Method: put
+        Delete:
+          Type: Api
+          Properties:
+            Path: /admin/research/{id}
+            Method: delete
+
+  # Image Upload (presigned URL)
+  UploadImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/upload-image.handler
+      Timeout: 10
+      Environment:
+        Variables:
+          S3_BUCKET: !If
+            - IsProduction
+            - fartooyoung-prod-frontend
+            - fartooyoung-stg-frontend
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: !If
+                - IsProduction
+                - "arn:aws:s3:::fartooyoung-prod-frontend/blog/images/*"
+                - "arn:aws:s3:::fartooyoung-stg-frontend/blog/images/*"
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /admin/upload-image
+            Method: post
 
 Outputs:
   ApiGatewayApi:

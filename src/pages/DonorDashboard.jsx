@@ -252,10 +252,19 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
         {/* Sign Out Button - Top Left */}
         <button
           onClick={handleLogout}
-          className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-300 text-xs sm:text-sm font-medium border border-white/20 z-10"
+          className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-orange-500/20 hover:bg-orange-500/30 text-white hover:text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-300 text-xs sm:text-sm font-medium border border-orange-500/30 z-10"
         >
           Sign Out
         </button>
+
+        {user?.role === 'admin' && (
+          <button
+            onClick={() => navigate('/admin')}
+            className="absolute top-2 sm:top-4 left-24 sm:left-32 bg-green-500/20 hover:bg-green-500/30 text-white hover:text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-300 text-xs sm:text-sm font-medium border border-green-500/30 z-10"
+          >
+            Admin Panel
+          </button>
+        )}
 
         {/* Close Button - Top Right */}
         <button

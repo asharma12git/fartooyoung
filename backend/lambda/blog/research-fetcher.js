@@ -16,10 +16,9 @@ const RSS_SOURCES = [
   // Tier 1 - UN Agencies
   { name: 'UNICEF', tier: 1, url: 'https://www.unicef.org/press-releases/rss.xml' },
   { name: 'WHO', tier: 1, url: 'https://www.who.int/rss-feeds/news-english.xml' },
+  { name: 'UN News', tier: 1, url: 'https://news.un.org/feed/subscribe/en/news/topic/women/feed/rss.xml' },
   // Tier 3 - NGOs
-  { name: 'Girls Not Brides', tier: 3, url: 'https://www.girlsnotbrides.org/feed/' },
-  { name: 'Human Rights Watch', tier: 3, url: 'https://www.hrw.org/rss/news/topic/childrens-rights' },
-  { name: 'Plan International', tier: 3, url: 'https://plan-international.org/news/rss.xml' },
+  { name: 'Human Rights Watch', tier: 3, url: 'https://www.hrw.org/rss/news' },
   { name: 'Population Council', tier: 3, url: 'https://www.popcouncil.org/feed/' },
 ];
 

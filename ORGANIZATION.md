@@ -79,6 +79,17 @@ Far Too Young envisions a society free from child, underage and forced marriages
 | Backend Pipeline | fartooyoung-stg-backend-pipeline | fartooyoung-prod-backend-pipeline |
 | CodeStar Connection | arn:aws:codeconnections:us-east-1:538781441544:connection/2b096c20-2f8f-4def-8be1-030bbc00df07 |
 
+### DynamoDB Tables (Staging)
+
+| Table | Purpose |
+|-------|---------|
+| fartooyoung-staging-users-table | User accounts + roles |
+| fartooyoung-staging-donations-table | Donation records |
+| fartooyoung-staging-rate-limits | Rate limiting (TTL) |
+| fartooyoung-staging-blog-posts | Blog posts (draft/published) |
+| fartooyoung-staging-research-articles | Research articles (pending/approved/starred) |
+| fartooyoung-staging-tiers | Source tier descriptions |
+
 ---
 
-*Last updated: June 1, 2026*
+*Last updated: June 6, 2026*

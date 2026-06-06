@@ -17,9 +17,20 @@ exports.handler = async (event) => {
       TableName: RESEARCH_TABLE
     }).promise();
 
-    const articles = result.Items
+    const status = event.queryStringParameters?.status;
+    const limit = parseInt(event.queryStringParameters?.limit) || result.Items.length;
+
+    let articles = result.Items;
+    if (status) {
+      articles = articles.filter(a => a.status === status);
+    } else {
+      // Public: only show approved (or legacy articles without status)
+      articles = articles.filter(a => !a.status || a.status === 'approved');
+    }
+
+    articles = articles
       .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
-      .slice(0, 20); // Return latest 20
+      .slice(0, limit);
 
     return {
       statusCode: 200,

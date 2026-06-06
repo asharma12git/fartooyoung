@@ -218,7 +218,7 @@ See `docs/5-testing/1-testing-checklist.md` — 70+ test cases covering all endp
 | `docs/2-system-design/1-architecture.md` | Full system architecture, how services connect |
 | `docs/2-system-design/2-environments.md` | All AWS resources per environment (staging vs production) |
 | `docs/2-system-design/3-frontend-design.md` | React components, pages, routing |
-| `docs/2-system-design/4-backend-design.md` | All 25 Lambda functions, what each does |
+| `docs/2-system-design/4-backend-design.md` | All 27 Lambda functions, what each does |
 | `docs/2-system-design/5-database-design.md` | DynamoDB table schemas |
 | `docs/3-deployments/1-deployment-overview.md` | How deployment works end-to-end |
 | `docs/5-testing/1-testing-checklist.md` | Full regression test suite (70 test cases) |

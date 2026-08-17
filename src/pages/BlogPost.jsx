@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import SEO from '../components/SEO'
-import defaultHero from '../assets/images/pages/what-we-do/carousel/nepal/IMG_0958.webp'
+import defaultHero from '../assets/images/pages/what-we-do/fty-join-the-movement.png'
+import ftyLogo from '../assets/images/shared/Far-Too-Young-Logo.png'
 
 const BlogPost = ({ onDonateClick }) => {
   const { slug } = useParams()
@@ -69,11 +70,12 @@ const BlogPost = ({ onDonateClick }) => {
       {/* Hero with Image */}
       <div className="relative h-[50vh] sm:h-[60vh] overflow-hidden">
         <div
-          className="absolute inset-0 bg-no-repeat"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `url(${post.featured_image || defaultHero})`,
-            filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.35) contrast(1.0)',
-            backgroundSize: 'cover',
+            backgroundImage: `url(${post.image_url || defaultHero})`,
+            filter: 'grayscale(100%) sepia(25%) saturate(0.8) brightness(.20) contrast(1.0)',
+            backgroundSize: '500px',
+            backgroundRepeat: 'repeat',
             backgroundPosition: 'center top',
           }}
         ></div>
@@ -99,40 +101,55 @@ const BlogPost = ({ onDonateClick }) => {
       <div className="bg-gray-50">
         <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
 
-          {/* Author + Share Row */}
-          <div className="flex items-center justify-between mb-6 pb-8 border-b border-gray-200">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {post.author?.charAt(0)}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{post.author}</p>
-                <p className="text-xs text-gray-500">Founder, Far Too Young · Activist & Researcher</p>
-              </div>
+          {/* Author + Share */}
+          <div className="text-center mb-6 pb-8 border-b border-gray-200">
+            <div className="flex flex-col items-center gap-2 mb-6">
+              {post.author === 'Far Too Young, Inc.' ? (
+                <img src={ftyLogo} alt="Far Too Young" className="w-14 h-14 rounded-full object-contain bg-white border border-gray-200" />
+              ) : (
+                <div className="w-14 h-14 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  {post.author?.charAt(0)}
+                </div>
+              )}
+              <p className="text-sm font-semibold text-gray-900">{post.author}</p>
+              <p className="text-xs text-gray-500">{post.author === 'Far Too Young, Inc.' ? 'Nonprofit Organization · Ending Child Marriage' : 'Founder, Far Too Young · Activist & Researcher'}</p>
             </div>
-            {/* Share Buttons */}
-            <div className="flex items-center gap-3">
-              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://www.fartooyoung.org/blog/${post.slug}`)}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+            <p className="text-xs text-gray-400 mb-3">Share this story to raise awareness.</p>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://www.fartooyoung.org/blog/${post.slug}`)}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
                 <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               </a>
-              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://www.fartooyoung.org/blog/${post.slug}`)}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://www.fartooyoung.org/blog/${post.slug}`)}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
                 <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               </a>
-              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://www.fartooyoung.org/blog/${post.slug}`)}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://www.fartooyoung.org/blog/${post.slug}`)}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
                 <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               </a>
             </div>
+            <button onClick={() => onDonateClick()} className="px-5 py-2 bg-orange-500 text-white rounded-full text-sm font-medium hover:bg-orange-600 transition-colors">
+              Donate Now
+            </button>
           </div>
 
           {/* Back link */}
           <Link to="/blog" className="text-sm text-orange-600 hover:text-orange-700 mb-8 inline-block">← Back to Stories</Link>
 
           {/* Content */}
-          <div className="text-gray-700 text-lg leading-relaxed space-y-6">
-            {post.content.split('\n').filter(p => p.trim()).map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
-          </div>
+          <div 
+            className="text-gray-700 text-lg leading-relaxed space-y-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h2]:mt-8 [&_h2]:mb-4 [&_p]:mb-4 [&_a]:text-orange-600 [&_a]:underline [&_a:hover]:text-orange-800 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+            onClick={(e) => {
+              const link = e.target.closest('a')
+              if (!link) return
+              if (link.getAttribute('href') === '#donate-monthly') {
+                e.preventDefault()
+                onDonateClick(null, 'monthly')
+              } else if (link.getAttribute('href') === '#donate-once') {
+                e.preventDefault()
+                onDonateClick(null, 'one-time')
+              }
+            }}
+          />
 
           {/* FAQ Section */}
           {post.faq && post.faq.length > 0 && (
@@ -156,9 +173,12 @@ const BlogPost = ({ onDonateClick }) => {
                 <h3 className="text-base font-semibold text-gray-900">Stay updated on our work</h3>
                 <p className="text-sm text-gray-500">Get stories and research delivered to your inbox monthly.</p>
               </div>
-              <div className="flex gap-2 w-full sm:w-auto">
-                <input type="email" placeholder="Your email" className="px-3 py-2 border border-gray-300 rounded-lg text-sm flex-1 sm:w-48 focus:outline-none focus:border-orange-500" />
-                <button className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">Subscribe</button>
+              <div className="flex flex-col gap-2 w-full sm:w-auto">
+                <div className="flex gap-2">
+                  <input type="email" placeholder="Your email" className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 flex-1 sm:w-48 focus:outline-none focus:border-orange-500" />
+                  <button onClick={(e) => { e.preventDefault(); e.target.closest('.flex-col').querySelector('.newsletter-msg').classList.remove('hidden') }} className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">Subscribe</button>
+                </div>
+                <p className="newsletter-msg hidden text-xs text-orange-600">Thank you for your interest! Our newsletter is launching soon. Please check back shortly.</p>
               </div>
             </div>
           </div>

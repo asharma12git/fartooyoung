@@ -23,7 +23,7 @@ exports.handler = async (event) => {
     }).promise();
 
     const post = result.Items[0];
-    if (!post || post.status !== 'published') {
+    if (!post) {
       return {
         statusCode: 404,
         headers: { 'Access-Control-Allow-Origin': getAllowedOrigin(event) },

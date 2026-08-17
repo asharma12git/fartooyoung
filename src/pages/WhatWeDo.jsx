@@ -89,35 +89,33 @@ import bdTraining1 from '../assets/images/pages/what-we-do/carousel/bangladesh-v
 import bdTraining2 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/5-training-and-education/DSCN8153.JPG'
 import bdTraining3 from '../assets/images/pages/what-we-do/carousel/bangladesh-viscom/5-training-and-education/WP_20141221_087.jpg'
 
-const WhatWeDo = ({ onDonateClick }) => {
-  const [zoomedImage, setZoomedImage] = useState(null)
+// Counter animation component
+const Counter = ({ end, suffix = '', duration = 2000, delay = 0 }) => {
+  const [count, setCount] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef()
 
-  // Counter animation component
-  const Counter = ({ end, suffix = '', duration = 2000 }) => {
-    const [count, setCount] = useState(0)
-    const [isVisible, setIsVisible] = useState(false)
-    const ref = useRef()
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
 
-    useEffect(() => {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && !isVisible) {
-            setIsVisible(true)
-          }
-        },
-        { threshold: 0.1 }
-      )
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
 
-      if (ref.current) {
-        observer.observe(ref.current)
-      }
+    return () => observer.disconnect()
+  }, [isVisible])
 
-      return () => observer.disconnect()
-    }, [isVisible])
+  useEffect(() => {
+    if (!isVisible) return
 
-    useEffect(() => {
-      if (!isVisible) return
-
+    const timeout = setTimeout(() => {
       let startTime
       const animate = (currentTime) => {
         if (!startTime) startTime = currentTime
@@ -131,14 +129,20 @@ const WhatWeDo = ({ onDonateClick }) => {
       }
 
       requestAnimationFrame(animate)
-    }, [isVisible, end, duration])
+    }, delay)
 
-    return (
-      <div ref={ref} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-black mb-4">
-        {count.toLocaleString()}{suffix}
-      </div>
-    )
-  }
+    return () => clearTimeout(timeout)
+  }, [isVisible, end, duration, delay])
+
+  return (
+    <div ref={ref} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-black mb-4">
+      {count.toLocaleString()}{suffix}
+    </div>
+  )
+}
+
+const WhatWeDo = ({ onDonateClick }) => {
+  const [zoomedImage, setZoomedImage] = useState(null)
 
   // Carousel images array
   const imageArray = [
@@ -880,37 +884,37 @@ const WhatWeDo = ({ onDonateClick }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Target 1 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
-              <Counter end={20} suffix="M+" />
+              <Counter end={20} suffix="M+" delay={500} />
               <p className="text-gray-600 text-sm">Reach people through awareness and advocacy against child marriage in communities and countries.</p>
             </div>
 
             {/* Target 2 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
-              <Counter end={6000} suffix="+" />
+              <Counter end={6000} suffix="+" delay={1000} />
               <p className="text-gray-600 text-sm">Provide additional scholarships to keep girl children in school.</p>
             </div>
 
             {/* Target 3 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_1.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
-              <Counter end={4000} suffix="+" />
+              <Counter end={4000} suffix="+" delay={1500} />
               <p className="text-gray-600 text-sm">Provide vocational skills to young brides.</p>
             </div>
 
             {/* Target 4 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
-              <Counter end={20000} suffix="+" />
+              <Counter end={20000} suffix="+" delay={2000} />
               <p className="text-gray-600 text-sm">Provide additional counselling to young brides.</p>
             </div>
 
             {/* Target 5 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_2.5s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
-              <Counter end={1200} suffix="+" />
+              <Counter end={1200} suffix="+" delay={2500} />
               <p className="text-gray-600 text-sm">Form new partnerships and local bodies.</p>
             </div>
 
             {/* Target 6 */}
             <div className="bg-white rounded-lg p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 animate-[fadeInUp_0.6s_ease-out_3s_forwards] border border-orange-200 min-h-[200px] flex flex-col justify-center">
-              <Counter end={1800} suffix="+" />
+              <Counter end={1800} suffix="+" delay={3000} />
               <p className="text-gray-600 text-sm">Partnership and programs in new schools.</p>
             </div>
           </div>

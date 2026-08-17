@@ -29,7 +29,11 @@ exports.handler = async (event) => {
     }
 
     articles = articles
-      .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+      .sort((a, b) => {
+        // Starred first, then by date (newest)
+        if ((b.starred ? 1 : 0) !== (a.starred ? 1 : 0)) return (b.starred ? 1 : 0) - (a.starred ? 1 : 0);
+        return new Date(b.published_at) - new Date(a.published_at);
+      })
       .slice(0, limit);
 
     return {

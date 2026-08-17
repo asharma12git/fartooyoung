@@ -13,15 +13,22 @@ exports.handler = async (event) => {
   }
 
   try {
-    const result = await dynamodb.scan({
-      TableName: BLOG_TABLE,
-      FilterExpression: '#s = :published',
-      ExpressionAttributeNames: { '#s': 'status' },
-      ExpressionAttributeValues: { ':published': 'published' }
-    }).promise();
+    const showAll = event.queryStringParameters?.all === 'true';
+    
+    let result;
+    if (showAll) {
+      result = await dynamodb.scan({ TableName: BLOG_TABLE }).promise();
+    } else {
+      result = await dynamodb.scan({
+        TableName: BLOG_TABLE,
+        FilterExpression: '#s = :published',
+        ExpressionAttributeNames: { '#s': 'status' },
+        ExpressionAttributeValues: { ':published': 'published' }
+      }).promise();
+    }
 
     const posts = result.Items
-      .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+      .sort((a, b) => new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at))
       .map(({ content, ...rest }) => rest); // Exclude full content from listing
 
     return {

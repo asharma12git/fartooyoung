@@ -102,8 +102,7 @@ exports.handler = async (event) => {
           TableName: RESEARCH_TABLE,
           FilterExpression: '#u = :url',
           ExpressionAttributeNames: { '#u': 'url' },
-          ExpressionAttributeValues: { ':url': item.link },
-          Limit: 1
+          ExpressionAttributeValues: { ':url': item.link }
         }).promise();
 
         if (existing.Items.length > 0) {

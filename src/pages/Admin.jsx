@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
 
@@ -88,8 +90,14 @@ function Admin() {
 }
 
 // ─── SORTABLE HEADER ──────────────────────────────────────────
+// Default sort indicators: which columns are active in default mode and their direction
+const DEFAULT_SORT_FIELDS = { status: 'asc', starred: 'desc', date: 'desc' }
+
 function SortHeader({ label, field, sort, setSort, className = '', align = 'left' }) {
   const isActive = sort && sort.field === field
+  const isDefault = !sort && DEFAULT_SORT_FIELDS[field]
+  const defaultDir = DEFAULT_SORT_FIELDS[field]
+
   const toggle = () => {
     if (isActive) setSort({ field, dir: sort.dir === 'asc' ? 'desc' : 'asc' })
     else setSort({ field, dir: 'asc' })
@@ -98,9 +106,10 @@ function SortHeader({ label, field, sort, setSort, className = '', align = 'left
   return (
     <th className={`px-4 py-3 ${className}`}>
       <button onClick={toggle} className={`flex items-center gap-1 font-medium text-xs uppercase tracking-wider transition hover:text-white/70 ${justify} w-full`}>
-        <span className={isActive ? 'text-orange-300' : 'text-white/40'}>{label}</span>
-        <span className="text-[10px]">
-          {isActive ? (sort.dir === 'asc' ? '▲' : '▼') : <span className="text-white/20">⇅</span>}
+        <span className={isActive ? 'text-orange-300' : isDefault ? 'text-yellow-400' : 'text-white/40'}>{label}</span>
+        <span className="flex flex-col text-[10px] leading-[11px]">
+          <span className={isActive && sort.dir === 'asc' ? 'text-orange-300' : isDefault && defaultDir === 'asc' ? 'text-yellow-400' : 'text-white/20'}>▲</span>
+          <span className={isActive && sort.dir === 'desc' ? 'text-orange-300' : isDefault && defaultDir === 'desc' ? 'text-yellow-400' : 'text-white/20'}>▼</span>
         </span>
       </button>
     </th>
@@ -353,7 +362,7 @@ function PostsTab() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch(`${API_URL}/blog/posts`, { headers })
+      const res = await fetch(`${API_URL}/blog/posts?all=true`, { headers })
       const data = await res.json()
       if (data.success) setPosts(data.posts)
     } catch (e) { console.error(e) }
@@ -446,6 +455,22 @@ function PostEditor({ post, onClose, headers }) {
   })
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [loadingContent, setLoadingContent] = useState(!isNew && !post.content)
+
+  // Fetch full post content if not included in listing
+  useEffect(() => {
+    if (!isNew && !post.content && post.slug) {
+      fetch(`${API_URL}/blog/posts/slug/${post.slug}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.success && d.post) {
+            setForm(prev => ({ ...prev, content: d.post.content || '' }))
+          }
+          setLoadingContent(false)
+        })
+        .catch(() => setLoadingContent(false))
+    }
+  }, [post.slug])
 
   const categories = ['Education', 'Health', 'Norms & Culture', 'Policy & Justice', 'Research', 'Climate & Crisis']
 
@@ -531,13 +556,24 @@ function PostEditor({ post, onClose, headers }) {
           className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-white/30 focus:border-orange-500/50 focus:outline-none"
         />
 
-        <textarea
-          placeholder="Post content (HTML supported)"
-          value={form.content}
-          onChange={e => setForm({ ...form, content: e.target.value })}
-          rows={20}
-          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm font-mono text-white/80 placeholder-white/30 focus:border-orange-500/50 focus:outline-none"
-        />
+        <div className="bg-white rounded-lg [&_.ql-editor]:min-h-[400px] [&_.ql-editor]:text-gray-900 [&_.ql-toolbar]:border-gray-300 [&_.ql-container]:border-gray-300">
+          <style>{`.ql-editor h2 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 700; } .ql-editor p { margin-bottom: 1rem; line-height: 1.7; }`}</style>
+          <ReactQuill
+            theme="snow"
+            value={form.content}
+            onChange={val => setForm({ ...form, content: val })}
+            placeholder="Start writing your post..."
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['blockquote', 'link', 'image'],
+                ['clean']
+              ]
+            }}
+          />
+        </div>
 
         <div className="flex justify-end gap-3 pt-2">
           <button onClick={onClose} className="px-4 py-2 border border-white/20 rounded-lg text-sm text-white/60 hover:text-white hover:border-white/40 transition">Cancel</button>

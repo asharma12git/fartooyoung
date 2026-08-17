@@ -704,6 +704,50 @@ Resources:
             Path: /admin/upload-image
             Method: post
 
+  # Blog Generator (AI Content)
+  BlogGeneratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/blog/blog-generator.handler
+      Timeout: 120
+      MemorySize: 512
+      Environment:
+        Variables:
+          RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
+          BLOG_TABLE: !Sub "${AWS::StackName}-blog-posts"
+          S3_BUCKET: !If
+            - IsProduction
+            - fartooyoung-prod-frontend
+            - fartooyoung-stg-frontend
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResearchArticlesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BlogPostsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: !If
+                - IsProduction
+                - "arn:aws:s3:::fartooyoung-prod-frontend/blog/images/*"
+                - "arn:aws:s3:::fartooyoung-stg-frontend/blog/images/*"
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref SecretsManagerArn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /admin/generate-post
+            Method: post
+
 Outputs:
   ApiGatewayApi:
     Description: "API Gateway endpoint URL"

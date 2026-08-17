@@ -394,6 +394,7 @@ Resources:
   # DynamoDB Tables
   UsersTable:
     Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
     Properties:
       TableName: !Sub "${AWS::StackName}-users-table"
       AttributeDefinitions:
@@ -406,6 +407,7 @@ Resources:
 
   DonationsTable:
     Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
     Properties:
       TableName: !Sub "${AWS::StackName}-donations-table"
       AttributeDefinitions:
@@ -418,6 +420,7 @@ Resources:
 
   RateLimitsTable:
     Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
     Properties:
       TableName: !Sub "${AWS::StackName}-rate-limits"
       AttributeDefinitions:
@@ -433,6 +436,7 @@ Resources:
 
   BlogPostsTable:
     Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
     Properties:
       TableName: !Sub "${AWS::StackName}-blog-posts"
       AttributeDefinitions:
@@ -454,6 +458,7 @@ Resources:
 
   ResearchArticlesTable:
     Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
     Properties:
       TableName: !Sub "${AWS::StackName}-research-articles"
       AttributeDefinitions:

@@ -4,7 +4,7 @@
 **PRODUCTION STATUS: ✅ LIVE** - Frontend architecture for Far Too Young platform at https://www.fartooyoung.org
 
 **Current Implementation**: React app with authentication, donations, admin panel, and responsive design deployed via CloudFront CDN  
-**Backend Integration**: Connected to 20 Lambda functions via API Gateway at https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
+**Backend Integration**: Connected to 28 Lambda functions via API Gateway at https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 
 ---
 
@@ -54,7 +54,7 @@
                                         │ API Calls (HTTPS)
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                    API GATEWAY (0o7onj0dr7) + 17 LAMBDA FUNCTIONS              │
+│                    API GATEWAY (0o7onj0dr7) + 28 LAMBDA FUNCTIONS              │
 │              https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com            │
 │─────────────────────────────────────────────────────────────────────────────────│
 │  POST /auth/login          │  POST /auth/register     │  POST /auth/logout      │
@@ -122,7 +122,8 @@
 | Rate Limiting (All)         | All endpoints             | All functions         | `fartooyoung-production-rate-limits` | ✅ LIVE   |
 | `Admin.jsx` (Research)      | `GET/POST/PUT/DELETE /admin/research` | `AdminResearchFunction` | `research-articles`, `tiers` | ✅ LIVE |
 | `Admin.jsx` (Blog)          | `POST /admin/upload-image` | `UploadImageFunction` | S3 (presigned URLs)          | ✅ LIVE |
-| `Blog.jsx`                  | `GET /research/articles`  | `GetResearchArticlesFunction` | `research-articles`  | ✅ LIVE |
+| `Blog.jsx`                  | `GET /research/articles`, `GET /blog/posts`  | `GetResearchArticlesFunction`, `GetBlogPostsFunction` | `research-articles`, `blog-posts`  | ✅ LIVE |
+| `BlogPost.jsx`              | `GET /blog/posts/{id}`    | `GetBlogPostFunction`         | `blog-posts`             | ✅ LIVE |
 
 **Production API Base URL**: `https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com`
 
@@ -150,8 +151,9 @@
 | `FounderTeam.jsx` | Founder & team bios | ✅ LIVE |
 | `Partners.jsx` | Partner organizations | ✅ LIVE |
 | `WhatWeDo.jsx` | Programs, carousel, targets | ✅ LIVE |
-| `Blog.jsx` | Stories page (public blog posts) | ✅ LIVE |
-| `Admin.jsx` | Admin panel (research articles + blog management, admin role only) | ✅ LIVE |
+| `Blog.jsx` | Stories page — category tabs, month/year navigation, Latest Research panel, responsive redesign | ✅ LIVE |
+| `BlogPost.jsx` | Single post page — HTML rendering, tiled hero, author section, donate CTA, share | ✅ LIVE |
+| `Admin.jsx` | Admin panel (research articles + blog management, React Quill editor, admin role only) | ✅ LIVE |
 | `VerifyEmail.jsx` | Email verification landing page | ✅ LIVE |
 | `PaymentSuccess.jsx` | Post-donation success page | ✅ LIVE |
 | `SubscriptionReturn.jsx` | Post-subscription return page | ✅ LIVE |
@@ -480,7 +482,7 @@ const futureUserState = {
 - **Responsive Design**: Mobile-first with Tailwind CSS
 
 **🔗 LIVE INTEGRATIONS**:
-- **API Gateway**: 20 Lambda functions via https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
+- **API Gateway**: 28 Lambda functions via https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 - **Stripe Payments**: Live donation processing
 - **Email Verification**: SES integration for user accounts
 - **Rate Limiting**: DynamoDB-based API protection
@@ -497,5 +499,5 @@ const futureUserState = {
 
 ---
 
-*Last Updated: June 6, 2026*  
+*Last Updated: August 17, 2026*  
 *Production Frontend Status: ✅ LIVE and serving global users*

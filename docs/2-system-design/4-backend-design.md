@@ -1,9 +1,9 @@
 # Far Too Young - Backend Design
 
 ## Overview
-Complete production backend architecture for Far Too Young platform using 20 AWS Lambda functions, integrated with Stripe payments, email verification, donation management, and admin panel.
+Complete production backend architecture for Far Too Young platform using 28 AWS Lambda functions, integrated with Stripe payments, email verification, donation management, admin panel, and AI blog generation.
 
-**Status:** ✅ Production LIVE | ✅ 20 Functions Deployed | ✅ Real Payments Active
+**Status:** ✅ Production LIVE | ✅ 28 Functions Deployed | ✅ Real Payments Active
 
 ---
 
@@ -48,11 +48,15 @@ Complete production backend architecture for Far Too Young platform using 20 AWS
 │  ┌─────────────────┐  ┌─────────────────┐                                    │
 │  │ Content &       │  │ Admin Panel     │                                    │
 │  │ Research        │  │  (2 Functions)  │                                    │
-│  │  (2 Functions)  │  │─────────────────│                                    │
+│  │  (5 Functions)  │  │─────────────────│                                    │
 │  │─────────────────│  │• Admin Research │                                    │
 │  │• Get Research   │  │  (CRUD + tiers) │                                    │
-│  │• Research       │  │• Upload Image   │                                    │
-│  │  Fetcher (cron) │  │  (presigned S3) │                                    │
+│  │• Get Blog Posts │  │• Upload Image   │                                    │
+│  │• Get Blog Post  │  │  (presigned S3) │                                    │
+│  │• Research       │  │                 │                                    │
+│  │  Fetcher (cron) │  │                 │                                    │
+│  │• Blog Generator │  │                 │                                    │
+│  │  (AI, cron)     │  │                 │                                    │
 │  └─────────────────┘  └─────────────────┘                                    │
 │                                                                                 │
 │  ┌─────────────────────────────────────────────────────────────┐              │
@@ -131,12 +135,15 @@ Complete production backend architecture for Far Too Young platform using 20 AWS
 | `list-subscriptions.js` | GET /stripe/list-subscriptions | None | User subscription management |
 | `webhook.js` | POST /stripe/webhook | donations | Payment event processing |
 
-### Content & Research Functions (2 Functions)
+### Content & Research Functions (5 Functions)
 
 | Function | Endpoint | Database Tables | Purpose |
 |----------|----------|-----------------|---------|
-| `get-research-articles.js` | GET /research/articles | research-articles | Public research articles (supports `?status=` and `?limit=` params) |
+| `get-research-articles.js` | GET /research/articles | research-articles | Public research articles (supports `?status=`, `?limit=`, starred-first sort) |
+| `get-blog-posts.js` | GET /blog/posts | blog-posts | Public blog posts (supports `?all=true` for admin to see drafts) |
+| `get-blog-post.js` | GET /blog/posts/{id} | blog-posts | Single blog post (allows drafts for admin) |
 | `research-fetcher.js` | Scheduled (cron) | research-articles | RSS feed aggregation (UNICEF, WHO, UN News, HRW, Population Council) |
+| `blog-generator.js` | Scheduled (cron) | research-articles, blog-posts | AI content generation (Claude Sonnet 4.6 via Bedrock, Mon+Fri 11am UTC) |
 
 ### Admin Functions (2 Functions)
 
@@ -154,6 +161,8 @@ Complete production backend architecture for Far Too Young platform using 20 AWS
 | **Secrets Manager** | API key storage | All functions requiring secrets |
 | **Rate Limiting** | Bot protection | login, register |
 | **S3** | Image uploads (presigned URLs) | upload-image |
+| **AWS Bedrock** | AI content generation (Claude Sonnet 4.6) | blog-generator |
+| **EventBridge** | Scheduled triggers | research-fetcher (weekly), blog-generator (Mon+Fri) |
 
 ---
 
@@ -288,7 +297,9 @@ Complete production backend architecture for Far Too Young platform using 20 AWS
 ### Content & Research Endpoints
 | Method | Endpoint | Function | Purpose |
 |--------|----------|----------|---------|
-| GET | `/research/articles` | get-research-articles.js | Public research articles (supports `?status=`, `?limit=`) |
+| GET | `/research/articles` | get-research-articles.js | Public research articles (supports `?status=`, `?limit=`, starred-first) |
+| GET | `/blog/posts` | get-blog-posts.js | Public blog posts (supports `?all=true` for admin drafts) |
+| GET | `/blog/posts/{id}` | get-blog-post.js | Single blog post (allows drafts for admin) |
 
 ### Admin Endpoints (Admin role required)
 | Method | Endpoint | Function | Purpose |
@@ -381,6 +392,7 @@ React (CloudFront) → API Gateway → Lambda Functions → DynamoDB
 - **Analytics**: Donation tracking and user insights
 
 ### ✅ Recently Completed
+- **AI Blog Generator**: Claude Sonnet 4.6 auto-generates posts from research articles (Mon+Fri)
 - **Blog System**: Content management and publishing (admin panel)
 - **Research Article Admin**: CRUD, status management, starring, RSS aggregation
 - **Admin Panel**: Role-based admin interface with research + blog management
@@ -393,6 +405,6 @@ React (CloudFront) → API Gateway → Lambda Functions → DynamoDB
 
 ---
 
-**Last Updated:** June 6, 2026  
-**Production Status:** ✅ 20 Functions LIVE  
+**Last Updated:** August 17, 2026  
+**Production Status:** ✅ 28 Functions LIVE  
 **Payment Status:** ✅ Real Stripe Processing Active

@@ -4,15 +4,15 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 40 - Admin Panel (Plan 6)  
-**Last Updated:** June 6, 2026, 6:33 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete
+**Current Phase:** Phase 41 - AI Content Generation (Plan 6 Step 4)  
+**Last Updated:** August 17, 2026, 4:50 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active
 
 ### **What's Working (Production Ready)**
 
 ✅ **Live Production System**
 - **Website**: https://www.fartooyoung.org (LIVE and operational)
-- **API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com (27 Lambda functions)
+- **API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com (28 Lambda functions)
 - **Database**: 6 DynamoDB tables (users, donations, rate-limits, blog-posts, research-articles, tiers)
 - **CDN**: CloudFront distribution E2PHSH4ED2AIN5 (global distribution)
 - **SSL**: Valid certificates for www.fartooyoung.org and fartooyoung.org
@@ -54,7 +54,7 @@
 - Real-time subscription status updates
 
 ✅ **Infrastructure (AWS Serverless)**
-- **Backend**: 27 Lambda functions + API Gateway (production + staging)
+- **Backend**: 28 Lambda functions + API Gateway (production + staging)
 - **Database**: DynamoDB with auto-scaling and TTL
 - **Email**: AWS SES (verified domain, operational)
 - **Frontend**: React + Vite deployed to S3 + CloudFront
@@ -88,7 +88,7 @@
 | 3 | SEO Implementation (meta tags, sitemap, structured data) | 3-4 hrs | ✅ Phase 1+2 Done |
 | 4 | Donor Retention & Tracking (A/B testing, analytics) | 8-10 hrs | 📋 Ready |
 | 5 | Mobile App (PWA) | 2-3 hrs | ✅ Manifest Done |
-| 6 | AI Blog System (Bedrock + newsletter) | 8-10 hrs | ⏳ Steps 1-3 + Admin Panel Done |
+| 6 | AI Blog System (Bedrock + newsletter) | 8-10 hrs | ⏳ Steps 1-4 + Admin Panel Done |
 | 7 | Social Media Automation (Twitter/Facebook) | 3-4 hrs | 📋 Depends on #6 |
 | 8 | Dashboard Restructure (admin + blog UI) | 8-10 hrs | 📋 Depends on #6 |
 | 9 | E-commerce (merchandise shop) | 20+ hrs | 📋 Future |
@@ -99,36 +99,126 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 40: Admin Panel (Plan 6 Step 6) — COMPLETE on staging
-- **RSS Fetcher Fixed**: Removed dead feeds (Girls Not Brides, Plan International, old HRW), added UN News, fixed HRW URL. 4 new articles fetched. 47 total in DB.
-- **Admin Panel Built** (`src/pages/Admin.jsx`):
-  - Protected `/admin` route (redirects non-admins)
-  - Research tab: sortable table (★, Article, Source, Date, Status, Actions), filter tabs (All/Pending/Approved/Starred/Rejected), smart default sort (approved → starred → newest)
-  - Blog Posts tab: list all posts with status badges, edit/publish/unpublish/delete
-  - Post Editor: title, category, author (default "Far Too Young, Inc."), hero image upload to S3, excerpt, HTML content
-  - Add Article form: source dropdown → URL validation + auto title extraction → duplicate check → saves to DB
-  - Tiers table in DynamoDB, fetched dynamically for "Add New Source" flow
-  - Info guide boxes explaining workflow for new admins
-  - UI matches donor dashboard dark theme (glassmorphism, orange accents, SVG action icons)
-- **Backend Deployed** to staging:
-  - `admin-research.js` Lambda (GET all, GET tiers, POST add with URL validation + title extraction + dedup, PUT status/starred, DELETE)
-  - `upload-image.js` Lambda (presigned S3 URL for blog images)
-  - `get-research-articles.js` updated (status filter, limit param)
-  - CORS fixed for PUT/DELETE methods
-  - Tiers DynamoDB table created + seeded (7 tiers)
-- **Research Articles Status**: 10 approved, 37 pending (set via CLI to test filtering)
-- **Donor Dashboard**: "Admin Panel" button (green) next to "Sign Out" (orange), navigates to `/admin`
-- **Plan 6 docs updated**: Article lifecycle (pending→approved→starred), architecture diagram, admin panel features
-- **SESSION-WRAP.md** created at project root (end-of-session checklist prompt)
-- Frontend NOT pushed to staging yet (local only) — backend IS deployed
-- ⏳ Google Ad Grants — awaiting Goodstack verification
-- Next: Git push to staging, test full admin flow on staging site, then Step 4 (AI Content Generation)
+- Phase 41: AI Content Generation (Plan 6 Step 4) — COMPLETE on staging
+- **Blog Generator Lambda** (`blog-generator.js`): Claude Sonnet 4.6 writes posts from starred/approved research articles
+  - Single article per post, focused topic. Skips irrelevant articles ({skip:true})
+  - Auto-categorizes (Education, Health, Norms & Culture, Policy & Justice, Research, Climate & Crisis)
+  - Calculates reading_time (words/200) and word_count
+  - Appends CTA block with donate links (#donate-monthly, #donate-once)
+  - No dashes rule in prompt. Author: 'Far Too Young, Inc.' default
+- **EventBridge Triggers**: Monday 11am UTC + Friday 11am UTC (2 posts/week auto-generated)
+  - 3 total EventBridge rules: research weekly + blog Monday + blog Friday
+- **Blog.jsx Redesigned**:
+  - Category tabs (desktop=underline with dividers, mobile/iPad=dropdown)
+  - Year dropdown + short month tabs (Jan, Feb...) replace old arrow navigation
+  - Latest Research tab (orange, always orange) with right panel on desktop (xl:)
+  - Mobile/iPad: Latest Research section below posts before Top Research
+  - Category color placeholders (gradient boxes, short names mobile, full desktop)
+  - Posts without image_url show colored gradient (removed placeholder images)
+  - Top Research: 10 articles, sticky right panel
+  - Stay Informed: temporary message on subscribe
+  - Responsive: xl breakpoint for side panel, overflow scroll for categories
+- **BlogPost.jsx Updated**:
+  - HTML content rendered with dangerouslySetInnerHTML (was showing raw tags)
+  - Tiled hero image (Join the Movement, repeated, dark overlay)
+  - Centered author section with FTY logo + 'Share this story' + Donate Now button
+  - Donate links in CTA block trigger modal (monthly/one-time)
+  - Bottom donate button fixed (was passing event as amount)
+  - Newsletter subscribe: temporary message added
+- **Admin.jsx**: React Quill rich text editor, proper content loading on edit
+- **Other Frontend Fixes**: WhatWeDo Counter component moved outside (fixes infinite spin), Partners VISCOM logo updated, Footer logo size reduced for mobile/iPad
+- **Backend Fixes**: research-fetcher dedup bug fixed (removed Limit:1), dead feeds removed, UN News added; get-research-articles starred-first sort; get-blog-posts ?all=true for admin; get-blog-post allows drafts; admin-research URL validation + title extraction + dedup; CORS PUT/DELETE added
+- **DynamoDB Cleanup**: 34 duplicate research articles removed (85→51), 6 old test posts deleted, 6 new AI-generated posts created, all posts updated (author, reading_time, word_count, dashes removed)
+- **Lambda Count**: 28 (added blog-generator)
+- **EventBridge Rules**: 3 (research weekly + blog Monday + blog Friday)
+- Frontend + Backend deployed to staging
+- Next: Step 5 (Newsletter System), then production deployment
 
 ---
 
 ## 📅 PROGRESS BY DAY
 
-### **May 27, 2026 - Donations Cleanup, Auth Hardening & CORS Fix**
+### **August 16-17, 2026 - AI Blog Generator & Blog Page Redesign**
+
+**Session Duration:** ~6 hours (Aug 16 evening - Aug 17 afternoon)
+
+#### **Phase 41: AI Content Generation (Plan 6 Step 4) + Blog Redesign** ✅
+
+**AI BLOG GENERATOR LAMBDA** (`blog-generator.js`):
+- Created new Lambda: Claude Sonnet 4.6 writes blog posts from research articles
+- Single article per post, focused topic approach
+- Skips irrelevant articles (returns {skip:true} if article not related to mission)
+- Auto-categorizes posts (AI picks from: Education, Health, Norms & Culture, Policy & Justice, Research, Climate & Crisis)
+- Calculates reading_time (words/200) and word_count automatically
+- Appends CTA block with donate links (#donate-monthly, #donate-once)
+- No dashes rule enforced in prompt
+- Author defaults to 'Far Too Young, Inc.'
+- EventBridge triggers: Monday 11am UTC + Friday 11am UTC (auto-generates 2 posts/week)
+
+**BLOG.JSX FULL REDESIGN**:
+- Category tabs: desktop = underline tabs with dividers, mobile/iPad = dropdown selector
+- Year dropdown + short month tabs (Jan, Feb...) replace old arrow-based navigation
+- Latest Research tab (orange, always orange) with right panel on desktop (xl: breakpoint)
+- Mobile/iPad: Latest Research section positioned below posts, before Top Research
+- Category color placeholders (gradient boxes, short names on mobile, full on desktop)
+- Posts without image_url now show colored gradient (removed placeholder images)
+- Top Research: 10 articles displayed, sticky right panel
+- Stay Informed: temporary message on subscribe (newsletter not yet wired)
+- Responsive: xl breakpoint for side panel layout, overflow scroll for categories
+
+**BLOGPOST.JSX UPDATES**:
+- HTML content rendered with dangerouslySetInnerHTML (was previously showing raw HTML tags)
+- Tiled hero image (Join the Movement text, repeated pattern, dark overlay)
+- Centered author section with FTY logo + 'Share this story' + Donate Now button
+- Donate links in CTA block trigger donation modal (monthly/one-time options)
+- Bottom donate button fixed (was incorrectly passing event object as amount)
+- Newsletter subscribe: temporary message added
+
+**OTHER FRONTEND CHANGES**:
+- Admin.jsx: React Quill rich text editor integrated, proper content loading on edit
+- WhatWeDo.jsx: Counter component moved outside component (fixes infinite re-render spin)
+- Partners.jsx: VISCOM logo updated
+- Footer.jsx: logo size reduced for mobile/iPad
+
+**BACKEND FIXES**:
+- `research-fetcher.js`: dedup bug fixed (removed Limit:1 that was breaking dedup), removed dead feeds, added UN News RSS
+- `get-research-articles.js`: starred-first sort order, status filter, limit param
+- `get-blog-posts.js`: added ?all=true param (shows drafts for admin panel)
+- `get-blog-post.js`: allows fetching draft posts (removed published-only filter)
+- `admin-research.js`: URL validation + title extraction + duplicate check on POST
+- CORS: PUT/DELETE added to AllowMethods
+
+**DYNAMODB CLEANUP**:
+- 34 duplicate research articles removed (85→51 remaining)
+- 6 old test blog posts deleted, 6 new AI-generated posts created
+- 2 posts moved to July 2026 for testing month tab navigation
+- All posts updated: author='Far Too Young, Inc.', reading_time/word_count added, dashes removed from content
+
+**KEY METRICS**:
+- Lambda functions: 28 (added blog-generator)
+- DynamoDB tables: 6 (unchanged)
+- EventBridge rules: 3 (research weekly + blog Monday + blog Friday)
+- Research articles: 51 (cleaned from 85)
+- Blog posts: 6 AI-generated
+
+**DEPLOYMENT**: Frontend + Backend deployed to staging
+
+**Next Session Goals**:
+- Step 5: Newsletter System (subscribe, double opt-in, SES distribution)
+- Production deployment of blog generator
+- Google Ad Grants follow-up
+
+---
+
+### **June 6, 2026 - Admin Panel & Research Management**
+
+**Session Duration:** ~5 hours
+
+#### **Phase 40: Admin Panel (Plan 6 Step 6)** ✅
+
+*See previous session notes below for full details.*
+
+---
 
 **Session Duration:** ~2.5 hours (1:20 PM - 3:25 PM EST)
 
@@ -832,10 +922,10 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 
 ---
 
-**Last Updated:** June 6, 2026, 6:33 PM EST  
-**Current Branch:** staging (admin panel development)  
+**Last Updated:** August 17, 2026, 4:50 PM EST  
+**Current Branch:** staging (AI blog generator development)  
 **Production Status:** ✅ LIVE at https://www.fartooyoung.org  
 **Payment Status:** ✅ Live Stripe processing operational  
 **Documentation Status:** ✅ All docs updated and synchronized  
-**Next Milestone:** Step 4 — AI Content Generation (Bedrock)  
-**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - ADMIN PANEL + BLOG STEPS 1-3 ON STAGING
+**Next Milestone:** Step 5 — Newsletter System  
+**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - AI BLOG GENERATOR + BLOG REDESIGN ON STAGING

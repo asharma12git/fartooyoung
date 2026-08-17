@@ -3,7 +3,7 @@
 ## Overview
 Complete content pipeline: automated research collection from reputable sources, AI-generated blog posts grounded in real data, newsletter distribution, and social media posting (Plan 7). One pipeline feeds all channels.
 
-**Status:** ⏳ In Progress (Steps 1-3 + Admin Panel complete)
+**Status:** ⏳ In Progress (Steps 1-4 + Admin Panel complete)
 **Priority:** HIGH — directly drives SEO traffic + Google Ad Grants landing pages
 **Cost:** ~$3-5/month
 **Effort:** 10-12 hours total
@@ -36,7 +36,7 @@ Complete content pipeline: automated research collection from reputable sources,
 
 ### Phase 2: Content Pipeline
 - [x] Step 3: Research Pipeline (RSS feeds → DynamoDB)
-- [ ] Step 4: AI Content Generation (Claude writes posts using research)
+- [x] Step 4: AI Content Generation (Claude writes posts using research)
 - [ ] Step 5: Newsletter System
 
 ### Phase 3: Management
@@ -116,62 +116,52 @@ Complete content pipeline: automated research collection from reputable sources,
 ### Effort
 2-3 hours
 
-## Step 4: AI Content Generation ⬜
+## Step 4: AI Content Generation ✅
 
-**Benefit:** AWS Bedrock (Claude) reads the full text of this week's research articles and writes a 1500-word blog post grounded in real, current data with working hyperlinks to sources. Produces factual, SEO-optimized content without hiring writers.
+**Benefit:** AWS Bedrock (Claude Sonnet 4.6) reads research articles and writes focused blog posts grounded in real, current data with working hyperlinks to sources. Produces factual, SEO-optimized content without hiring writers.
 
-**Problem:** Writing 4 quality blog posts per month manually is time-consuming. Without consistent content, organic traffic growth stalls and Google Ad Grants has insufficient landing pages.
+**Problem:** Writing quality blog posts manually is time-consuming. Without consistent content, organic traffic growth stalls and Google Ad Grants has insufficient landing pages.
 
-**Implementation:**
+**Implementation:** Complete. `blog-generator.js` Lambda triggered by EventBridge (Monday + Friday at 11am UTC). Generates 2 posts/week automatically.
 
 ### Blog Generator Lambda: `blog-generator.js`
 - Runtime: Node.js 18, timeout: 5 min, memory: 1024 MB
-- Triggered by EventBridge every Monday (AFTER research-fetcher completes)
-- Pulls **starred** articles first, then remaining **approved** articles from DynamoDB
-- Picks a keyword from content cluster list
-- Sends to Claude: full article texts + writing instructions
+- Triggered by EventBridge: Monday 11am UTC + Friday 11am UTC
+- Pulls **starred** articles first, then **approved** articles from DynamoDB
+- Processes **one article per post** (focused topic approach)
+- Skips irrelevant articles (returns `{skip:true}` if article not related to child marriage mission)
+- Sends article text + writing instructions to Claude Sonnet 4.6 via Bedrock
+- Auto-categorizes: AI picks from (Education, Health, Norms & Culture, Policy & Justice, Research, Climate & Crisis)
+- Calculates `reading_time` (words/200) and `word_count` automatically
+- Appends CTA block with donate links (`#donate-monthly`, `#donate-once`)
+- No dashes rule enforced in prompt
+- Author: 'Far Too Young, Inc.' (default)
 - Saves output as "draft" in blog-posts table
 
-### Prompt Structure
-```
-Context: Here are recent articles about [keyword topic]:
-[Article 1 - full text + URL]
-[Article 2 - full text + URL]
-[Article 3 - full text + URL]
+### EventBridge Schedule
+| Rule | Schedule | Purpose |
+|------|----------|---------|
+| Research Fetcher | Weekly (Sunday) | Fetches new RSS articles |
+| Blog Generator Monday | Monday 11am UTC | Generates post from starred/approved article |
+| Blog Generator Friday | Friday 11am UTC | Generates post from starred/approved article |
 
-Instructions:
-- Write a 1500-word blog post about [keyword]
-- Write as "Avinash Sharma, Founder of Far Too Young"
-- Include first-person references to fieldwork in Nepal/Bangladesh
-- Cite specific statistics from the articles above with hyperlinks
-- Include 2-3 internal links to fartooyoung.org pages
-- Generate 3-5 FAQ questions at the end
-- Structure with clear H2/H3 headings
-- Tone: authoritative but accessible
-```
+### Post Output Format
+- HTML content (rendered with dangerouslySetInnerHTML on frontend)
+- Auto-assigned category from fixed list
+- reading_time and word_count calculated
+- CTA block appended with donation links
+- Author set to 'Far Too Young, Inc.'
+- Status: 'draft' (admin reviews and publishes)
 
-### Content Clusters
-
-| Pillar | Keywords |
-|--------|----------|
-| Child Marriage | statistics by country, causes, effects on girls, laws by state, how to prevent |
-| Gender-Based Violence | types, prevention, support resources, global statistics |
-| Girls Education | developing countries, scholarships, impact on child marriage |
-| Advocacy | how to help, volunteer, donate, policy changes |
-
-### Google E-E-A-T Compliance
-
-| Requirement | How We Handle It |
-|-------------|-----------------|
-| Human oversight | Draft → review → publish workflow |
-| Author attribution | "By Avinash Sharma, Founder" on every post |
-| Experience signals | First-person references to fieldwork |
-| Expertise | Real statistics from Tier 1-3 sources with citations |
-| Trustworthiness | Nonprofit org, verifiable sources, working hyperlinks |
-| Not mass-produced | 4 posts/month max, each reviewed |
+### Key Behaviors
+- **One article = one post**: Focused, single-topic posts rather than roundups
+- **Skips irrelevant**: If article isn't about child marriage/GBV/girls education, returns skip
+- **No dashes**: Prompt explicitly forbids em-dashes and en-dashes in output
+- **Auto-categorization**: AI assigns category based on content analysis
+- **CTA integration**: Every post ends with donate call-to-action
 
 ### Effort
-2-3 hours
+Completed in ~3 hours
 
 ## Step 5: Newsletter System ⬜
 
@@ -401,4 +391,4 @@ Each post structured for ChatGPT/Perplexity citation:
 
 ---
 
-*Last updated: June 6, 2026*
+*Last updated: August 17, 2026*

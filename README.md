@@ -5,7 +5,7 @@ A full-stack serverless web application for an organization focused on ending ch
 ## Tech Stack
 
 - **Frontend**: React 18, Vite, Tailwind CSS, React Router
-- **Backend**: 27 AWS Lambda functions (Node.js 18) via API Gateway
+- **Backend**: 28 AWS Lambda functions (Node.js 18) via API Gateway
 - **Database**: DynamoDB (6 tables: Users, Donations, Rate Limits, Blog Posts, Research Articles, Tiers)
 - **Payments**: Stripe (live checkout, subscriptions, webhooks)
 - **Email**: AWS SES (verification, password reset, notifications)
@@ -31,7 +31,7 @@ A full-stack serverless web application for an organization focused on ending ch
 fartooyoung/
 ├── src/                        # React frontend (components, pages)
 ├── backend/
-│   ├── lambda/                 # 27 Lambda functions
+│   ├── lambda/                 # 28 Lambda functions
 │   ├── scripts/                # One-off migration scripts (manual)
 │   ├── template.yaml           # SAM infrastructure definition
 │   └── samconfig.toml          # Deployment targets per environment

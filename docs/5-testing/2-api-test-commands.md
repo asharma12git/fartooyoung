@@ -5,12 +5,13 @@
 ### **🟢 PRODUCTION STACK: fartooyoung-production** ✅ LIVE
 - **Website**: https://www.fartooyoung.org
 - **API Gateway**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
-- **17 Lambda Functions**: Complete auth, donation, and Stripe system
-- **3 DynamoDB Tables**: Users, donations, and rate-limits
+- **28 Lambda Functions**: Complete auth, donation, Stripe, blog, and AI content system
+- **6 DynamoDB Tables**: Users, donations, rate-limits, research-articles, blog-posts, tiers
 - **CloudFront CDN**: E2PHSH4ED2AIN5 (global distribution)
 - **S3 Frontend**: fartooyoung-prod-frontend
 - **AWS Secrets Manager**: fartooyoung-production-secrets-tEmB4i
 - **Live Payments**: Real Stripe integration processing donations
+- **EventBridge**: 3 rules (research weekly, blog Monday, blog Friday)
 
 ### **🔵 STAGING STACK: fartooyoung-staging** (Development)
 - **API Gateway**: https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com
@@ -201,7 +202,9 @@ Status: 🧪 TESTING - Safe for development and testing
 - `DELETE /user/account` - Delete user account (requires auth)
 
 ### Content & Research Endpoints ✅ PRODUCTION
-- `GET /research/articles` - Get public research articles (supports `?status=`, `?limit=`)
+- `GET /research/articles` - Get public research articles (supports `?status=`, `?limit=`, starred-first sort)
+- `GET /blog/posts` - Get published blog posts (supports `?all=true` for admin drafts)
+- `GET /blog/posts/{id}` - Get single blog post (allows drafts for admin)
 
 ### Admin Endpoints ✅ PRODUCTION (Admin role required)
 - `GET /admin/research` - List all research articles (all statuses)
@@ -805,15 +808,69 @@ curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/upload
 
 ---
 
+## Blog Post Endpoints
+
+### Get All Published Blog Posts (Public, No Auth)
+
+**🔵 STAGING:**
+```bash
+# All published posts
+curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/blog/posts
+
+# All posts including drafts (admin)
+curl -X GET "https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/blog/posts?all=true" \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN_HERE"
+```
+
+### Get Single Blog Post
+
+**🔵 STAGING:**
+```bash
+curl -X GET https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/blog/posts/POST_ID
+```
+
+### Trigger AI Blog Generation (Manual Invoke via CLI)
+
+```bash
+# Invoke blog-generator Lambda directly (useful for testing)
+aws lambda invoke \
+  --function-name fartooyoung-staging-BlogGeneratorFunction \
+  --region us-east-1 \
+  --payload '{}' \
+  /tmp/blog-generator-output.json
+
+cat /tmp/blog-generator-output.json
+```
+
+**Expected Response (success):**
+```json
+{
+  "statusCode": 200,
+  "body": "{\"success\":true,\"post\":{\"id\":\"uuid\",\"title\":\"...\",\"category\":\"Education\",\"reading_time\":4,\"word_count\":800,\"author\":\"Far Too Young, Inc.\",\"status\":\"draft\"}}"
+}
+```
+
+**Expected Response (skip — irrelevant article):**
+```json
+{
+  "statusCode": 200,
+  "body": "{\"success\":true,\"skip\":true,\"reason\":\"Article not relevant to mission\"}"
+}
+```
+
+---
+
 ## 🚀 **PRODUCTION STATUS SUMMARY**
 
 **✅ LIVE API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
-- **20 Lambda Functions**: All endpoints operational
+- **28 Lambda Functions**: All endpoints operational
 - **6 DynamoDB Tables**: Users, donations, rate-limits, research-articles, blog-posts, tiers
+- **3 EventBridge Rules**: Research weekly, blog Monday, blog Friday
 - **Live Stripe Integration**: Processing real payments
 - **Email Verification**: SES integration active
 - **Rate Limiting**: DynamoDB-based protection
 - **Security**: JWT authentication, HTTPS enforcement
+- **AI Blog Generation**: Claude Sonnet 4.6 via Bedrock (auto Mon+Fri)
 
 **🧪 STAGING API**: https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com  
 - **Safe Testing Environment**: No real payments or emails
@@ -822,5 +879,5 @@ curl -X POST https://71z0wz0dg9.execute-api.us-east-1.amazonaws.com/admin/upload
 
 ---
 
-*Last Updated: June 6, 2026*  
+*Last Updated: August 17, 2026*  
 *Production API Status: ✅ LIVE and processing real transactions*

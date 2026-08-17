@@ -747,6 +747,16 @@ Resources:
           Properties:
             Path: /admin/generate-post
             Method: post
+        MondayTrigger:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 11 ? * MON *)
+            Description: Generate blog post every Monday 11am UTC
+        FridayTrigger:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 11 ? * FRI *)
+            Description: Generate blog post every Friday 11am UTC
 
 Outputs:
   ApiGatewayApi:

@@ -211,6 +211,10 @@ exports.handler = async (event) => {
 </div>`;
 
     const slug = slugify(post.title);
+    // Calculate reading time (words ÷ 200)
+    const wordCount = post.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length;
+    const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
     const item = {
       post_id: postId,
       slug,
@@ -223,6 +227,8 @@ exports.handler = async (event) => {
       image_url: imageUrl,
       status: 'draft',
       created_at: new Date().toISOString(),
+      reading_time: readingTime,
+      word_count: wordCount,
       source_articles: [{ title: selected.title, url: selected.url, source: selected.source }]
     };
 

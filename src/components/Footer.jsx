@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Logo Section */}
           <div className="flex flex-col items-center mb-8">
             <Link to="/" onClick={() => window.scrollTo(0, 0)} className="hover:opacity-80 transition-opacity duration-300">
-              <img src={logo} alt="Far Too Young" className="h-32 sm:h-40 w-auto" />
+              <img src={logo} alt="Far Too Young" className="h-24 sm:h-32 w-auto" />
             </Link>
             <p className="text-gray-500 text-xs italic mt-2">Tax ID: 87-3583633</p>
           </div>
@@ -97,7 +97,7 @@ const Footer = () => {
           {/* Center Logo with Tax ID */}
           <div className="flex flex-col justify-center items-center">
             <Link to="/" onClick={() => window.scrollTo(0, 0)} className="hover:opacity-80 transition-opacity duration-300">
-              <img src={logo} alt="Far Too Young" className="h-48 w-auto" />
+              <img src={logo} alt="Far Too Young" className="h-32 lg:h-40 xl:h-48 w-auto" />
             </Link>
             <p className="text-gray-500 text-xs italic mt-1">Tax ID: 87-3583633</p>
           </div>

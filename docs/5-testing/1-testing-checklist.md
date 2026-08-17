@@ -271,6 +271,21 @@ Run these minimum after every deploy:
 | 14.17 | Admin Panel button in dashboard | Browser | Log in as admin, check dashboard | Green "Admin Panel" button visible |
 | 14.18 | CORS preflight for PUT | API | `curl -I -X OPTIONS {api}/admin/research/123 -H "Origin: https://www.fartooyoung.org" -H "Access-Control-Request-Method: PUT"` | Allow-Methods includes PUT |
 | 14.19 | CORS preflight for DELETE | API | `curl -I -X OPTIONS {api}/admin/research/123 -H "Origin: https://www.fartooyoung.org" -H "Access-Control-Request-Method: DELETE"` | Allow-Methods includes DELETE |
+| 14.20 | Generate blog post (admin) | API | `curl -X POST {api}/admin/generate-post -H "Authorization: Bearer {admin_token}"` | Draft post created with title, content, category |
+| 14.21 | Generated post has reading_time | API | Check generated post in DB | `reading_time` field > 0 |
+| 14.22 | Generated post has CTA block | API | Check generated post content | Contains `#donate-monthly` and `#donate-once` links |
+| 14.23 | Generated post author | API | Check generated post | `author` = "Far Too Young, Inc." |
+| 14.24 | Generated post has category | API | Check generated post | Category is one of: Education, Health, Norms & Culture, Policy & Justice, Research, Climate & Crisis |
+| 14.25 | Generate post skips used articles | API | Generate twice, check source_articles | Different articles used each time |
+| 14.26 | EventBridge Monday trigger active | API | `aws events describe-rule --name {monday-rule} --region us-east-1` | State: ENABLED, cron(0 11 ? * MON *) |
+| 14.27 | EventBridge Friday trigger active | API | `aws events describe-rule --name {friday-rule} --region us-east-1` | State: ENABLED, cron(0 11 ? * FRI *) |
+| 14.28 | Blog posts public (published only) | API | `curl {api}/blog/posts` | Only published posts returned |
+| 14.29 | Blog posts admin (all statuses) | API | `curl {api}/blog/posts?all=true -H "Authorization: Bearer {admin_token}"` | Includes drafts |
+| 14.30 | Blog post by slug (draft accessible) | API | `curl {api}/blog/posts/slug/{draft-slug}` | Returns draft post content |
+| 14.31 | Subscribe shows temp message | Browser | Click Subscribe on blog page | "Thank you for your interest! Our newsletter is launching soon." |
+| 14.32 | Donate Monthly link in CTA | Browser | Click "→ Donate Monthly" in blog post | Opens donation modal with monthly tab selected |
+| 14.33 | Donate One-Time link in CTA | Browser | Click "→ Make a One-Time Gift" in blog post | Opens donation modal with one-time tab selected |
+| 14.34 | Bottom Donate Now button | Browser | Click "Donate Now" at bottom of blog post | Opens donation modal at step 1 (amount selection) |
 
 ---
 

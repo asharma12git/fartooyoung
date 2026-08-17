@@ -73,4 +73,36 @@ Note: Blog UI is handled in Plan 6 (Blog System). This plan covers dashboard lay
 
 ---
 
-*Last updated: June 1, 2026*
+## Step 3: Super Admin & User Management ⬜
+
+**Benefit:** A super admin role allows the site owner to manage who has admin access, without code changes. Enables safe delegation of content management to team members.
+
+**Problem:** Currently only one admin exists (set manually in DynamoDB). No way to add/remove admins through the UI. As the team grows, need to control who can manage blog posts, research articles, etc.
+
+**Implementation:**
+
+Role Hierarchy:
+- `super_admin` — full access + can manage other admins
+- `admin` — can manage blog, research, content
+- `donor` — standard user (donations, dashboard)
+
+Admin Panel "Users" Tab (super_admin only):
+- List all registered users with their role
+- Toggle role: donor → admin, admin → donor
+- Cannot remove own super_admin role (safety)
+- Future: granular permissions (blog only, research only, shop only)
+
+Database Change:
+- Add `role: 'super_admin'` to owner's user record
+- Admin panel checks `super_admin` for Users tab visibility
+
+---
+
+## Checklist (Updated)
+- [ ] Step 1: Donor Dashboard Tab Cleanup
+- [ ] Step 2: Admin Dashboard
+- [ ] Step 3: Super Admin & User Management
+
+---
+
+*Last updated: August 17, 2026*

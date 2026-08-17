@@ -189,7 +189,7 @@ const BlogPost = ({ onDonateClick }) => {
             <div className="relative z-10">
               <h3 className="text-xl font-medium text-white mb-2">Help End Child Marriage</h3>
               <p className="text-gray-300 mb-4 text-sm">Your donation directly supports girls&apos; education and community programs.</p>
-              <button onClick={onDonateClick} className="inline-block px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors font-medium text-sm">
+              <button onClick={() => onDonateClick()} className="inline-block px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors font-medium text-sm">
                 Donate Now
               </button>
             </div>

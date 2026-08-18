@@ -100,6 +100,7 @@ Resources:
               commands:
                 - npm run lint || echo "Lint warnings found, continuing..."
                 - npm run build:staging
+                - echo -e "User-agent: *\nDisallow: /" > dist/robots.txt
             post_build:
               commands:
                 - aws s3 sync dist/ s3://${FRONTEND_BUCKET} --delete

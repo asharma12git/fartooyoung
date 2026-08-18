@@ -29,8 +29,8 @@ $0/month (all free tools)
 ### Phase 3: Growth & Authority
 - [ ] Step 10: Google Ad Grants ($10K/month free ads)
 - [x] Step 11: Content / Blog System
-- [ ] Step 12: GEO — AI Search Optimization
-- [ ] Step 13: Backlinks & Authority Building
+- [ ] Step 12: GEO — AI Search Optimization - *manual outreach required*
+- [ ] Step 13: Backlinks & Authority Building - *manual outreach required*
 - [x] Step 14: IndexNow Protocol
 
 ---

@@ -5,11 +5,13 @@ const SEO = ({ title, description, path = '/' }) => {
   const fullUrl = `${siteUrl}${path}`
   const siteName = 'Far Too Young'
   const image = `${siteUrl}/og-image.jpg`
+  const isProduction = import.meta.env.VITE_API_BASE_URL?.includes('0o7onj0dr7')
 
   return (
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
+      {!isProduction && <meta name="robots" content="noindex, nofollow" />}
       <link rel="canonical" href={fullUrl} />
 
       {/* Open Graph */}

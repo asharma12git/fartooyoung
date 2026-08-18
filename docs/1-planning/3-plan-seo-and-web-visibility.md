@@ -31,7 +31,7 @@ $0/month (all free tools)
 - [x] Step 11: Content / Blog System
 - [ ] Step 12: GEO — AI Search Optimization
 - [ ] Step 13: Backlinks & Authority Building
-- [ ] Step 14: IndexNow Protocol
+- [x] Step 14: IndexNow Protocol
 
 ---
 
@@ -155,11 +155,13 @@ Both are `<script>` tags in `index.html`.
 **Problem:** Without paid ads, we rely entirely on organic search which takes months to build. Ad Grants provides immediate visibility for high-intent keywords like "donate to prevent child marriage."
 
 **Implementation:**
-- Status: ⏳ Applied May 29, 2026 — awaiting verification (2-14 business days via Goodstack)
+- Status: ⏳ Resubmitted August 17, 2026 — awaiting verification (2-14 business days via Goodstack)
+- First application: May 29, 2026 (no response)
 - Application portal: [nonprofits.google.com](https://nonprofits.google.com/)
 - Verification partner: [Goodstack](https://goodstack.org) (hello@goodstack.org)
-- Contact email used: `avinashsharma.np@gmail.com`
-- Approval notification to: `admin@fartooyoung.org`
+- Contact email used: `avinash.sharma@fartooyoung.org`
+- Category: Youth Services > Youth Development
+- Approval notification to: `avinash.sharma@fartooyoung.org`
 - Google Ads dashboard (once approved): [ads.google.com](https://ads.google.com)
 
 Requirements to maintain:
@@ -186,11 +188,25 @@ Keywords to target:
 
 **Implementation:** Complete. See Plan 6 (AI Blog System). Blog live with AI-generated posts (Claude Sonnet 4.6), auto-generates 2 posts/week, categories, research pipeline feeding content.
 
-## Step 12: GEO — AI Search Optimization ⬜
+## Step 12: GEO — AI Search Optimization ⬜ (Partially Complete)
 
 **Benefit:** GEO (Generative Engine Optimization) is the practice of making your content citable by AI search engines (ChatGPT, Perplexity, Google AI Overviews). AI referral traffic grew 527% between Jan-May 2025.
 
 **Problem:** Without entity presence in knowledge bases (Wikidata, Wikipedia), AI engines have no structured data to cite us from.
+
+**Implementation:**
+
+Done ✅:
+- Wikidata entry created
+- Blog posts with citable statistics and source citations
+- Structured data (JSON-LD) on all pages
+- Consistent entity references in AI-generated content ("Far Too Young, Inc., a US-based nonprofit...")
+
+Remaining (manual effort):
+- Wikipedia page (requires 3-5 independent press sources — do NOT write your own)
+- Google Business Profile
+- Crunchbase profile
+- LinkedIn company page
 
 **Implementation:**
 
@@ -229,11 +245,13 @@ Remaining GEO tasks:
 - Consistent entity presence (Google Business Profile, Crunchbase, LinkedIn company page)
 - All nonprofit directories (see Step 13)
 
-## Step 13: Backlinks & Authority Building ⬜
+## Step 13: Backlinks & Authority Building ⬜ (Manual Effort)
 
 **Benefit:** Backlinks are links from other websites pointing to yours. Google uses them as "votes of confidence" — more high-quality backlinks = higher search rankings. Nonprofit directories provide authoritative, free backlinks.
 
 **Problem:** Without backlinks, our domain authority stays low and we can't compete for competitive keywords regardless of content quality.
+
+**Note:** This step is entirely manual outreach — no code changes. Create profiles, submit listings, build relationships with partner organizations.
 
 **Implementation:**
 
@@ -270,27 +288,25 @@ Remaining GEO tasks:
 
 What NOT to do: ❌ Buy backlinks, ❌ spammy directories, ❌ comment spam, ❌ link exchange schemes
 
-## Step 14: IndexNow Protocol ⬜
+## Step 14: IndexNow Protocol ✅
 
 **Benefit:** IndexNow is a protocol that instantly notifies Bing/Yandex when content changes, instead of waiting for them to re-crawl. Reduces indexing time from days to minutes.
 
 **Problem:** Without IndexNow, updated content may take days to appear in Bing search results.
 
-**Implementation:** Add post-deploy step in frontend pipeline:
+**Implementation:** Complete (August 17, 2026).
 
-```
-POST https://api.indexnow.org/indexnow
-{
-  "host": "www.fartooyoung.org",
-  "key": "<your-key>",
-  "urlList": [
-    "https://www.fartooyoung.org/",
-    "https://www.fartooyoung.org/founder-team",
-    "https://www.fartooyoung.org/partners",
-    "https://www.fartooyoung.org/what-we-do"
-  ]
-}
-```
+- Key file: `public/8e03c8f815294be0ad691a4a71419c9d.txt`
+- Integrated into `publish-blog-post.js` Lambda
+- Pings `api.indexnow.org` every time a blog post is published
+- Production only (skipped on staging via `SITE_URL` check)
+- Non-blocking: publish succeeds even if IndexNow fails
+- Also generates dynamic `sitemap.xml` on publish (uploads to S3 with all published blog post URLs)
+
+Additional staging protection:
+- `<meta name="robots" content="noindex, nofollow">` on all staging pages
+- `robots.txt` overridden to `Disallow: /` during staging build
+- IndexNow only pings when `SITE_URL` contains `www.fartooyoung.org`
 
 ---
 

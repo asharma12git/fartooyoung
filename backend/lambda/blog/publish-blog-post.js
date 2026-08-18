@@ -69,8 +69,8 @@ exports.handler = async (event) => {
       ExpressionAttributeValues: { ':status': 'published', ':now': new Date().toISOString() }
     }).promise();
 
-    // Ping IndexNow (non-blocking, don't fail if it errors)
-    if (slug) {
+    // Ping IndexNow (production only, non-blocking)
+    if (slug && SITE_URL.includes('www.fartooyoung.org')) {
       await pingIndexNow(`${SITE_URL}/blog/${slug}`);
     }
 

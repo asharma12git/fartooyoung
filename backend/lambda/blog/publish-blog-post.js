@@ -8,7 +8,9 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({
   endpoint: process.env.DYNAMODB_ENDPOINT || undefined,
   region: 'us-east-1'
 });
+const s3 = new AWS.S3();
 const BLOG_TABLE = process.env.BLOG_TABLE;
+const S3_BUCKET = process.env.S3_BUCKET;
 const INDEXNOW_KEY = '8e03c8f815294be0ad691a4a71419c9d';
 const SITE_URL = process.env.FRONTEND_URL || 'https://www.fartooyoung.org';
 
@@ -33,6 +35,51 @@ function pingIndexNow(url) {
     req.write(payload);
     req.end();
   });
+}
+
+async function generateSitemap() {
+  try {
+    const result = await dynamodb.scan({
+      TableName: BLOG_TABLE,
+      FilterExpression: '#s = :published',
+      ExpressionAttributeNames: { '#s': 'status' },
+      ExpressionAttributeValues: { ':published': 'published' }
+    }).promise();
+
+    const staticPages = [
+      { loc: '/', priority: '1.0' },
+      { loc: '/founder-team', priority: '0.8' },
+      { loc: '/partners', priority: '0.8' },
+      { loc: '/what-we-do', priority: '0.9' },
+      { loc: '/blog', priority: '0.8' }
+    ];
+
+    const blogPages = result.Items.map(post => ({
+      loc: `/blog/${post.slug}`,
+      priority: '0.7',
+      lastmod: post.published_at?.slice(0, 10)
+    }));
+
+    const allPages = [...staticPages, ...blogPages];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allPages.map(p => `  <url>
+    <loc>https://www.fartooyoung.org${p.loc}</loc>
+    <priority>${p.priority}</priority>${p.lastmod ? `\n    <lastmod>${p.lastmod}</lastmod>` : ''}
+  </url>`).join('\n')}
+</urlset>`;
+
+    await s3.putObject({
+      Bucket: S3_BUCKET,
+      Key: 'sitemap.xml',
+      Body: xml,
+      ContentType: 'application/xml'
+    }).promise();
+
+    console.log(`Sitemap updated: ${allPages.length} URLs`);
+  } catch (err) {
+    console.error('Sitemap generation error:', err.message);
+  }
 }
 
 async function verifyAdmin(event) {
@@ -73,6 +120,9 @@ exports.handler = async (event) => {
     if (slug && SITE_URL.includes('www.fartooyoung.org')) {
       await pingIndexNow(`${SITE_URL}/blog/${slug}`);
     }
+
+    // Regenerate sitemap with new post
+    await generateSitemap();
 
     return {
       statusCode: 200,

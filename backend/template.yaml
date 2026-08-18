@@ -590,7 +590,13 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/publish-blog-post.handler
-      Timeout: 10
+      Timeout: 15
+      Environment:
+        Variables:
+          S3_BUCKET: !If
+            - IsProduction
+            - fartooyoung-prod-frontend
+            - fartooyoung-stg-frontend
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BlogPostsTable
@@ -600,6 +606,13 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: !Ref SecretsManagerArn
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: !If
+                - IsProduction
+                - "arn:aws:s3:::fartooyoung-prod-frontend/sitemap.xml"
+                - "arn:aws:s3:::fartooyoung-stg-frontend/sitemap.xml"
       Events:
         Api:
           Type: Api

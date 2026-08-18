@@ -327,6 +327,24 @@ sam build
 sam deploy --config-env production --force-upload
 ```
 
+### Pipeline Troubleshooting
+
+**If pipeline fails with `UPDATE_ROLLBACK_COMPLETE`:**
+1. Deploy manually first to recover the stack: `sam deploy --config-env production --no-confirm-changeset`
+2. Then retrigger the pipeline: `aws codepipeline start-pipeline-execution --name fartooyoung-prod-backend-pipeline --region us-east-1`
+
+**If pipeline fails with IAM/EventBridge permission errors:**
+CodeBuild roles have an `AdditionalDeployPermissions` inline policy added August 2026. If new AWS services are added that the role can't manage, update the policy:
+```bash
+# Production role:
+aws iam put-role-policy --role-name fartooyoung-prod-backend-pipeline-CodeBuildRole-txJm60dDnZVS --policy-name AdditionalDeployPermissions --policy-document file://policy.json
+
+# Staging role:
+aws iam put-role-policy --role-name fartooyoung-stg-backend-pipeline-CodeBuildRole-G5i1g7sFd2Zk --policy-name AdditionalDeployPermissions --policy-document file://policy.json
+```
+
+**DeletionPolicy: Retain** is set on all DynamoDB tables — tables are never deleted during rollbacks.
+
 ---
 
 ## Deploying to Production

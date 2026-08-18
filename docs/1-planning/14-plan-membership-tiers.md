@@ -27,11 +27,25 @@ A tiered membership model that rewards recurring donors with exclusive access, i
 
 ## Tiers
 
-| Tier | Price | Target Audience |
-|------|-------|-----------------|
-| **Free** | $0 | Everyone — blog readers, one-time donors |
-| **Supporter** | $5-10/month | Regular supporters who want to stay connected |
-| **Champion** | $25-50/month | Committed advocates who want deeper involvement |
+Industry best practice: 4-6 tiers, mission-themed names, concrete impact per tier, recurring amounts 30-50% lower than one-time equivalents. Pre-select the mid tier as default.
+
+| Tier | Monthly | Name | Impact Statement | Benefits |
+|------|---------|------|-----------------|----------|
+| **Entry** | $5/month | **Friend** | "Provides school supplies for one girl for a month" | Newsletter, blog access |
+| **Core** | $15/month | **Guardian** | "Keeps one girl in school for a month" | Early access content, impact reports |
+| **Mid** ⭐ | $25/month | **Protector** | "Funds vocational training for a young bride" | All above + supporters page, exclusive briefs |
+| **Upper** | $50/month | **Champion** | "Supports a full community awareness program" | All above + vote on topics, badge |
+| **Major** | $100/month | **Changemaker** | "Prevents one child marriage through direct intervention" | All above + quarterly calls, fieldwork updates |
+
+⭐ = pre-selected default (mid tier encourages higher giving via anchoring)
+
+**Naming rationale:** Names progress from passive support (Friend) to active impact (Changemaker). Each connects to Far Too Young's mission — protecting girls from child marriage. Donors identify as "I'm a Guardian" rather than "I give $15."
+
+**Key stats (industry data):**
+- Average recurring donor stays engaged **7.5-8 years** (vs 1.5 years for one-time)
+- Lifetime value of recurring donor: **$7,288** (vs $3,607 one-time)
+- Low-barrier entry ($5/month) captures donors who won't commit to $50 one-time
+- 50 Protectors × $25/month = $15,000/year from just one tier
 
 ## Checklist
 
@@ -180,14 +194,27 @@ A tiered membership model that rewards recurring donors with exclusive access, i
 
 ## Revenue Model
 
+Based on industry benchmarks for small nonprofits (avg gift $30-$75):
+
 | Scenario | Monthly | Annual |
 |----------|---------|--------|
-| 50 Supporters × $10 | $500 | $6,000 |
-| 10 Champions × $25 | $250 | $3,000 |
-| **Conservative total** | **$750** | **$9,000** |
-| 200 Supporters × $10 | $2,000 | $24,000 |
-| 50 Champions × $25 | $1,250 | $15,000 |
-| **Growth target** | **$3,250** | **$39,000** |
+| 20 Friends × $5 | $100 | $1,200 |
+| 30 Guardians × $15 | $450 | $5,400 |
+| 15 Protectors × $25 | $375 | $4,500 |
+| 5 Champions × $50 | $250 | $3,000 |
+| 2 Changemakers × $100 | $200 | $2,400 |
+| **Year 1 conservative** | **$1,375** | **$16,500** |
+
+| Growth (Year 2-3) | Monthly | Annual |
+|----------|---------|--------|
+| 50 Friends × $5 | $250 | $3,000 |
+| 80 Guardians × $15 | $1,200 | $14,400 |
+| 40 Protectors × $25 | $1,000 | $12,000 |
+| 15 Champions × $50 | $750 | $9,000 |
+| 5 Changemakers × $100 | $500 | $6,000 |
+| **Growth target** | **$3,700** | **$44,400** |
+
+**Key insight:** At average 7.5 year retention, 72 recurring donors acquired in Year 1 = ~$120,000 in lifetime value.
 
 Combined with one-time donations and Google Ad Grants traffic, this creates a sustainable funding model.
 

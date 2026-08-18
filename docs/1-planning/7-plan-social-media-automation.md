@@ -137,19 +137,83 @@ Effort: 30 min
 
 | Platform | Post Format | API | Status |
 |----------|-------------|-----|--------|
+| Instagram | Quote card image + caption + hashtags | Meta Graph API | Planned |
+| Facebook | Excerpt + link + quote card image | Meta Graph API | Planned |
+| LinkedIn | Professional tone + key stat + link | LinkedIn Marketing API | Planned |
 | Twitter/X | Title + link + hashtags (280 chars) | Twitter API v2 | Planned |
-| Facebook | Excerpt + link + cover image | Graph API | Planned |
 | Reddit | ⚠️ SKIP — manual only (communities ban self-promotion) | — | Not automated |
-| LinkedIn | Future consideration | — | Not planned |
+
+## Image Generation (Quote Cards)
+
+Auto-generated branded images for each social post. No manual design needed.
+
+**Template:**
+```
+┌─────────────────────────────────┐
+│  [FTY Logo - top left]          │
+│                                 │
+│  "650 Million Girls             │
+│   Married as Children:          │
+│   The Crisis Continues"         │
+│                                 │
+│  fartooyoung.org                │
+│  [category-colored gradient bg] │
+└─────────────────────────────────┘
+```
+
+**Implementation:**
+- Lambda uses `sharp` or `canvas` (Node.js) library to generate images programmatically
+- Takes blog title + category color → renders PNG (1080x1080 for Instagram, 1200x630 for Facebook/LinkedIn)
+- Uploads to S3, attaches to social post
+- Each category has its branded gradient (same colors as blog placeholders)
+- FTY logo + website URL always present for brand recognition
+
+**Sizes:**
+| Platform | Image Size | Aspect Ratio |
+|----------|-----------|--------------|
+| Instagram | 1080×1080 | 1:1 (square) |
+| Facebook | 1200×630 | ~1.9:1 (landscape) |
+| LinkedIn | 1200×627 | ~1.9:1 (landscape) |
+| Twitter | 1200×675 | 16:9 |
+
+## Platform-Specific Content
+
+**Instagram:**
+- Quote card image (required — Instagram is visual-first)
+- Caption: 2-3 sentences from excerpt + CTA ("Link in bio")
+- 15-20 hashtags: #EndChildMarriage #GirlsRights #FarTooYoung #NonprofitOrg #SDG5 etc.
+- Update link in bio to latest post (via Linktree or direct)
+
+**Facebook:**
+- Quote card image + link to blog post
+- Longer caption: full excerpt + "Read more at fartooyoung.org/blog/..."
+- Tag relevant organizations when applicable
+- Enable donate button on page
+
+**LinkedIn:**
+- Professional tone — lead with a statistic or finding
+- Quote card image + link
+- Tag relevant people/orgs
+- Use 3-5 hashtags only (#ChildMarriage #HumanRights #GirlsEducation)
+
+**Twitter/X:**
+- Title + link + 3-5 hashtags (stay under 280 chars)
+- Thread option: break longer posts into 2-3 tweet thread
+- Tag relevant organizations (@UNICEF @GirlsNotBrides)
 
 ## Content Strategy
 
-Posting Schedule: 2 posts per platform per week (aligned with blog schedule). Best times: Tuesday-Thursday, 10am-2pm EST.
+Posting Schedule: 2 posts per platform per week (Mon + Fri, aligned with blog schedule).
+Best times: Tuesday-Thursday, 10am-2pm EST.
 
-Hashtags (Twitter): `#EndChildMarriage` `#FarTooYoung` `#ChildProtection` `#GirlsRights` `#SDG5` `#Education`
+Hashtags bank:
+- Primary: `#EndChildMarriage` `#FarTooYoung` `#ChildProtection` `#GirlsRights`
+- Reach: `#SDG5` `#Education` `#HumanRights` `#NonprofitOrg` `#SocialImpact`
+- Specific: `#ChildBride` `#ForcedMarriage` `#GirlsEducation` `#GenderEquality`
 
 Tone: Informative, not sensational. Data-driven with calls to action. Link back to website.
 
 ---
 
 *Created: May 26, 2026*
+*Updated: August 17, 2026 — added image generation, LinkedIn, platform-specific content*

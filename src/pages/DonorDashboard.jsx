@@ -1127,14 +1127,14 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                               donation.type === 'monthly'
                                 ? 'bg-green-500/20' 
-                                : 'bg-orange-500/20'
+                                : 'bg-green-500/20'
                             }`}>
                               {donation.type === 'monthly' ? (
                                 <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                 </svg>
                               ) : (
-                                <svg className="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                               )}
@@ -1187,7 +1187,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           <div className="text-right">
                             <span className="text-white/60 font-medium text-sm">{donation.status}</span>
                             <p className={`text-xs ${
-                              donation.type === 'monthly' ? 'text-green-400' : 'text-orange-400'
+                              donation.type === 'monthly' ? 'text-green-400' : 'text-green-400'
                             }`}>{donation.type}</p>
                           </div>
                         </div>

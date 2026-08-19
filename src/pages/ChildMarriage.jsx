@@ -97,19 +97,29 @@ const ProtectRights = () => {
 const CountryCard = ({ flag, country, description, frontDescription }) => {
   const [isFlipped, setIsFlipped] = useState(false)
 
-  const handleCardClick = (e) => {
+  const handleFlip = (e) => {
     e.preventDefault()
     e.stopPropagation()
     setIsFlipped(prev => !prev)
   }
 
   return (
-    <div 
-      className="group perspective-1000 h-[28rem] cursor-pointer touch-manipulation"
-      onClick={handleCardClick}
-      onTouchEnd={handleCardClick}
-    >
-      <div className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d md:group-hover:rotate-y-180 ${
+    <div className="group perspective-1000 h-[28rem] relative">
+      {/* Flip button */}
+      <button
+        onClick={handleFlip}
+        className={`absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 ${
+          isFlipped 
+            ? 'bg-orange-500 text-white' 
+            : 'bg-white/90 text-gray-600 shadow-md animate-pulse hover:animate-none hover:bg-orange-500 hover:text-white'
+        }`}
+        title={isFlipped ? 'Flip back' : 'Learn more'}
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isFlipped ? "M6 18L18 6M6 6l12 12" : "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"} />
+        </svg>
+      </button>
+      <div className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d ${
         isFlipped ? 'rotate-y-180' : ''
       }`}>
         {/* Front */}

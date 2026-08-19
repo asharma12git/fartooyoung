@@ -1198,7 +1198,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
                 {/* Right Column - Subscriptions */}
                 <div>
-                  <SubscriptionManager userEmail={user.email} onDonateClick={onDonateClick} />
+                  <SubscriptionManager userEmail={user.email} onDonateClick={onDonateClick} refreshKey={localRefresh} />
                 </div>
               </div>
             </div>

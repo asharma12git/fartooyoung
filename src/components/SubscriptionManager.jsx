@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
-const SubscriptionManager = ({ userEmail, onDonateClick }) => {
+const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [subscriptions, setSubscriptions] = useState([])
@@ -37,7 +37,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick }) => {
     if (userEmail) {
       fetchSubscriptions()
     }
-  }, [userEmail])
+  }, [userEmail, refreshKey])
 
   const handleManageSubscription = async () => {
     setIsLoading(true)

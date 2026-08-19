@@ -1076,7 +1076,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <div className="flex items-center space-x-2">
                       <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-pink-600 rounded-full"></div>
                       <h3 className="text-lg sm:text-xl font-semibold text-white">Donation History</h3>
-                      <span className="text-white/30 text-xs ml-2 hidden sm:inline">Bank transfers may take a few minutes to appear</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -1093,6 +1092,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       </button>
                     </div>
                   </div>
+                  <p className="text-white/30 text-xs mb-4">Bank transfers may take a few minutes to appear.</p>
                   {userDonations.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-white/60">No donations yet</p>

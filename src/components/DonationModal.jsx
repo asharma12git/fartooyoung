@@ -86,6 +86,8 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
     try {
       setError('') // Clear any errors
       setSuccess(true)
+      // Auto-close after 3 seconds — triggers dashboard refresh via onClose
+      setTimeout(() => onClose(), 3000)
     } catch (err) {
       console.error('Post-payment error:', err)
       setError('Payment succeeded but there was an issue. Please contact support if needed.')

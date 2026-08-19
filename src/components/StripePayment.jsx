@@ -11,6 +11,7 @@ const stripePromise = stripeKey ? loadStripe(stripeKey) : null
 const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, loading, setLoading }) => {
   const [clientSecret, setClientSecret] = useState(null)
   const [loadingIntent, setLoadingIntent] = useState(true)
+  const [piId, setPiId] = useState(null)
 
   useEffect(() => {
     const createIntent = async () => {
@@ -37,6 +38,7 @@ const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, lo
         }
 
         setClientSecret(data.client_secret)
+        setPiId(data.client_secret.split('_secret_')[0])
         setLoadingIntent(false)
       } catch (err) {
         onError(err.message === 'Load failed' || err.message === 'Failed to fetch'
@@ -48,7 +50,7 @@ const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, lo
 
     createIntent()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount])
+  }, [])
 
   if (loadingIntent) {
     return (

@@ -1120,8 +1120,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       {userDonations.slice(0, 20).map((donation, index) => (
                         <div key={donation.id} className={`flex items-center justify-between py-2 px-3 rounded-md border hover:bg-white/10 transition-all ${
                           donation.type === 'monthly'
-                            ? 'bg-gradient-to-r from-green-500/10 to-green-400/5 border-green-400/20' 
-                            : 'bg-white/5 border border-white/10'
+                            ? 'bg-white/5 border-green-400/30' 
+                            : 'bg-white/5 border-orange-400/30'
                         }`}>
                           <div className="flex items-center space-x-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${

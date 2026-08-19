@@ -1092,7 +1092,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       </button>
                     </div>
                   </div>
-                  <p className="text-white/30 text-xs mb-4">Bank transfers may take a few minutes to appear.</p>
                   {userDonations.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-white/60">No donations yet</p>
@@ -1195,6 +1194,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       ))}
                     </div>
                   )}
+                  <p className="text-white/30 text-xs mt-4">Bank transfers may take a few minutes to appear.</p>
                 </div>
 
                 {/* Right Column - Subscriptions */}

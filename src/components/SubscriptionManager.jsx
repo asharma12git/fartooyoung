@@ -203,7 +203,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
 
       <div className="mb-4">
         <p className="text-white/30 text-xs mt-auto pt-4">
-          Click on Manage to update your recurring donations and payment methods.
+          🔒 Click Manage to update your subscriptions. You'll be securely redirected to Stripe.
         </p>
       </div>
 

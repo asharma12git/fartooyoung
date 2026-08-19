@@ -270,10 +270,22 @@ exports.handler = async (event) => {
         const cardLast4 = card?.last4 || null
         const wallet = card?.wallet?.type || null
 
+        // Get email: metadata first, then billing details from charge, then receipt_email
+        let chargeEmail = null
+        let chargeName = null
+        try {
+          if (paymentIntent.latest_charge) {
+            const chargeId2 = typeof paymentIntent.latest_charge === 'string' ? paymentIntent.latest_charge : paymentIntent.latest_charge.id
+            const chargeData = await stripe.charges.retrieve(chargeId2)
+            chargeEmail = chargeData.billing_details?.email
+            chargeName = chargeData.billing_details?.name
+          }
+        } catch (err) { /* ignore */ }
+
         const donation = {
           id: `pi_${paymentIntent.id}`,
-          email: paymentIntent.metadata?.donor_email || paymentIntent.receipt_email || 'unknown',
-          name: paymentIntent.metadata?.donor_name || 'Anonymous',
+          email: paymentIntent.metadata?.donor_email || chargeEmail || paymentIntent.receipt_email || 'unknown',
+          name: paymentIntent.metadata?.donor_name || chargeName || 'Anonymous',
           amount: paymentIntent.amount / 100,
           type: paymentIntent.metadata?.donation_type || 'one-time',
           status: 'completed',

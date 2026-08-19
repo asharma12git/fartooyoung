@@ -1194,7 +1194,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       ))}
                     </div>
                   )}
-                  <p className="text-white/30 text-xs mt-auto pt-4">Bank transfers may take a few minutes to appear.</p>
+                  <p className="text-white/30 text-xs mt-auto pt-4">Transfers may take a few minutes to appear.</p>
                 </div>
 
                 {/* Right Column - Subscriptions */}

@@ -111,7 +111,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
               </h4>
               <div className="space-y-2">
                 {activeSubscriptions.map((sub) => (
-                  <div key={sub.id} className="bg-white/5 border border-green-400/30 rounded-lg p-3 sm:p-4 hover:bg-white/10 transition-all">
+                  <div key={sub.id} className="bg-white/5 border border-green-400/30 rounded-lg py-2 px-3 hover:bg-white/10 transition-all">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white font-medium text-sm sm:text-base">
@@ -140,7 +140,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
               </h4>
               <div className="space-y-2">
                 {endingSoonSubscriptions.map((sub) => (
-                  <div key={sub.id} className="bg-white/5 border border-yellow-400/30 rounded-lg p-3 sm:p-4 hover:bg-white/10 transition-all">
+                  <div key={sub.id} className="bg-white/5 border border-yellow-400/30 rounded-lg py-2 px-3 hover:bg-white/10 transition-all">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white font-medium text-sm sm:text-base">
@@ -172,7 +172,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
               </h4>
               <div className="space-y-2">
                 {cancelledSubscriptions.map((sub) => (
-                  <div key={sub.id} className="bg-white/5 border border-red-400/20 rounded-lg p-3 sm:p-4 opacity-60">
+                  <div key={sub.id} className="bg-white/5 border border-red-400/20 rounded-lg py-2 px-3 opacity-60">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white/80 font-medium text-sm sm:text-base">

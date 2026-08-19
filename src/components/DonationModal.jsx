@@ -48,7 +48,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [showMonthlyPopup, setShowMonthlyPopup] = useState(false)
+  const [showMonthlyPopup, setShowMonthlyPopup] = useState(true)
   const [honeypot, setHoneypot] = useState(createHoneypot())
   const [validationErrors, setValidationErrors] = useState({})
 
@@ -253,7 +253,6 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                         type="button"
                         onClick={() => {
                           setDonationType('monthly')
-                          setShowMonthlyPopup(true)
                         }}
                         className={`flex-1 py-3 sm:py-3 px-4 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-all duration-300 ${donationType === 'monthly'
                           ? 'bg-orange-500/80 text-white border border-orange-400/50'

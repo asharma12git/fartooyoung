@@ -108,15 +108,18 @@ const CountryCard = ({ flag, country, description, frontDescription }) => {
       {/* Flip button */}
       <button
         onClick={handleFlip}
-        className={`absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 ${
+        className={`absolute top-4 right-4 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 ${
           isFlipped 
-            ? 'bg-orange-500 text-white' 
-            : 'bg-white/90 text-gray-600 shadow-md animate-pulse hover:animate-none hover:bg-orange-500 hover:text-white'
+            ? 'bg-orange-500 text-white shadow-lg' 
+            : 'bg-white text-orange-500 shadow-lg animate-[pulse_2s_ease-in-out_infinite] hover:animate-none hover:bg-orange-500 hover:text-white'
         }`}
         title={isFlipped ? 'Flip back' : 'Learn more'}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isFlipped ? "M6 18L18 6M6 6l12 12" : "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"} />
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          {isFlipped 
+            ? <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            : <path strokeLinecap="round" strokeLinejoin="round" d="M15 9l6 6m0 0l-6 6m6-6H9a6 6 0 010-12h3" />
+          }
         </svg>
       </button>
       <div className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d ${

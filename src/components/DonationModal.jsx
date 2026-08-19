@@ -299,6 +299,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                       <div>
                         <input
                           type="number"
+                          step="0.01"
                           placeholder="Enter amount (min $5)"
                           value={customAmount}
                           onChange={(e) => setCustomAmount(e.target.value)}

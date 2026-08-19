@@ -202,8 +202,8 @@ const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
       )}
 
       <div className="mb-4">
-        <p className="text-white/80 text-sm">
-          Manage your recurring donations and payment methods
+        <p className="text-white/30 text-xs">
+          Click on Manage to update your recurring donations and payment methods.
         </p>
       </div>
 

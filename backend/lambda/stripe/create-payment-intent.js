@@ -61,8 +61,24 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 3: CREATE STRIPE PAYMENT INTENT
     // ========================================================================
+    // For monthly: create/find customer and set up for future charges
+    let customer = null
+    if (donation_type === 'monthly') {
+      // Find or create customer for subscription
+      const existingCustomers = await stripe.customers.list({ email: donor_info.email, limit: 1 })
+      if (existingCustomers.data.length > 0) {
+        customer = existingCustomers.data[0]
+      } else {
+        customer = await stripe.customers.create({
+          email: donor_info.email,
+          name: `${donor_info.firstName} ${donor_info.lastName}`,
+          metadata: { organization: 'Far Too Young' }
+        })
+      }
+    }
+
     // Create payment intent for direct payment processing
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntentConfig = {
       amount: Math.round(amount * 100),                   // Convert dollars to cents (Stripe requirement)
       currency: 'usd',                                    // US Dollars
       description: donation_type === 'monthly' ? 'Far Too Young - Monthly Donation' : 'Far Too Young - One-time Donation',
@@ -73,7 +89,15 @@ exports.handler = async (event) => {
         donor_email: donor_info.email,
         donation_type: donation_type || 'one-time'        // Default to one-time donation
       }
-    })
+    }
+
+    // For monthly: attach customer and save payment method for future use
+    if (donation_type === 'monthly' && customer) {
+      paymentIntentConfig.customer = customer.id
+      paymentIntentConfig.setup_future_usage = 'off_session'  // Saves card for recurring charges
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentConfig)
 
     // ========================================================================
     // STEP 4: RETURN CLIENT SECRET FOR FRONTEND

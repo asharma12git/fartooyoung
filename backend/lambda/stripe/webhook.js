@@ -247,6 +247,41 @@ exports.handler = async (event) => {
         }).promise()
 
         console.log('Payment intent donation saved:', donation.id)
+
+        // Create subscription for monthly donations
+        if (paymentIntent.metadata?.donation_type === 'monthly' && paymentIntent.customer && paymentIntent.payment_method) {
+          try {
+            // Attach payment method to customer
+            await stripe.paymentMethods.attach(paymentIntent.payment_method, {
+              customer: paymentIntent.customer,
+            })
+
+            // Set as default payment method
+            await stripe.customers.update(paymentIntent.customer, {
+              invoice_settings: { default_payment_method: paymentIntent.payment_method }
+            })
+
+            // Create recurring subscription starting next month
+            const subscription = await stripe.subscriptions.create({
+              customer: paymentIntent.customer,
+              items: [{ price_data: { currency: 'usd', product_data: { name: 'Far Too Young - Monthly Donation' }, unit_amount: paymentIntent.amount, recurring: { interval: 'month' } } }],
+              metadata: { donor_name: paymentIntent.metadata.donor_name, donor_email: paymentIntent.metadata.donor_email, donation_type: 'monthly' },
+              description: 'Far Too Young - Monthly Donation'
+            })
+
+            // Update the donation record with subscription ID
+            await dynamodb.update({
+              TableName: DONATIONS_TABLE,
+              Key: { id: `pi_${paymentIntent.id}` },
+              UpdateExpression: 'SET stripeSubscriptionId = :subId',
+              ExpressionAttributeValues: { ':subId': subscription.id }
+            }).promise()
+
+            console.log('Monthly subscription created:', subscription.id)
+          } catch (subErr) {
+            console.error('Error creating subscription:', subErr.message)
+          }
+        }
       }
     }
 

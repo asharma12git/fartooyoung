@@ -435,26 +435,15 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                       Payment Information
                     </label>
 
-                    {donationType === 'monthly' ? (
-                      <CheckoutButton
-                        amount={Math.round(parseFloat(getTotalAmount()) * 100) / 100}
-                        donorInfo={sanitizeFormData(donorInfo)}
-                        donationType={donationType}
-                        onError={handleStripeError}
-                        loading={loading}
-                        setLoading={setLoading}
-                      />
-                    ) : (
-                      <StripePayment
-                        amount={Math.round(parseFloat(getTotalAmount()) * 100) / 100}
-                        donorInfo={sanitizeFormData(donorInfo)}
-                        donationType={donationType}
-                        onSuccess={handleStripeSuccess}
-                        onError={handleStripeError}
-                        loading={loading}
-                        setLoading={setLoading}
-                      />
-                    )}
+                    <StripePayment
+                      amount={Math.round(parseFloat(getTotalAmount()) * 100) / 100}
+                      donorInfo={sanitizeFormData(donorInfo)}
+                      donationType={donationType}
+                      onSuccess={handleStripeSuccess}
+                      onError={handleStripeError}
+                      loading={loading}
+                      setLoading={setLoading}
+                    />
                   </div>
 
                   {/* Cover Transaction Costs */}

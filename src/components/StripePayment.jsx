@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import PropTypes from 'prop-types'
@@ -12,8 +12,12 @@ const StripePayment = ({ amount, donorInfo, donationType, onSuccess, onError, lo
   const [clientSecret, setClientSecret] = useState(null)
   const [loadingIntent, setLoadingIntent] = useState(true)
   const [piId, setPiId] = useState(null)
+  const intentCreated = useRef(false)
 
   useEffect(() => {
+    if (intentCreated.current) return
+    intentCreated.current = true
+
     const createIntent = async () => {
       try {
         const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'

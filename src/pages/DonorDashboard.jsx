@@ -1080,7 +1080,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setLocalRefresh(prev => prev + 1)}
-                        className="bg-white/10 hover:bg-white/20 text-white/80 hover:text-white px-3 py-2 rounded-md font-medium transition-all duration-300 text-sm border border-white/20"
+                        className="bg-green-500/20 hover:bg-green-500/30 text-white px-3 py-2 rounded-md font-medium transition-all duration-300 text-sm border border-green-500/30"
                       >
                         Refresh
                       </button>

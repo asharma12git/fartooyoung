@@ -85,7 +85,7 @@ const SubscriptionManager = ({ userEmail, onDonateClick, refreshKey }) => {
           <button
             onClick={handleManageSubscription}
             disabled={isLoading}
-            className={`bg-gradient-to-r from-white/10 to-purple-500/20 hover:from-white/20 hover:to-purple-500/30 text-white/80 hover:text-white px-2 sm:px-4 py-2 rounded-lg font-medium transition-all duration-300 border border-white/20 text-xs sm:text-sm ${
+            className={`bg-green-500/20 hover:bg-green-500/30 text-white px-2 sm:px-4 py-2 rounded-lg font-medium transition-all duration-300 border border-green-500/30 text-xs sm:text-sm ${
               isLoading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >

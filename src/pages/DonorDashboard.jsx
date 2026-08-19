@@ -9,6 +9,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
   const [activeShopSubtab, setActiveShopSubtab] = useState('orders') // For Shop subtabs
   const [userDonations, setUserDonations] = useState([])
   const [loading, setLoading] = useState(true)
+  const [localRefresh, setLocalRefresh] = useState(0)
   const [calculatorAmount, setCalculatorAmount] = useState(100)
   const [showSmartSuggestion, setShowSmartSuggestion] = useState(true)
   
@@ -102,7 +103,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
     }
 
     fetchDonations()
-  }, [user, refreshKey]) // Refetch when refreshKey changes
+  }, [user, refreshKey, localRefresh]) // Refetch when refreshKey changes
 
   // Handle profile update
   const handleSubmit = async (e) => {
@@ -1076,12 +1077,20 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <div className="w-1 h-6 bg-gradient-to-b from-red-400 to-pink-600 rounded-full"></div>
                       <h3 className="text-lg sm:text-xl font-semibold text-white">Donation History</h3>
                     </div>
-                    <button
-                      onClick={() => onDonateClick()}
-                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm"
-                    >
-                      Donate Now
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setLocalRefresh(prev => prev + 1)}
+                        className="bg-white/10 hover:bg-white/20 text-white/80 hover:text-white px-3 py-2 rounded-md font-medium transition-all duration-300 text-sm border border-white/20"
+                      >
+                        Refresh
+                      </button>
+                      <button
+                        onClick={() => onDonateClick()}
+                        className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm"
+                      >
+                        Donate Now
+                      </button>
+                    </div>
                   </div>
                   {userDonations.length === 0 ? (
                     <div className="text-center py-8">

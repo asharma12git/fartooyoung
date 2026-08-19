@@ -251,20 +251,45 @@ exports.handler = async (event) => {
         // Create subscription for monthly donations
         if (paymentIntent.metadata?.donation_type === 'monthly' && paymentIntent.customer && paymentIntent.payment_method) {
           try {
-            // Attach payment method to customer
-            await stripe.paymentMethods.attach(paymentIntent.payment_method, {
+            // Check if subscription already exists for this customer at this amount (prevent duplicates)
+            const existingSubs = await stripe.subscriptions.list({
               customer: paymentIntent.customer,
+              status: 'active',
+              limit: 10
             })
+            const alreadyExists = existingSubs.data.some(s => 
+              s.items.data[0].price.unit_amount === paymentIntent.amount
+            )
+            
+            if (alreadyExists) {
+              console.log('Subscription already exists for this amount, skipping creation')
+            } else {
+              // Attach payment method to customer
+              await stripe.paymentMethods.attach(paymentIntent.payment_method, {
+                customer: paymentIntent.customer,
+              })
 
             // Set as default payment method
             await stripe.customers.update(paymentIntent.customer, {
               invoice_settings: { default_payment_method: paymentIntent.payment_method }
             })
 
-            // Create recurring subscription starting next month
+            // Create recurring subscription — skip first invoice (already charged via PaymentIntent)
+            const now = Math.floor(Date.now() / 1000)
+            const nextMonth = now + (30 * 24 * 60 * 60) // 30 days from now
+
+            const price = await stripe.prices.create({
+              currency: 'usd',
+              unit_amount: paymentIntent.amount,
+              recurring: { interval: 'month' },
+              product_data: { name: 'Far Too Young - Monthly Donation' }
+            })
+
             const subscription = await stripe.subscriptions.create({
               customer: paymentIntent.customer,
-              items: [{ price_data: { currency: 'usd', product_data: { name: 'Far Too Young - Monthly Donation' }, unit_amount: paymentIntent.amount, recurring: { interval: 'month' } } }],
+              items: [{ price: price.id }],
+              billing_cycle_anchor: nextMonth,
+              proration_behavior: 'none',
               metadata: { donor_name: paymentIntent.metadata.donor_name, donor_email: paymentIntent.metadata.donor_email, donation_type: 'monthly' },
               description: 'Far Too Young - Monthly Donation'
             })
@@ -278,6 +303,7 @@ exports.handler = async (event) => {
             }).promise()
 
             console.log('Monthly subscription created:', subscription.id)
+            }
           } catch (subErr) {
             console.error('Error creating subscription:', subErr.message)
           }

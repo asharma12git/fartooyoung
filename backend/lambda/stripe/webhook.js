@@ -196,6 +196,52 @@ exports.handler = async (event) => {
     // ========================================================================
     // STEP 4B: HANDLE PAYMENT INTENT SUCCEEDED (Embedded Payment Element)
     // ========================================================================
+    // HANDLE BANK PAYMENTS IN PROCESSING STATE (show as pending)
+    // ========================================================================
+    if (stripeEvent.type === 'payment_intent.processing') {
+      const paymentIntent = stripeEvent.data.object
+      console.log('Payment intent processing (bank):', paymentIntent.id)
+
+      let paymentMethodDetails = { type: 'us_bank_account' }
+      try {
+        if (paymentIntent.latest_charge) {
+          const chargeId = typeof paymentIntent.latest_charge === 'string'
+            ? paymentIntent.latest_charge
+            : paymentIntent.latest_charge.id
+          const charge = await stripe.charges.retrieve(chargeId)
+          paymentMethodDetails = charge.payment_method_details || { type: 'us_bank_account' }
+        }
+      } catch (err) {
+        console.error('Error retrieving payment method:', err.message)
+      }
+
+      const donation = {
+        id: `pi_${paymentIntent.id}`,
+        email: paymentIntent.metadata?.donor_email || paymentIntent.receipt_email || 'unknown',
+        name: paymentIntent.metadata?.donor_name || 'Anonymous',
+        amount: paymentIntent.amount / 100,
+        type: paymentIntent.metadata?.donation_type || 'one-time',
+        status: 'pending',
+        paymentMethod: paymentMethodDetails.type || 'us_bank_account',
+        cardBrand: null,
+        cardLast4: null,
+        wallet: null,
+        stripePaymentIntentId: paymentIntent.id,
+        stripeInvoiceId: null,
+        stripeSubscriptionId: null,
+        stripeSessionId: null,
+        createdAt: new Date().toISOString(),
+      }
+
+      await dynamodb.put({
+        TableName: DONATIONS_TABLE,
+        Item: donation
+      }).promise()
+
+      console.log('Pending bank donation saved:', donation.id)
+    }
+
+    // ========================================================================
     if (stripeEvent.type === 'payment_intent.succeeded') {
       const paymentIntent = stripeEvent.data.object
 

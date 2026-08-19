@@ -624,7 +624,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                   Keep One-time
                 </button>
                 <button
-                  onClick={() => setShowMonthlyPopup(false)}
+                  onClick={() => { setDonationType('monthly'); setShowMonthlyPopup(false) }}
                   className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-bold transition-colors border border-orange-400/50"
                 >
                   Yes, Monthly

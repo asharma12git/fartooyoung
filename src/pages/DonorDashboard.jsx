@@ -1543,7 +1543,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <p className="text-white/60 mb-6">We're working on bringing you merchandise and educational materials to support our cause.</p>
                     <button
                       onClick={() => onDonateClick()}
-                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 active:scale-95 active:opacity-90"
                     >
                       Make a Donation Instead
                     </button>
@@ -1564,7 +1564,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     <p className="text-white/60 mb-6">Save your favorite items and get notified when they become available.</p>
                     <button
                       onClick={() => onDonateClick()}
-                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                      className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 active:scale-95 active:opacity-90"
                     >
                       Make a Donation Instead
                     </button>

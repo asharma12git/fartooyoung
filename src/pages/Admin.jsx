@@ -31,7 +31,7 @@ function Admin() {
         {/* Header row */}
         <div className="flex items-end justify-between mb-10">
           <h1 className="text-2xl font-light text-white tracking-wide">Admin Panel</h1>
-          <button onClick={() => navigate('/dashboard')} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium border border-white/20 transition-all duration-300">
+          <button onClick={() => navigate('/dashboard')} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium border border-white/20 transition-all duration-300 active:scale-95 active:opacity-90">
             ← Donor Dashboard
           </button>
         </div>
@@ -212,7 +212,7 @@ function ResearchTab() {
           <button onClick={() => setSort(null)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-300 ${sort ? 'bg-white/10 hover:bg-white/20 text-white border-white/20' : 'bg-white/5 text-white/30 border-white/10 cursor-default'}`} disabled={!sort}>
             ↺ Reset sort
           </button>
-          <button onClick={() => setShowAdd(!showAdd)} className="bg-orange-500/20 hover:bg-orange-500/30 text-white px-4 py-2 rounded-lg text-sm font-medium border border-orange-500/30 transition-all duration-300">
+          <button onClick={() => setShowAdd(!showAdd)} className="bg-orange-500/20 hover:bg-orange-500/30 text-white px-4 py-2 rounded-lg text-sm font-medium border border-orange-500/30 transition-all duration-300 active:scale-95 active:opacity-90">
             + Add Article
           </button>
         </div>
@@ -397,7 +397,7 @@ function PostsTab() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <p className="text-sm text-white/50">{posts.length} posts ({posts.filter(p => p.status === 'published').length} published, {posts.filter(p => p.status !== 'published').length} drafts)</p>
-        <button onClick={() => setEditingPost({})} className="bg-orange-500/20 hover:bg-orange-500/30 text-white px-4 py-2 rounded-lg text-sm font-medium border border-orange-500/30 transition-all duration-300">
+        <button onClick={() => setEditingPost({})} className="bg-orange-500/20 hover:bg-orange-500/30 text-white px-4 py-2 rounded-lg text-sm font-medium border border-orange-500/30 transition-all duration-300 active:scale-95 active:opacity-90">
           + New Post
         </button>
       </div>

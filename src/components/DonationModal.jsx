@@ -597,7 +597,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                   setAgreeToTerms(true)
                   setShowTerms(false)
                 }}
-                className="bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-md text-sm sm:text-base font-bold transition-colors border border-orange-400/50"
+                className="bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-md text-sm sm:text-base font-bold transition-colors border border-orange-400/50 active:scale-95 active:opacity-90"
               >
                 Accept Terms
               </button>
@@ -627,7 +627,7 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
                 </button>
                 <button
                   onClick={() => { setDonationType('monthly'); setShowMonthlyPopup(false) }}
-                  className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-bold transition-colors border border-orange-400/50"
+                  className="flex-1 bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-bold transition-colors border border-orange-400/50 active:scale-95 active:opacity-90"
                 >
                   Yes, Monthly
                 </button>

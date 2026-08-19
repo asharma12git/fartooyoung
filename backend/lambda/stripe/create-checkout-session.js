@@ -173,8 +173,14 @@ exports.handler = async (event) => {
       sessionConfig.line_items[0].price_data.recurring = {
         interval: 'month'                               // Bill monthly
       }
+      sessionConfig.subscription_data = {
+        description: 'Far Too Young - Monthly Donation'
+      }
     } else {
       sessionConfig.mode = 'payment'                    // One-time payment mode
+      sessionConfig.payment_intent_data = {
+        description: 'Far Too Young - One-time Donation'
+      }
     }
 
     // ========================================================================

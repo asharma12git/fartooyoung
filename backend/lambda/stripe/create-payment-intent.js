@@ -65,6 +65,7 @@ exports.handler = async (event) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100),                   // Convert dollars to cents (Stripe requirement)
       currency: 'usd',                                    // US Dollars
+      description: donation_type === 'monthly' ? 'Far Too Young - Monthly Donation' : 'Far Too Young - One-time Donation',
       payment_method_types: ['card', 'us_bank_account'],  // Card (Apple Pay, Google Pay) + Bank (ACH)
       metadata: {
         // Custom data attached to the payment intent

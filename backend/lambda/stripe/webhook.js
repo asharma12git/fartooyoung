@@ -216,7 +216,7 @@ exports.handler = async (event) => {
       }
 
       const donation = {
-        id: `pi_${paymentIntent.id}`,
+        id: paymentIntent.id,
         email: paymentIntent.metadata?.donor_email || paymentIntent.receipt_email || 'unknown',
         name: paymentIntent.metadata?.donor_name || 'Anonymous',
         amount: paymentIntent.amount / 100,
@@ -283,7 +283,7 @@ exports.handler = async (event) => {
         } catch (err) { /* ignore */ }
 
         const donation = {
-          id: `pi_${paymentIntent.id}`,
+          id: paymentIntent.id,
           email: paymentIntent.metadata?.donor_email || chargeEmail || paymentIntent.receipt_email || 'unknown',
           name: paymentIntent.metadata?.donor_name || chargeName || 'Anonymous',
           amount: paymentIntent.amount / 100,
@@ -355,7 +355,7 @@ exports.handler = async (event) => {
             // Update the donation record with subscription ID
             await dynamodb.update({
               TableName: DONATIONS_TABLE,
-              Key: { id: `pi_${paymentIntent.id}` },
+              Key: { id: paymentIntent.id },
               UpdateExpression: 'SET stripeSubscriptionId = :subId',
               ExpressionAttributeValues: { ':subId': subscription.id }
             }).promise()

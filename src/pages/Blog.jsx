@@ -296,7 +296,7 @@ const Blog = () => {
                     placeholder="Your email"
                     className="w-full px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-orange-500 mb-2"
                   />
-                  <button onClick={(e) => { e.preventDefault(); e.target.closest('div').querySelector('.newsletter-msg').classList.remove('hidden') }} className="w-full px-3 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                  <button onClick={(e) => { e.preventDefault(); e.target.closest('div').querySelector('.newsletter-msg').classList.remove('hidden') }} className="w-full px-3 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors active:scale-95 active:opacity-90">
                     Subscribe
                   </button>
                   <p className="newsletter-msg hidden text-xs text-orange-600 mt-2">Thank you for your interest! Our newsletter is launching soon. Please check back shortly.</p>
@@ -350,7 +350,7 @@ const Blog = () => {
                   placeholder="Your email"
                   className="w-full px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-orange-500 mb-2"
                 />
-                <button onClick={(e) => { e.preventDefault(); e.target.closest('div').querySelector('.newsletter-msg').classList.remove('hidden') }} className="w-full px-3 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                <button onClick={(e) => { e.preventDefault(); e.target.closest('div').querySelector('.newsletter-msg').classList.remove('hidden') }} className="w-full px-3 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors active:scale-95 active:opacity-90">
                   Subscribe
                 </button>
                 <p className="newsletter-msg hidden text-xs text-orange-600 mt-2">Thank you for your interest! Our newsletter is launching soon. Please check back shortly.</p>

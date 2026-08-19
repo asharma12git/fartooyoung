@@ -58,7 +58,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
           {/* Mobile Hamburger Button - Visible on mobile and tablet */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="xl:hidden flex items-center justify-center w-11 sm:w-10 md:w-12 lg:w-10 h-11 sm:h-10 md:h-12 lg:h-10 rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
+            className="xl:hidden flex items-center justify-center w-11 sm:w-10 md:w-12 lg:w-10 h-11 sm:h-10 md:h-12 lg:h-10 rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300 active:scale-95 active:opacity-90"
             aria-label="Toggle mobile menu"
           >
             <svg 
@@ -106,7 +106,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
               className="flex items-center space-x-2"
             >
               <span className="text-white/90 text-base xl:text-lg font-medium transition-colors duration-300 hover:text-orange-200">Donate</span>
-              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300">
+              <div className="bg-orange-500/80 backdrop-blur-sm p-2 rounded-md border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300 active:scale-95 active:opacity-90">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -124,7 +124,7 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
             <div className="flex justify-end items-center mb-6">
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-11 h-11 flex items-center justify-center rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300"
+                className="w-11 h-11 flex items-center justify-center rounded-md bg-orange-500/80 backdrop-blur-sm border border-orange-400/50 hover:bg-orange-600/90 transition-colors duration-300 active:scale-95 active:opacity-90"
                 aria-label="Close menu"
               >
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

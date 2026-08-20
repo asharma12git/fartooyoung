@@ -649,7 +649,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
                     <div className="mb-6">
                       <div className="flex items-center justify-between mb-3">
-                        <label className="text-white/80 text-sm font-medium">Your Donation Amount</label>
+                        <label className="text-white/80 text-sm font-medium">See how your gift makes a difference</label>
                         <div className="text-2xl font-bold text-orange-400">${calculatorAmount}</div>
                       </div>
                       <input

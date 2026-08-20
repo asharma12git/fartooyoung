@@ -130,10 +130,10 @@ Complete production backend architecture for Far Too Young platform using 28 AWS
 | Function | Endpoint | Database Tables | Purpose |
 |----------|----------|-----------------|---------|
 | `create-checkout-session.js` | POST /stripe/create-checkout-session | donations | Stripe Checkout integration |
-| `create-payment-intent.js` | POST /stripe/create-payment-intent | None | Direct payment processing |
+| `create-payment-intent.js` | POST /stripe/create-payment-intent | None | Direct payment processing (one-time + monthly inline, descriptions: 'Far Too Young - One-time/Monthly Donation') |
 | `create-portal-session.js` | POST /stripe/create-portal-session | None | Customer subscription portal |
 | `list-subscriptions.js` | GET /stripe/list-subscriptions | None | User subscription management |
-| `webhook.js` | POST /stripe/webhook | donations | Payment event processing |
+| `webhook.js` | POST /stripe/webhook | donations | Payment event processing (succeeded, processing, subscription lifecycle) |
 
 ### Content & Research Functions (5 Functions)
 
@@ -229,10 +229,20 @@ Complete production backend architecture for Far Too Young platform using 28 AWS
 ```javascript
 // Webhook Processing
 1. Verify Stripe webhook signature
-2. Process payment events (success/failure)
-3. Update donation status in database
-4. Handle subscription events
-5. Send confirmation emails via SES
+2. Process payment events:
+   - payment_intent.succeeded → record donation, create Stripe Subscription for monthly type
+   - payment_intent.processing → record donation as 'pending' (bank/ACH payments)
+   - checkout.session.completed → legacy checkout flow
+   - invoice.payment_succeeded → recurring subscription payment
+   - customer.subscription.deleted → mark subscription cancelled
+3. Subscription creation logic (monthly donations):
+   - Check for existing active subscription (duplicate prevention)
+   - Create Stripe Subscription with billing_cycle_anchor 30 days out
+   - Store subscription ID on donation record
+4. ID handling: check for existing pi_ prefix before prepending (prevents pi_pi_ bug)
+5. Capture billing_details (email, name) for Apple Pay/Google Pay wallets
+6. Update donation status in database
+7. Send confirmation emails via SES
 ```
 
 ## User Management Functions
@@ -405,6 +415,6 @@ React (CloudFront) → API Gateway → Lambda Functions → DynamoDB
 
 ---
 
-**Last Updated:** August 17, 2026  
+**Last Updated:** August 19, 2026  
 **Production Status:** ✅ 28 Functions LIVE  
-**Payment Status:** ✅ Real Stripe Processing Active
+**Payment Status:** ✅ Real Stripe Processing Active (inline payments, webhook-based subscriptions)

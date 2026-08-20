@@ -14,7 +14,7 @@ A full-stack serverless web application for an organization focused on ending ch
 ## Features
 
 - User authentication with email verification and input validation
-- One-time and recurring donations via Stripe
+- One-time and recurring donations via Stripe (inline card form, Apple Pay, Google Pay, bank transfers)
 - User dashboard (donation history, subscription management, profile settings)
 - Rate limiting and bot protection
 - Password strength enforcement (8+ chars, uppercase, lowercase, number, special)

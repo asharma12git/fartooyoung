@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 41 - Blog System LIVE in Production  
-**Last Updated:** August 17, 2026, 9:14 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod
+**Current Phase:** Phase 42 - Critical Payment Fixes + Dashboard Polish  
+**Last Updated:** August 19, 2026, 9:00 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed
 
 ### **What's Working (Production Ready)**
 
@@ -35,14 +35,20 @@
 - HTTPS enforcement across all endpoints
 
 ✅ **Donation System (Live Payments)**
-- Stripe Checkout integration with live keys
-- One-time donations ($25, $50, $100, custom amounts)
-- Monthly subscriptions with automatic billing
+- Stripe Elements inline payment form (card, Apple Pay, Google Pay, bank)
+- One-time donations ($25, $50, $100, custom amounts with decimal support)
+- Monthly subscriptions created via webhook after first inline payment
+- billing_cycle_anchor set 30 days out (no double-charge on first month)
+- Duplicate subscription prevention (checks existing before creating)
+- PaymentIntent deduplication (useRef guard, single PI per modal session)
+- Transaction descriptions: 'Far Too Young - One-time/Monthly Donation'
 - Subscription management portal (cancel, update)
-- Webhook processing for all payment events
-- Bank account payment support (ACH)
+- Webhook processing: payment_intent.succeeded, payment_intent.processing, invoice events
+- Bank account payment support (ACH) with pending state
 - Payment method display (cards, bank accounts, digital wallets)
+- Apple Pay/Google Pay: email+name captured from billing_details
 - Anonymous donation support
+- Auto-close modal on success (3s delay, triggers dashboard refresh)
 
 ✅ **User Dashboard**
 - Complete donation history with date filtering
@@ -52,6 +58,13 @@
 - Responsive design (mobile + desktop optimized)
 - Payment method icons (Visa, Mastercard, bank, Google Pay, Apple Pay)
 - Real-time subscription status updates
+- Freeze pane top bar (Sign Out + Admin Panel frozen, content scrolls)
+- Refresh button on Donation History (refreshes donations + subscriptions)
+- Donation cards: green border (monthly), orange border (one-time)
+- Impact Journey: swipeable cards on mobile (scroll-snap)
+- Impact Goals: dynamic year title, $50/month highlight, green checkmarks
+- Impact calculator with animated slider
+- Press animation (active:scale-95) on all buttons site-wide
 
 ✅ **Infrastructure (AWS Serverless)**
 - **Backend**: 28 Lambda functions + API Gateway (production + staging)
@@ -99,51 +112,110 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 41: AI Content Generation (Plan 6 Step 4) — COMPLETE on staging
-- **Blog Generator Lambda** (`blog-generator.js`): Claude Sonnet 4.6 writes posts from starred/approved research articles
-  - Single article per post, focused topic. Skips irrelevant articles ({skip:true})
-  - Auto-categorizes (Education, Health, Norms & Culture, Policy & Justice, Research, Climate & Crisis)
-  - Calculates reading_time (words/200) and word_count
-  - Appends CTA block with donate links (#donate-monthly, #donate-once)
-  - No dashes rule in prompt. Author: 'Far Too Young, Inc.' default
-- **EventBridge Triggers**: Monday 11am UTC + Friday 11am UTC (2 posts/week auto-generated)
-  - 3 total EventBridge rules: research weekly + blog Monday + blog Friday
-- **Blog.jsx Redesigned**:
-  - Category tabs (desktop=underline with dividers, mobile/iPad=dropdown)
-  - Year dropdown + short month tabs (Jan, Feb...) replace old arrow navigation
-  - Latest Research tab (orange, always orange) with right panel on desktop (xl:)
-  - Mobile/iPad: Latest Research section below posts before Top Research
-  - Category color placeholders (gradient boxes, short names mobile, full desktop)
-  - Posts without image_url show colored gradient (removed placeholder images)
-  - Top Research: 10 articles, sticky right panel
-  - Stay Informed: temporary message on subscribe
-  - Responsive: xl breakpoint for side panel, overflow scroll for categories
-- **BlogPost.jsx Updated**:
-  - HTML content rendered with dangerouslySetInnerHTML (was showing raw tags)
-  - Tiled hero image (Join the Movement, repeated, dark overlay)
-  - Centered author section with FTY logo + 'Share this story' + Donate Now button
-  - Donate links in CTA block trigger modal (monthly/one-time)
-  - Bottom donate button fixed (was passing event as amount)
-  - Newsletter subscribe: temporary message added
-- **Admin.jsx**: React Quill rich text editor, proper content loading on edit
-- **Other Frontend Fixes**: WhatWeDo Counter component moved outside (fixes infinite spin), Partners VISCOM logo updated, Footer logo size reduced for mobile/iPad
-- **Backend Fixes**: research-fetcher dedup bug fixed (removed Limit:1), dead feeds removed, UN News added; get-research-articles starred-first sort; get-blog-posts ?all=true for admin; get-blog-post allows drafts; admin-research URL validation + title extraction + dedup; CORS PUT/DELETE added
-- **DynamoDB Cleanup**: 34 duplicate research articles removed (85→51), 6 old test posts deleted, 6 new AI-generated posts created, all posts updated (author, reading_time, word_count, dashes removed)
-- **Lambda Count**: 28 (added blog-generator)
-- **EventBridge Rules**: 3 (research weekly + blog Monday + blog Friday)
+- Phase 42: Critical Payment Fixes + Dashboard Polish — DEPLOYED TO PRODUCTION
+- **Payment System Overhaul** (12 critical fixes):
+  - Monthly subscriptions now inline (same card form as one-time) — webhook creates Stripe Subscription after first payment
+  - `billing_cycle_anchor` set 30 days out (no double-charge on first month)
+  - Duplicate subscription prevention (checks existing before creating)
+  - PaymentIntent created only ONCE per donation (useRef guard prevents duplicates on re-render)
+  - Transaction descriptions: 'Far Too Young - One-time Donation' / 'Far Too Young - Monthly Donation'
+  - Apple Pay/Google Pay: email+name captured from billing_details (was 'unknown' before)
+  - Double `pi_pi_` ID prefix bug fixed (webhook was adding pi_ to already-prefixed ID)
+  - Bank payments: pending state via `payment_intent.processing` webhook event
+  - Stripe webhook events: added `payment_intent.processing` to both staging+prod webhook endpoints
+  - Decimal amounts allowed (step=0.01 on custom input)
+  - Monthly upsell popup shows on modal open, 'Yes Monthly' sets type correctly
+  - Auto-close donation modal after 3 seconds on success (triggers dashboard refresh)
+- **Dashboard UI Polish** (18 improvements):
+  - Freeze pane top bar (Sign Out + Admin Panel frozen, content scrolls below)
+  - X button absolute flush top-right corner
+  - Refresh button (green) on Donation History — refreshes both donations + subscriptions
+  - Donation cards: green border for monthly, orange border for one-time
+  - Impact Journey: swipeable cards on mobile (scroll-snap), stacked
+  - Impact Goals: dynamic year title with month in orange, removed redundant month subtitle
+  - $50/month highlighted orange, green checkmarks for coverage list
+  - Impact calculator: 'See how your gift makes a difference' + animated ▶ arrow + orange slider thumb
+  - Progress bars: lighter orange (60% opacity), thinner
+  - Best donation moved into year cards (removed from header)
+  - Girls Supported + Best Donation numbers in green
+  - Green donated amount in Impact Goals section
+  - 'Transfers may take a few minutes to appear' footer note
+  - Lock icon + Stripe redirect note on subscriptions
+  - Subscription card padding matched to donation cards
+  - Press animation (active:scale-95) on all buttons site-wide
+  - Where We Work: flip button with pulse animation (replaces auto-flip)
+  - Mobile: dashboard buttons don't overlap welcome, Impact Goals stacks on mobile
+- **Other**:
+  - Blog auto-generation confirmed working (Mon+Fri EventBridge)
+  - Google Ad Grants resubmitted via Goodstack (approved, pending Google activation)
+- **Lambda Count**: 28 (unchanged)
+- **EventBridge Rules**: 3 (unchanged)
 - Frontend + Backend deployed to staging AND production ✅
-- **Production Deployment** (Aug 17 evening):
-  - Merged staging → main, pipelines triggered
-  - Fixed pipeline CodeBuild role permissions (added iam:GetRole, events:*, bedrock:InvokeModel) on both stg + prod
-  - Added DeletionPolicy: Retain to all 5 DynamoDB tables (prevents data loss on rollback)
-  - Data migrated: 53 research articles, 6 blog posts, 7 tiers copied to prod
-  - Admin role set on production user
-  - Production sanity check: all endpoints passing ✅
-- Next: Step 5 (Newsletter System)
+- Next: Step 5 (Newsletter System), Google Ad Grants activation follow-up
 
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **August 18-19, 2026 - Critical Payment Fixes + Dashboard Polish**
+
+**Session Duration:** ~8 hours (Aug 18 evening - Aug 19 evening)
+
+#### **Phase 42: Payment System Overhaul + Dashboard UI** ✅
+
+**CRITICAL PAYMENT FIXES (12 fixes)**:
+1. Monthly subscriptions now inline (same card form as one-time) — webhook creates Stripe Subscription after first payment
+2. `billing_cycle_anchor` set 30 days out (no double-charge on first month)
+3. Duplicate subscription prevention (checks existing active subscription before creating new one)
+4. PaymentIntent created only ONCE per donation (useRef guard prevents duplicates on re-render)
+5. Transaction descriptions: 'Far Too Young - One-time Donation' / 'Far Too Young - Monthly Donation'
+6. Apple Pay/Google Pay: email+name captured from billing_details (was 'unknown' before)
+7. Double `pi_pi_` ID prefix bug fixed (webhook was adding pi_ to already-prefixed ID)
+8. Bank payments: pending state via `payment_intent.processing` webhook event
+9. Stripe webhook events: added `payment_intent.processing` to both staging+prod webhook endpoints
+10. Decimal amounts allowed (step=0.01 on custom input)
+11. Monthly upsell popup shows on modal open, 'Yes Monthly' sets type correctly
+12. Auto-close donation modal after 3 seconds on success (triggers dashboard refresh)
+
+**DASHBOARD UI POLISH (18 changes)**:
+13. Freeze pane top bar (Sign Out + Admin Panel frozen, content scrolls below)
+14. X button absolute flush top-right corner
+15. Refresh button (green) on Donation History — refreshes both donations + subscriptions
+16. Donation cards: green border for monthly, orange border for one-time
+17. Impact Journey: swipeable cards on mobile (scroll-snap), stacked
+18. Impact Goals: dynamic year title with month in orange, removed redundant month subtitle
+19. $50/month highlighted orange, green checkmarks for coverage list
+20. Impact calculator: 'See how your gift makes a difference' + animated ▶ arrow + orange slider thumb
+21. Progress bars: lighter orange (60% opacity), thinner
+22. Best donation moved into year cards (removed from header)
+23. Girls Supported + Best Donation numbers in green
+24. Green donated amount in Impact Goals section
+25. 'Transfers may take a few minutes to appear' footer note
+26. Lock icon + Stripe redirect note on subscriptions
+27. Subscription card padding matched to donation cards
+28. Press animation (active:scale-95) on all buttons site-wide
+29. Where We Work: flip button with pulse animation (replaces auto-flip)
+30. Mobile: dashboard buttons don't overlap welcome, Impact Goals stacks on mobile
+
+**OTHER**:
+31. Blog auto-generation confirmed working (Mon+Fri EventBridge)
+32. Google Ad Grants resubmitted via Goodstack (approved, pending Google activation)
+
+**KEY TECHNICAL DETAILS**:
+- Webhook now handles `payment_intent.processing` event (bank payments show "pending" status)
+- Webhook creates Stripe Subscription object after successful first monthly payment (no redirect to Stripe Checkout)
+- `billing_cycle_anchor` set to `current_period_end` (30 days from first payment) to avoid immediate double-charge
+- PaymentIntent guard: `useRef` tracks whether PI has been created for current modal session
+- Donation ID stored without double-prefix: checks if ID already starts with `pi_` before prepending
+
+**DEPLOYMENT**: Frontend + Backend deployed to staging AND production ✅
+
+**Next Session Goals**:
+- Step 5: Newsletter System (subscribe, double opt-in, SES distribution)
+- Google Ad Grants activation follow-up
+- Monitor subscription renewals for billing_cycle_anchor correctness
+
+---
 
 ### **August 16-17, 2026 - AI Blog Generator & Blog Page Redesign**
 
@@ -929,10 +1001,10 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 
 ---
 
-**Last Updated:** August 17, 2026, 4:50 PM EST  
-**Current Branch:** staging (AI blog generator development)  
+**Last Updated:** August 19, 2026, 9:00 PM EST  
+**Current Branch:** staging (payment fixes + dashboard polish)  
 **Production Status:** ✅ LIVE at https://www.fartooyoung.org  
-**Payment Status:** ✅ Live Stripe processing operational  
+**Payment Status:** ✅ Live Stripe processing operational (inline payments, subscriptions via webhook)  
 **Documentation Status:** ✅ All docs updated and synchronized  
 **Next Milestone:** Step 5 — Newsletter System  
-**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - AI BLOG GENERATOR + BLOG REDESIGN ON STAGING
+**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - PAYMENT FIXES + DASHBOARD POLISH DEPLOYED

@@ -19,10 +19,10 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `backend/lambda/auth/update-profile.js`, `logout.js` | 6 (Profile) |
 | `backend/lambda/donations/get-donations.js` | 7 (Dashboard) |
 | `backend/lambda/donations/create-donation.js` | 8 (Donations One-time) |
-| `backend/lambda/stripe/webhook.js` | 8, 9, 11 (Donations + Stripe) |
+| `backend/lambda/stripe/webhook.js` | 8, 9, 11 (Donations + Stripe + Payment Fixes) |
 | `backend/lambda/stripe/create-checkout-session.js` | 8, 9 (Donations) |
 | `backend/lambda/stripe/create-portal-session.js`, `list-subscriptions.js` | 9 (Monthly) |
-| `backend/lambda/stripe/create-payment-intent.js` | 8 (Donations) |
+| `backend/lambda/stripe/create-payment-intent.js` | 8, 9, 11 (Donations + Monthly Inline + Stripe) |
 | `backend/template.yaml` | ALL (infrastructure change) |
 | `backend/lambda/utils/cors.js` | 10 (Security - CORS) |
 | `backend/lambda/admin/admin-research.js` | 14 (Admin Panel) |
@@ -185,11 +185,17 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 
 | # | Test | Method | Command | Expected |
 |---|------|--------|---------|----------|
-| 9.1 | Create subscription checkout | API | `curl -X POST {api}/stripe/create-checkout-session -d '{"amount":25,"donation_type":"monthly","donor_info":{...}}'` | `checkout_url` returned (subscription mode) |
+| 9.1 | Create monthly payment intent (inline) | API | `curl -X POST {api}/stripe/create-payment-intent -d '{"amount":25,"donation_type":"monthly","donor_info":{...}}'` | `client_secret` returned (same flow as one-time) |
 | 9.2 | List subscriptions | API | `curl -X GET {api}/stripe/list-subscriptions -H "Authorization: Bearer {token}"` | `subscriptions` array returned |
 | 9.3 | Create portal session | API | `curl -X POST {api}/stripe/create-portal-session -H "Authorization: Bearer {token}"` | `portal_url` returned |
 | 9.4 | Cancel subscription | Browser | Go to portal, cancel | Status changes to cancelled |
 | 9.5 | Recurring payment recorded | API | After billing cycle, check donations | New record with same stripeSubscriptionId |
+| 9.6 | Subscription created after first monthly payment | Stripe | Complete monthly donation → check Stripe | Subscription object created with billing_cycle_anchor 30 days out |
+| 9.7 | No double-charge on first month | Stripe | Complete monthly → check billing_cycle_anchor | Anchor = current_period_end (30 days from payment) |
+| 9.8 | Duplicate subscription prevention | Stripe | Complete same monthly donation twice | Only one subscription exists (second is blocked) |
+| 9.9 | Monthly upsell popup | Browser | Open donation modal | Monthly upsell popup appears, 'Yes Monthly' sets type to monthly |
+| 9.10 | Transaction description (monthly) | Stripe | Complete monthly donation → check Stripe dashboard | Description: 'Far Too Young - Monthly Donation' |
+| 9.11 | Transaction description (one-time) | Stripe | Complete one-time donation → check Stripe dashboard | Description: 'Far Too Young - One-time Donation' |
 
 ---
 
@@ -218,6 +224,13 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | 11.3 | Subscription created event | Stripe | Create subscription → check DB | Record with type "monthly" |
 | 11.4 | Subscription cancelled event | Stripe | Cancel subscription → check DB | Record with type "subscription_cancelled" |
 | 11.5 | Invoice payment succeeded | Stripe | Wait for renewal → check DB | New record with stripeInvoiceId |
+| 11.6 | payment_intent.processing event | Stripe | Pay with bank account → check DB | Record with status "pending" |
+| 11.7 | No double pi_ prefix | API | After payment, check donation ID in DB | ID starts with `pi_` (not `pi_pi_`) |
+| 11.8 | Apple Pay captures email+name | Stripe | Complete Apple Pay donation → check DB | name and email populated (not 'unknown') |
+| 11.9 | Google Pay captures email+name | Stripe | Complete Google Pay donation → check DB | name and email populated (not 'unknown') |
+| 11.10 | PaymentIntent not duplicated | Browser | Open modal, wait, check network tab | Only ONE /create-payment-intent call per modal open |
+| 11.11 | Decimal amount accepted | Browser | Enter $12.50 in custom amount (step=0.01) | Payment processes for $12.50 |
+| 11.12 | Auto-close modal on success | Browser | Complete a donation | Modal closes after ~3 seconds, dashboard refreshes |
 
 ---
 
@@ -352,4 +365,4 @@ aws dynamodb scan --table-name fartooyoung-staging-users-table \
 
 ---
 
-*Last updated: 2026-06-06*
+*Last updated: 2026-08-19*

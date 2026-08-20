@@ -183,10 +183,23 @@ const Header = ({ onAuthClick, onDonateClick, user, isLoggedIn }) => {
                   onDonateClick()
                   setIsMobileMenuOpen(false)
                 }}
-                className="flex-1 bg-gradient-to-r from-orange-500/80 to-orange-600/80 backdrop-blur-sm border border-orange-400/50 hover:from-orange-600/90 hover:to-orange-700/90 text-white px-4 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg text-sm"
+                className="flex-1 bg-gradient-to-r from-orange-500/80 to-orange-600/80 backdrop-blur-sm border border-orange-400/50 hover:from-orange-600/90 hover:to-orange-700/90 text-white px-4 py-3 rounded-lg font-medium transition-all duration-300 active:scale-95 active:opacity-90 shadow-lg text-sm"
               >
                 Donate
               </button>
+
+              {isLoggedIn && (
+                <button
+                  onClick={() => {
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('user')
+                    window.location.href = '/'
+                  }}
+                  className="flex-1 backdrop-blur-sm border border-white/20 text-white/70 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg font-medium transition-all duration-300 active:scale-95 active:opacity-90 shadow-lg text-sm"
+                >
+                  Sign Out
+                </button>
+              )}
             </div>
           </div>
         </div>

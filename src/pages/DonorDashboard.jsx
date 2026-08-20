@@ -299,7 +299,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           `}</style>
 
           {/* Hero Header with Impact Summary */}
-          <div className="mb-6 lg:mb-8">
+          <div className="mb-6 lg:mb-8 pt-12 sm:pt-0">
             {/* Welcome Message */}
             <div className="text-center mb-4 lg:mb-6">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light bg-gradient-to-r from-white via-orange-200 to-purple-200 bg-clip-text text-transparent mb-3 lg:mb-4 tracking-wide">

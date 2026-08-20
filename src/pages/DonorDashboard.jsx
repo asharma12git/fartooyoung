@@ -649,21 +649,27 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
                     <div className="mb-6">
                       <div className="flex items-center justify-between mb-3">
-                        <label className="text-white/80 text-sm font-medium">See how your gift makes a difference</label>
+                        <label className="text-white/80 text-sm font-medium">See how your gift makes a difference {showSmartSuggestion && <span className="text-orange-400 font-bold animate-[slideRight_2s_ease-in-out_infinite]"> ▶</span>}</label>
                         <div className="text-2xl font-bold text-orange-400">${calculatorAmount}</div>
                       </div>
-                      <input
-                        type="range"
-                        min="25"
-                        max="500"
-                        step="25"
-                        value={calculatorAmount}
-                        onChange={(e) => setCalculatorAmount(parseInt(e.target.value))}
-                        className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                        style={{
-                          background: `linear-gradient(to right, #f97316 0%, #f97316 ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) 100%)`
-                        }}
-                      />
+                      <div className="relative">
+                        <input
+                          type="range"
+                          min="25"
+                          max="500"
+                          step="25"
+                          value={calculatorAmount}
+                          onChange={(e) => { setCalculatorAmount(parseInt(e.target.value)); setShowSmartSuggestion(false) }}
+                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider relative z-10"
+                          style={{
+                            background: `linear-gradient(to right, #f97316 0%, #f97316 ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) 100%)`
+                          }}
+                        />
+                        {showSmartSuggestion && (
+                          <span className="hidden"></span>
+                        )}
+                      </div>
+                      <style>{`.animate-\\[slideRight_2s_ease-in-out_infinite\\] { animation: slideRight 2s ease-in-out infinite; } @keyframes slideRight { 0% { opacity: 1; transform: translateX(0) translateY(-50%); } 70% { opacity: 1; transform: translateX(30px) translateY(-50%); } 100% { opacity: 0; transform: translateX(50px) translateY(-50%); } } .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #f97316; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 4px rgba(249,115,22,0.5); } .slider::-moz-range-thumb { width: 20px; height: 20px; background: #f97316; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 4px rgba(249,115,22,0.5); }`}</style>
                       <div className="flex justify-between text-white/50 text-xs mt-1">
                         <span>$25</span>
                         <span>$500</span>
@@ -730,10 +736,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   </div>
 
                 {/* Current Month Summary - Three Column Format */}
-                <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center sm:text-left">
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6 text-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Month Info */}
-                    <div className="flex items-center justify-center sm:justify-start space-x-3">
+                    <div className="flex items-center justify-center space-x-3">
                       <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
                         <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -760,7 +766,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     {/* Donated This Month */}
                     <div className="text-center">
                       <h4 className="text-white/80 text-sm font-medium mb-1">Donated</h4>
-                      <p className="text-xl font-bold text-white">
+                      <p className="text-xl font-bold text-green-400">
                         ${(() => {
                           const currentMonth = new Date().toISOString().slice(0, 7)
                           const monthlyDonations = userDonations.filter(d => d.createdAt?.startsWith(currentMonth))
@@ -773,7 +779,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   {/* Cost Breakdown */}
                   <div className="mt-4 pt-4 border-t border-white/10 text-center">
                     <p className="text-white/70 text-base mb-5"><span className="text-orange-400 font-semibold">$50/month</span> per girl covers:</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-3 text-base max-w-md sm:max-w-none mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-3 text-base max-w-md sm:max-w-none mx-auto justify-items-center sm:justify-items-center">
                       <div className="flex items-center justify-center sm:justify-start space-x-2">
                         <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                         <span className="text-white/70 text-sm">School fees</span>
@@ -803,11 +809,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <div>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
                       <span className="text-white/80 text-sm">Support 1 Girl for 1 Year ($600)</span>
-                      <span className="text-orange-400 font-medium text-sm">${userStats.lifetimeTotal}/$600</span>
+                      <span className="text-sm"><span className="text-green-400 font-medium">${userStats.lifetimeTotal}</span><span className="text-orange-400 font-medium">/$600</span></span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-2 sm:h-3">
+                    <div className="w-full bg-white/10 rounded-full h-1.5 sm:h-2">
                       <div
-                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 sm:h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-400/60 to-orange-300/60 h-1.5 sm:h-2 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 600) * 100, 100)}%` }}
                       ></div>
                     </div>
@@ -818,11 +824,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <div>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
                       <span className="text-white/80 text-sm">Fund Complete Elementary (5 years - $3,000)</span>
-                      <span className="text-orange-400 font-medium text-sm">${userStats.lifetimeTotal}/$3,000</span>
+                      <span className="text-sm"><span className="text-green-400 font-medium">${userStats.lifetimeTotal}</span><span className="text-orange-400 font-medium">/$3,000</span></span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-2 sm:h-3">
+                    <div className="w-full bg-white/10 rounded-full h-1.5 sm:h-2">
                       <div
-                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 sm:h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-400/60 to-orange-300/60 h-1.5 sm:h-2 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 3000) * 100, 100)}%` }}
                       ></div>
                     </div>
@@ -833,11 +839,11 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                   <div>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
                       <span className="text-white/80 text-sm">Life-Changing Champion ($6,000)</span>
-                      <span className="text-orange-400 font-medium text-sm">${userStats.lifetimeTotal}/$6,000</span>
+                      <span className="text-sm"><span className="text-green-400 font-medium">${userStats.lifetimeTotal}</span><span className="text-orange-400 font-medium">/$6,000</span></span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-2 sm:h-3">
+                    <div className="w-full bg-white/10 rounded-full h-1.5 sm:h-2">
                       <div
-                        className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 sm:h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-400/60 to-orange-300/60 h-1.5 sm:h-2 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((userStats.lifetimeTotal / 6000) * 100, 100)}%` }}
                       ></div>
                     </div>
@@ -860,25 +866,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                       <div className="w-1 h-6 bg-gradient-to-b from-indigo-400 to-blue-600 rounded-full"></div>
                       <h3 className="text-xl font-semibold text-white">Your Impact Journey</h3>
                     </div>
-                    {/* Kindest Donation - Compact Version */}
-                    {(() => {
-                      const currentYear = new Date().getFullYear().toString()
-                      const currentYearDonations = userDonations.filter(d => d.createdAt?.startsWith(currentYear))
-
-                      if (currentYearDonations.length > 0) {
-                        const highestDonation = Math.max(...currentYearDonations.map(d => d.amount))
-                        return (
-                          <div className="flex items-center space-x-2 bg-white/5 px-3 py-2 rounded-lg border border-white/10">
-                            <span className="text-orange-400 text-sm">👑</span>
-                            <div className="text-right">
-                              <p className="text-white font-medium text-sm">${highestDonation}</p>
-                              <p className="text-white/60 text-xs">{currentYear} Best</p>
-                            </div>
-                          </div>
-                        )
-                      }
-                      return null
-                    })()}
                   </div>
 
                   <div className="flex flex-row space-x-4 overflow-x-auto pb-3 pt-2 px-1 snap-x snap-mandatory sm:snap-none" style={{
@@ -942,7 +929,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-white/70 text-sm">Girls Supported</span>
-                                <span className="text-orange-400 font-medium">{girlsSupported}</span>
+                                <span className="text-green-400 font-medium">{girlsSupported}</span>
                               </div>
                               {yearTotal >= 6000 && (
                                 <div className="flex justify-between">
@@ -950,6 +937,12 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                                   <span className="text-green-400 font-medium">{Math.floor(yearTotal / 6000)}</span>
                                 </div>
                               )}
+                            </div>
+
+                            {/* Best donation */}
+                            <div className="flex justify-between items-center mt-2">
+                              <span className="text-white/70 text-sm">👑 Best Donation</span>
+                              <span className="text-green-400 font-medium">${Math.max(...yearDonations.map(d => d.amount)).toFixed(2)}</span>
                             </div>
 
                             {/* Year highlight */}

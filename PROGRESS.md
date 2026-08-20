@@ -145,6 +145,7 @@
   - Press animation (active:scale-95) on all buttons site-wide
   - Where We Work: flip button with pulse animation (replaces auto-flip)
   - Mobile: dashboard buttons don't overlap welcome, Impact Goals stacks on mobile
+  - Mobile hamburger menu: Sign Out button added (green/orange/yellow row when logged in)
 - **Other**:
   - Blog auto-generation confirmed working (Mon+Fri EventBridge)
   - Google Ad Grants resubmitted via Goodstack (approved, pending Google activation)

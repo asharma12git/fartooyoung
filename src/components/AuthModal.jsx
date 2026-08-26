@@ -28,6 +28,16 @@ const AuthModal = ({ onClose, onLogin }) => {
   })
   const [honeypot, setHoneypot] = useState(createHoneypot())
   const [validationErrors, setValidationErrors] = useState({})
+  const [cooldown, setCooldown] = useState(0)
+
+  // Cooldown timer for forgot password
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setInterval(() => {
+      setCooldown(prev => prev - 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [cooldown])
   const [rateLimitError, setRateLimitError] = useState('')
 
   // Validation functions
@@ -173,6 +183,7 @@ const AuthModal = ({ onClose, onLogin }) => {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault()
+    if (loading || cooldown > 0) return
     setError('')
 
     const emailError = validateEmail(formData.email);
@@ -201,7 +212,8 @@ const AuthModal = ({ onClose, onLogin }) => {
           setCurrentView('reset')
         } else {
           // Production - show email sent message (persists until user navigates away)
-          setError('✅ Check your email for a reset link. Didn\'t receive it? Wait 60 seconds and try again.')
+          setError('✅ Check your email for a reset link.')
+          setCooldown(60)
         }
       } else {
         setError(data.message || 'Failed to send reset email')
@@ -608,7 +620,7 @@ const AuthModal = ({ onClose, onLogin }) => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || cooldown > 0}
               className="w-full bg-orange-500/80 backdrop-blur-sm hover:bg-orange-600/90 disabled:bg-orange-300/60 text-white py-3 rounded-md text-base font-bold transition-all duration-300 border border-orange-400/50"
             >
               {loading ? (
@@ -616,6 +628,8 @@ const AuthModal = ({ onClose, onLogin }) => {
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Sending...
                 </div>
+              ) : cooldown > 0 ? (
+                `Resend in ${cooldown}s`
               ) : (
                 'Send Reset Link'
               )}

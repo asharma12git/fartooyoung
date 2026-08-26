@@ -57,6 +57,7 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/login.handler
+      Timeout: 10
       Environment:
         Variables:
           RATE_LIMIT_TABLE: !Sub "${AWS::StackName}-rate-limits"
@@ -83,6 +84,7 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/register.handler
+      Timeout: 10
       Environment:
         Variables:
           RATE_LIMIT_TABLE: !Sub "${AWS::StackName}-rate-limits"
@@ -135,6 +137,7 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/forgot-password.handler
+      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
@@ -157,6 +160,7 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/reset-password.handler
+      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"

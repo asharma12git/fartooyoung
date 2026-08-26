@@ -15,7 +15,7 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `backend/lambda/auth/login.js` | 2 (Login), 10 (Security) |
 | `backend/lambda/auth/register.js` | 3 (Registration) |
 | `backend/lambda/auth/verify-email.js`, `resend-verification.js` | 4 (Email Verification) |
-| `backend/lambda/auth/forgot-password.js`, `reset-password.js`, `change-password.js` | 5 (Password Management) |
+| `backend/lambda/auth/forgot-password.js`, `reset-password.js`, `change-password.js` | 5 (Password Management), 15 (Reset Password Page) |
 | `backend/lambda/auth/update-profile.js`, `logout.js` | 6 (Profile) |
 | `backend/lambda/donations/get-donations.js` | 7 (Dashboard) |
 | `backend/lambda/donations/create-donation.js` | 8 (Donations One-time) |
@@ -34,9 +34,9 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `src/components/StripePayment.jsx` | 8, 9 (Donations) |
 | `src/components/PaymentForm.jsx` | 8, 9 (Donations) |
 | `src/components/DonationModal.jsx` | 8, 9 (Donations) |
-| `src/pages/*.jsx` | 1 (Frontend) |
+| `src/pages/*.jsx` | 1 (Frontend), 15 (Reset Password Page) |
 | `src/pages/Admin.jsx` | 14 (Admin Panel) |
-| `src/App.jsx` | 1 (Frontend - routing) |
+| `src/App.jsx` | 1 (Frontend - routing), 15 (Reset Password Page) |
 | `.env.staging`, `.env.production` | ALL (environment config) |
 | `deployment/*` | None (pipeline infra only) |
 | `docs/*` | None |
@@ -302,6 +302,31 @@ Run these minimum after every deploy:
 
 ---
 
+## 15. Reset Password Page
+
+| # | Test | Method | Steps/Command | Expected |
+|---|------|--------|---------------|----------|
+| 15.1 | Page loads with valid token | Browser | Navigate to `/reset-password?token=valid_token` | Form renders with two password fields |
+| 15.2 | Page shows error without token | Browser | Navigate to `/reset-password` (no token) | Error message: invalid/missing token |
+| 15.3 | Password validation - too short | Browser | Enter password < 8 chars, submit | Validation error shown |
+| 15.4 | Password validation - no uppercase | Browser | Enter `password1!`, submit | Validation error: must include uppercase |
+| 15.5 | Password validation - no number | Browser | Enter `Password!`, submit | Validation error: must include number |
+| 15.6 | Password validation - no special char | Browser | Enter `Password1`, submit | Validation error: must include special character |
+| 15.7 | Passwords must match | Browser | Enter different passwords in both fields | Validation error: passwords don't match |
+| 15.8 | Eye toggle shows/hides password | Browser | Click eye icon on password field | Toggles between type="password" and type="text" |
+| 15.9 | Eye toggle works on confirm field | Browser | Click eye icon on confirm password field | Toggles independently from first field |
+| 15.10 | Successful reset with valid token | API | `curl -X POST {api}/auth/reset-password -d '{"token":"valid","newPassword":"NewPass1!"}'` | "Password reset successfully" |
+| 15.11 | Reset with expired token | API | Use token older than 1 hour | Error: token expired |
+| 15.12 | Reset sends confirmation email | Browser | Complete valid reset | Confirmation email received |
+| 15.13 | Frontend sends 'newPassword' field | Browser | Submit form, check Network tab | POST body contains `newPassword` (not `password`) |
+| 15.14 | Forgot password - Send Reset Link button | Browser | Open forgot password form in AuthModal | Button reads "Send Reset Link" (not "Send Reset Token") |
+| 15.15 | Forgot password - no 'Already have a token?' link | Browser | Open forgot password form | No "Already have a token?" link present |
+| 15.16 | Success message persists | Browser | Send reset link, observe message | Success message stays visible (does not disappear after 3s) |
+| 15.17 | Lambda timeout handles cold start | API | Call `/auth/reset-password` after period of inactivity | Response within 10s (no 502 timeout) |
+| 15.18 | No white flash on page transition | Browser | Navigate between pages quickly | Black background persists, no white flash |
+
+---
+
 ## Adding New Tests
 
 When adding a new feature:
@@ -365,4 +390,4 @@ aws dynamodb scan --table-name fartooyoung-staging-users-table \
 
 ---
 
-*Last updated: 2026-08-19*
+*Last updated: 2026-08-26*

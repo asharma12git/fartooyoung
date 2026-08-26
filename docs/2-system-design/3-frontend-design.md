@@ -119,6 +119,7 @@
 | `PaymentForm.jsx`           | Stripe Payment Element (embedded)    | N/A (client-side)             | N/A                               | ✅ LIVE |
 | `SubscriptionManager.jsx`   | `GET /stripe/list-subscriptions` | `ListSubscriptionsFunction` | None | ✅ LIVE |
 | `AuthModal.jsx` (Reset)     | `POST /auth/forgot-password` | `ForgotPasswordFunction` | `fartooyoung-production-users` | ✅ LIVE   |
+| `ResetPassword.jsx`         | `POST /auth/reset-password`  | `ResetPasswordFunction`  | `fartooyoung-production-users` | ✅ LIVE   |
 | Rate Limiting (All)         | All endpoints             | All functions         | `fartooyoung-production-rate-limits` | ✅ LIVE   |
 | `Admin.jsx` (Research)      | `GET/POST/PUT/DELETE /admin/research` | `AdminResearchFunction` | `research-articles`, `tiers` | ✅ LIVE |
 | `Admin.jsx` (Blog)          | `POST /admin/upload-image` | `UploadImageFunction` | S3 (presigned URLs)          | ✅ LIVE |
@@ -155,6 +156,7 @@
 | `BlogPost.jsx` | Single post page — HTML rendering, tiled hero, author section, donate CTA, share | ✅ LIVE |
 | `Admin.jsx` | Admin panel (research articles + blog management, React Quill editor, admin role only) | ✅ LIVE |
 | `VerifyEmail.jsx` | Email verification landing page | ✅ LIVE |
+| `ResetPassword.jsx` | Password reset page (token from URL, validates, submits new password, eye toggle) | ✅ LIVE |
 | `PaymentSuccess.jsx` | Post-donation success page | ✅ LIVE |
 | `SubscriptionReturn.jsx` | Post-subscription return page | ✅ LIVE |
 | `SEO.jsx` | Per-page meta tags, OG, canonical URLs (react-helmet-async) | ✅ LIVE |
@@ -499,5 +501,5 @@ const futureUserState = {
 
 ---
 
-*Last Updated: August 17, 2026*  
+*Last Updated: August 26, 2026*  
 *Production Frontend Status: ✅ LIVE and serving global users*

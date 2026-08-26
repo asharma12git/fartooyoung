@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 42 - Critical Payment Fixes + Dashboard Polish  
-**Last Updated:** August 19, 2026, 9:00 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed
+**Current Phase:** Phase 43 - Password Reset Fix + Auth Timeouts + Page Transition  
+**Last Updated:** August 26, 2026, 2:00 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete
 
 ### **What's Working (Production Ready)**
 
@@ -112,51 +112,65 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 42: Critical Payment Fixes + Dashboard Polish — DEPLOYED TO PRODUCTION
-- **Payment System Overhaul** (12 critical fixes):
-  - Monthly subscriptions now inline (same card form as one-time) — webhook creates Stripe Subscription after first payment
-  - `billing_cycle_anchor` set 30 days out (no double-charge on first month)
-  - Duplicate subscription prevention (checks existing before creating)
-  - PaymentIntent created only ONCE per donation (useRef guard prevents duplicates on re-render)
-  - Transaction descriptions: 'Far Too Young - One-time Donation' / 'Far Too Young - Monthly Donation'
-  - Apple Pay/Google Pay: email+name captured from billing_details (was 'unknown' before)
-  - Double `pi_pi_` ID prefix bug fixed (webhook was adding pi_ to already-prefixed ID)
-  - Bank payments: pending state via `payment_intent.processing` webhook event
-  - Stripe webhook events: added `payment_intent.processing` to both staging+prod webhook endpoints
-  - Decimal amounts allowed (step=0.01 on custom input)
-  - Monthly upsell popup shows on modal open, 'Yes Monthly' sets type correctly
-  - Auto-close donation modal after 3 seconds on success (triggers dashboard refresh)
-- **Dashboard UI Polish** (18 improvements):
-  - Freeze pane top bar (Sign Out + Admin Panel frozen, content scrolls below)
-  - X button absolute flush top-right corner
-  - Refresh button (green) on Donation History — refreshes both donations + subscriptions
-  - Donation cards: green border for monthly, orange border for one-time
-  - Impact Journey: swipeable cards on mobile (scroll-snap), stacked
-  - Impact Goals: dynamic year title with month in orange, removed redundant month subtitle
-  - $50/month highlighted orange, green checkmarks for coverage list
-  - Impact calculator: 'See how your gift makes a difference' + animated ▶ arrow + orange slider thumb
-  - Progress bars: lighter orange (60% opacity), thinner
-  - Best donation moved into year cards (removed from header)
-  - Girls Supported + Best Donation numbers in green
-  - Green donated amount in Impact Goals section
-  - 'Transfers may take a few minutes to appear' footer note
-  - Lock icon + Stripe redirect note on subscriptions
-  - Subscription card padding matched to donation cards
-  - Press animation (active:scale-95) on all buttons site-wide
-  - Where We Work: flip button with pulse animation (replaces auto-flip)
-  - Mobile: dashboard buttons don't overlap welcome, Impact Goals stacks on mobile
-  - Mobile hamburger menu: Sign Out button added (green/orange/yellow row when logged in)
-- **Other**:
-  - Blog auto-generation confirmed working (Mon+Fri EventBridge)
-  - Google Ad Grants resubmitted via Goodstack (approved, pending Google activation)
+- Phase 43: Password Reset Fix + Auth Timeouts + Page Transition — DEPLOYED TO STAGING
+- **Password Reset System Overhaul** (10 changes):
+  - CRITICAL: Password reset emails not sending — NODE_ENV check replaced with FRONTEND_URL check in forgot-password.js
+  - NEW: Reset Password page created (`src/pages/ResetPassword.jsx`) — reads token from URL, validates, submits new password
+  - NEW: Password reset confirmation email sent after successful reset
+  - UX: Eye toggle on reset password fields (show/hide password)
+  - UX: 'Send Reset Link' button text (was 'Send Reset Token'), removed 'Already have a token?' link
+  - UX: Success message persists after sending reset link (was disappearing after 3s)
+  - FIX: Reset password frontend sends 'newPassword' (was sending 'password' — backend mismatch)
+  - FIX: Auth Lambda timeouts increased from 3s to 10s (Login, Register, ForgotPassword, ResetPassword) — cold starts were causing 502s
+  - FIX: Page transition — body background set to black (#000000), attempted Framer Motion (reverted due to modal conflicts), CSS fade removed
+  - Route added: /reset-password in App.jsx
 - **Lambda Count**: 28 (unchanged)
 - **EventBridge Rules**: 3 (unchanged)
-- Frontend + Backend deployed to staging AND production ✅
-- Next: Step 5 (Newsletter System), Google Ad Grants activation follow-up
+- Frontend deployed to staging ✅
+- Next: Production deployment, Newsletter System (Step 5), Google Ad Grants activation follow-up
 
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **August 26, 2026 - Password Reset Fix + Auth Timeouts + Page Transition**
+
+**Session Duration:** ~3 hours
+
+#### **Phase 43: Password Reset System Overhaul** ✅
+
+**CRITICAL BUG FIX**:
+1. Password reset emails not sending — `forgot-password.js` had a `NODE_ENV` check that failed in Lambda (NODE_ENV is undefined). Replaced with `FRONTEND_URL` environment variable check to construct reset link.
+
+**NEW FEATURES**:
+2. Reset Password page created (`src/pages/ResetPassword.jsx`) — reads token from URL query params, validates token, submits new password to backend
+3. Password reset confirmation email sent after successful password reset (notifies user their password was changed)
+4. Route added: `/reset-password` in `App.jsx`
+
+**UX IMPROVEMENTS**:
+5. Eye toggle on reset password fields (show/hide password visibility)
+6. 'Send Reset Link' button text (was 'Send Reset Token'), removed 'Already have a token?' link from forgot password form
+7. Success message persists after sending reset link (was disappearing after 3s timeout)
+
+**BUG FIXES**:
+8. Reset password frontend sends `newPassword` field (was sending `password` — backend expected `newPassword`, causing silent failures)
+9. Auth Lambda timeouts increased from 3s to 10s for Login, Register, ForgotPassword, and ResetPassword functions — cold starts were causing 502 Gateway Timeout errors
+10. Page transition — body background set to black (#000000) to prevent white flash between route changes. Attempted Framer Motion (reverted due to modal conflicts), CSS fade transition also removed.
+
+**KEY TECHNICAL DETAILS**:
+- `forgot-password.js`: Reset link now uses `process.env.FRONTEND_URL` instead of checking `process.env.NODE_ENV` to determine base URL
+- `template.yaml`: Timeout increased from 3→10 seconds on 4 auth Lambda functions
+- `ResetPassword.jsx`: Token extracted from URL via `useSearchParams()`, password validation (8+ chars, uppercase, lowercase, number, special char), eye toggle with state management
+- Body background: `document.body.style.backgroundColor = '#000000'` set globally, prevents white flash on SPA route transitions
+
+**DEPLOYMENT**: Frontend + Backend deployed to staging ✅
+
+**Next Session Goals**:
+- Deploy to production
+- Step 5: Newsletter System (subscribe, double opt-in, SES distribution)
+- Google Ad Grants activation follow-up
+
+---
 
 ### **August 18-19, 2026 - Critical Payment Fixes + Dashboard Polish**
 
@@ -1002,10 +1016,10 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 
 ---
 
-**Last Updated:** August 19, 2026, 9:00 PM EST  
-**Current Branch:** staging (payment fixes + dashboard polish)  
+**Last Updated:** August 26, 2026, 2:00 PM EST  
+**Current Branch:** staging (password reset fix + auth timeouts)  
 **Production Status:** ✅ LIVE at https://www.fartooyoung.org  
 **Payment Status:** ✅ Live Stripe processing operational (inline payments, subscriptions via webhook)  
 **Documentation Status:** ✅ All docs updated and synchronized  
-**Next Milestone:** Step 5 — Newsletter System  
-**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - PAYMENT FIXES + DASHBOARD POLISH DEPLOYED
+**Next Milestone:** Production deployment of password reset + Newsletter System  
+**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - PASSWORD RESET FLOW COMPLETE

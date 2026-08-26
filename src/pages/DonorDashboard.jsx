@@ -59,7 +59,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
   // Redirect if not logged in
   useEffect(() => {
     if (!user) {
-      navigate('/')
+      navigate('/?login=true')
     }
   }, [user, navigate])
 

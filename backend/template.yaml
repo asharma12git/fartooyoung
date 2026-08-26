@@ -393,6 +393,10 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: !Ref SecretsManagerArn
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+              Resource: "*"
       Events:
         StripeWebhookApi:
           Type: Api

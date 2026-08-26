@@ -306,6 +306,39 @@ exports.handler = async (event) => {
 
         console.log('Payment intent donation saved:', donation.id)
 
+        // Send donation receipt email
+        if (donation.email && donation.email !== 'unknown') {
+          try {
+            const { generateDonationReceipt } = require('../utils/email-templates');
+            const ses = new AWS.SES({ region: 'us-east-1' });
+            
+            const paymentDisplay = cardBrand && cardLast4 
+              ? `${cardBrand.charAt(0).toUpperCase() + cardBrand.slice(1)} ••••${cardLast4}`
+              : wallet ? wallet.charAt(0).toUpperCase() + wallet.slice(1) + ' Pay' : 'Card';
+            
+            const receipt = generateDonationReceipt({
+              firstName: donation.name.split(' ')[0] || 'Friend',
+              amount: donation.amount,
+              donationType: donation.type,
+              paymentMethod: paymentDisplay,
+              transactionId: donation.id,
+              date: donation.createdAt
+            });
+
+            await ses.sendEmail({
+              Source: 'noreply@fartooyoung.org',
+              Destination: { ToAddresses: [donation.email] },
+              Message: {
+                Subject: { Data: receipt.subject, Charset: 'UTF-8' },
+                Body: { Html: { Data: receipt.html, Charset: 'UTF-8' } }
+              }
+            }).promise();
+            console.log('Donation receipt email sent to:', donation.email);
+          } catch (emailErr) {
+            console.error('Failed to send donation receipt:', emailErr.message);
+          }
+        }
+
         // Create subscription for monthly donations
         if (paymentIntent.metadata?.donation_type === 'monthly' && paymentIntent.customer && paymentIntent.payment_method) {
           try {

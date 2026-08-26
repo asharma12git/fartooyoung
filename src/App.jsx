@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ChildMarriage from './pages/ChildMarriage'
@@ -86,6 +86,27 @@ function AppContent() {
     setUser(updatedUser)
     localStorage.setItem('user', JSON.stringify(updatedUser))
   }
+
+  // Auto-open donation modal from URL params (?donate=monthly&amount=25)
+  const [searchParams, setSearchParams] = useSearchParams()
+  useEffect(() => {
+    const donate = searchParams.get('donate')
+    const login = searchParams.get('login')
+    if (donate) {
+      const amount = searchParams.get('amount') ? Number(searchParams.get('amount')) : null
+      setDonationType(donate === 'monthly' ? 'monthly' : 'one-time')
+      setDonationAmount(amount)
+      setShowDonation(true)
+      searchParams.delete('donate')
+      searchParams.delete('amount')
+      setSearchParams(searchParams, { replace: true })
+    }
+    if (login && !isLoggedIn) {
+      setShowAuth(true)
+      searchParams.delete('login')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [])
 
   const handleDonateClick = (amount = null, type = null) => {
     setDonationAmount(amount)

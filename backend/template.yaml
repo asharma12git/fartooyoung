@@ -227,6 +227,11 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+              Resource: "*"
       Events:
         VerifyEmailApi:
           Type: Api

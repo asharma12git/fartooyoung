@@ -106,6 +106,25 @@ exports.handler = async (event) => {
 
     await docClient.send(new UpdateCommand(updateParams))
 
+    // Send welcome email
+    try {
+      const AWS = require('aws-sdk');
+      const { generateWelcomeEmail } = require('../utils/email-templates');
+      const ses = new AWS.SES({ region: 'us-east-1' });
+      const welcome = generateWelcomeEmail({ firstName: user.firstName || '' });
+      await ses.sendEmail({
+        Source: 'noreply@fartooyoung.org',
+        Destination: { ToAddresses: [user.email] },
+        Message: {
+          Subject: { Data: welcome.subject, Charset: 'UTF-8' },
+          Body: { Html: { Data: welcome.html, Charset: 'UTF-8' } }
+        }
+      }).promise();
+      console.log('Welcome email sent to:', user.email);
+    } catch (emailErr) {
+      console.error('Failed to send welcome email:', emailErr.message);
+    }
+
     return {
       statusCode: 200,
       headers,

@@ -89,8 +89,8 @@ const AuthModal = ({ onClose, onLogin }) => {
     setValidationErrors({})
     setRateLimitError('')
 
-    // Check for bot activity (honeypot)
-    if (isBot(honeypot.value)) {
+    // Check for bot activity (honeypot) - only on registration
+    if (currentView === 'register' && isBot(honeypot.value)) {
       setError('Suspicious activity detected. Please try again later.')
       return
     }

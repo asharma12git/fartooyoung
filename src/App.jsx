@@ -105,6 +105,8 @@ function AppContent() {
 
       {/* Main content area with page routing */}
       <main className="flex-1">
+        <style>{`@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } .page-transition { animation: fadeIn 0.25s ease-out; }`}</style>
+        <div key={window.location.pathname} className="page-transition">
         <Routes>
           <Route path="/" element={<ChildMarriage onDonateClick={handleDonateClick} />} />
           <Route path="/founder-team" element={<FounderTeam onDonateClick={handleDonateClick} />} />
@@ -130,6 +132,7 @@ function AppContent() {
             }
           />
         </Routes>
+        </div>
       </main>
 
       {/* Global footer - hide on dashboard and admin */}

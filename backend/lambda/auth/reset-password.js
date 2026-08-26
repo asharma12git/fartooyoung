@@ -104,7 +104,36 @@ exports.handler = async (event) => {
     }).promise();
     
     // ========================================================================
-    // STEP 7: RETURN SUCCESS RESPONSE
+    // STEP 7: SEND CONFIRMATION EMAIL
+    // ========================================================================
+    if (process.env.FRONTEND_URL && process.env.FRONTEND_URL.includes('fartooyoung.org')) {
+      try {
+        const ses = new AWS.SES({ region: 'us-east-1' });
+        await ses.sendEmail({
+          Source: 'noreply@fartooyoung.org',
+          Destination: { ToAddresses: [user.email] },
+          Message: {
+            Subject: { Data: 'Password Changed - Far Too Young' },
+            Body: {
+              Html: {
+                Data: `
+                  <h2>Password Successfully Changed</h2>
+                  <p>Your password for Far Too Young has been successfully reset.</p>
+                  <p>If you did not make this change, please contact us immediately at admin@fartooyoung.org.</p>
+                  <br>
+                  <p>— Far Too Young Team</p>
+                `
+              }
+            }
+          }
+        }).promise();
+      } catch (emailErr) {
+        console.error('Confirmation email failed:', emailErr.message);
+      }
+    }
+
+    // ========================================================================
+    // STEP 8: RETURN SUCCESS RESPONSE
     // ========================================================================
     return {
       statusCode: 200,

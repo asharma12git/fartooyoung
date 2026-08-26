@@ -200,9 +200,8 @@ const AuthModal = ({ onClose, onLogin }) => {
           setFormData({ ...formData, token: data.resetToken }) // Pre-fill token
           setCurrentView('reset')
         } else {
-          // Production - show email sent message
-          setError('✅ Reset instructions sent! Check your email.')
-          setTimeout(() => setError(''), 3000)
+          // Production - show email sent message (persists until user navigates away)
+          setError('✅ Check your email for a reset link. Didn\'t receive it? Wait 60 seconds and try again.')
         }
       } else {
         setError(data.message || 'Failed to send reset email')

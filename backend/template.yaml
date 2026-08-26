@@ -28,6 +28,7 @@ Conditions:
 Globals:
   Function:
     Runtime: nodejs18.x
+    Timeout: 15
     Environment:
       Variables:
         DYNAMODB_ENDPOINT: !Ref DynamoDBEndpoint
@@ -57,7 +58,6 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/login.handler
-      Timeout: 10
       Environment:
         Variables:
           RATE_LIMIT_TABLE: !Sub "${AWS::StackName}-rate-limits"
@@ -84,7 +84,6 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/register.handler
-      Timeout: 10
       Environment:
         Variables:
           RATE_LIMIT_TABLE: !Sub "${AWS::StackName}-rate-limits"
@@ -137,7 +136,6 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/forgot-password.handler
-      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
@@ -160,7 +158,6 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/reset-password.handler
-      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
@@ -224,7 +221,6 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/verify-email.handler
-      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"
@@ -518,7 +514,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/get-research-articles.handler
-      Timeout: 10
       Environment:
         Variables:
           RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
@@ -537,7 +532,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/get-blog-posts.handler
-      Timeout: 10
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref BlogPostsTable
@@ -552,7 +546,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/get-blog-post.handler
-      Timeout: 10
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref BlogPostsTable
@@ -567,7 +560,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/create-blog-post.handler
-      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BlogPostsTable
@@ -588,7 +580,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/update-blog-post.handler
-      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BlogPostsTable
@@ -609,7 +600,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/publish-blog-post.handler
-      Timeout: 15
       Environment:
         Variables:
           S3_BUCKET: !If
@@ -643,7 +633,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/delete-blog-post.handler
-      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BlogPostsTable
@@ -665,7 +654,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/admin-research.handler
-      Timeout: 15
       Environment:
         Variables:
           RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
@@ -713,7 +701,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: lambda/blog/upload-image.handler
-      Timeout: 10
       Environment:
         Variables:
           S3_BUCKET: !If

@@ -98,7 +98,7 @@ exports.handler = async (event) => {
     // Build reset URL for the frontend
     const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
     
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.FRONTEND_URL && process.env.FRONTEND_URL.includes('fartooyoung.org')) {
       // ======================================================================
       // PRODUCTION: Send real email via AWS SES
       // ======================================================================

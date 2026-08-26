@@ -506,6 +506,55 @@ exports.handler = async (event) => {
       }).promise()
 
       console.log('Subscription cancellation saved to database:', cancellationId)
+
+      // Send cancellation email with impact summary
+      const donorEmail = subscription.metadata?.donor_email || subscription.customer_email;
+      if (donorEmail && donorEmail !== 'unknown') {
+        try {
+          const { generateSubscriptionCancelledEmail } = require('../utils/email-templates');
+          const ses = new AWS.SES({ region: 'us-east-1' });
+
+          // Query donations for this email to calculate impact
+          const donationData = await dynamodb.scan({
+            TableName: DONATIONS_TABLE,
+            FilterExpression: 'email = :email AND #s = :status',
+            ExpressionAttributeNames: { '#s': 'status' },
+            ExpressionAttributeValues: { ':email': donorEmail, ':status': 'completed' }
+          }).promise();
+
+          const currentYear = new Date().getFullYear().toString();
+          let totalAmount = 0, totalMonths = 0, thisYearAmount = 0, thisYearMonths = 0;
+          (donationData.Items || []).forEach(d => {
+            totalAmount += d.amount || 0;
+            totalMonths++;
+            if (d.createdAt && d.createdAt.startsWith(currentYear)) {
+              thisYearAmount += d.amount || 0;
+              thisYearMonths++;
+            }
+          });
+
+          const donorName = subscription.metadata?.donor_name || subscription.customer_name || '';
+          const email = generateSubscriptionCancelledEmail({
+            firstName: donorName.split(' ')[0] || 'Friend',
+            thisYearAmount: Math.round(thisYearAmount),
+            thisYearMonths,
+            totalAmount: Math.round(totalAmount),
+            totalMonths
+          });
+
+          await ses.sendEmail({
+            Source: 'noreply@fartooyoung.org',
+            Destination: { ToAddresses: [donorEmail] },
+            Message: {
+              Subject: { Data: email.subject, Charset: 'UTF-8' },
+              Body: { Html: { Data: email.html, Charset: 'UTF-8' } }
+            }
+          }).promise();
+          console.log('Cancellation email sent to:', donorEmail);
+        } catch (emailErr) {
+          console.error('Failed to send cancellation email:', emailErr.message);
+        }
+      }
     }
 
     // ========================================================================

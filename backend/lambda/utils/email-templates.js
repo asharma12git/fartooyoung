@@ -199,4 +199,46 @@ function generateWelcomeEmail({ firstName }) {
   };
 }
 
-module.exports = { generateDonationReceipt, generateWelcomeEmail };
+// 20 cancellation-specific founder messages
+const cancellationMessages = [
+  "Thank you for every single month you gave. Those months mattered. Those girls remember.",
+  "I personally appreciate every month you stood with us. You made a real difference.",
+  "Your support carried us through. I won't forget that.",
+  "You gave when you didn't have to. That's the kind of person you are. Thank you.",
+  "Every month you gave, a girl stayed in school. That impact doesn't disappear.",
+  "I hope we made you proud with how we used your support. Thank you for trusting us.",
+  "You showed up for these girls month after month. That's not small. That's everything.",
+  "Life gets busy. Priorities shift. But your impact here? That's permanent.",
+  "You were part of something real. And that doesn't end just because the payments stop.",
+  "I wish I could show you the faces of the girls your monthly gift protected. Thank you.",
+  "Some people give once. You gave every month. That takes commitment. I respect that.",
+  "Your consistency gave us the ability to plan ahead and reach more girls. Thank you.",
+  "You weren't just a donor. You were a partner in this mission. I'm grateful.",
+  "The girls you helped will never know your name, but they'll carry your impact forward.",
+  "Thank you for being the kind of person who gives without being asked twice.",
+  "Your monthly support gave us stability when we needed it most. I'm deeply grateful.",
+  "I hope our paths cross again. Until then, thank you for everything you gave.",
+  "You believed in us before we had proof. That kind of faith means everything to me.",
+  "The world needs more people who care enough to act. You're one of them. Thank you.",
+  "No matter what happens next, you changed a girl's life. Nobody can take that away."
+];
+
+// Generate subscription cancelled email HTML
+function generateSubscriptionCancelledEmail({ firstName, thisYearAmount, thisYearMonths, totalAmount, totalMonths }) {
+  const isStaging = FRONTEND_URL.includes('staging');
+  const subjectPrefix = isStaging ? '[TEST] ' : '';
+  const name = firstName || 'Friend';
+  const founderNote = pickRandom(cancellationMessages);
+  
+  const thisYearGirls = Math.max(1, Math.round(thisYearAmount / 25));
+  const totalGirls = Math.max(1, Math.round(totalAmount / 25));
+
+  const html = `<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap' rel='stylesheet'></head><body style='margin:0;padding:0;background-color:#f8fafc;font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;'><table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f8fafc;padding:30px 0;'><tr><td align='center'><table width='604' cellpadding='0' cellspacing='0' style='max-width:604px;width:100%;border:2px solid #f97316;border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(249,115,22,0.1);'><tr><td style='background:linear-gradient(135deg,#0a0a14 0%,#1a1a2e 100%);padding:20px 40px 20px;text-align:center;'><a href='${FRONTEND_URL}'><img src='https://fartooyoung.org/assets/email-logo.png' alt='Far Too Young' style='height:220px;margin:0;'></a><div style='height:2px;background:linear-gradient(90deg,transparent,#f97316,#fbbf24,transparent);margin:12px 20px 0;'></div></td></tr><tr><td style='background-color:#ffffff;padding:35px 40px 0;text-align:center;'><div style='display:inline-block;background:#ffffff;border-radius:50%;width:60px;height:60px;line-height:60px;font-size:28px;border:3px solid #f97316;margin-bottom:16px;'>&#128155;</div><p style='font-size:30px;color:#f97316;font-weight:800;margin:0 0 6px;font-family:Inter,sans-serif;'>Subscription Cancelled</p><p style='font-size:15px;color:#1f2937;font-weight:700;margin:0 0 35px;'>Your monthly donation has been stopped.</p><p style='font-size:18px;color:#1f2937;margin:0 0 8px;line-height:1.6;text-align:left;'><span style='font-family:Playfair Display,Georgia,serif;color:#f97316;font-weight:700;'>${name},</span></p><p style='font-size:16px;color:#374151;margin:0 0 30px;line-height:1.6;text-align:left;'>We understand, and we respect your decision. Life changes, priorities shift, and that&rsquo;s okay. What matters is that you showed up when you did. <span style='font-size:20px;'>&#128591;</span></p></td></tr><tr><td style='background-color:#ffffff;padding:0 40px;'><div style='background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:12px;padding:24px;margin-bottom:30px;text-align:center;border:1px solid #bfdbfe;'><p style='margin:0 0 4px;font-size:28px;'>&#127775;</p><p style='margin:0 0 16px;font-size:16px;color:#1e40af;font-weight:700;'>Your Impact While You Were Here</p><p style='margin:0 0 6px;font-size:15px;color:#1e3a5f;line-height:1.6;'><strong>This year:</strong> $${thisYearAmount} donated &middot; ${thisYearGirls} girl${thisYearGirls > 1 ? 's' : ''} kept in school</p><p style='margin:0;font-size:15px;color:#1e3a5f;line-height:1.6;'><strong>Since you joined:</strong> $${totalAmount} total &middot; ${totalGirls} girl${totalGirls > 1 ? 's' : ''} helped</p></div></td></tr><tr><td style='background-color:#ffffff;padding:0 40px 16px;'><p style='font-size:15px;color:#374151;margin:0;line-height:1.6;text-align:center;'>You&rsquo;re always welcome back. If your situation changes, we&rsquo;d love to have you again. No pressure, no guilt. Just gratitude.</p></td></tr><tr><td style='background-color:#ffffff;padding:0 40px 30px;text-align:center;'><a href='${FRONTEND_URL}/?donate=monthly' style='display:inline-block;background:linear-gradient(135deg,#f97316,#ea580c);color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:15px;font-weight:600;box-shadow:0 4px 12px rgba(249,115,22,0.25);'>Re-subscribe Anytime</a></td></tr><tr><td style='background-color:#ffffff;padding:0 40px 30px;'><div style='background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;'><div style='height:2px;background:linear-gradient(90deg,#f97316,#fbbf24);border-radius:2px;margin-bottom:16px;'></div><table width='100%' cellpadding='0' cellspacing='0'><tr><td width='56' style='vertical-align:top;padding-right:16px;'><a href='${FRONTEND_URL}/founder-team'><img src='https://fartooyoung.org/assets/email-avinash.jpg' alt='Avinash Sharma' style='width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #f97316;'></a></td><td style='vertical-align:top;'><p style='font-size:15px;color:#374151;margin:0 0 14px;line-height:1.6;font-style:italic;'>&ldquo;${founderNote}&rdquo;</p><img src='https://fartooyoung.org/assets/email-signature-v2.png' alt='Avinash Sharma signature' style='width:140px;margin-bottom:8px;display:block;'><p style='font-size:15px;margin:0 0 2px;'><a href='${FRONTEND_URL}/founder-team' style='text-decoration:none;'><span style='font-family:Playfair Display,Georgia,serif;color:#f97316;font-weight:700;'>Avinash Sharma</span></a></p><p style='font-size:13px;color:#6b7280;margin:0;'>Founder</p></td></tr></table></div></td></tr><tr><td style='background-color:#f9fafb;padding:24px 40px;border-top:1px solid #f3f4f6;'><p style='font-size:12px;color:#374151;margin:0;line-height:1.7;text-align:center;'>Far Too Young is a registered 501(c)(3) nonprofit organization.<br>EIN: 93-3769961 &middot; fartooyoung.org</p></td></tr><tr><td style='background:linear-gradient(135deg,#0a0a14 0%,#1a1a2e 100%);padding:32px 40px;text-align:center;'><p style='color:#e5e7eb;font-size:13px;margin:0 0 16px;text-transform:uppercase;letter-spacing:1.5px;font-weight:500;'>Follow Us</p><table cellpadding='0' cellspacing='0' style='margin:0 auto 20px;'><tr><td style='padding:0 14px;'><a href='https://www.instagram.com/fartooyoung_organization/'><img src='https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png' alt='Instagram' width='32' height='32' style='display:block;'></a></td><td style='padding:0 14px;'><a href='https://www.facebook.com/fartooyoung.org'><img src='https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png' alt='Facebook' width='32' height='32' style='display:block;'></a></td><td style='padding:0 14px;'><a href='https://www.youtube.com/@FarTooYoungInc'><img src='https://img.icons8.com/ios-filled/50/ffffff/youtube-play.png' alt='YouTube' width='32' height='32' style='display:block;'></a></td></tr></table><div style='height:1px;background:linear-gradient(90deg,transparent,#374151,transparent);margin:0 40px 20px;'></div><p style='margin:0 0 6px;'><a href='${FRONTEND_URL}' style='color:#f97316;text-decoration:none;font-weight:600;font-size:16px;'>fartooyoung.org</a></p><p style='color:#9ca3af;font-size:13px;margin:0;'>Far Too Young &middot; Ending child marriage, one girl at a time.</p></td></tr></table></td></tr></table></body></html>`;
+
+  return {
+    subject: `${subjectPrefix}We'll miss you 💛`,
+    html
+  };
+}
+
+module.exports = { generateDonationReceipt, generateWelcomeEmail, generateSubscriptionCancelledEmail };

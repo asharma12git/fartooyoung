@@ -12,6 +12,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import Admin from './pages/Admin'
+import ResetPassword from './pages/ResetPassword'
 import AuthModal from './components/AuthModal'
 import DonationModal from './components/DonationModal'
 import { useState, useEffect } from 'react'
@@ -112,6 +113,7 @@ function AppContent() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost onDonateClick={handleDonateClick} />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/subscription-return" element={<SubscriptionReturn />} />
           <Route path="/verify-email" element={<VerifyEmail onAuthClick={handleAuthClick} />} />

@@ -584,7 +584,7 @@ const AuthModal = ({ onClose, onLogin }) => {
           <form onSubmit={handleForgotPassword} className="space-y-8">
             <div className="text-center mb-6">
               <p className="text-white/80 text-sm">
-                Enter your email address and we'll send you a reset token.
+                Enter your email address and we'll send you a reset link.
               </p>
             </div>
 
@@ -618,20 +618,9 @@ const AuthModal = ({ onClose, onLogin }) => {
                   Sending...
                 </div>
               ) : (
-                'Send Reset Token'
+                'Send Reset Link'
               )}
             </button>
-
-            {/* Manual Reset Link */}
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => switchView('reset')}
-                className="text-orange-400 hover:text-orange-300 text-sm transition-colors duration-300"
-              >
-                Already have a reset token? Enter it here →
-              </button>
-            </div>
 
             {/* Back to Login */}
             <div className="text-center">

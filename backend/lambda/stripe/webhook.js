@@ -334,6 +334,16 @@ exports.handler = async (event) => {
               }
             }).promise();
             console.log('Donation receipt email sent to:', donation.email);
+
+            // Internal notification to admin
+            await ses.sendEmail({
+              Source: 'noreply@fartooyoung.org',
+              Destination: { ToAddresses: ['admin@fartooyoung.org'] },
+              Message: {
+                Subject: { Data: `💰 $${donation.amount} donation from ${donation.name} (${donation.type})`, Charset: 'UTF-8' },
+                Body: { Text: { Data: `New donation received:\n\nAmount: $${donation.amount}\nDonor: ${donation.name}\nEmail: ${donation.email}\nType: ${donation.type}\nPayment: ${paymentDisplay}\nID: ${donation.id}\nDate: ${donation.createdAt}`, Charset: 'UTF-8' } }
+              }
+            }).promise();
           } catch (emailErr) {
             console.error('Failed to send donation receipt:', emailErr.message);
           }
@@ -551,6 +561,16 @@ exports.handler = async (event) => {
             }
           }).promise();
           console.log('Cancellation email sent to:', donorEmail);
+
+          // Internal notification to admin
+          await ses.sendEmail({
+            Source: 'noreply@fartooyoung.org',
+            Destination: { ToAddresses: ['admin@fartooyoung.org'] },
+            Message: {
+              Subject: { Data: `⚠️ Subscription cancelled: ${donorName} ($${subscription.items?.data?.[0]?.price?.unit_amount / 100 || '?'}/mo)`, Charset: 'UTF-8' },
+              Body: { Text: { Data: `Subscription cancelled:\n\nDonor: ${donorName}\nEmail: ${donorEmail}\nSubscription ID: ${subscription.id}\nTotal donated: $${Math.round(totalAmount)}\nMonths active: ${totalMonths}`, Charset: 'UTF-8' } }
+            }
+          }).promise();
         } catch (emailErr) {
           console.error('Failed to send cancellation email:', emailErr.message);
         }

@@ -121,6 +121,16 @@ exports.handler = async (event) => {
         }
       }).promise();
       console.log('Welcome email sent to:', user.email);
+
+      // Internal notification to admin
+      await ses.sendEmail({
+        Source: 'noreply@fartooyoung.org',
+        Destination: { ToAddresses: ['admin@fartooyoung.org'] },
+        Message: {
+          Subject: { Data: `👤 New member: ${user.firstName || ''} ${user.lastName || ''}`, Charset: 'UTF-8' },
+          Body: { Text: { Data: `New member verified:\n\nName: ${user.firstName || ''} ${user.lastName || ''}\nEmail: ${user.email}\nDate: ${new Date().toISOString()}`, Charset: 'UTF-8' } }
+        }
+      }).promise();
     } catch (emailErr) {
       console.error('Failed to send welcome email:', emailErr.message);
     }

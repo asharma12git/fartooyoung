@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 43 - Password Reset Fix + Auth Timeouts + Page Transition  
-**Last Updated:** August 26, 2026, 2:00 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete
+**Current Phase:** Phase 44 - Email System + Auth Fixes + UX Polish  
+**Last Updated:** August 26, 2026, 4:40 PM EST  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete
 
 ### **What's Working (Production Ready)**
 
@@ -23,8 +23,17 @@
 - Login with JWT tokens (24-hour expiration)
 - Password reset flow with email notifications
 - Email verification required for new accounts
+- Welcome email after verification (emotional copy, mission sections, Donate CTA)
 - Rate limiting protection (5 attempts/hour register, 5 attempts/15min login)
 - Multi-layer security with IP tracking
+- 60s cooldown on forgot password button
+
+✅ **Email System (Transactional)**
+- Donation receipt emails (100 founder messages, 15 greetings, branded HTML, monthly upsell)
+- Welcome email (fires after verification, What We Do/What Your Dollar Does/Stories That Matter)
+- Subscription cancelled email (this year + lifetime impact, 20 founder messages, re-subscribe CTA)
+- Environment-aware ([TEST] prefix for staging)
+- Email assets in public/assets/ (persist through pipeline deploys)
 
 ✅ **Security (Production-Grade)**
 - Backend rate limiting (IP + email tracking with DynamoDB TTL)
@@ -112,30 +121,26 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
-- Phase 43: Password Reset Fix + Auth Timeouts + Page Transition — DEPLOYED TO STAGING
-- **Password Reset System Overhaul** (10 changes):
-  - CRITICAL: Password reset emails not sending — NODE_ENV check replaced with FRONTEND_URL check in forgot-password.js
-  - NEW: Reset Password page created (`src/pages/ResetPassword.jsx`) — reads token from URL, validates, submits new password
-  - NEW: Password reset confirmation email sent after successful reset
-  - UX: Eye toggle on reset password fields (show/hide password)
-  - UX: 'Send Reset Link' button text (was 'Send Reset Token'), removed 'Already have a token?' link
-  - UX: Success message persists after sending reset link (was disappearing after 3s)
-  - FIX: Reset password frontend sends 'newPassword' (was sending 'password' — backend mismatch)
-  - FIX: Auth Lambda timeouts increased from 3s to 10s (Login, Register, ForgotPassword, ResetPassword) — cold starts were causing 502s
-  - FIX: Page transition — body background set to black (#000000), attempted Framer Motion (reverted due to modal conflicts), CSS fade removed
-  - Route added: /reset-password in App.jsx
+- Phase 44: Email System + Auth Fixes + UX Polish — DEPLOYED TO STAGING
+- **Donation Receipt Email**: 100 founder messages, 15 greetings, dynamic impact, branded HTML, monthly upsell, environment-aware
+- **Welcome Email**: fires after verification, emotional copy, What We Do/What Your Dollar Does/Stories That Matter, Donate CTA
+- **Subscription Cancelled Email**: fires on customer.subscription.deleted, this year + lifetime impact, 20 founder messages, re-subscribe CTA
+- **Email assets**: permanently stored in `public/assets/` (survives pipeline deploys)
+- **Auth fixes**: Lambda timeouts 3s→10s, password reset field name fix, eye toggle, 60s cooldown on forgot password
+- **UX**: Auto-open donation modal from URL params, dashboard redirect to /?login=true, page transition (black bg, Framer Motion reverted)
+- **SES permissions**: added to StripeWebhookFunction, VerifyEmailFunction, ResetPasswordFunction
 - **Lambda Count**: 28 (unchanged)
 - **EventBridge Rules**: 3 (unchanged)
-- Frontend deployed to staging ✅
+- Frontend + Backend deployed to staging ✅
 - Next: Production deployment, Newsletter System (Step 5), Google Ad Grants activation follow-up
 
 ---
 
 ## 📅 PROGRESS BY DAY
 
-### **August 26, 2026 - Password Reset Fix + Auth Timeouts + Page Transition**
+### **August 26, 2026 - Email System + Password Reset Fix + Auth Timeouts + UX Polish**
 
-**Session Duration:** ~3 hours
+**Session Duration:** ~6 hours
 
 #### **Phase 43: Password Reset System Overhaul** ✅
 
@@ -162,6 +167,54 @@
 - `template.yaml`: Timeout increased from 3→10 seconds on 4 auth Lambda functions
 - `ResetPassword.jsx`: Token extracted from URL via `useSearchParams()`, password validation (8+ chars, uppercase, lowercase, number, special char), eye toggle with state management
 - Body background: `document.body.style.backgroundColor = '#000000'` set globally, prevents white flash on SPA route transitions
+
+**DEPLOYMENT**: Frontend + Backend deployed to staging ✅
+
+#### **Phase 44: Email System + Auth Fixes + UX Polish** ✅
+
+**DONATION RECEIPT EMAIL SYSTEM**:
+11. Complete donation receipt email with branded HTML template
+12. 100 random founder messages (rotated per email)
+13. 15 greeting messages (randomized)
+14. Dynamic impact ranges based on donation amount
+15. Branded HTML template with logo, signature, and social icons
+16. Monthly upsell section for one-time donors (encourages upgrade to monthly)
+17. Environment-aware: [TEST] prefix added to subject line for staging
+
+**WELCOME EMAIL**:
+18. Welcome email fires after email verification completes
+19. Emotional copy with mission-driven messaging
+20. Sections: What We Do / What Your Dollar Does / Stories That Matter
+21. Make a Donation CTA button
+
+**SUBSCRIPTION CANCELLED EMAIL**:
+22. Fires on Stripe `customer.subscription.deleted` webhook event
+23. Shows this year + lifetime donation impact
+24. 20 cancellation-specific founder messages (unique pool)
+25. Re-subscribe CTA to encourage return
+
+**EMAIL INFRASTRUCTURE**:
+26. Email assets permanently stored in `public/assets/` (won't get wiped by CI/CD pipeline)
+27. SES permissions added to: StripeWebhookFunction, VerifyEmailFunction, ResetPasswordFunction
+
+**AUTH & SECURITY FIXES**:
+28. Auth Lambda timeouts increased 3s→10s (Login, Register, ForgotPassword, ResetPassword) — cold starts causing 502s
+29. Password reset fix: frontend was sending `password` field, backend expected `newPassword`
+30. Eye toggle on reset password fields (show/hide password visibility)
+31. 60-second cooldown timer on forgot password button (prevents spam clicks)
+
+**UX IMPROVEMENTS**:
+32. Auto-open donation modal from URL params (`?donate=monthly&amount=25`)
+33. Dashboard redirects to `/?login=true` when user is not authenticated
+34. Page transition: body background set to black, CSS fade attempted then reverted (Framer Motion broke modals)
+
+**KEY TECHNICAL DETAILS**:
+- Donation receipt uses `sendDonationReceipt()` utility with SES
+- Welcome email triggered in verify-email Lambda after successful verification
+- Subscription cancelled email triggered in webhook on `customer.subscription.deleted` event
+- Email assets path: `public/assets/` (persists through S3 sync --delete)
+- URL param handling: `useSearchParams()` reads `donate` and `amount` params, opens modal with pre-filled values
+- Dashboard auth check redirects with `window.location.href = '/?login=true'` to trigger login modal
 
 **DEPLOYMENT**: Frontend + Backend deployed to staging ✅
 
@@ -1016,10 +1069,10 @@ aws cloudfront create-invalidation --distribution-id E2PHSH4ED2AIN5 --paths "/*"
 
 ---
 
-**Last Updated:** August 26, 2026, 2:00 PM EST  
-**Current Branch:** staging (password reset fix + auth timeouts)  
+**Last Updated:** August 26, 2026, 4:40 PM EST  
+**Current Branch:** staging (email system + auth fixes + UX polish)  
 **Production Status:** ✅ LIVE at https://www.fartooyoung.org  
 **Payment Status:** ✅ Live Stripe processing operational (inline payments, subscriptions via webhook)  
 **Documentation Status:** ✅ All docs updated and synchronized  
-**Next Milestone:** Production deployment of password reset + Newsletter System  
-**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - PASSWORD RESET FLOW COMPLETE
+**Next Milestone:** Production deployment of email system + Newsletter System  
+**Status:** 🎉 PRODUCTION SYSTEM OPERATIONAL - EMAIL SYSTEM COMPLETE

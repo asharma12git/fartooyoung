@@ -189,6 +189,15 @@ Completed in ~3 hours
 - Subscribe form in Footer + Blog page sidebar
 - Double opt-in: confirmation email → click to activate
 
+### Newsletter Subscription — PLANNED/next
+
+1. **Subscribe endpoint** — `POST /newsletter/subscribe` saves email to DynamoDB
+2. **Newsletter subscribers DynamoDB table** — `fartooyoung-{env}-newsletter-subscribers` (PK: email, fields: name, status, token, subscribed_at)
+3. **Send newsletter Lambda** — triggered on blog publish, sends to all active subscribers via SES
+4. **Unsubscribe flow** — one-click token-based unsubscribe link (no login required)
+5. **Newsletter email template** — branded HTML (dark theme), article title + teaser + "Read More" link
+6. **Optional:** also send for new research articles (when approved/starred)
+
 ### Effort
 2 hours
 

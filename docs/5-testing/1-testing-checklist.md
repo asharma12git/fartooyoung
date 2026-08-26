@@ -29,6 +29,8 @@ This is the **regression test suite** for the Far Too Young project. Run after e
 | `backend/lambda/admin/upload-image.js` | 14 (Admin Panel) |
 | `backend/lambda/content/get-research-articles.js` | 14 (Admin Panel), 1 (Frontend) |
 | `backend/lambda/content/research-fetcher.js` | 14 (Admin Panel) |
+| `backend/lambda/emails/*` | 16 (Email System) |
+| `backend/lambda/stripe/webhook.js` (email triggers) | 16 (Email System) |
 | `src/pages/DonorDashboard.jsx` | 7 (Dashboard) |
 | `src/components/CheckoutButton.jsx` | 8, 9 (Donations) — legacy, still exists for fallback |
 | `src/components/StripePayment.jsx` | 8, 9 (Donations) |
@@ -324,6 +326,41 @@ Run these minimum after every deploy:
 | 15.16 | Success message persists | Browser | Send reset link, observe message | Success message stays visible (does not disappear after 3s) |
 | 15.17 | Lambda timeout handles cold start | API | Call `/auth/reset-password` after period of inactivity | Response within 10s (no 502 timeout) |
 | 15.18 | No white flash on page transition | Browser | Navigate between pages quickly | Black background persists, no white flash |
+
+---
+
+## 16. Email System
+
+| # | Test | Method | Steps/Command | Expected |
+|---|------|--------|---------------|----------|
+| **Donation Receipt Email** | | | | |
+| 16.1 | Sent on payment_intent.succeeded | Stripe/API | Complete a donation, check inbox | Receipt email delivered within 60s of successful payment |
+| 16.2 | Dynamic content - amount | Browser | Complete $25 donation, check email | Displays "$25.00" in receipt |
+| 16.3 | Dynamic content - donor name | Browser | Donate as "Jane Smith", check email | Greeting uses "Jane Smith" |
+| 16.4 | Dynamic content - payment method | Browser | Donate with Visa ••••4242, check email | Shows "Visa ending in 4242" |
+| 16.5 | Dynamic content - impact statement | Browser | Donate $50, check email | Impact section reflects $50 equivalent |
+| 16.6 | Monthly badge (monthly donation) | Browser | Complete monthly donation, check email | "Monthly Donor" badge displayed |
+| 16.7 | One-time badge (one-time donation) | Browser | Complete one-time donation, check email | "One-Time Gift" badge displayed |
+| 16.8 | Monthly upsell on one-time only | Browser | Complete one-time donation, check email | Monthly upsell CTA present in email |
+| 16.9 | No monthly upsell on monthly | Browser | Complete monthly donation, check email | No monthly upsell CTA in email |
+| 16.10 | [TEST] prefix on staging | API | Trigger donation receipt on staging | Subject line starts with "[TEST]" |
+| 16.11 | No [TEST] prefix on production | API | Trigger donation receipt on production | Subject line does NOT start with "[TEST]" |
+| **Welcome Email** | | | | |
+| 16.12 | Sent after email verification | API | Verify email → check inbox | Welcome email delivered after successful verification |
+| 16.13 | Content sections render | Browser | Open welcome email | All content sections (intro, what we do, how to help) render correctly |
+| 16.14 | Links work | Browser | Click all links in welcome email | Each link navigates to correct destination (no 404s) |
+| **Subscription Cancelled Email** | | | | |
+| 16.15 | Sent on customer.subscription.deleted | Stripe | Cancel subscription in Stripe → check inbox | Cancellation email delivered |
+| 16.16 | Impact calculation - this year | Browser | Cancel after $100 this year, check email | Shows "Your impact this year: $100" |
+| 16.17 | Impact calculation - lifetime | Browser | Cancel after $500 lifetime, check email | Shows "Lifetime impact: $500" |
+| 16.18 | Re-subscribe link works | Browser | Click re-subscribe link in email | Navigates to donation page with monthly pre-selected |
+| **All Emails (General)** | | | | |
+| 16.19 | Logo loads | Browser | Open any email | Logo image loads from `/assets/` path |
+| 16.20 | Signature renders | Browser | Open any email | Signature block renders correctly |
+| 16.21 | Headshot loads | Browser | Open any email | Headshot image loads from `/assets/` path |
+| 16.22 | Social icons visible | Browser | Open any email, scroll to footer | Social media icons (Facebook, Instagram, X, etc.) are visible |
+| 16.23 | Links correct - staging | Browser | Open email sent from staging | All links point to staging domain |
+| 16.24 | Links correct - production | Browser | Open email sent from production | All links point to production domain (fartooyoung.org) |
 
 ---
 

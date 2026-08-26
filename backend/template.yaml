@@ -224,6 +224,7 @@ Resources:
     Properties:
       CodeUri: .
       Handler: lambda/auth/verify-email.handler
+      Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub "${AWS::StackName}-users-table"

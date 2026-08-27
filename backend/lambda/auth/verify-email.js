@@ -108,29 +108,30 @@ exports.handler = async (event) => {
 
     // Send welcome email
     try {
-      const AWS = require('aws-sdk');
+      const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
       const { generateWelcomeEmail } = require('../utils/email-templates');
-      const ses = new AWS.SES({ region: 'us-east-1' });
+      const sesClient = new SESClient({ region: 'us-east-1' });
       const welcome = generateWelcomeEmail({ firstName: user.firstName || '' });
-      await ses.sendEmail({
+      
+      await sesClient.send(new SendEmailCommand({
         Source: 'noreply@fartooyoung.org',
         Destination: { ToAddresses: [user.email] },
         Message: {
           Subject: { Data: welcome.subject, Charset: 'UTF-8' },
           Body: { Html: { Data: welcome.html, Charset: 'UTF-8' } }
         }
-      }).promise();
+      }));
       console.log('Welcome email sent to:', user.email);
 
       // Internal notification to admin
-      await ses.sendEmail({
+      await sesClient.send(new SendEmailCommand({
         Source: 'noreply@fartooyoung.org',
         Destination: { ToAddresses: ['admin@fartooyoung.org'] },
         Message: {
           Subject: { Data: `👤 New member: ${user.firstName || ''} ${user.lastName || ''}`, Charset: 'UTF-8' },
           Body: { Text: { Data: `New member verified:\n\nName: ${user.firstName || ''} ${user.lastName || ''}\nEmail: ${user.email}\nDate: ${new Date().toISOString()}`, Charset: 'UTF-8' } }
         }
-      }).promise();
+      }));
     } catch (emailErr) {
       console.error('Failed to send welcome email:', emailErr.message);
     }

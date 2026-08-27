@@ -4,8 +4,8 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 44 - Email System + Auth Fixes + UX Polish  
-**Last Updated:** August 26, 2026, 4:40 PM EST  
+**Current Phase:** Phase 45 - EIN Correction + Email Bug Fixes  
+**Last Updated:** August 27, 2026, 4:00 PM EST  
 **Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete
 
 ### **What's Working (Production Ready)**
@@ -121,6 +121,14 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
+- Phase 45: EIN Correction + Email Bug Fixes (Aug 27) — DEPLOYED TO PROD + STAGING
+- **CRITICAL: EIN corrected** in email templates — was placeholder `93-3769961` (AI-invented, wrong), corrected to actual `87-3583633` in all 3 email tax footers (donation receipt, welcome, subscription cancelled)
+- **verify-email fix**: syntax error from v2→v3 SES migration (leftover `.promise()`), converted to `@aws-sdk/client-ses`
+- **Global Lambda timeout**: set to 15s in template.yaml Globals (individual 30/60/120s preserved for long-running functions)
+- **Honeypot fix**: only check on registration, not login (browser autofill was triggering false "Suspicious activity" on login)
+- **Internal admin notifications**: admin@fartooyoung.org gets emails on new donation, new member, subscription cancellation
+- Cleared test users (Ashutosh, Ravi) from prod for clean re-registration; Ravi re-registered successfully
+
 - Phase 44: Email System + Auth Fixes + UX Polish — DEPLOYED TO STAGING
 - **Donation Receipt Email**: 100 founder messages, 15 greetings, dynamic impact, branded HTML, monthly upsell, environment-aware
 - **Welcome Email**: fires after verification, emotional copy, What We Do/What Your Dollar Does/Stories That Matter, Donate CTA
@@ -137,6 +145,27 @@
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **August 27, 2026 - EIN Correction + Email Bug Fixes**
+
+**CRITICAL FIX — Incorrect EIN in email receipts:**
+- The donation receipt, welcome, and subscription-cancelled email templates contained EIN `93-3769961` — an AI-generated placeholder that was never a real number (mistake: should have asked for the real EIN or used a clear `[EIN]` marker instead of inventing one)
+- Corrected to the actual registered EIN `87-3583633` (verified against IRS/Charity Navigator public record for Far Too Young Inc., Peachtree Corners GA)
+- Location: `backend/lambda/utils/email-templates.js` — tax footer line of all 3 email templates
+- Deployed to both prod and staging
+- Docs (ORGANIZATION.md, Plan 3) already had the correct EIN — only the email code was wrong
+
+**Email bug fixes:**
+- **verify-email.js**: had a syntax error (leftover `}).promise();` from v2→v3 SES migration) causing "Missing catch or finally after try" — Lambda failed to load. Fixed by fully migrating to `@aws-sdk/client-ses`
+- **Global Lambda timeout**: added `Timeout: 15` to template.yaml Globals section (individual 30/60/120s timeouts preserved for blog-generator, research-fetcher, etc.). Root cause of repeated verify/login CORS errors was 3s default timeout + cold start + SES sends
+- **Honeypot false positive**: login was triggering "Suspicious activity detected" because browser autofill/password managers filled the hidden `website_url` honeypot field. Fixed to only check honeypot on registration, not login
+- **Internal admin notifications**: added plain-text notifications to admin@fartooyoung.org for new donations (💰), new members (👤), and subscription cancellations (⚠️)
+
+**User management:**
+- Cleared test accounts (ashutosh.sharma@, ravi.baral@) from prod users table for clean re-registration — donations preserved (separate table, keyed by email)
+- Ravi re-registered and verified successfully on prod
+
+---
 
 ### **August 26, 2026 - Email System + Password Reset Fix + Auth Timeouts + UX Polish**
 

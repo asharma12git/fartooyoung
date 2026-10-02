@@ -321,13 +321,13 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               </button>
             )}
           </div>
-          {/* Full name — clean, right-aligned (cleared from close button) */}
+          {/* Full name — clean, right-aligned. On small screens show only the avatar to avoid crowding the buttons. */}
           {(user?.firstName || user?.name) && (
-            <div className="flex items-center gap-2 mr-8 sm:mr-10">
+            <div className="flex items-center gap-2 ml-2 mr-9 sm:mr-10 flex-shrink-0">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400/40 to-purple-400/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                 {`${(user.firstName?.[0] || user.name?.[0] || '')}${(user.lastName?.[0] || '')}`.toUpperCase()}
               </div>
-              <span className="text-orange-300 text-xs sm:text-sm font-medium truncate max-w-[40vw] sm:max-w-xs">
+              <span className="hidden sm:inline text-orange-300 text-sm font-medium truncate max-w-xs">
                 {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : (user.name || user.firstName)}
               </span>
             </div>
@@ -750,13 +750,13 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           Give {calculatorAmount > userStats.thisYearTotal ? `$${Math.round(calculatorAmount - userStats.thisYearTotal)} More` : 'Now'}
                         </button>
                       </div>
-                      <p className="text-white/60 text-sm mb-5">Slide to see how many girls your giving keeps in school this year.</p>
+                      <p className="text-white/60 text-sm mb-5">See how many girls your giving keeps in school this year.</p>
 
                       {/* Girl icons — fill in as giving increases ($480 = 1 girl fully supported) */}
                       <div className="bg-white/5 border border-white/10 rounded-xl p-5 mb-6 text-center">
                         <div className="flex flex-wrap justify-center items-end gap-2.5 mb-3 min-h-[3.5rem]">
                           {girlIcons.length === 0 ? (
-                            <span className="text-white/40 text-sm">Slide up to support your first girl</span>
+                            <span className="text-white/60 text-sm">Every journey begins with one girl. Explore what your giving can do.</span>
                           ) : girlIcons.map((fill, i) => {
                             const isComplete = fill >= 1
                             const color = isComplete ? '#22c55e' : '#f97316' // green = complete, orange = in progress
@@ -853,7 +853,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           <h3 className="text-lg sm:text-xl font-bold text-white">Where &amp; How We Help</h3>
                         </div>
                       </div>
-                      <p className="text-white/60 text-sm mb-4">A multi-pronged approach so girls stay in school and families never feel they must marry them off early — working alongside families and communities <span className="text-white/80">across South Asia</span>. {perGirl > 0 && <>At your current level, each girl you support receives:</>}</p>
+                      <p className="text-white/60 text-sm mb-3">A multi-pronged approach so girls stay in school and families never feel they must marry them off early — working alongside families and communities <span className="text-white/80">across South Asia</span>.</p>
+                      {perGirl > 0 && <p className="text-white/70 text-sm mb-4">At your current level, each girl you support receives:</p>}
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-white/80 text-sm font-semibold">Cost to support one girl</span>
                         <span className="text-white/50 text-xs">per girl · <span className="text-green-400 font-semibold">$100/mo</span> · <span className="text-green-400 font-semibold">$1,200/yr</span> full support</span>

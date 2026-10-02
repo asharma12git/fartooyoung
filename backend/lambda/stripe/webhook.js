@@ -248,6 +248,15 @@ exports.handler = async (event) => {
       // Skip if this came from a checkout session (already handled above)
       if (paymentIntent.metadata?.source === 'checkout_session') {
         console.log('Skipping payment_intent from checkout session')
+      }
+      // Skip if this PaymentIntent belongs to a subscription invoice (recurring renewal).
+      // Renewals are recorded by the invoice.payment_succeeded handler. Without this guard
+      // the webhook writes a duplicate "one-time" row for every monthly renewal (the renewal
+      // PaymentIntent carries no donation_type metadata, so it falls through to one-time).
+      // One-time donations and the initial subscription-setup charge have no invoice, so they
+      // are unaffected and still recorded here.
+      else if (paymentIntent.invoice) {
+        console.log('Skipping payment_intent for subscription invoice (handled by invoice.payment_succeeded):', paymentIntent.invoice)
       } else {
         console.log('Payment intent succeeded:', paymentIntent.id)
 

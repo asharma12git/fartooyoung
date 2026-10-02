@@ -21,6 +21,11 @@ Parameters:
     Description: ARN of the Secrets Manager secret containing application secrets
     NoEcho: true
 
+  ReliefWebAppname:
+    Type: String
+    Default: ""
+    Description: Approved ReliefWeb API appname (leave empty to keep ReliefWeb ingestion dormant)
+
 Conditions:
   IsProduction: !Equals [!Ref Environment, production]
   IsStaging: !Equals [!Ref Environment, staging]
@@ -494,6 +499,7 @@ Resources:
       Environment:
         Variables:
           RESEARCH_TABLE: !Sub "${AWS::StackName}-research-articles"
+          RELIEFWEB_APPNAME: !Ref ReliefWebAppname
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ResearchArticlesTable

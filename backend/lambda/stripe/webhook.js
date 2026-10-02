@@ -202,6 +202,19 @@ exports.handler = async (event) => {
       const paymentIntent = stripeEvent.data.object
       console.log('Payment intent processing (bank):', paymentIntent.id)
 
+      // Skip if this PaymentIntent belongs to a subscription invoice (recurring renewal).
+      // Renewals (any payment method, incl. ACH/bank) are recorded by the
+      // invoice.payment_succeeded handler. Without this guard a bank-funded monthly
+      // renewal would write a duplicate "pending" row. One-time bank donations have no
+      // invoice, so they are unaffected and still recorded here.
+      if (paymentIntent.invoice) {
+        console.log('Skipping payment_intent.processing for subscription invoice (handled by invoice.payment_succeeded):', paymentIntent.invoice)
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ received: true, skipped: 'subscription invoice processing event' })
+        }
+      }
+
       let paymentMethodDetails = { type: 'us_bank_account' }
       try {
         if (paymentIntent.latest_charge) {

@@ -111,7 +111,10 @@ exports.handler = async (event) => {
         published_at: body.published_at || new Date().toISOString(),
         fetched_at: new Date().toISOString(),
         status: 'approved',
-        starred: false
+        starred: false,
+        // use_count: how many blog posts the generator has produced from this
+        // article. Only approved articles carry this counter. 0 = never used.
+        use_count: 0
       };
       await dynamodb.put({ TableName: RESEARCH_TABLE, Item: item }).promise();
       return { statusCode: 201, headers, body: JSON.stringify({ success: true, article: item }) };
@@ -128,6 +131,17 @@ exports.handler = async (event) => {
         updates.push('#s = :s');
         names['#s'] = 'status';
         values[':s'] = body.status;
+
+        // When an article becomes approved, initialize its use_count to 0 if it
+        // does not already have one. Only approved articles carry this counter
+        // (0 = never used by the generator, 1 = used once, etc.). Pending
+        // articles have no counter. if_not_exists avoids clobbering an existing
+        // count if the article is re-approved later.
+        if (body.status === 'approved') {
+          updates.push('#uc = if_not_exists(#uc, :zero)');
+          names['#uc'] = 'use_count';
+          values[':zero'] = 0;
+        }
       }
       if (body.starred !== undefined) {
         updates.push('#st = :st');

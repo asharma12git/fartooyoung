@@ -37,7 +37,15 @@ function pickCategory(title, excerpt) {
   return 'Research';
 }
 
-async function generateBlogPost(article) {
+async function generateBlogPost(article, priorTitles = [], reuseCount = 0) {
+  const priorTitlesBlock = priorTitles.length > 0
+    ? `\nWe have ALREADY published posts with these titles. You MUST create a completely new, different headline. Do not reuse or lightly reword any of these:\n${priorTitles.map(t => `- "${t}"`).join('\n')}\n`
+    : '';
+
+  const reuseBlock = reuseCount > 0
+    ? `\nNOTE: We have already written ${reuseCount} post(s) from THIS SAME source article before. Approach it from a genuinely different angle this time (for example: if a previous post covered the data and scale, focus now on solutions, a specific country, affected girls' stories, policy, or prevention). The new post must not duplicate the earlier framing, and the title must be new.\n`
+    : '';
+
   const prompt = `You are writing a blog post for Far Too Young, Inc., a US-based 501(c)(3) nonprofit focused EXCLUSIVELY on ending child marriage globally.
 
 Based on this research article:
@@ -45,10 +53,14 @@ Title: "${article.title}"
 Source: ${article.source} (${article.published_at?.slice(0, 10)})
 URL: ${article.url}
 ${article.excerpt ? `Summary: ${article.excerpt}` : ''}
+${priorTitlesBlock}${reuseBlock}
+RELEVANCE JUDGMENT (read carefully):
+Far Too Young works ONLY on ending child marriage. Decide how this article relates:
+- If it DIRECTLY addresses child marriage, forced marriage, girls' education, or gender-based violence against girls, write a focused post.
+- If it addresses a RELATED issue that is a well-documented driver or consequence of child marriage (girls' education, gender-based violence against girls, humanitarian crises and displacement, poverty, adolescent/reproductive health, girls' rights), write a post that HONESTLY explores that genuine connection to child marriage. Use child marriage as the lens, even if the source is broader. Do NOT fabricate statistics, do NOT overstate the link, and do NOT claim the source article is about child marriage when it is not. Ground every claim in what the article actually says or in well-established research.
+- ONLY if there is no honest, meaningful connection to child marriage or girls' rights (for example: unrelated geopolitics, general press-freedom or censorship stories, topics with no real tie to girls), respond with exactly: {"skip": true}
 
-IMPORTANT: If this article is NOT about child marriage, forced marriage, girls' education, or gender-based violence against girls — respond with exactly: {"skip": true}
-
-Write a focused, concise blog post (~800-1000 words) about ONE specific topic from this article related to child marriage or girls' rights.
+Write a focused, concise blog post (~800-1000 words) about ONE specific topic connecting this article to child marriage or girls' rights.
 
 Structure:
 1. Hook (1 short paragraph — a striking stat, question, or story)
@@ -58,6 +70,7 @@ Structure:
 5. Call to Action (1 paragraph — donate, share, learn more at fartooyoung.org)
 
 Rules:
+- Create a BRAND-NEW, unique headline that has never been used before (see the list above if provided).
 - Keep paragraphs SHORT (2-4 sentences max)
 - Use clear H2 headings for each section
 - Cite the source with a hyperlink
@@ -72,7 +85,7 @@ Rules:
 
 Provide as JSON:
 {
-  "title": "compelling title, max 70 characters",
+  "title": "compelling UNIQUE title, max 70 characters",
   "excerpt": "2 sentences for blog listing",
   "content": "HTML with <h2>, <p>, <strong>, <a href> tags only",
   "category": "one of: Education, Health, Norms & Culture, Policy & Justice, Research, Climate & Crisis",
@@ -159,36 +172,82 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Get approved articles sorted by newest
+    // Get all research articles
     const result = await dynamodb.scan({ TableName: RESEARCH_TABLE }).promise();
+    // Only approved articles are candidates (legacy rows without a status are
+    // treated as usable for backward-compat). Pending articles are never used.
     let articles = result.Items.filter(a => a.status === 'approved' || !a.status);
-    articles.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
 
-    // Get already-used article URLs from existing blog posts
-    const postsResult = await dynamodb.scan({ TableName: BLOG_TABLE }).promise();
-    const usedUrls = new Set();
-    postsResult.Items.forEach(p => {
-      if (p.source_articles) p.source_articles.forEach(sa => usedUrls.add(sa.url));
+    // Sort by use_count ascending (never-used first), then published_at
+    // descending (newest news first within the same use_count). This keeps us
+    // following the latest news while guaranteeing we never run dry: once every
+    // article has been used once, the generator rolls to the second pass, and
+    // so on. Missing use_count is treated as 0.
+    articles.sort((a, b) => {
+      const ucA = a.use_count || 0;
+      const ucB = b.use_count || 0;
+      if (ucA !== ucB) return ucA - ucB;
+      return new Date(b.published_at) - new Date(a.published_at);
     });
 
-    // Pick first unused article, skip irrelevant ones
-    const unusedArticles = articles.filter(a => !usedUrls.has(a.url));
-    const articlesToTry = unusedArticles.length > 0 ? unusedArticles : [articles[articles.length - 1]];
+    // Collect existing post titles so the model never repeats a headline, even
+    // when it reuses the same source article on a later pass.
+    const postsResult = await dynamodb.scan({ TableName: BLOG_TABLE }).promise();
+    const existingTitles = postsResult.Items.map(p => p.title).filter(Boolean);
+    const existingTitlesLower = new Set(existingTitles.map(t => t.toLowerCase().trim()));
+    const existingSlugs = new Set(postsResult.Items.map(p => p.slug).filter(Boolean));
 
+    if (articles.length === 0) {
+      console.log('[blog-generator] No approved articles available to generate from.');
+      return { statusCode: 200, headers, body: JSON.stringify({ success: false, message: 'No approved articles available' }) };
+    }
+
+    // Walk the FULL sorted list. Skip articles the model deems unrelated. Stop
+    // at the first article that yields a usable, unique post.
     let post = null;
     let selected = null;
+    let skipped = 0;
+    let attempted = 0;
 
-    for (const article of articlesToTry.slice(0, 5)) {
-      const result2 = await generateBlogPost(article);
-      if (result2.skip) continue; // AI says not relevant, try next
+    for (const article of articles) {
+      attempted++;
+      const reuseCount = article.use_count || 0;
+      // Titles we have already used for THIS source (for angle rotation context)
+      const result2 = await generateBlogPost(article, existingTitles, reuseCount);
+
+      if (result2.skip) {
+        skipped++;
+        continue; // Model says not relevant, try next
+      }
+
+      // Enforce unique title + slug. If the model returned a duplicate despite
+      // instructions, append a differentiator so routing (slug-index) stays safe.
+      let candidateTitle = (result2.title || '').trim();
+      let candidateSlug = slugify(candidateTitle);
+      if (existingTitlesLower.has(candidateTitle.toLowerCase()) || existingSlugs.has(candidateSlug)) {
+        console.log(`[blog-generator] Duplicate title/slug detected for "${candidateTitle}"; differentiating.`);
+        const suffix = new Date().toISOString().slice(0, 10);
+        candidateTitle = `${candidateTitle} (${suffix})`.slice(0, 70);
+        candidateSlug = slugify(candidateTitle);
+        // If still colliding, add a short random token.
+        if (existingSlugs.has(candidateSlug)) {
+          candidateSlug = `${candidateSlug}-${crypto.randomBytes(2).toString('hex')}`;
+        }
+      }
+      result2.title = candidateTitle;
+      result2._slug = candidateSlug;
+
       post = result2;
       selected = article;
       break;
     }
 
     if (!post || !selected) {
+      console.log(`[blog-generator] No relevant article found. approved=${articles.length}, attempted=${attempted}, skipped=${skipped}.`);
       return { statusCode: 200, headers, body: JSON.stringify({ success: false, message: 'No relevant articles found to generate from' }) };
     }
+
+    console.log(`[blog-generator] Selected "${selected.title}" (use_count ${selected.use_count || 0} -> ${(selected.use_count || 0) + 1}) after ${skipped} skip(s).`);
 
     // Generate hero image
     const imageUrl = await generateImage(post.title);
@@ -204,13 +263,13 @@ exports.handler = async (event) => {
 <h2>Take Action</h2>
 <p>Your support helps end child marriage. Here's how you can make a difference:</p>
 <p>
-<a href="#donate-monthly" class="donate-link" data-type="monthly" style="color:#ea580c;font-weight:600;">→ Donate Monthly</a> — Sustain our programs with a recurring gift<br/>
-<a href="#donate-once" class="donate-link" data-type="once" style="color:#ea580c;font-weight:600;">→ Make a One-Time Gift</a> — Every dollar protects a girl's future<br/>
-<a href="https://www.fartooyoung.org/what-we-do" style="color:#ea580c;font-weight:600;">→ Learn About Our Work</a> — See how we're making an impact
+<a href="#donate-monthly" class="donate-link" data-type="monthly" style="color:#ea580c;font-weight:600;">→ Donate Monthly</a>, sustain our programs with a recurring gift<br/>
+<a href="#donate-once" class="donate-link" data-type="once" style="color:#ea580c;font-weight:600;">→ Make a One-Time Gift</a>, every dollar protects a girl's future<br/>
+<a href="https://www.fartooyoung.org/what-we-do" style="color:#ea580c;font-weight:600;">→ Learn About Our Work</a>, see how we're making an impact
 </p>
 </div>`;
 
-    const slug = slugify(post.title);
+    const slug = post._slug || slugify(post.title);
     // Calculate reading time (words ÷ 200)
     const wordCount = post.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(w => w).length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
@@ -233,6 +292,15 @@ exports.handler = async (event) => {
     };
 
     await dynamodb.put({ TableName: BLOG_TABLE, Item: item }).promise();
+
+    // Increment use_count on the article we actually generated from (real use
+    // only; skips do not count). Missing counter starts at 0.
+    await dynamodb.update({
+      TableName: RESEARCH_TABLE,
+      Key: { article_id: selected.article_id },
+      UpdateExpression: 'SET use_count = if_not_exists(use_count, :zero) + :one',
+      ExpressionAttributeValues: { ':zero': 0, ':one': 1 }
+    }).promise();
 
     return {
       statusCode: 201,

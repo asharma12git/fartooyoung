@@ -122,8 +122,10 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
       const yearTotal = userDonations
         .filter(d => d.createdAt?.startsWith(yr))
         .reduce((sum, d) => sum + d.amount, 0)
-      // Snap to nearest $25 step, clamp to slider range [0, 1200]
-      const snapped = Math.min(12000, Math.max(0, Math.round(yearTotal / 50) * 50))
+      // Start the slider at the EXACT this-year total so it matches the yearly
+      // impact card (no $50 snap, which previously caused e.g. 2665 vs 2650).
+      // The slider still steps by $50 when the donor drags it. Clamp to range.
+      const snapped = Math.min(12000, Math.max(0, Math.round(yearTotal * 100) / 100))
       setCalculatorAmount(snapped)
       setCalcInitialized(true)
     }

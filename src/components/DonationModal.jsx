@@ -19,8 +19,9 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
   const [paymentMethod, setPaymentMethod] = useState('stripe')
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [showTerms, setShowTerms] = useState(false)
-  // Only skip to step 2 if amount provided AND no type specified (quick donate from other pages)
-  const [currentStep, setCurrentStep] = useState((initialAmount && !initialType) ? 2 : 1)
+  // Always start at step 1 (amount / donation-type selection) so the flow is consistent
+  // everywhere: monthly popup -> amount selection -> payment. A preset amount only pre-fills.
+  const [currentStep, setCurrentStep] = useState(1)
   const [donorInfo, setDonorInfo] = useState({
     firstName: '',
     lastName: '',
@@ -37,6 +38,17 @@ const DonationModal = ({ onClose, user, initialAmount = null, initialType = null
       })
     }
   }, [user])
+
+  // If a preset amount was passed in (e.g. from the dashboard calculator or impact cards),
+  // reflect it correctly on step 1: highlight a matching preset, or route a non-preset
+  // value into the Custom Amount field so the user sees and can edit it.
+  useEffect(() => {
+    if (initialAmount && !presetAmounts.includes(initialAmount)) {
+      setAmount('custom')
+      setCustomAmount(String(initialAmount))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [cardInfo, setCardInfo] = useState({
     cardNumber: '',
     expiration: '',

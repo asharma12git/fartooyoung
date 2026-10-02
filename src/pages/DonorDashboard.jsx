@@ -12,6 +12,14 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
   const [localRefresh, setLocalRefresh] = useState(0)
   const [calculatorAmount, setCalculatorAmount] = useState(100)
   const [showSmartSuggestion, setShowSmartSuggestion] = useState(true)
+  // Rotating Smart Suggestion message: pick a random variation each time the dashboard opens
+  const [suggestionVariant] = useState(() => Math.floor(Math.random() * 10))
+  // Rotating hero greeting: fresh message each time the dashboard view opens
+  const [greetingIndex] = useState(() => Math.floor(Math.random() * 10))
+  // Rotating "Message from the Field": fresh quote each time the dashboard opens, then auto-rotates
+  const [fieldMessageIndex, setFieldMessageIndex] = useState(() => Math.floor(Math.random() * 50))
+  // Yearly Impact: show only the latest 3 years by default, expand to show the rest
+  const [showAllYears, setShowAllYears] = useState(false)
   
   // Settings form state
   const [isEditing, setIsEditing] = useState(false)
@@ -104,6 +112,37 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
 
     fetchDonations()
   }, [user, refreshKey, localRefresh]) // Refetch when refreshKey changes
+
+  // Annual Impact Calculator: start the slider at THIS YEAR's total giving.
+  // Because it keys off the current calendar year, it naturally "resets" each January.
+  const [calcInitialized, setCalcInitialized] = useState(false)
+  useEffect(() => {
+    if (!calcInitialized && userDonations.length > 0) {
+      const yr = new Date().getFullYear().toString()
+      const yearTotal = userDonations
+        .filter(d => d.createdAt?.startsWith(yr))
+        .reduce((sum, d) => sum + d.amount, 0)
+      // Snap to nearest $25 step, clamp to slider range [0, 1200]
+      const snapped = Math.min(12000, Math.max(0, Math.round(yearTotal / 50) * 50))
+      setCalculatorAmount(snapped)
+      setCalcInitialized(true)
+    }
+  }, [userDonations, calcInitialized])
+
+  // Auto-rotate the "Message from the Field" with a slow cinematic crossfade.
+  // Every ~60s: fade the current message out, swap, then fade the new one in.
+  const [fieldVisible, setFieldVisible] = useState(true)
+  useEffect(() => {
+    const id = setInterval(() => {
+      setFieldVisible(false) // start slow fade-out
+      const swap = setTimeout(() => {
+        setFieldMessageIndex(prev => prev + 1) // swap while invisible
+        setFieldVisible(true)                  // slow fade-in
+      }, 1200) // matches the CSS transition duration
+      return () => clearTimeout(swap)
+    }, 60000)
+    return () => clearInterval(id)
+  }, [])
 
   // Handle profile update
   const handleSubmit = async (e) => {
@@ -232,6 +271,9 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
   const userStats = {
     totalDonations: userDonations.length,
     lifetimeTotal: Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) * 100) / 100,
+    thisYearTotal: Math.round(userDonations
+      .filter(d => d.createdAt?.startsWith(new Date().getFullYear().toString()))
+      .reduce((sum, donation) => sum + donation.amount, 0) * 100) / 100,
     averageDonation: userDonations.length > 0
       ? Math.round(userDonations.reduce((sum, donation) => sum + donation.amount, 0) / userDonations.length * 100) / 100
       : 0
@@ -262,7 +304,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
         </button>
 
         {/* Frozen top row */}
-        <div className="flex items-center px-3 sm:px-4 py-3 sm:py-4 border-b border-white/10 flex-shrink-0">
+        <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-2">
             <button
               onClick={handleLogout}
@@ -279,6 +321,17 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               </button>
             )}
           </div>
+          {/* Full name — clean, right-aligned (cleared from close button) */}
+          {(user?.firstName || user?.name) && (
+            <div className="flex items-center gap-2 mr-8 sm:mr-10">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400/40 to-purple-400/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                {`${(user.firstName?.[0] || user.name?.[0] || '')}${(user.lastName?.[0] || '')}`.toUpperCase()}
+              </div>
+              <span className="text-orange-300 text-xs sm:text-sm font-medium truncate max-w-[40vw] sm:max-w-xs">
+                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : (user.name || user.firstName)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Scrollable body */}
@@ -308,9 +361,9 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
             <div className="text-center mb-4 lg:mb-6">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light bg-gradient-to-r from-white via-orange-200 to-purple-200 bg-clip-text text-transparent mb-3 lg:mb-4 tracking-wide">
                 {(() => {
-                  const displayName = user.firstName && user.lastName 
-                    ? `${user.firstName} ${user.lastName}`
-                    : user.name || 'Friend'; // Fallback for old users or missing data
+                  const displayName = user.firstName
+                    || user.name?.split(' ')[0]
+                    || 'Friend'; // Fallback for old users or missing data
                     
                   const welcomeMessages = [
                     `Hello, ${displayName}!`,
@@ -325,14 +378,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                     `Making a difference, ${displayName}!`
                   ]
 
-                  let loginTime = localStorage.getItem('loginTimestamp')
-                  if (!loginTime) {
-                    loginTime = Date.now()
-                    localStorage.setItem('loginTimestamp', loginTime)
-                  }
-                  const messageIndex = Math.floor(parseInt(loginTime) / 1000) % welcomeMessages.length
-
-                  return welcomeMessages[messageIndex]
+                  return welcomeMessages[greetingIndex % welcomeMessages.length]
                 })()}
               </h2>
               <div className="flex justify-center mb-3 lg:mb-4">
@@ -344,7 +390,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
             {userDonations.length > 0 && (
               <div className="bg-white/5 rounded-lg p-6 sm:p-8 lg:p-10 text-center">
                 <p className="text-lg sm:text-xl mb-6 sm:mb-8 font-medium tracking-wide bg-gradient-to-r from-orange-300 via-orange-200 to-orange-400 bg-clip-text text-transparent">
-                  Your Impact Journey
+                  Your Giving Journey
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center items-center space-y-6 sm:space-y-0 sm:space-x-12 lg:space-x-16">
                   <div className="group">
@@ -425,15 +471,59 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
               {(() => {
                 if (userDonations.length === 0) return null
 
-                // Calculate smart suggestion
+                // Suggested amount: donor's usual gift nudged up 20%
                 const avgDonation = userStats.averageDonation
-                const suggestedAmount = Math.round(avgDonation * 1.2) // 20% higher
+                const suggestedAmount = Math.round(avgDonation * 1.2)
+
+                // This year's giving → girls educated ($50 = 1 girl)
                 const currentYear = new Date().getFullYear()
                 const yearDonations = userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString()))
                 const yearTotal = yearDonations.reduce((sum, d) => sum + d.amount, 0)
                 const girlsEducatedSoFar = Math.floor(yearTotal / 50)
-                const goalGirls = 10
-                const progressPercent = Math.min((girlsEducatedSoFar / goalGirls) * 100, 100)
+
+                // Milestone ladder: 10 → 25 → 50 → 100 → then +50 each step.
+                // Goal is always the NEXT milestone above current progress, so it
+                // keeps advancing and the donor is never "done".
+                const MILESTONES = [10, 25, 50, 100]
+                let goalGirls, prevMilestone
+                if (girlsEducatedSoFar < MILESTONES[MILESTONES.length - 1]) {
+                  const idx = MILESTONES.findIndex(m => girlsEducatedSoFar < m)
+                  goalGirls = MILESTONES[idx]
+                  prevMilestone = idx === 0 ? 0 : MILESTONES[idx - 1]
+                } else {
+                  // Beyond the ladder: next multiple of 50
+                  goalGirls = Math.floor(girlsEducatedSoFar / 50) * 50 + 50
+                  prevMilestone = goalGirls - 50
+                }
+
+                // Ring fills from the previous rung to the next, so it RESETS each level
+                const span = goalGirls - prevMilestone
+                const progressPercent = Math.min(Math.max(((girlsEducatedSoFar - prevMilestone) / span) * 100, 0), 100)
+                const girlsToGo = Math.max(goalGirls - girlsEducatedSoFar, 0)
+
+                // Did they just land exactly on a milestone? (celebrate + show next)
+                const justReached = girlsEducatedSoFar > 0 && (MILESTONES.includes(girlsEducatedSoFar) || girlsEducatedSoFar % 50 === 0)
+
+                // Reusable highlighted spans
+                const name = user?.firstName || 'friend'
+                const nGirls = <span className="font-bold text-green-400">{girlsEducatedSoFar}</span>
+                const nAmount = <span className="font-bold text-orange-300">${suggestedAmount}</span>
+                const nGoal = <span className="font-bold text-green-400">{goalGirls}</span>
+                const nToGo = <span className="font-bold text-green-400">{girlsToGo}</span>
+
+                // 10 warm variations for the in-progress message (rotates each time the dashboard opens)
+                const inProgressVariations = [
+                  <>Because of you, {name}, {nGirls} girls are in school this year. A {nAmount} gift could help you reach {nGoal} — that&apos;s {nToGo} more futures changed.</>,
+                  <>{name}, your generosity has placed {nGirls} girls in classrooms this year. With {nAmount}, {nToGo} more could follow, all the way to {nGoal}.</>,
+                  <>{nGirls} girls have hope because of you, {name}. A {nAmount} gift carries that light to {nToGo} more, on the path to {nGoal}.</>,
+                  <>Thanks to your kindness, {name}, {nGirls} girls are learning this year. Just {nToGo} more would bring you to {nGoal} — a {nAmount} gift helps get there.</>,
+                  <>You&apos;ve already changed {nGirls} young lives this year, {name}. A {nAmount} gift opens the door for {nToGo} more, toward {nGoal}.</>,
+                  <>{name}, {nGirls} girls can dream bigger because of you. A gift of {nAmount} brings {nToGo} more within reach of {nGoal}.</>,
+                  <>Your compassion has given {nGirls} girls a classroom this year, {name}. {nToGo} more would reach {nGoal} — and {nAmount} moves them closer.</>,
+                  <>Every gift you&apos;ve given adds up, {name} — {nGirls} girls in school so far. A {nAmount} gift could carry {nToGo} more toward {nGoal}.</>,
+                  <>{name}, you&apos;ve helped {nGirls} girls step into a brighter future this year. A {nAmount} gift could help {nToGo} more join them, on the way to {nGoal}.</>,
+                  <>Hope looks like {nGirls} girls in school, {name} — and it&apos;s because of you. A {nAmount} gift brings {nToGo} more closer to {nGoal}.</>,
+                ]
 
                 return showSmartSuggestion ? (
                   <div className="bg-gradient-to-r from-orange-500/20 to-orange-400/10 backdrop-blur-sm border border-orange-400/40 rounded-lg p-4">
@@ -444,24 +534,31 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           <h3 className="text-base font-bold text-white">Smart Suggestion</h3>
                         </div>
                         <p className="text-white/90 text-sm mb-3">
-                          A <span className="font-bold text-orange-300">${suggestedAmount}</span> donation would help you reach your goal of educating {goalGirls} girls this year. You're <span className="font-bold text-green-400">{Math.round(progressPercent)}%</span> there!
+                          {girlsEducatedSoFar === 0 ? (
+                            <>Welcome, {user?.firstName || 'friend'}. Your first <span className="font-bold text-orange-300">${suggestedAmount}</span> gift could put <span className="font-bold text-green-400">{Math.max(Math.floor(suggestedAmount / 50), 1)}</span> {Math.max(Math.floor(suggestedAmount / 50), 1) === 1 ? 'girl' : 'girls'} on the path to a brighter future.</>
+                          ) : justReached ? (
+                            <>What a milestone, {user?.firstName || 'friend'} — because of you, <span className="font-bold text-green-400">{girlsEducatedSoFar}</span> girls are in school this year. A <span className="font-bold text-orange-300">${suggestedAmount}</span> gift carries that hope onward toward <span className="font-bold text-green-400">{goalGirls}</span>.</>
+                          ) : (
+                            inProgressVariations[suggestionVariant % inProgressVariations.length]
+                          )}
                         </p>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-stretch rounded-lg overflow-hidden border border-orange-400/30 w-full max-w-md">
                           <button
                             onClick={() => onDonateClick(suggestedAmount)}
-                            className="bg-gradient-to-r from-orange-400/20 to-orange-600/30 hover:from-orange-400/30 hover:to-orange-600/40 text-white/80 hover:text-white px-4 py-1.5 rounded-md font-medium transition-all duration-300 text-sm border border-orange-400/20"
+                            className="flex-1 bg-gradient-to-r from-orange-500/30 to-orange-600/40 hover:from-orange-500/40 hover:to-orange-600/50 text-white px-4 py-2.5 font-semibold transition-all duration-300 text-sm active:scale-95"
                           >
                             Donate ${suggestedAmount}
                           </button>
-                          <button 
+                          <div className="w-px bg-orange-400/30"></div>
+                          <button
                             onClick={() => setShowSmartSuggestion(false)}
-                            className="text-white/60 hover:text-white text-xs transition-colors"
+                            className="flex-1 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white/80 px-4 py-2.5 font-medium transition-all duration-300 text-sm active:scale-95"
                           >
-                            Maybe Later
+                            I&apos;ll help another day
                           </button>
                         </div>
                       </div>
-                      <div className="ml-4">
+                      <div className="ml-4 text-center">
                         <div className="w-16 h-16 relative">
                           <svg className="transform -rotate-90 w-16 h-16">
                             <circle
@@ -487,525 +584,441 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                             <span className="text-white font-bold text-sm">{Math.round(progressPercent)}%</span>
                           </div>
                         </div>
+                        <div className="text-white/50 text-[10px] uppercase tracking-wider mt-1">to {goalGirls} girls</div>
                       </div>
                     </div>
                   </div>
                 ) : null
               })()}
 
-              {/* Impact Insights - AI Feature #2 */}
-              {(() => {
-                if (userDonations.length === 0) return null
-
-                // Calculate insights
-                const totalDonors = 100 // In production, get from backend
-                const avgAllDonors = 150 // In production, get from backend
-                const percentile = userStats.lifetimeTotal > avgAllDonors ?
-                  Math.min(Math.round((userStats.lifetimeTotal / avgAllDonors) * 50) + 50, 95) :
-                  Math.round((userStats.lifetimeTotal / avgAllDonors) * 50)
-
-                const currentYear = new Date().getFullYear()
-                const lastYear = currentYear - 1
-                const thisYearTotal = userDonations
-                  .filter(d => d.createdAt?.startsWith(currentYear.toString()))
-                  .reduce((sum, d) => sum + d.amount, 0)
-                const lastYearTotal = userDonations
-                  .filter(d => d.createdAt?.startsWith(lastYear.toString()))
-                  .reduce((sum, d) => sum + d.amount, 0)
-                const growthPercent = lastYearTotal > 0 ?
-                  Math.round(((thisYearTotal - lastYearTotal) / lastYearTotal) * 100) : 0
-
-                return (
-                  <>
-                    {/* Your Impact Insights Section */}
-                    <div>
-                      <div className="flex items-center space-x-2 mb-4">
-                        <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-purple-600 rounded-full"></div>
-                        <h3 className="text-lg sm:text-xl font-bold text-white">Your Impact Insights</h3>
-                      </div>
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                        {/* Donor Rank */}
-                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
-                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                            </svg>
-                          </div>
-                          <div className="text-white font-bold text-xl mb-1">Top {100 - percentile}%</div>
-                          <div className="text-white/60 text-xs">Donor Rank</div>
-                        </div>
-                        {/* Year Growth */}
-                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
-                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                          </div>
-                          <div className="text-white font-bold text-xl mb-1">{growthPercent > 0 ? '+' : ''}{growthPercent}%</div>
-                          <div className="text-white/60 text-xs">Year Growth</div>
-                        </div>
-                        {/* To Goal */}
-                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
-                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-                            </svg>
-                          </div>
-                          <div className="text-white font-bold text-xl mb-1">{Math.max(0, 10 - Math.floor(thisYearTotal / 50))} girls</div>
-                          <div className="text-white/60 text-xs">To Goal</div>
-                        </div>
-                        {/* This Year Donations */}
-                        <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-4 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all text-center">
-                          <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                            </svg>
-                          </div>
-                          <div className="text-white font-bold text-xl mb-1">{userDonations.filter(d => d.createdAt?.startsWith(currentYear.toString())).length} donations</div>
-                          <div className="text-white/60 text-xs">This Year</div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )
-              })()}
-
-              {/* Impact Stats Cards - Existing */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-6 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white/80 text-sm font-medium">Girls Currently Supported</h3>
-                    <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 50)}</p>
-                  <p className="text-white/60 text-sm mt-1">girls in school this month</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-6 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white/80 text-sm font-medium">Years of Education Funded</h3>
-                    <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-white">{(userStats.lifetimeTotal / 600).toFixed(1)}</p>
-                  <p className="text-white/60 text-sm mt-1">years of education provided</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-orange-500/5 to-white/5 rounded-lg p-6 border border-orange-400/10 hover:from-orange-500/10 hover:to-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white/80 text-sm font-medium">Lives Completely Changed</h3>
-                    <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-white">{Math.floor(userStats.lifetimeTotal / 6000)}</p>
-                  <p className="text-white/60 text-sm mt-1">girls fully educated (age 5-14)</p>
-                </div>
-              </div>
-
-              {/* Impact Calculator - AI Feature #3 */}
-              {(() => {
-                const calculateImpact = (amount) => {
-                  return {
-                    girlsEducated: Math.floor(amount / 50),
-                    schoolKits: Math.floor(amount / 25),
-                    teacherTraining: Math.floor(amount / 200),
-                    schoolsSupported: Math.floor(amount / 500)
-                  }
-                }
-
-                const impact = calculateImpact(calculatorAmount)
-
-                return (
-                  <>
-                    {/* Elegant Divider */}
-                    <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                    
-                    {/* Impact Calculator Section */}
-                    <div>
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-1 h-6 bg-gradient-to-b from-green-400 to-teal-600 rounded-full"></div>
-                          <h3 className="text-lg sm:text-xl font-bold text-white">Impact Calculator</h3>
-                        </div>
-                      <button
-                        onClick={() => onDonateClick(calculatorAmount)}
-                        className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm"
-                      >
-                        Donate Now
-                      </button>
-                    </div>
-
-                    <div className="mb-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <label className="text-white/80 text-sm font-medium">See how your gift makes a difference {showSmartSuggestion && <span className="text-orange-400 font-bold animate-[slideRight_2s_ease-in-out_infinite]"> ▶</span>}</label>
-                        <div className="text-2xl font-bold text-orange-400">${calculatorAmount}</div>
-                      </div>
-                      <div className="relative">
-                        <input
-                          type="range"
-                          min="25"
-                          max="500"
-                          step="25"
-                          value={calculatorAmount}
-                          onChange={(e) => { setCalculatorAmount(parseInt(e.target.value)); setShowSmartSuggestion(false) }}
-                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider relative z-10"
-                          style={{
-                            background: `linear-gradient(to right, #f97316 0%, #f97316 ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) ${((calculatorAmount - 25) / 475) * 100}%, rgba(255,255,255,0.2) 100%)`
-                          }}
-                        />
-                        {showSmartSuggestion && (
-                          <span className="hidden"></span>
-                        )}
-                      </div>
-                      <style>{`.animate-\\[slideRight_2s_ease-in-out_infinite\\] { animation: slideRight 2s ease-in-out infinite; } @keyframes slideRight { 0% { opacity: 1; transform: translateX(0) translateY(-50%); } 70% { opacity: 1; transform: translateX(30px) translateY(-50%); } 100% { opacity: 0; transform: translateX(50px) translateY(-50%); } } .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #f97316; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 4px rgba(249,115,22,0.5); } .slider::-moz-range-thumb { width: 20px; height: 20px; background: #f97316; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 4px rgba(249,115,22,0.5); }`}</style>
-                      <div className="flex justify-between text-white/50 text-xs mt-1">
-                        <span>$25</span>
-                        <span>$500</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
-                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </div>
-                        <div className="text-2xl font-bold text-white mb-1">{impact.girlsEducated}</div>
-                        <div className="text-green-300 text-xs font-medium mb-1">(1 year)</div>
-                        <div className="text-white/60 text-xs">Girls Educated</div>
-                      </div>
-                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
-                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                          </svg>
-                        </div>
-                        <div className="text-2xl font-bold text-white mb-1">{impact.schoolKits}</div>
-                        <div className="text-green-300 text-xs font-medium mb-1">(supplies)</div>
-                        <div className="text-white/60 text-xs">School Kits</div>
-                      </div>
-                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
-                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                        </div>
-                        <div className="text-2xl font-bold text-white mb-1">{impact.teacherTraining}</div>
-                        <div className="text-green-300 text-xs font-medium mb-1">(sessions)</div>
-                        <div className="text-white/60 text-xs">Teacher Training</div>
-                      </div>
-                      <div className="bg-gradient-to-br from-green-500/5 to-white/5 rounded-lg p-6 border border-green-400/10 hover:from-green-500/10 hover:to-white/10 transition-all text-center">
-                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
-                        </div>
-                        <div className="text-2xl font-bold text-white mb-1">{impact.schoolsSupported}</div>
-                        <div className="text-green-300 text-xs font-medium mb-1">(monthly)</div>
-                        <div className="text-white/60 text-xs">Schools Supported</div>
-                      </div>
-                    </div>
-                    </div>
-                  </>
-                )
-              })()}
-
-              {/* Progress Towards Goals */}
-              <>
-                {/* Elegant Divider */}
-                <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                
-                {/* Your Impact Goals for 2025 Section */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-6">
-                    <div className="w-1 h-6 bg-gradient-to-b from-purple-400 to-pink-600 rounded-full"></div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-white">Your Impact Goals for <span className="text-orange-400">{new Date().toLocaleDateString('en-US', { month: 'long' })}</span> {new Date().getFullYear()}</h3>
-                  </div>
-
-                {/* Current Month Summary - Three Column Format */}
-                <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6 text-center">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {/* Month Info */}
-                    <div className="flex items-center justify-center space-x-3">
-                      <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-white font-medium">This Month's Impact</h4>
-                      </div>
-                    </div>
-
-                    {/* Girls Educated */}
-                    <div className="text-center">
-                      <h4 className="text-white/80 text-sm font-medium mb-1">Girls Educated</h4>
-                      <p className="text-2xl font-bold text-orange-400">
-                        {(() => {
-                          const currentMonth = new Date().toISOString().slice(0, 7) // YYYY-MM format
-                          const monthlyDonations = userDonations.filter(d => d.createdAt?.startsWith(currentMonth))
-                          const monthlyTotal = monthlyDonations.reduce((sum, d) => sum + d.amount, 0)
-                          return Math.floor(monthlyTotal / 50)
-                        })()}
-                      </p>
-                    </div>
-
-                    {/* Donated This Month */}
-                    <div className="text-center">
-                      <h4 className="text-white/80 text-sm font-medium mb-1">Donated</h4>
-                      <p className="text-xl font-bold text-green-400">
-                        ${(() => {
-                          const currentMonth = new Date().toISOString().slice(0, 7)
-                          const monthlyDonations = userDonations.filter(d => d.createdAt?.startsWith(currentMonth))
-                          return monthlyDonations.reduce((sum, d) => sum + d.amount, 0).toFixed(2)
-                        })()}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Cost Breakdown */}
-                  <div className="mt-4 pt-4 border-t border-white/10 text-center">
-                    <p className="text-white/70 text-base mb-5"><span className="text-orange-400 font-semibold">$50/month</span> per girl covers:</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-3 text-base max-w-md sm:max-w-none mx-auto justify-items-center sm:justify-items-center">
-                      <div className="flex items-center justify-center sm:justify-start space-x-2">
-                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                        <span className="text-white/70 text-sm">School fees</span>
-                      </div>
-                      <div className="flex items-center justify-center sm:justify-start space-x-2">
-                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                        <span className="text-white/70 text-sm">Uniforms</span>
-                      </div>
-                      <div className="flex items-center justify-center sm:justify-start space-x-2">
-                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                        <span className="text-white/70 text-sm">Transport</span>
-                      </div>
-                      <div className="flex items-center justify-center sm:justify-start space-x-2">
-                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                        <span className="text-white/70 text-sm">Welfare checks</span>
-                      </div>
-                      <div className="flex items-center justify-center sm:justify-start space-x-2">
-                        <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                        <span className="text-white/70 text-sm">Support</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Goal 1: Support 1 Girl for 1 Year */}
-                  <div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
-                      <span className="text-white/80 text-sm">Support 1 Girl for 1 Year ($600)</span>
-                      <span className="text-sm"><span className="text-green-400 font-medium">${userStats.lifetimeTotal}</span><span className="text-orange-400 font-medium">/$600</span></span>
-                    </div>
-                    <div className="w-full bg-white/10 rounded-full h-1.5 sm:h-2">
-                      <div
-                        className="bg-gradient-to-r from-orange-400/60 to-orange-300/60 h-1.5 sm:h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min((userStats.lifetimeTotal / 600) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-white/60 text-xs mt-1">${Math.max(600 - userStats.lifetimeTotal, 0).toFixed(2)} more to reach goal</p>
-                  </div>
-
-                  {/* Goal 2: Complete Elementary Education */}
-                  <div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
-                      <span className="text-white/80 text-sm">Fund Complete Elementary (5 years - $3,000)</span>
-                      <span className="text-sm"><span className="text-green-400 font-medium">${userStats.lifetimeTotal}</span><span className="text-orange-400 font-medium">/$3,000</span></span>
-                    </div>
-                    <div className="w-full bg-white/10 rounded-full h-1.5 sm:h-2">
-                      <div
-                        className="bg-gradient-to-r from-orange-400/60 to-orange-300/60 h-1.5 sm:h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min((userStats.lifetimeTotal / 3000) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-white/60 text-xs mt-1">Ages 5-10: Foundation for life</p>
-                  </div>
-
-                  {/* Goal 3: Life-Changing Champion */}
-                  <div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 space-y-1 sm:space-y-0">
-                      <span className="text-white/80 text-sm">Life-Changing Champion ($6,000)</span>
-                      <span className="text-sm"><span className="text-green-400 font-medium">${userStats.lifetimeTotal}</span><span className="text-orange-400 font-medium">/$6,000</span></span>
-                    </div>
-                    <div className="w-full bg-white/10 rounded-full h-1.5 sm:h-2">
-                      <div
-                        className="bg-gradient-to-r from-orange-400/60 to-orange-300/60 h-1.5 sm:h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min((userStats.lifetimeTotal / 6000) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-white/60 text-xs mt-1">Complete education: Age 5-14 (10 years)</p>
-                  </div>
-                </div>
-                </div>
-              </>
-
               {/* Annual Impact History */}
               {userDonations.length > 0 && (
                 <>
-                  {/* Elegant Divider */}
-                  <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                  
-                  {/* Your Impact Journey Section */}
+                  {/* Your Yearly Impact Section */}
                   <div>
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-6">
                     <div className="flex items-center space-x-2">
                       <div className="w-1 h-6 bg-gradient-to-b from-indigo-400 to-blue-600 rounded-full"></div>
-                      <h3 className="text-xl font-semibold text-white">Your Impact Journey</h3>
+                      <h3 className="text-xl font-semibold text-white">Your Yearly Impact</h3>
                     </div>
                   </div>
 
-                  <div className="flex flex-row space-x-4 overflow-x-auto pb-3 pt-2 px-1 snap-x snap-mandatory sm:snap-none" style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(249, 115, 22, 0.6) transparent'
-                  }}>
-                    <style jsx>{`
-                      div::-webkit-scrollbar {
-                        height: 6px;
-                      }
-                      div::-webkit-scrollbar-track {
-                        background: transparent;
-                      }
-                      div::-webkit-scrollbar-thumb {
-                        background: rgba(249, 115, 22, 0.6);
-                        border-radius: 3px;
-                      }
-                      div::-webkit-scrollbar-thumb:hover {
-                        background: rgba(249, 115, 22, 0.8);
-                      }
-                    `}</style>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {(() => {
-                      // Get unique years from donations
+                      // Get unique years from donations (newest first)
                       const years = [...new Set(userDonations.map(d => d.createdAt?.split('-')[0]))].sort((a, b) => b - a)
+                      // Default to the latest 3 years; expand to show all
+                      const visibleYears = showAllYears ? years : years.slice(0, 3)
 
-                      return years.map(year => {
+                      return visibleYears.map(year => {
                         const yearDonations = userDonations.filter(d => d.createdAt?.startsWith(year))
                         const yearTotal = yearDonations.reduce((sum, d) => sum + d.amount, 0)
                         const yearCount = yearDonations.length
                         const girlsSupported = Math.floor(yearTotal / 50)
 
-                        return (
-                          <div key={year} className={`rounded-lg p-3 sm:p-4 min-w-[85vw] sm:min-w-[280px] sm:w-auto flex-shrink-0 snap-center border transition-all hover:scale-[1.02] ${
-                            years.indexOf(year) % 2 === 0
-                              ? 'bg-gradient-to-br from-green-500/10 to-green-400/5 border-green-400/20'
-                              : 'bg-gradient-to-br from-blue-500/10 to-blue-400/5 border-blue-400/20'
-                          }`}>
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-lg font-semibold text-white">{year}</h4>
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                years.indexOf(year) % 2 === 0
-                                  ? 'bg-green-500/20'
-                                  : 'bg-blue-500/20'
-                              }`}>
-                                <span className={`text-sm ${
-                                  years.indexOf(year) % 2 === 0
-                                    ? 'text-green-400'
-                                    : 'text-blue-400'
-                                }`}>📅</span>
-                              </div>
-                            </div>
+                        // 3-color cycle across the 3-column grid: green → blue → purple
+                        const colorIdx = years.indexOf(year) % 3
+                        const theme = [
+                          { card: 'from-green-500/10 to-green-400/5 border-green-400/20' },
+                          { card: 'from-blue-500/10 to-blue-400/5 border-blue-400/20' },
+                          { card: 'from-purple-500/10 to-purple-400/5 border-purple-400/20' },
+                        ][colorIdx]
 
-                            <div className="space-y-2">
-                              <div className="flex justify-between">
-                                <span className="text-white/70 text-sm">Donations</span>
-                                <span className="text-white font-medium">{yearCount}</span>
+                        // Personal, varied footer message — tier by the year's giving, name included,
+                        // stable per year (keyed off the year digits so it doesn't flicker).
+                        const fName = user?.firstName || 'friend'
+                        const footerTiers = yearTotal >= 1000
+                          ? [`You're on fire, ${fName}! 🔥`, `Unstoppable, ${fName}! 🌟`, `What a year, ${fName}! 🎉`]
+                          : yearTotal >= 500
+                          ? [`You showed up big, ${fName}! 💫`, `Big heart, ${fName}! 💛`, `Making waves, ${fName}! 🌊`]
+                          : yearCount >= 5
+                          ? [`Faithful as ever, ${fName}! ❤️`, `Steady and strong, ${fName}! 🙌`, `Always there, ${fName}! ✨`]
+                          : [`Every bit counts, ${fName}! 🎯`, `You made a mark, ${fName}! 🌱`, `Thank you, ${fName}! 💛`]
+                        const footerMsg = footerTiers[parseInt(year, 10) % footerTiers.length]
+
+                        return (
+                          <div className={`rounded-xl p-5 border bg-gradient-to-br transition-all hover:-translate-y-0.5 ${theme.card}`} key={year}>
+                            {/* Year — hero of the card */}
+                            <div className={`text-3xl font-bold tracking-tight mb-2 ${year === new Date().getFullYear().toString() ? 'text-orange-400' : 'text-white'}`}>{year}</div>
+                            <div className="h-0.5 w-20 bg-white/20 rounded-full mb-4"></div>
+
+                            {/* Stats — consistent label-left / value-right rows; Total is the big headline */}
+                            <div className="space-y-1.5">
+                              <div className="flex justify-between items-center">
+                                <span className="text-white/70 text-sm">Total Given</span>
+                                <span className="text-green-400 font-bold text-lg">${yearTotal.toFixed(2)}</span>
                               </div>
-                              <div className="flex justify-between">
-                                <span className="text-white/70 text-sm">Total Impact</span>
-                                <span className="text-white font-medium">${yearTotal.toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-white/70 text-sm">Girls Supported</span>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-white/70">Girls Supported</span>
                                 <span className="text-green-400 font-medium">{girlsSupported}</span>
                               </div>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-white/70">Donations</span>
+                                <span className="text-white font-medium">{yearCount}</span>
+                              </div>
                               {yearTotal >= 6000 && (
-                                <div className="flex justify-between">
-                                  <span className="text-white/70 text-sm">Lives Transformed</span>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-white/70">Lives Transformed</span>
                                   <span className="text-green-400 font-medium">{Math.floor(yearTotal / 6000)}</span>
                                 </div>
                               )}
                             </div>
 
-                            {/* Best donation */}
-                            <div className="flex justify-between items-center mt-2">
-                              <span className="text-white/70 text-sm">👑 Best Donation</span>
-                              <span className="text-green-400 font-medium">${Math.max(...yearDonations.map(d => d.amount)).toFixed(2)}</span>
-                            </div>
-
-                            {/* Year highlight */}
-                            <div className="mt-3 pt-3 border-t border-white/10">
-                              <p className="text-white/60 text-xs">
-                                {yearTotal >= 1000 ? '🌟 Amazing year!' :
-                                  yearTotal >= 500 ? '💫 Great impact!' :
-                                    yearCount >= 5 ? '❤️ Consistent supporter!' :
-                                      '🎯 Making a difference!'}
-                              </p>
+                            {/* Personal footer */}
+                            <div className="mt-4 pt-3 border-t border-white/10">
+                              <p className="text-white text-sm font-semibold text-left">{footerMsg}</p>
                             </div>
                           </div>
                         )
                       })
                     })()}
                   </div>
+                  {(() => {
+                    const yearCountTotal = [...new Set(userDonations.map(d => d.createdAt?.split('-')[0]))].length
+                    if (yearCountTotal <= 3) return null
+                    return (
+                      <div className="flex justify-center mt-4">
+                        <button
+                          onClick={() => setShowAllYears(prev => !prev)}
+                          className="flex items-center gap-1.5 text-orange-300 hover:text-orange-200 text-sm font-medium transition-colors active:scale-95"
+                        >
+                          {showAllYears ? (
+                            <>Show less
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                            </>
+                          ) : (
+                            <>Show {yearCountTotal - 3} earlier {yearCountTotal - 3 === 1 ? 'year' : 'years'}
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )
+                  })()}
                   </div>
                 </>
               )}
 
-              {/* Quick Actions */}
+              {/* Annual Impact Calculator — "Keep a Girl in School" support ladder */}
+              {(() => {
+                // Program pillars with per-girl annual cost (peer-benchmarked; tune to real FTY costs).
+                // cum = cumulative cost to have unlocked this pillar for one girl. Full support = $480/yr.
+                const PILLARS = [
+                  { icon: '📚', title: 'School fees & essentials', line: 'Fees, uniform, books, and supplies so cost is never the reason she drops out', cost: 180, mo: 15, cum: 180 },
+                  { icon: '🍛', title: 'Daily meals (tiffin)', line: 'Nutrition that keeps her in class', cost: 300, mo: 25, cum: 480 },
+                  { icon: '🛺', title: 'Transport', line: 'Safe travel for girls in rural areas', cost: 180, mo: 15, cum: 660 },
+                  { icon: '🏠', title: 'Family welfare checks', line: 'Support so parents keep her in school', cost: 240, mo: 20, cum: 900 },
+                  { icon: '💬', title: 'Counselling', line: 'Guidance through her toughest moments', cost: 144, mo: 12, cum: 1044 },
+                  { icon: '✊🏽', title: 'Empowerment', line: 'Confidence, life skills, and knowing her rights', cost: 156, mo: 13, cum: 1200 },
+                ]
+                const amt = calculatorAmount
+                const PER_GIRL = 1200 // $1,200/yr ($100/mo) fully supports one girl across all pillars
+                const girlsFullySupported = Math.floor(amt / PER_GIRL)
+                // Per-girl spend drives which pillars are "covered": the in-progress girl's remainder,
+                // or a full $480 if they're already supporting at least one girl.
+                const perGirl = girlsFullySupported >= 1 ? PER_GIRL : (amt % PER_GIRL)
+                const partialGirl = (amt % PER_GIRL) / PER_GIRL // 0..1 progress toward next girl
+                const pct = Math.min((amt / 12000) * 100, 100)
+
+                // Build the row of girl icons (cap at 10 displayed; overflow shown as ×N)
+                const MAX_ICONS = 10
+                const iconsToShow = Math.min(Math.max(girlsFullySupported + (partialGirl > 0 ? 1 : 0), 0), MAX_ICONS)
+                const girlIcons = []
+                for (let i = 0; i < iconsToShow; i++) {
+                  const fill = i < girlsFullySupported ? 1 : partialGirl // full or partial for the in-progress one
+                  girlIcons.push(fill)
+                }
+
+                return (
+                  <>
+                    {/* Elegant Divider */}
+                    <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1 h-6 bg-gradient-to-b from-green-400 to-teal-600 rounded-full"></div>
+                          <h3 className="text-lg sm:text-xl font-bold text-white">Your Impact This Year</h3>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const more = Math.round(calculatorAmount - userStats.thisYearTotal)
+                            onDonateClick(more > 0 ? more : calculatorAmount)
+                          }}
+                          className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-4 py-2 rounded-md font-medium transition-all duration-300 text-sm active:scale-95"
+                        >
+                          Give {calculatorAmount > userStats.thisYearTotal ? `$${Math.round(calculatorAmount - userStats.thisYearTotal)} More` : 'Now'}
+                        </button>
+                      </div>
+                      <p className="text-white/60 text-sm mb-5">Slide to see how many girls your giving keeps in school this year.</p>
+
+                      {/* Girl icons — fill in as giving increases ($480 = 1 girl fully supported) */}
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-5 mb-6 text-center">
+                        <div className="flex flex-wrap justify-center items-end gap-2.5 mb-3 min-h-[3.5rem]">
+                          {girlIcons.length === 0 ? (
+                            <span className="text-white/40 text-sm">Slide up to support your first girl</span>
+                          ) : girlIcons.map((fill, i) => {
+                            const isComplete = fill >= 1
+                            const color = isComplete ? '#22c55e' : '#f97316' // green = complete, orange = in progress
+                            const gid = `girlfill_${i}_${Math.round(fill * 100)}`
+                            return (
+                              <svg key={i} width="36" height="54" viewBox="0 0 26 40" className="flex-shrink-0">
+                                <defs>
+                                  <linearGradient id={gid} x1="0" y1="1" x2="0" y2="0">
+                                    <stop offset="0%" stopColor={color} />
+                                    <stop offset={`${fill * 100}%`} stopColor={color} />
+                                    <stop offset={`${fill * 100}%`} stopColor="rgba(255,255,255,0.15)" />
+                                    <stop offset="100%" stopColor="rgba(255,255,255,0.15)" />
+                                  </linearGradient>
+                                </defs>
+                                {/* refined schoolgirl silhouette: head, hair, A-line dress, legs */}
+                                <g fill={`url(#${gid})`}>
+                                  {/* hair / head */}
+                                  <path d="M13 2 C9.7 2 7.5 4.3 7.5 7.2 C7.5 10 9.7 12 13 12 C16.3 12 18.5 10 18.5 7.2 C18.5 4.3 16.3 2 13 2 Z" />
+                                  {/* dress (A-line) */}
+                                  <path d="M13 12 C11 12 9.6 13.2 9 15 L5 30 L21 30 L17 15 C16.4 13.2 15 12 13 12 Z" />
+                                  {/* legs */}
+                                  <rect x="9.5" y="30" width="2.6" height="8" rx="1.1" />
+                                  <rect x="13.9" y="30" width="2.6" height="8" rx="1.1" />
+                                </g>
+                              </svg>
+                            )
+                          })}
+                          {girlsFullySupported > MAX_ICONS && (
+                            <span className="text-green-400 font-bold text-lg ml-1 self-center">+{girlsFullySupported - MAX_ICONS}</span>
+                          )}
+                        </div>
+                        <div className="text-white font-semibold text-sm">
+                          {(() => {
+                            const nm = user?.firstName || 'friend'
+                            const words = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth']
+                            const nextWord = words[girlsFullySupported] || `${girlsFullySupported + 1}th`
+                            const g = girlsFullySupported
+                            const partialClause = partialGirl > 0 ? <>, and you&apos;re <span className="text-orange-400 font-bold">{Math.round(partialGirl * 100)}%</span> of the way to a {nextWord}</> : null
+                            if (g === 0) {
+                              return <>You&apos;re <span className="text-orange-400 font-bold">{Math.round(partialGirl * 100)}%</span> of the way to keeping your first girl in school, {nm}. Every gift brings her closer. 💚🌸</>
+                            }
+                            // Enthusiasm escalates with the number of girls supported
+                            let lead, emoji
+                            if (g === 1) { lead = <>Thank you, {nm}. You&apos;re keeping <span className="text-green-400 font-bold">a girl</span> in school this year</>; emoji = '💚🌸' }
+                            else if (g <= 3) { lead = <>Wonderful, {nm}! You&apos;re keeping <span className="text-green-400 font-bold">{g}</span> girls in school this year</>; emoji = '💚🌸' }
+                            else if (g <= 6) { lead = <>Incredible, {nm}! <span className="text-green-400 font-bold">{g}</span> girls are in school because of you</>; emoji = '🌟🌸' }
+                            else if (g <= 9) { lead = <>Extraordinary, {nm}! You&apos;re changing <span className="text-green-400 font-bold">{g}</span> lives this year</>; emoji = '🔥🌸' }
+                            else { lead = <>You&apos;re a hero, {nm}! <span className="text-green-400 font-bold">{g}</span> girls&apos; futures are transformed because of you</>; emoji = '👑🌸' }
+                            return <>{lead}{partialClause}. {emoji}</>
+                          })()}
+                        </div>
+                      </div>
+
+                      {/* Slider */}
+                      <div className="mb-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-white/70 text-sm">Your giving in {new Date().getFullYear()}</span>
+                          <div className="text-2xl font-bold text-green-400">${calculatorAmount.toLocaleString()}</div>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="12000"
+                          step="50"
+                          value={calculatorAmount}
+                          onChange={(e) => { setCalculatorAmount(parseInt(e.target.value)); setShowSmartSuggestion(false) }}
+                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                          style={{
+                            background: `linear-gradient(to right, #22c55e 0%, #22c55e ${pct}%, rgba(255,255,255,0.2) ${pct}%, rgba(255,255,255,0.2) 100%)`
+                          }}
+                        />
+                        <style>{`
+                          @keyframes thumbPulse {
+                            0%, 100% { filter: drop-shadow(0 0 2px rgba(249,115,22,0.5)); transform: scale(1); }
+                            50% { filter: drop-shadow(0 0 9px rgba(249,115,22,0.95)); transform: scale(1.6); }
+                          }
+                          .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 20px; background: #f97316; clip-path: polygon(0 0, 100% 50%, 0 100%); cursor: pointer; animation: thumbPulse 1.6s ease-in-out infinite; }
+                          .slider:hover::-webkit-slider-thumb, .slider:active::-webkit-slider-thumb { animation: none; filter: drop-shadow(0 0 4px rgba(249,115,22,0.7)); }
+                          .slider::-moz-range-thumb { width: 16px; height: 20px; background: #f97316; border: none; clip-path: polygon(0 0, 100% 50%, 0 100%); cursor: pointer; animation: thumbPulse 1.6s ease-in-out infinite; }
+                          .slider:hover::-moz-range-thumb, .slider:active::-moz-range-thumb { animation: none; filter: drop-shadow(0 0 4px rgba(249,115,22,0.7)); }
+                        `}</style>
+                        <div className="flex justify-between text-white/50 text-xs mt-1">
+                          <span>$0</span>
+                          <span>$12,000+</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Where & How We Help — dynamic: pillars fill in based on your giving PER girl */}
+                    <div className="mt-2">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1 h-6 bg-gradient-to-b from-orange-400 to-orange-600 rounded-full"></div>
+                          <h3 className="text-lg sm:text-xl font-bold text-white">Where &amp; How We Help</h3>
+                        </div>
+                      </div>
+                      <p className="text-white/60 text-sm mb-4">A multi-pronged approach so girls stay in school and families never feel they must marry them off early — working alongside families and communities <span className="text-white/80">across South Asia</span>. {perGirl > 0 && <>At your current level, each girl you support receives:</>}</p>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-white/80 text-sm font-semibold">Cost to support one girl</span>
+                        <span className="text-white/50 text-xs">per girl · <span className="text-green-400 font-semibold">$100/mo</span> · <span className="text-green-400 font-semibold">$1,200/yr</span> full support</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {PILLARS.map(p => {
+                          const covered = perGirl >= p.cum
+                          return (
+                            <div key={p.title} className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${covered ? 'bg-green-500/10 border-green-400/30' : 'bg-white/5 border-white/10'}`}>
+                              <span className={`text-3xl ${covered ? '' : 'grayscale opacity-40'}`}>{p.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`text-sm font-semibold ${covered ? 'text-white' : 'text-white/50'}`}>{p.title}</span>
+                                  {covered && <span className="text-green-400 text-xs">✓</span>}
+                                </div>
+                                <div className={`text-xs mt-0.5 ${covered ? 'text-white/70' : 'text-white/40'}`}>{p.line}</div>
+                                <div className={`text-xs font-bold mt-1.5 ${covered ? 'text-green-400' : 'text-white/50'}`}>${p.mo}/mo <span className="font-normal text-white/40">·</span> ${p.cost}/yr</div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <a href="/what-we-do" className="inline-block mt-4 text-orange-300 hover:text-orange-200 text-sm font-medium transition-colors">Learn more about our work →</a>
+                    </div>
+                  </>
+                )
+              })()}
+
+              {/* Make a Lasting Impact — one-time big-impact giving options */}
               <>
                 {/* Elegant Divider */}
                 <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                
-                {/* Continue Your Impact Section */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <div className="w-1 h-5 bg-gradient-to-b from-emerald-400 to-green-600 rounded-full"></div>
-                    <h3 className="text-lg font-semibold text-white">Continue Your Impact</h3>
-                  </div>
 
-                  {/* Message from the Field */}
-                  <div className="bg-gradient-to-r from-orange-500/10 to-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-lg p-4 mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-orange-400">💌</span>
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-purple-400 to-pink-600 rounded-full"></div>
+                    <h3 className="text-lg sm:text-xl font-bold text-white">Make a Lasting Impact</h3>
+                  </div>
+                  <p className="text-white/60 text-sm mb-5">A single gift can change a girl&apos;s entire future. Choose the legacy you&apos;d like to leave.</p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { amount: 1200, emoji: '🌸', title: 'Support a Girl for a Year', desc: 'A full year of school, meals, transport, and support for one girl.' },
+                      { amount: 6000, emoji: '🌱', title: 'Fund Complete Elementary', desc: 'Five years of education, ages 5 to 10. A foundation for life.' },
+                      { amount: 12000, emoji: '🎓', title: 'Life-Changing Champion', desc: 'A girl\u2019s entire education, ages 5 to 14. A life completely transformed.' },
+                    ].map(goal => (
+                      <div key={goal.amount} className="bg-gradient-to-br from-purple-500/15 to-pink-500/10 border border-purple-400/25 rounded-xl p-5 flex flex-col hover:-translate-y-0.5 transition-all">
+                        <div className="text-5xl mb-3">{goal.emoji}</div>
+                        <h4 className="text-white font-bold text-base mb-1">{goal.title}</h4>
+                        <p className="text-white/60 text-xs mb-4 flex-1">{goal.desc}</p>
+                        <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 mb-3">${goal.amount.toLocaleString()}</div>
+                        <button
+                          onClick={() => onDonateClick(goal.amount)}
+                          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2.5 rounded-lg font-semibold text-sm transition-all active:scale-95"
+                        >
+                          Give ${goal.amount.toLocaleString()}
+                        </button>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-white font-medium mb-1">A Message from the Field</h3>
-                        <p className="text-white/80 text-sm italic">
-                          "Every donation brings hope to girls like me. Thank you for caring about our education and future!"
-                        </p>
-                        <p className="text-orange-400 text-xs mt-1">- From all the girls at Far Too Young</p>
+                    ))}
+                  </div>
+                </div>
+              </>
+
+
+              {/* A Message from the Field — rotates each time the dashboard opens */}
+              <>
+                {/* Elegant Divider */}
+                <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+                {(() => {
+                  const FIELD_MESSAGES = [
+                    'Because someone believed in me, I get to sit in a classroom instead of a wedding hall.',
+                    'I used to walk two hours to school. Now I have a way to get there, and a reason to keep going.',
+                    'My parents wanted to marry me at fourteen. My teacher and this program helped them see another future for me.',
+                    'I want to be a nurse one day. For the first time, that dream feels possible.',
+                    'When I wear my uniform, I feel like I belong. Thank you for giving me that.',
+                    'My little sister sees me studying and now she wants to stay in school too.',
+                    'The meals at school mean I can focus on my lessons instead of my hunger.',
+                    'I was so close to being pulled out of school. Someone far away made sure I stayed.',
+                    'I am the first girl in my family to reach secondary school. I will not be the last.',
+                    'Every book you helped me get is a door you opened for me.',
+                    'My father used to say school was not for girls. Now he walks me to the gate.',
+                    'I passed my exams this year. I cried, because I never thought I would get the chance.',
+                    'Thank you for seeing girls like me, even from so far away.',
+                    'I want to become a teacher so other girls can have what I was given.',
+                    'The counsellor told me my voice matters. No one had ever said that to me.',
+                    'I am still a child, and because of you, I get to stay one a little longer.',
+                    'My friends who left school are already married. I am still dreaming.',
+                    'With my uniform and my books, I feel ready to face anything.',
+                    'I learned that I have rights. That knowledge changed everything for me.',
+                    'My mother says I am her hope now. I carry that proudly.',
+                    'School is the safest place I know. Thank you for keeping me here.',
+                    'I used to be afraid of my future. Now I am curious about it.',
+                    'Someone paid for my fees this year. I promise to make it count.',
+                    'I want to study science. My teacher says I have a gift for it.',
+                    'When the floods came, I thought school was over for me. It was not.',
+                    'I stand a little taller now, knowing people believe in girls like me.',
+                    'My grandmother was married at twelve. I am thirteen, and I am in school.',
+                    'The transport you provide means my parents no longer worry about my safety.',
+                    'I read to the younger children now. They look up to me.',
+                    'I did not know a girl could lead. Now I lead my study group.',
+                    'Every day in school is a day I am not someone\u2019s bride.',
+                    'Thank you for believing my education is worth it. I believe it too now.',
+                    'I want to go to university. I say it out loud now, without fear.',
+                    'My name means hope. For the first time, it feels true.',
+                    'I was ready to give up. The support I received told me not to.',
+                    'I help my mother in the evenings and study by lamplight. I will not waste this chance.',
+                    'The empowerment classes taught me to say no, and to dream yes.',
+                    'I am learning English. One day I want to tell my own story to the world.',
+                    'My village is proud of me now. That felt impossible a year ago.',
+                    'You gave me more than school. You gave me a future I can choose.',
+                    'I want to be a doctor and come back to help my community.',
+                    'The welfare visits kept my family strong enough to keep me in class.',
+                    'I used to think marriage was my only path. Now I see many.',
+                    'My teacher believed in me before I believed in myself.',
+                    'I finished the year at the top of my class. I am just getting started.',
+                    'For every girl still waiting, I study harder, so she knows it is possible.',
+                    'Thank you, from a girl who gets to be a girl.',
+                    'I am safe, I am learning, and I am dreaming. All because someone cared.',
+                    'My future used to belong to others. Now it belongs to me.',
+                    'When I grow up, I will give to a girl the way someone gave to me.',
+                  ]
+                  const msg = FIELD_MESSAGES[fieldMessageIndex % FIELD_MESSAGES.length]
+                  const FIELD_NAMES = [
+                    { n: 'Aisha', c: 'Bangladesh' }, { n: 'Priya', c: 'India' }, { n: 'Anjali', c: 'Nepal' },
+                    { n: 'Fatima', c: 'Bangladesh' }, { n: 'Meena', c: 'India' }, { n: 'Sunita', c: 'Nepal' },
+                    { n: 'Lakshmi', c: 'India' }, { n: 'Nabila', c: 'Bangladesh' }, { n: 'Rina', c: 'Nepal' },
+                    { n: 'Kavya', c: 'India' }, { n: 'Sita', c: 'Nepal' }, { n: 'Zara', c: 'Bangladesh' },
+                    { n: 'Deepa', c: 'India' }, { n: 'Nasrin', c: 'Bangladesh' }, { n: 'Pooja', c: 'Nepal' },
+                    { n: 'Ritu', c: 'India' }, { n: 'Sabina', c: 'Nepal' }, { n: 'Tahmina', c: 'Bangladesh' },
+                    { n: 'Uma', c: 'India' }, { n: 'Yasmin', c: 'Bangladesh' }, { n: 'Asha', c: 'Nepal' },
+                    { n: 'Bina', c: 'Nepal' }, { n: 'Chandni', c: 'India' }, { n: 'Divya', c: 'India' },
+                    { n: 'Gita', c: 'Nepal' }, { n: 'Hasina', c: 'Bangladesh' }, { n: 'Indira', c: 'India' },
+                    { n: 'Jaya', c: 'India' }, { n: 'Kiran', c: 'Nepal' }, { n: 'Lata', c: 'India' },
+                    { n: 'Mira', c: 'Nepal' }, { n: 'Nita', c: 'India' }, { n: 'Parvati', c: 'Nepal' },
+                    { n: 'Rani', c: 'India' }, { n: 'Shanti', c: 'Nepal' }, { n: 'Taslima', c: 'Bangladesh' },
+                    { n: 'Usha', c: 'India' }, { n: 'Vidya', c: 'India' }, { n: 'Sara', c: 'Bangladesh' },
+                    { n: 'Amina', c: 'Bangladesh' }, { n: 'Laxmi', c: 'Nepal' }, { n: 'Rekha', c: 'India' },
+                    { n: 'Shabnam', c: 'Bangladesh' }, { n: 'Sarita', c: 'Nepal' }, { n: 'Neha', c: 'India' },
+                    { n: 'Rupa', c: 'Nepal' }, { n: 'Monira', c: 'Bangladesh' }, { n: 'Komal', c: 'India' },
+                    { n: 'Devi', c: 'Nepal' }, { n: 'Ruksana', c: 'Bangladesh' },
+                  ]
+                  const person = FIELD_NAMES[fieldMessageIndex % FIELD_NAMES.length]
+                  return (
+                    <div className="bg-gradient-to-r from-orange-500/10 to-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-lg p-6 overflow-hidden">
+                      <div
+                        className="flex items-center space-x-4"
+                        style={{
+                          transition: 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out',
+                          opacity: fieldVisible ? 1 : 0,
+                          transform: fieldVisible ? 'translateY(0)' : 'translateY(-12px)'
+                        }}
+                      >
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-orange-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-orange-400 text-3xl sm:text-4xl">💌</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-white font-semibold mb-1.5">A Message from the Field</h3>
+                          <p className="text-white/85 text-sm sm:text-base italic leading-relaxed">&ldquo;{msg}&rdquo;</p>
+                          <p className="text-orange-400 text-xs mt-2">{person.n}, {person.c}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  <button
-                    onClick={() => onDonateClick()}
-                    className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white py-3 px-4 rounded-lg transition-all duration-300 text-sm font-medium"
-                  >
-                    🎯 Make Another Donation
-                  </button>
-                  <button className="bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium border border-white/20">
-                    📚 Read Success Stories
-                  </button>
-                  <button className="bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-colors text-sm font-medium border border-white/20">
-                    📢 Share Our Mission
-                  </button>
-                </div>
-                </div>
+                  )
+                })()}
               </>
             </div>
           )}
@@ -1013,47 +1026,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
           {/* Donations Tab */}
           {activeTab === 'donations' && (
             <div className="space-y-6 lg:space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                <div className="bg-gradient-to-br from-blue-500/5 to-white/5 rounded-lg p-6 border border-blue-400/10 hover:from-blue-500/10 hover:to-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white/80 text-sm font-medium">Total Donations</h3>
-                    <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-white">{userStats.totalDonations}</p>
-                  <p className="text-white/60 text-sm mt-1">donations made</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-blue-500/5 to-white/5 rounded-lg p-6 border border-blue-400/10 hover:from-blue-500/10 hover:to-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white/80 text-sm font-medium">Lifetime Total</h3>
-                    <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-white">${userStats.lifetimeTotal.toLocaleString()}</p>
-                  <p className="text-white/60 text-sm mt-1">total contributed</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-blue-500/5 to-white/5 rounded-lg p-6 border border-blue-400/10 hover:from-blue-500/10 hover:to-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white/80 text-sm font-medium">Average Donation</h3>
-                    <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-white">${userStats.averageDonation}</p>
-                  <p className="text-white/60 text-sm mt-1">per donation</p>
-                </div>
-              </div>
-
               {/* Donation History & Subscriptions - Two Column Layout */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
                 {/* Left Column - Donation History */}
@@ -1103,7 +1075,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           background: rgba(249, 115, 22, 0.8);
                         }
                       `}</style>
-                      {userDonations.slice(0, 20).map((donation, index) => (
+                      {userDonations.slice(0, 20).map((donation) => (
                         <div key={donation.id} className={`flex items-center justify-between py-2 px-3 rounded-md border hover:bg-white/10 transition-all ${
                           donation.type === 'monthly'
                             ? 'bg-white/5 border-green-400/30' 

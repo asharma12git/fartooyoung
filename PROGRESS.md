@@ -4,15 +4,15 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 45 - EIN Correction + Email Bug Fixes  
-**Last Updated:** August 27, 2026, 4:00 PM EST  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete
+**Current Phase:** Phase 46 - Donation Duplicate Fix + Donor Dashboard UX Overhaul  
+**Last Updated:** October 2, 2026  
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete | ✅ Donation Duplicate Bug Fixed | ✅ Dashboard Redesigned
 
 ### **What's Working (Production Ready)**
 
 ✅ **Live Production System**
 - **Website**: https://www.fartooyoung.org (LIVE and operational)
-- **API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com (28 Lambda functions)
+- **API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com (27 Lambda functions)
 - **Database**: 6 DynamoDB tables (users, donations, rate-limits, blog-posts, research-articles, tiers)
 - **CDN**: CloudFront distribution E2PHSH4ED2AIN5 (global distribution)
 - **SSL**: Valid certificates for www.fartooyoung.org and fartooyoung.org
@@ -146,7 +146,53 @@
 
 ## 📅 PROGRESS BY DAY
 
-### **August 27, 2026 - EIN Correction + Email Bug Fixes**
+### **October 2, 2026 - Donation Duplicate Fix + Donor Dashboard UX Overhaul**
+
+#### **Phase 46A: Duplicate Donation Record Bug (CRITICAL) — FIXED & DEPLOYED TO PROD** ✅
+
+**The bug (reported by owner):** A recurring $500 monthly donation showed as TWO rows in the donor dashboard (one "one-time" + one "recurring") for a single payment. Investigation (code + live prod data) confirmed it affected multiple donors.
+
+**Root cause:** On a monthly **renewal**, Stripe fires both `invoice.payment_succeeded` (the correct record) AND `payment_intent.succeeded` for the same underlying payment. `webhook.js` recorded BOTH — the second as a stray "one-time" row (the renewal PaymentIntent carries no `donation_type` metadata, so it fell through to the `|| 'one-time'` default). Stripe charged once; only the DynamoDB record was duplicated. Began ~late Aug 2026.
+
+**Fix (backend/lambda/stripe/webhook.js):**
+- Added guard in `payment_intent.succeeded`: skip when `paymentIntent.invoice` is set (renewal already recorded by invoice handler). Commit `df221f0`.
+- Added the SAME guard to `payment_intent.processing` (bank/ACH renewals) to prevent a duplicate pending row for future bank subscriptions. Commit `9fafa0c`.
+- Guards are payment-method-agnostic (card, Apple/Google Pay, bank). One-time donations and the initial subscription-setup charge have no invoice, so they're unaffected.
+
+**Verification:** Deployed to staging first; replayed the exact event pair via Stripe CLI test clock + a real card subscription renewal — confirmed the guard fires (`Skipping payment_intent for subscription invoice`) and exactly ONE row is written per renewal. Confirmed deployed artifact contains both guards. Then deployed to **production** (both guards verified live in prod artifact).
+
+**Data cleanup (prod donations table):** Identified 6 confirmed duplicate stray `one-time` rows (paired with legitimate `invoice_` renewal rows, same email+amount+day) for avinashsharma.np@gmail.com and ashutosh (both emails). Backed up the full prod donations table to `backup/prod-donations-2026-10-02-prededup.json`, then deleted exactly those 6 rows (72 → 66 records). Verified paired `invoice_` rows remain intact.
+- **DEFERRED:** 12 legacy `pi_pi_` double-prefix rows in prod remain — a mix of real single donations (malformed id) and likely-older duplicates (unknown email). Needs per-row Stripe cross-reference before any action. NOT touched.
+
+#### **Phase 46B: Donor Dashboard UX Overhaul + Donation Flow Fix — DEPLOYED TO PROD** ✅
+
+Large frontend redesign of `src/pages/DonorDashboard.jsx` + `src/components/DonationModal.jsx`. Deployed staging → prod (commits `d5df615`, `2666634`, `a14b98b`, `327f533`).
+
+**Dashboard tab redesign:**
+- Hero greeting: first-name only, rotates each time the dashboard opens (was stuck per-login via loginTimestamp).
+- Smart Suggestion: rewritten with a **milestone ladder** (goal auto-advances), 10 rotating warm name-personalized messages with escalating enthusiasm, split rectangular Donate/decline button ("I'll help another day").
+- "Your Yearly Impact" cards (renamed from "Your Impact Journey"): moved to top of dashboard tab, responsive wrapping grid (was horizontal scroll — fixed alignment), 3-color cycle (green/blue/purple), **current calendar year highlighted orange** (dynamic), short underline accent, personal footer messages, Total Given as larger right-aligned green value, "Show earlier years" toggle (default shows latest 3).
+- Removed redundant/fake sections: "Impact Insights" (contained fabricated donor-rank), duplicate stat cards, "This Month's Impact" block, dead Quick Action buttons, Donations-tab stat cards (duplicated hero).
+- New **Annual Impact Calculator** ("Your Impact This Year"): slider $0–$12,000 (= 10 girls at $1,200/girl), starts at this year's total (resets yearly), girl-icon SVG visual (green = fully supported, orange = in-progress with %), orange pulsing triangle slider thumb. Dynamic "Where & How We Help" pillars that light up by per-girl spend, each showing per-month/per-year cost. Icons: 📚🍛🛺🏠💬✊🏽.
+- New **"Make a Lasting Impact"** section (purple/pink): one-time tiers 🌸 $1,200 / 🌱 $6,000 / 🎓 $12,000 with Donate buttons.
+- **"A Message from the Field"**: 50 illustrative messages + 50 name/country pairs (Nepal/Bangladesh/India), auto-rotates every 60s with a slow crossfade.
+- Full name + initials avatar ("AS") in the frozen top bar (orange, hidden on <640px to avoid crowding Admin button).
+
+**Donation flow fix (global, DonationModal.jsx):** Previously a preset amount skipped straight to the card page. Now ALL entry points flow consistently: Monthly Giving popup → amount/type selection (step 1) → card (step 2). Preset amount pre-fills step 1 (routes non-preset values into the Custom Amount field). Fixed the calculator "Give $X More" button to donate the correct delta (was donating the full slider value — e.g. "$16 More" was charging $9,700).
+
+**Per-girl cost model (peer-benchmarked PLACEHOLDERS — pending real FTY numbers):**
+School fees & essentials $25/mo·$300/yr, Daily meals $15/mo·$180/yr, Transport $15/$180, Family welfare $20/$240, Counselling $12/$144, Empowerment $13/$156 → **$100/mo · $1,200/yr full support**.
+
+**Testing:** Staging DynamoDB donations + rate-limits cleared for a fresh slate (users/blog/research/tiers kept). Verified end-to-end on staging: $150 one-time, $600 monthly (subscription created), and scheduled cancellation — all recorded correctly, no duplicates, receipt emails sent.
+
+**⚠️ Open follow-ups:**
+- Per-girl costs and "Message from the Field" quotes/names are **illustrative placeholders** — replace with real figures/testimonials.
+- 12 legacy `pi_pi_` prod donation rows still need review/cleanup.
+- `tiers` DynamoDB table exists live but is NOT defined in `template.yaml` (created out-of-band) — consider bringing under IaC.
+- `handle-bounces.js` exists but is unwired (not in template.yaml, not deployed) — dead code.
+- Note: actual Lambda function count is **27** (template.yaml + live), not 28 as some older docs state.
+
+---
 
 **CRITICAL FIX — Incorrect EIN in email receipts:**
 - The donation receipt, welcome, and subscription-cancelled email templates contained EIN `93-3769961` — an AI-generated placeholder that was never a real number (mistake: should have asked for the real EIN or used a clear `[EIN]` marker instead of inventing one)

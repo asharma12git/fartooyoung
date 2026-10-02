@@ -1,9 +1,9 @@
 # Far Too Young - Backend Design
 
 ## Overview
-Complete production backend architecture for Far Too Young platform using 28 AWS Lambda functions, integrated with Stripe payments, email verification, donation management, admin panel, and AI blog generation.
+Complete production backend architecture for Far Too Young platform using 27 AWS Lambda functions, integrated with Stripe payments, email verification, donation management, admin panel, and AI blog generation.
 
-**Status:** ✅ Production LIVE | ✅ 28 Functions Deployed | ✅ Real Payments Active
+**Status:** ✅ Production LIVE | ✅ 27 Functions Deployed | ✅ Real Payments Active
 
 ---
 
@@ -416,5 +416,5 @@ React (CloudFront) → API Gateway → Lambda Functions → DynamoDB
 ---
 
 **Last Updated:** August 19, 2026  
-**Production Status:** ✅ 28 Functions LIVE  
+**Production Status:** ✅ 27 Functions LIVE  
 **Payment Status:** ✅ Real Stripe Processing Active (inline payments, webhook-based subscriptions)

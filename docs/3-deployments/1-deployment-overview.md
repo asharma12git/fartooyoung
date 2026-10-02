@@ -112,7 +112,7 @@ sam deploy --config-env production  # Deploy all AWS resources to production
 - `fartooyoung-production-tiers` - Donation tier definitions
 
 **⚡ Backend Functions (Lambda):**
-- 20 Lambda functions (LoginFunction, RegisterFunction, CreateCheckoutSessionFunction, AdminResearchFunction, etc.)
+- 27 Lambda functions (LoginFunction, RegisterFunction, CreateCheckoutSessionFunction, AdminResearchFunction, etc.)
 - Complete authentication system (login, register, password reset)
 - Donation processing with Stripe integration
 - Email verification system
@@ -201,7 +201,7 @@ RateLimitsTable:     # IP tracking, auto-expires via TTL
 
 ### **⚡ API LAYER** 
 ```yaml
-# 20 Lambda Functions in template.yaml:
+# 27 Lambda Functions in template.yaml:
 Auth Functions:      LoginFunction, RegisterFunction, LogoutFunction
 Donation Functions:  CreateDonationFunction, GetDonationsFunction  
 Stripe Functions:    CreateCheckoutSessionFunction, StripeWebhookFunction
@@ -312,7 +312,7 @@ git push origin main
 
 **Live System:**
 - **🌐 Website:** https://www.fartooyoung.org (Global CDN)
-- **⚡ API:** Serverless backend with 20 Lambda functions
+- **⚡ API:** Serverless backend with 27 Lambda functions
 - **🗄️ Database:** 3 DynamoDB tables with auto-scaling
 - **💳 Payments:** Live Stripe processing operational
 - **📧 Emails:** SES verification and notification system

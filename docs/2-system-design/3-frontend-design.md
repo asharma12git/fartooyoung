@@ -4,7 +4,7 @@
 **PRODUCTION STATUS: ✅ LIVE** - Frontend architecture for Far Too Young platform at https://www.fartooyoung.org
 
 **Current Implementation**: React app with authentication, donations, admin panel, and responsive design deployed via CloudFront CDN  
-**Backend Integration**: Connected to 28 Lambda functions via API Gateway at https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
+**Backend Integration**: Connected to 27 Lambda functions via API Gateway at https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 
 ---
 
@@ -54,7 +54,7 @@
                                         │ API Calls (HTTPS)
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                    API GATEWAY (0o7onj0dr7) + 28 LAMBDA FUNCTIONS              │
+│                    API GATEWAY (0o7onj0dr7) + 27 LAMBDA FUNCTIONS              │
 │              https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com            │
 │─────────────────────────────────────────────────────────────────────────────────│
 │  POST /auth/login          │  POST /auth/register     │  POST /auth/logout      │
@@ -484,7 +484,7 @@ const futureUserState = {
 - **Responsive Design**: Mobile-first with Tailwind CSS
 
 **🔗 LIVE INTEGRATIONS**:
-- **API Gateway**: 28 Lambda functions via https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
+- **API Gateway**: 27 Lambda functions via https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
 - **Stripe Payments**: Live donation processing
 - **Email Verification**: SES integration for user accounts
 - **Rate Limiting**: DynamoDB-based API protection

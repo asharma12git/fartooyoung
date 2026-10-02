@@ -94,7 +94,7 @@ parameter_overrides = [
 ### 2. template.yaml
 
 Defines all AWS resources using CloudFormation syntax:
-- 20 Lambda functions
+- 27 Lambda functions
 - API Gateway with CORS (GET, POST, PUT, DELETE, OPTIONS)
 - 6 DynamoDB tables
 - IAM policies for each function
@@ -314,7 +314,7 @@ git push origin main  # Triggers automatic deployment (if backend/ changed)
    sam build                                              # Package Lambda functions
    sam deploy --config-env production --no-confirm-changeset --no-fail-on-empty-changeset
    ```
-4. All 17 Lambda functions updated automatically (~2-3 min total)
+4. All 27 Lambda functions updated automatically (~2-3 min total)
 5. Zero downtime deployment
 
 ### Manual Override (Emergency)
@@ -359,7 +359,7 @@ sam build && sam deploy --config-env production
 
 ## Resources Created
 
-### Lambda Functions (17 total)
+### Lambda Functions (27 total)
 - **Auth**: Login, Register, Logout, ForgotPassword, ResetPassword, UpdateProfile, ChangePassword, VerifyEmail, ResendVerification
 - **Donations**: CreateDonation, GetDonations
 - **Stripe**: CreateCheckoutSession, CreatePaymentIntent, CreatePortalSession, ListSubscriptions, StripeWebhook

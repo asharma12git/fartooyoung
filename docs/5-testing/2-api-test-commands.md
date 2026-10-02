@@ -5,7 +5,7 @@
 ### **🟢 PRODUCTION STACK: fartooyoung-production** ✅ LIVE
 - **Website**: https://www.fartooyoung.org
 - **API Gateway**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
-- **28 Lambda Functions**: Complete auth, donation, Stripe, blog, and AI content system
+- **27 Lambda Functions**: Complete auth, donation, Stripe, blog, and AI content system
 - **6 DynamoDB Tables**: Users, donations, rate-limits, research-articles, blog-posts, tiers
 - **CloudFront CDN**: E2PHSH4ED2AIN5 (global distribution)
 - **S3 Frontend**: fartooyoung-prod-frontend
@@ -863,7 +863,7 @@ cat /tmp/blog-generator-output.json
 ## 🚀 **PRODUCTION STATUS SUMMARY**
 
 **✅ LIVE API**: https://0o7onj0dr7.execute-api.us-east-1.amazonaws.com
-- **28 Lambda Functions**: All endpoints operational
+- **27 Lambda Functions**: All endpoints operational
 - **6 DynamoDB Tables**: Users, donations, rate-limits, research-articles, blog-posts, tiers
 - **3 EventBridge Rules**: Research weekly, blog Monday, blog Friday
 - **Live Stripe Integration**: Processing real payments

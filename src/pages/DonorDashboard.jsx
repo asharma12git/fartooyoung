@@ -853,8 +853,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                           <h3 className="text-lg sm:text-xl font-bold text-white">Where &amp; How We Help</h3>
                         </div>
                       </div>
-                      <p className="text-white/60 text-sm mb-3">A multi-pronged approach so girls stay in school and families never feel they must marry them off early — working alongside families and communities <span className="text-white/80">across South Asia</span>.</p>
-                      {perGirl > 0 && <p className="text-white/70 text-sm mb-4">At your current level, each girl you support receives:</p>}
+                      <p className="text-white/60 text-sm mb-4">A multi-pronged approach so girls stay in school and families never feel they must marry them off early — working alongside families and communities <span className="text-white/80">across South Asia</span>.</p>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-white/80 text-sm font-semibold">Cost to support one girl</span>
                         <span className="text-white/50 text-xs">per girl · <span className="text-green-400 font-semibold">$100/mo</span> · <span className="text-green-400 font-semibold">$1,200/yr</span> full support</span>

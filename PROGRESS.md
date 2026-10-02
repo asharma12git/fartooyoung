@@ -4,9 +4,9 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 46 - Donation Duplicate Fix + Donor Dashboard UX Overhaul  
+**Current Phase:** Phase 47 - Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix  
 **Last Updated:** October 2, 2026  
-**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete | ✅ Donation Duplicate Bug Fixed | ✅ Dashboard Redesigned
+**Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active (FIXED) | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete | ✅ Donation Duplicate Bug Fixed | ✅ Dashboard Redesigned
 
 ### **What's Working (Production Ready)**
 
@@ -121,6 +121,20 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
+- Phase 47: Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix (Oct 2) — DEPLOYED TO PROD + STAGING
+- **Blog generator was silently producing nothing since Sep 11** — root-caused and fixed (use_count ordering, full-list walk, smarter relevance, unique titles). Prod verified generating again; owner published first new post ("Myanmar's Imprisoned Girls").
+- **Research fetcher sources repaired**: added UNFPA (on-mission, working), removed dead UNICEF (404) + empty Population Council feeds, added dead-feed logging.
+- **ReliefWeb API v2 integration pre-built but DORMANT** (gated by `RELIEFWEB_APPNAME` CFN param, default empty). Owner submitted the appname request (approval within ~2 business days).
+- **Impact slider fix**: dashboard slider now starts at exact this-year total (matched the yearly card; was snapping $2,665 → $2,650).
+- **NEXT STEPS (continue later):**
+  1. When ReliefWeb approval email arrives → set `RELIEFWEB_APPNAME` on a prod deploy + test (recovers UNICEF/Save the Children/Plan via aggregation).
+  2. Owner plans to let generator run on schedule through October (already 4 Oct articles) and resume publishing in November; optional "draft queue review" then.
+  3. Replace placeholder per-girl costs + "Message from the Field" quotes/names in DonorDashboard with real FTY data.
+  4. Review/clean 12 legacy `pi_pi_` double-prefix duplicate rows in PROD donations (needs per-row Stripe cross-reference).
+  5. Deeper doc drift: `docs/2-system-design/5-database-design.md` (PKs, add `use_count` to research schema, `slug-index` GSI) + `4-backend-design.md` (blog endpoints).
+  6. `tiers` table live but not in template.yaml (consider IaC); `handle-bounces.js` is dead code.
+
+- Phase 46: Donation Duplicate Fix + Donor Dashboard UX Overhaul (Oct 2) — DEPLOYED TO PROD + STAGING
 - Phase 45: EIN Correction + Email Bug Fixes (Aug 27) — DEPLOYED TO PROD + STAGING
 - **CRITICAL: EIN corrected** in email templates — was placeholder `93-3769961` (AI-invented, wrong), corrected to actual `87-3583633` in all 3 email tax footers (donation receipt, welcome, subscription cancelled)
 - **verify-email fix**: syntax error from v2→v3 SES migration (leftover `.promise()`), converted to `@aws-sdk/client-ses`
@@ -145,6 +159,52 @@
 ---
 
 ## 📅 PROGRESS BY DAY
+
+### **October 2, 2026 (Session 2) - Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix**
+
+#### **Phase 47A: Blog Generator Silent Failure (no new posts since Sep 11) — ROOT-CAUSED & FIXED, DEPLOYED TO PROD** ✅
+
+**The problem (reported by owner):** No new blog/research articles appeared on the site since Sep 11, 2026. The `BlogGeneratorFunction` cron (Mon + Fri 11am UTC) was firing but producing nothing, with no error logged.
+
+**Root cause (confirmed by live prod invoke returning `{"success":false,"message":"No relevant articles found to generate from"}`):** NOT starvation and NOT an error. A selection-ordering bug:
+- Generator sorted approved articles newest-first, filtered out already-used URLs, then tried ONLY the 5 newest unused (`.slice(0, 5)`).
+- The newest unused approved articles were recent broad human-rights pieces (Myanmar prisoners, South Africa, Afghan rights workers) that Claude correctly `{skip:true}`'d as not specifically child marriage.
+- The genuinely on-topic unused articles had older `published_at`, so they sat past position 5 and were never tried. Every run hit the same 5 off-topic articles → 5 skips → silent exit.
+
+**Fix (backend/lambda/blog/blog-generator.js + admin-research.js), commit `b8dba92`:**
+- Replaced permanent URL-exclusion with a **`use_count`** counter on approved articles (0 = never used, +1 per real generation; skips do NOT increment).
+- Sort approved by `use_count` asc, then `published_at` desc. Walk the FULL list (removed `.slice(0,5)`), skip Bedrock `{skip:true}`, stop at first success. Never runs dry; reuses oldest-used articles once all have been used.
+- **Smarter middle-ground relevance prompt**: repurpose genuinely-linked GBV/education/crisis/displacement/poverty/reproductive-health articles with child marriage as the lens; honesty guardrails (no fabricated stats, don't claim the source is about child marriage); skip only truly unrelated.
+- **Unique titles enforced**: prior post titles passed into the prompt + angle rotation on reuse + code-level title/slug dedupe (protects `slug-index` GSI routing).
+- `use_count=0` initialized on approval (admin-research POST add + PUT→approved via `if_not_exists`).
+- Added logging on both success and no-article exit paths.
+- Blog posts still saved as `draft`; admin publishes manually (human gate intact).
+
+**Validation:** Full cycle tested on staging (success create, next-article advance, forced-reuse unique title + different angle, skip path with "after N skip(s)" logging, counter semantics). Then deployed to prod, ran one-time prod `use_count` backfill (43 approved: 13 already-used→1, 30 unused→0; pending left untouched; backup at `backup/prod-research-2026-10-02-pre-usecount.json`), invoked prod generator → created draft "Myanmar's Imprisoned Girls: When the Junta Steals Girlhood". **Owner reviewed and published it** (live at `/blog/myanmar-s-imprisoned-girls-when-the-junta-steals-girlhood`, HTTP 200, in sitemap).
+
+#### **Phase 47B: Research Fetcher Sources Repaired + ReliefWeb (dormant) — DEPLOYED TO PROD** ✅
+
+**Findings (verified by probing each feed):** Of the 5 existing RSS sources, 2 were dead weight — **UNICEF feed = 404** (UNICEF no longer publishes public RSS; verified no alternate path/autodiscovery) and **Population Council feed = 0 items**. Both failed silently. Only UN News (women) + HRW were effectively feeding the pipeline, both broad, explaining the off-topic skew.
+
+**Changes (backend/lambda/blog/research-fetcher.js + template.yaml), commit `3cc9e07`:**
+- **Added UNFPA** (`https://www.unfpa.org/rss.xml`) — verified working, Tier 1 UN, on-mission (immediately pulled "Pregnancy, poverty and the weight of hunger for child brides in Yemen").
+- **Removed** dead UNICEF + empty Population Council feeds.
+- Added **dead-feed logging** (0-item / fetch-fail) so silent failures surface.
+- Added shared `saveArticle` helper (RSS + ReliefWeb consistency).
+- **ReliefWeb API v2 integration — DORMANT** until `RELIEFWEB_APPNAME` env is set. Gated by new CFN param `ReliefWebAppname` (default empty, verified deployed as `""`). ReliefWeb is a UN OCHA service (CC-BY 4.0) aggregating UNICEF/UNFPA/Save the Children/Plan/IRC — recovers the dead sources once enabled.
+- **Owner submitted the ReliefWeb appname request** (official form; approval within ~2 business days). Email `@fartooyoung.org` required; purpose written in warm mission-aligned language.
+
+**Validation:** Fetcher tested on staging AND prod — `fetched=4, new=2, skipped=2, errors=[]`, ReliefWeb logs dormant-skip, UNFPA delivering child-marriage content.
+
+#### **Phase 47C: Impact Slider / Yearly Card Mismatch — FIXED, DEPLOYED TO PROD** ✅
+
+**Bug (owner noticed):** 2026 yearly card showed $2,665 but the Impact slider started at $2,650.
+**Root cause:** both compute the same this-year sum, but the slider snapped the initial value to the nearest $50 (`Math.round(yearTotal / 50) * 50`) while the card showed the exact figure.
+**Fix (src/pages/DonorDashboard.jsx), commit `8add428`:** initialize the slider at the exact this-year total (clamped to range); slider still steps by $50 on drag. Deployed to prod (frontend pipeline Succeeded).
+
+**End state:** `main = staging = 8add428`, all 4 prod pipelines green, live site healthy. ReliefWeb enablement is the only open follow-up (waiting on approval email).
+
+---
 
 ### **October 2, 2026 - Donation Duplicate Fix + Donor Dashboard UX Overhaul**
 

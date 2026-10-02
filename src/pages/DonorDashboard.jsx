@@ -499,7 +499,6 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 // Ring fills from the previous rung to the next, so it RESETS each level
                 const span = goalGirls - prevMilestone
                 const progressPercent = Math.min(Math.max(((girlsEducatedSoFar - prevMilestone) / span) * 100, 0), 100)
-                const girlsToGo = Math.max(goalGirls - girlsEducatedSoFar, 0)
 
                 // Did they just land exactly on a milestone? (celebrate + show next)
                 const justReached = girlsEducatedSoFar > 0 && (MILESTONES.includes(girlsEducatedSoFar) || girlsEducatedSoFar % 50 === 0)
@@ -507,22 +506,21 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 // Reusable highlighted spans
                 const name = user?.firstName || 'friend'
                 const nGirls = <span className="font-bold text-green-400">{girlsEducatedSoFar}</span>
-                const nAmount = <span className="font-bold text-orange-300">${suggestedAmount}</span>
-                const nGoal = <span className="font-bold text-green-400">{goalGirls}</span>
-                const nToGo = <span className="font-bold text-green-400">{girlsToGo}</span>
 
-                // 10 warm variations for the in-progress message (rotates each time the dashboard opens)
+                // Simple, clean variations — gratitude + a gentle ask, no confusing math.
+                // The suggested amount lives on the Donate button, not baked into the sentence.
+                const g1 = girlsEducatedSoFar === 1 ? 'girl' : 'girls'
                 const inProgressVariations = [
-                  <>Because of you, {name}, {nGirls} girls are in school this year. A {nAmount} gift could help you reach {nGoal} — that&apos;s {nToGo} more futures changed.</>,
-                  <>{name}, your generosity has placed {nGirls} girls in classrooms this year. With {nAmount}, {nToGo} more could follow, all the way to {nGoal}.</>,
-                  <>{nGirls} girls have hope because of you, {name}. A {nAmount} gift carries that light to {nToGo} more, on the path to {nGoal}.</>,
-                  <>Thanks to your kindness, {name}, {nGirls} girls are learning this year. Just {nToGo} more would bring you to {nGoal} — a {nAmount} gift helps get there.</>,
-                  <>You&apos;ve already changed {nGirls} young lives this year, {name}. A {nAmount} gift opens the door for {nToGo} more, toward {nGoal}.</>,
-                  <>{name}, {nGirls} girls can dream bigger because of you. A gift of {nAmount} brings {nToGo} more within reach of {nGoal}.</>,
-                  <>Your compassion has given {nGirls} girls a classroom this year, {name}. {nToGo} more would reach {nGoal} — and {nAmount} moves them closer.</>,
-                  <>Every gift you&apos;ve given adds up, {name} — {nGirls} girls in school so far. A {nAmount} gift could carry {nToGo} more toward {nGoal}.</>,
-                  <>{name}, you&apos;ve helped {nGirls} girls step into a brighter future this year. A {nAmount} gift could help {nToGo} more join them, on the way to {nGoal}.</>,
-                  <>Hope looks like {nGirls} girls in school, {name} — and it&apos;s because of you. A {nAmount} gift brings {nToGo} more closer to {nGoal}.</>,
+                  <>{name}, you&apos;ve helped {nGirls} {g1} so far. Will you help one more today?</>,
+                  <>Because of you, {name}, {nGirls} {g1} are in school. Ready to reach one more?</>,
+                  <>{name}, {nGirls} {g1} have a brighter future thanks to you. Will you help another?</>,
+                  <>You&apos;ve changed {nGirls} young lives, {name}. Will you change one more today?</>,
+                  <>Thanks to you, {name}, {nGirls} {g1} can stay in school. Help one more?</>,
+                  <>{nGirls} {g1} are learning because of you, {name}. Will you open the door for one more?</>,
+                  <>{name}, your giving has reached {nGirls} {g1}. One more is waiting for you.</>,
+                  <>You&apos;ve given {nGirls} {g1} hope, {name}. Will you give it to one more today?</>,
+                  <>{name}, {nGirls} {g1} are safer and in school because of you. Help one more?</>,
+                  <>Every gift matters, {name} — you&apos;ve helped {nGirls} {g1} so far. Will you help again?</>,
                 ]
 
                 return showSmartSuggestion ? (
@@ -535,9 +533,9 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         </div>
                         <p className="text-white/90 text-sm mb-3">
                           {girlsEducatedSoFar === 0 ? (
-                            <>Welcome, {user?.firstName || 'friend'}. Your first <span className="font-bold text-orange-300">${suggestedAmount}</span> gift could put <span className="font-bold text-green-400">{Math.max(Math.floor(suggestedAmount / 50), 1)}</span> {Math.max(Math.floor(suggestedAmount / 50), 1) === 1 ? 'girl' : 'girls'} on the path to a brighter future.</>
+                            <>Welcome, {user?.firstName || 'friend'}. Your first gift can put a girl on the path to a brighter future. Will you help today?</>
                           ) : justReached ? (
-                            <>What a milestone, {user?.firstName || 'friend'} — because of you, <span className="font-bold text-green-400">{girlsEducatedSoFar}</span> girls are in school this year. A <span className="font-bold text-orange-300">${suggestedAmount}</span> gift carries that hope onward toward <span className="font-bold text-green-400">{goalGirls}</span>.</>
+                            <>What a milestone, {user?.firstName || 'friend'}. Because of you, <span className="font-bold text-green-400">{girlsEducatedSoFar}</span> girls are in school. Will you help one more?</>
                           ) : (
                             inProgressVariations[suggestionVariant % inProgressVariations.length]
                           )}

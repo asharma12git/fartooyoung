@@ -704,8 +704,8 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                 // Program pillars with per-girl annual cost (peer-benchmarked; tune to real FTY costs).
                 // cum = cumulative cost to have unlocked this pillar for one girl. Full support = $480/yr.
                 const PILLARS = [
-                  { icon: '📚', title: 'School fees & essentials', line: 'Fees, uniform, books, and supplies so cost is never the reason she drops out', cost: 180, mo: 15, cum: 180 },
-                  { icon: '🍛', title: 'Daily meals (tiffin)', line: 'Nutrition that keeps her in class', cost: 300, mo: 25, cum: 480 },
+                  { icon: '📚', title: 'School fees & essentials', line: 'Fees, uniform, books, and supplies so cost is never the reason she drops out', cost: 300, mo: 25, cum: 300 },
+                  { icon: '🍛', title: 'Daily meals (tiffin)', line: 'Nutrition that keeps her in class', cost: 180, mo: 15, cum: 480 },
                   { icon: '🛺', title: 'Transport', line: 'Safe travel for girls in rural areas', cost: 180, mo: 15, cum: 660 },
                   { icon: '🏠', title: 'Family welfare checks', line: 'Support so parents keep her in school', cost: 240, mo: 20, cum: 900 },
                   { icon: '💬', title: 'Counselling', line: 'Guidance through her toughest moments', cost: 144, mo: 12, cum: 1044 },
@@ -854,7 +854,7 @@ const DonorDashboard = ({ user, onLogout, onDonateClick, onUserUpdate, refreshKe
                         </div>
                       </div>
                       <p className="text-white/60 text-sm mb-4">A multi-pronged approach so girls stay in school and families never feel they must marry them off early — working alongside families and communities <span className="text-white/80">across South Asia</span>.</p>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-4">
                         <span className="text-white/80 text-sm font-semibold">Cost to support one girl</span>
                         <span className="text-white/50 text-xs">per girl · <span className="text-green-400 font-semibold">$100/mo</span> · <span className="text-green-400 font-semibold">$1,200/yr</span> full support</span>
                       </div>

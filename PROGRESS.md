@@ -4,8 +4,8 @@
 
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
-**Current Phase:** Phase 47 - Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix  
-**Last Updated:** October 2, 2026  
+**Current Phase:** Phase 48 - ReliefWeb API Enabled (research fetcher aggregation)  
+**Last Updated:** October 20, 2026  
 **Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active (FIXED) | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete | ✅ Donation Duplicate Bug Fixed | ✅ Dashboard Redesigned
 
 ### **What's Working (Production Ready)**
@@ -121,6 +121,17 @@
 > Full details for each plan in `docs/1-planning/` (numbered by priority).
 
 ### **Session Left Off At**
+- Phase 48: ReliefWeb API Enabled (Oct 20) — DEPLOYED TO PROD + STAGING
+- **ReliefWeb appname APPROVED** (`fartooyoung-blog-research-fetcher-x7k234gfddf`) and enabled via `ReliefWebAppname` override in `backend/samconfig.toml` (staging + production). Validated against live v2 API (7,128 matching child-marriage reports).
+- **Working in prod + staging**: fetcher now logs `[research-fetcher] ReliefWeb: 25 reports scanned, 4 new`, errors=[]. Recovered the previously-dead sources via aggregation: added ReliefWeb/UNICEF ("Ethiopia advances efforts to end child marriage"), ReliefWeb/Plan International ("State of the World's Girls 2026"), ReliefWeb/Save the Children, ReliefWeb/UNFPA. Source attribution stored as `ReliefWeb/<org>`.
+- End-to-end verified on staging: generator picked a fresh ReliefWeb/UNICEF article and produced a clean on-topic draft ("Ethiopia Is Rewriting the Rules on Child Marriage", 0 skips). Test draft cleaned up.
+- **NEXT STEPS (continue later):**
+  1. Review/publish accumulated prod drafts when ready (owner planned to resume publishing in November). As of Oct 12 there were 2 drafts (GBV, Gambia faith leaders); more accrue twice-weekly.
+  2. Replace placeholder per-girl costs + "Message from the Field" quotes/names in DonorDashboard with real FTY data.
+  3. Review/clean 12 legacy `pi_pi_` double-prefix duplicate rows in PROD donations (needs per-row Stripe cross-reference).
+  4. Deeper doc drift: `docs/2-system-design/5-database-design.md` (PKs, add `use_count` to research schema, `slug-index` GSI) + `4-backend-design.md` (blog endpoints).
+  5. `tiers` table live but not in template.yaml (consider IaC); `handle-bounces.js` is dead code.
+
 - Phase 47: Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix (Oct 2) — DEPLOYED TO PROD + STAGING
 - **Blog generator was silently producing nothing since Sep 11** — root-caused and fixed (use_count ordering, full-list walk, smarter relevance, unique titles). Prod verified generating again; owner published first new post ("Myanmar's Imprisoned Girls").
 - **Research fetcher sources repaired**: added UNFPA (on-mission, working), removed dead UNICEF (404) + empty Population Council feeds, added dead-feed logging.

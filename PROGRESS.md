@@ -126,11 +126,14 @@
 - **Working in prod + staging**: fetcher now logs `[research-fetcher] ReliefWeb: 25 reports scanned, 4 new`, errors=[]. Recovered the previously-dead sources via aggregation: added ReliefWeb/UNICEF ("Ethiopia advances efforts to end child marriage"), ReliefWeb/Plan International ("State of the World's Girls 2026"), ReliefWeb/Save the Children, ReliefWeb/UNFPA. Source attribution stored as `ReliefWeb/<org>`.
 - End-to-end verified on staging: generator picked a fresh ReliefWeb/UNICEF article and produced a clean on-topic draft ("Ethiopia Is Rewriting the Rules on Child Marriage", 0 skips). Test draft cleaned up.
 - **NEXT STEPS (continue later):**
-  1. Review/publish accumulated prod drafts when ready (owner planned to resume publishing in November). As of Oct 12 there were 2 drafts (GBV, Gambia faith leaders); more accrue twice-weekly.
-  2. Replace placeholder per-girl costs + "Message from the Field" quotes/names in DonorDashboard with real FTY data.
-  3. Review/clean 12 legacy `pi_pi_` double-prefix duplicate rows in PROD donations (needs per-row Stripe cross-reference).
-  4. Deeper doc drift: `docs/2-system-design/5-database-design.md` (PKs, add `use_count` to research schema, `slug-index` GSI) + `4-backend-design.md` (blog endpoints).
-  5. `tiers` table live but not in template.yaml (consider IaC); `handle-bounces.js` is dead code.
+  1. **[NEW] Fix AI hero-image generation (deferred, owner to revisit next login):** `amazon.nova-canvas-v1:0` is end-of-life/legacy — failing on EVERY generator run (logs: "Access denied... marked by provider as Legacy" then "reached the end of its life"). `generateImage()` catches the error and falls back to empty, so all auto-generated posts have NO image. The only image present (Oct 9 "When GBV Services Fail Girls") came from a human/admin upload path, not the model. Fix: pick an active Bedrock image model the account can access (newer Nova Canvas version or Titan Image Generator), update `generateImage()` in `blog-generator.js`, test on staging. Optionally backfill images for the 14 older imageless published posts.
+  2. Review/publish accumulated prod drafts when ready (owner planned to resume publishing in November).
+  3. Replace placeholder per-girl costs + "Message from the Field" quotes/names in DonorDashboard with real FTY data.
+  4. Review/clean 12 legacy `pi_pi_` double-prefix duplicate rows in PROD donations (needs per-row Stripe cross-reference).
+  5. Deeper doc drift: `docs/2-system-design/5-database-design.md` (PKs, add `use_count` to research schema, `slug-index` GSI) + `4-backend-design.md` (blog endpoints).
+  6. `tiers` table live but not in template.yaml (consider IaC); `handle-bounces.js` is dead code.
+
+- **Admin note (Oct 20):** Ravi Baral (ravi.baral@fartooyoung.org) promoted donor → admin in PROD users table (role field only; needs re-login for fresh JWT). Prod now has 2 admins.
 
 - Phase 47: Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix (Oct 2) — DEPLOYED TO PROD + STAGING
 - **Blog generator was silently producing nothing since Sep 11** — root-caused and fixed (use_count ordering, full-list walk, smarter relevance, unique titles). Prod verified generating again; owner published first new post ("Myanmar's Imprisoned Girls").

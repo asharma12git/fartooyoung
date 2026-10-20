@@ -24,7 +24,8 @@ capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=staging",
     "DynamoDBEndpoint=\"\"",
-    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-staging-secrets-BjIpQD"
+    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-staging-secrets-BjIpQD",
+    "ReliefWebAppname=fartooyoung-blog-research-fetcher-x7k234gfddf"
 ]
 confirm_changeset = false
 
@@ -38,6 +39,7 @@ capabilities = "CAPABILITY_IAM"
 parameter_overrides = [
     "Environment=production",
     "DynamoDBEndpoint=\"\"",
-    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-production-secrets-tEmB4i"
+    "SecretsManagerArn=arn:aws:secretsmanager:us-east-1:538781441544:secret:fartooyoung-production-secrets-tEmB4i",
+    "ReliefWebAppname=fartooyoung-blog-research-fetcher-x7k234gfddf"
 ]
 confirm_changeset = false

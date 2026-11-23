@@ -5,7 +5,7 @@
 ## 📊 MASTER SUMMARY - PROJECT STATUS
 
 **Current Phase:** Phase 48 - ReliefWeb API Enabled (research fetcher aggregation)  
-**Last Updated:** October 20, 2026  
+**Last Updated:** November 22, 2026  
 **Status:** ✅ Production LIVE | ✅ Live Payments Active | ✅ HTTPS Secured | ✅ CI/CD V2 Automated | ✅ SEO Phase 1+2 Complete | ✅ AI Blog Generator Active (FIXED) | ✅ Blog Deployed to Prod | ✅ Payment Fixes Deployed | ✅ Password Reset Flow Complete | ✅ Email System Complete | ✅ Donation Duplicate Bug Fixed | ✅ Dashboard Redesigned
 
 ### **What's Working (Production Ready)**
@@ -134,6 +134,10 @@
   6. `tiers` table live but not in template.yaml (consider IaC); `handle-bounces.js` is dead code.
 
 - **Admin note (Oct 20):** Ravi Baral (ravi.baral@fartooyoung.org) promoted donor → admin in PROD users table (role field only; needs re-login for fresh JWT). Prod now has 2 admins.
+
+- **Dev environment note (Nov 22):** Project moved out of PyCharm to **`/Users/avinashsharma/Developer/fty-aws/fartooyoung`** (previously `/Users/avinashsharma/PyCharmMiscProject/fartooyoung`). Validated after the move: git healthy and in sync (`main` = `staging` = `8d74923` = origin), `npm run build` passes, all 31 backend Lambda files pass `node --check`, `sam validate` OK, AWS CLI/SAM/Stripe CLI work, prod + staging live (HTTP 200), all 4 pipelines Succeeded. Removed stale gitignored `.idea/` and `backend/.aws-sam/` (SAM regenerates `.aws-sam` on next `sam build`); no old-path references remain.
+- **Git auth now uses GitHub CLI (`gh`), not the macOS keychain helper (Nov 22):** `gh auth login` (HTTPS) + `gh auth setup-git` writes `[credential "https://github.com"]` → `!/opt/homebrew/bin/gh auth git-credential` in the user-level `~/.gitconfig` (applies to every github.com HTTPS repo on this Mac; nothing is stored in the repo). The old `osxkeychain` github.com entry was erased. Verified with a real throwaway-branch push/delete (no pipeline triggered). **On a new machine or after `gh auth logout`/uninstall:** re-run `gh auth login` then `gh auth setup-git`. The config hardcodes the `gh` path (`/opt/homebrew/bin/gh`). Pipelines use a separate AWS CodeConnections link to GitHub and are unaffected.
+- `fartooyoung` and `medalfoundation` are separate repos/pipelines (unrelated histories); this log covers Far Too Young only.
 
 - Phase 47: Blog Generator Fix + Research Fetcher Sources + Impact Slider Fix (Oct 2) — DEPLOYED TO PROD + STAGING
 - **Blog generator was silently producing nothing since Sep 11** — root-caused and fixed (use_count ordering, full-list walk, smarter relevance, unique titles). Prod verified generating again; owner published first new post ("Myanmar's Imprisoned Girls").
